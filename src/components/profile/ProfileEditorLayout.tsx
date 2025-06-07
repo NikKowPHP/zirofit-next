@@ -24,7 +24,7 @@ interface InitialProfileData {
     testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date, updatedAt: Date, profileId: string}>;
     externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
     transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
-    benefits: Array<{id: string, title: string, description: string | null, iconName: string | null, iconStyle: string | null, orderColumn: number, createdAt: Date}>;
+    benefits: Array<{id: string, title: string, description: string | null, iconName: string | null, iconStyle: string | null, orderColumn: number, createdAt: Date, profileId: string, updatedAt: Date}>;
   }
 }
 
@@ -48,7 +48,7 @@ interface ProfileEditorLayoutProps {
       testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; updatedAt: Date, profileId: string }[];
       externalLinks: { id: string; label: string; linkUrl: string; createdAt: Date; }[];
       transformationPhotos: { id: string; imagePath: string; caption: string | null; createdAt: Date; }[];
-      benefits: { id: string; title: string; description: string | null; iconName: string | null; iconStyle: string | null; orderColumn: number; createdAt: Date; }[];
+      benefits: { id: string; title: string; description: string | null; iconName: string | null; iconStyle: string | null; orderColumn: number; createdAt: Date; profileId: string; updatedAt: Date; }[];
     } | undefined;
   };
 }
