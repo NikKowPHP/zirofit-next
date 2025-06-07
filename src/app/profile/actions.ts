@@ -55,20 +55,20 @@ export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, f
     });
 
     if (!currentUser) {
-        return { error: "User profile not found in database.", success: false };
+      return { error: "User profile not found in database.", success: false };
     }
 
     if (username !== currentUser.username) {
-        const existingUserWithUsername = await prisma.user.findUnique({
-            where: { username: username },
-        });
-        if (existingUserWithUsername && existingUserWithUsername.id !== currentUser.id) {
-            return { 
-                errors: [{ code: 'custom', path: ['username'], message: 'Username is already taken.' }],
-                error: "Validation failed.",
-                success: false 
-            };
-        }
+      const existingUserWithUsername = await prisma.user.findUnique({
+          where: { username: username },
+      });
+      if (existingUserWithUsername && existingUserWithUsername.id !== currentUser.id) {
+          return { 
+              errors: [{ code: 'custom', path: ['username'], message: 'Username is already taken.' }],
+              error: "Validation failed.",
+              success: false 
+          };
+      }
     }
 
     // Update Prisma User (name, username) and Profile (other fields)
@@ -223,6 +223,9 @@ export async function getCurrentUserProfileData() {
             },
             testimonials: { // Add this
               orderBy: { createdAt: 'desc' }
+            },
+            externalLinks: { // Add this
+              orderBy: { createdAt: 'asc' }
             },
           },
         },
@@ -539,4 +542,106 @@ export async function updateTestimonial(prevState: UpdateTestimonialFormState | 
     } catch (e: any) {
         return { error: "Failed to update testimonial. " + e.message, success: false };
     }
+}
+
+const externalLinkSchema = z.object({
+  label: z.string().min(1, "Label is required.").max(255),
+  linkUrl: z.string().url({ message: "Please enter a valid URL." }).max(2048),
+});
+
+interface ExternalLinkFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newLink?: { id: string; label: string; linkUrl: string; createdAt: Date };
+  updatedLink?: { id: string; label: string; linkUrl: string; createdAt: Date }; // For update
+}
+
+// Add External Link
+export async function addExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated.", success: false };
+
+  const validatedFields = externalLinkSchema.safeParse({
+    label: formData.get('label'),
+    linkUrl: formData.get('linkUrl'),
+  });
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+  }
+  const { label, linkUrl } = validatedFields.data;
+
+  try {
+    const profile = await prisma.profile.findUnique({ where: { userId: authUser.id }, select: { id: true } });
+    if (!profile) return { error: "Profile not found.", success: false };
+
+    const newLink = await prisma.externalLink.create({
+      data: { profileId: profile.id, label, linkUrl },
+    });
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+    return { success: true, message: "External link added successfully!", newLink };
+  } catch (e: any) {
+    return { error: "Failed to add external link. " + e.message, success: false };
+  }
+}
+
+// Update External Link
+export async function updateExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated.", success: false };
+
+  const linkId = formData.get('linkId') as string;
+  if (!linkId) return { error: "Link ID missing.", success: false };
+
+  const validatedFields = externalLinkSchema.safeParse({
+    label: formData.get('label'),
+    linkUrl: formData.get('linkUrl'),
+  });
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+  }
+  const { label, linkUrl } = validatedFields.data;
+
+  try {
+    const linkToUpdate = await prisma.externalLink.findFirst({
+        where: { id: linkId, profile: { userId: authUser.id } },
+    });
+    if (!linkToUpdate) return { error: "Link not found or not authorized.", success: false };
+
+    const updatedLink = await prisma.externalLink.update({
+        where: { id: linkId },
+        data: { label, linkUrl },
+    });
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+    return { success: true, message: "External link updated.", updatedLink };
+  } catch (e: any) {
+    return { error: "Failed to update external link. " + e.message, success: false };
+  }
+}
+
+// Delete External Link
+export async function deleteExternalLink(linkId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated.", success: false };
+
+  try {
+    const linkToDelete = await prisma.externalLink.findFirst({
+        where: { id: linkId, profile: { userId: authUser.id } },
+    });
+    if (!linkToDelete) return { error: "Link not found or not authorized.", success: false };
+
+    await prisma.externalLink.delete({ where: { id: linkId } });
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+    return { success: true, message: "External link deleted.", deletedId: linkId };
+  } catch (e: any) {
+    return { error: "Failed to delete external link. " + e.message, success: false };
+  }
 }

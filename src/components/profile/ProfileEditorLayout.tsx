@@ -20,6 +20,7 @@ interface InitialProfileData {
     profilePhotoPath: string | null;
     services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
     testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
+    externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
     // Add other profile fields as they get editors
   } | null; // Profile can be null if not yet created
 }
@@ -40,7 +41,7 @@ const BenefitsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">
 const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
 const PhotosEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Photos Editor Content</div>;
 const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEditor'));
-const LinksEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">External Links Editor Content</div>;
+const LinksEditor = React.lazy(() => import('./sections/ExternalLinksEditor'));
 
 const SectionLoadingFallback = () => <div className="p-6 bg-white shadow-sm rounded-lg">Loading section...</div>;
 
@@ -74,7 +75,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
     'photos': PhotosEditor,
     'testimonials': () => <TestimonialsEditor initialTestimonials={initialData.profile?.testimonials || []} />,
-    'links': LinksEditor,
+    'links': () => <LinksEditor initialExternalLinks={initialData.profile?.externalLinks || []} />,
   };
 
   const SelectedComponent = sectionComponents[selectedSection] || (() => <div className="p-6 bg-white shadow-sm rounded-lg">Select a section to edit.</div>);
