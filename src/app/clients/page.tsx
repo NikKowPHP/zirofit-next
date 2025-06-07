@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getTrainerClients } from './actions';
 import { Button } from '../../components/ui/Button';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import DeleteClientButton from '@/components/clients/DeleteClientButton';
 
 interface Client {
   id: string;
@@ -58,8 +59,7 @@ export default async function ClientListPage() {
                     {/* Links will be implemented next */}
                     <Link href={`/clients/${client.id}`} className="text-gray-600 hover:text-indigo-600">View</Link>
                     <Link href={`/clients/${client.id}/edit`} className="text-indigo-600 hover:text-indigo-900">Edit</Link>
-                    {/* Delete button will be wired up later */}
-                    <button className="text-red-600 hover:text-red-900">Delete</button>
+                    <DeleteClientButton clientId={client.id} />
                   </td>
                 </tr>
               ))
