@@ -194,6 +194,8 @@ Specific Instructions:
     *   If the client is not found or doesn't belong to the trainer, it should return a `notFound()` or an error message.
     *   Pass the fetched client data as the `initialData` prop to the `ClientForm`.
 
+
+
 **TODO #54: Implement Client Deletion**
 Objective: Add the ability to delete a client.
 File(s) To Create/Modify:

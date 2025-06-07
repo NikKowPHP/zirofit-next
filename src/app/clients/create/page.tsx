@@ -7,7 +7,8 @@ export default async function CreateClientPage() {
       <Link href="/clients" className="mb-4 inline-block">
         Back to Client List
       </Link>
-      <ClientForm initialData={null} />
+      <ClientForm initialData={null} action={addClient} />
     </div>
   );
 }
+import { addClient } from '../actions';
