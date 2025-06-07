@@ -222,189 +222,141 @@ export async function deleteClient(clientId: string) {
   }
 }
 
-const MeasurementSchema = z.object({
+const measurementSchema = z.object({
   clientId: z.string(),
-  measurementDate: z.string(),
-  weightKg: z.string().optional(),
-  bodyFatPercentage: z.string().optional(),
-  notes: z.string().optional(),
-  customMetrics: z.array(z.object({
-    name: z.string(),
-    value: z.string(),
-  })).optional(),
+  measurementDate: z.string().refine((d) => !isNaN(Date.parse(d)), { message: "Invalid date" }),
+  weightKg: z.string().optional().nullable(),
+  bodyFatPercentage: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  customMetrics: z.string().optional().nullable(), // Will be a JSON string
 });
 
-export async function addMeasurement(prevState: any, formData: FormData) {
-  const validatedFields = MeasurementSchema.safeParse({
-    clientId: formData.get('clientId'),
-    measurementDate: formData.get('measurementDate'),
-    weightKg: formData.get('weightKg'),
-    bodyFatPercentage: formData.get('bodyFatPercentage'),
-    notes: formData.get('notes'),
-    customMetrics: JSON.parse(formData.get('customMetrics') as string || '[]'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Failed to create measurement.',
-    };
-  }
-
-  const { clientId, measurementDate, weightKg, bodyFatPercentage, notes, customMetrics } = validatedFields.data;
-
-  const supabase = createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return { message: "User not authenticated." };
-  }
-
-  try {
-    const client = await prisma.client.findUnique({
-      where: {
-        id: clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
-      return { message: "Client not found or unauthorized." };
-    }
-
-    const measurement = await prisma.clientMeasurement.create({
-      data: {
-        clientId,
-        measurementDate: new Date(measurementDate),
-        weightKg: weightKg ? parseFloat(weightKg) : null,
-        bodyFatPercentage: bodyFatPercentage ? parseFloat(bodyFatPercentage) : null,
-        notes,
-        customMetrics: customMetrics ? JSON.stringify(customMetrics) : null,
-      },
-    });
-
-    revalidatePath(`/clients/${clientId}`);
-    return { success: true, measurement };
-  } catch (error: any) {
-    console.error("Failed to create measurement:", error);
-    return { message: "Failed to create measurement." };
-  }
-}
-
-const UpdateMeasurementSchema = z.object({
+const updateMeasurementSchema = measurementSchema.extend({
   measurementId: z.string(),
-  clientId: z.string(),
-  measurementDate: z.string(),
-  weightKg: z.string().optional(),
-  bodyFatPercentage: z.string().optional(),
-  notes: z.string().optional(),
-  customMetrics: z.array(z.object({
-    name: z.string(),
-    value: z.string(),
-  })).optional(),
 });
 
-export async function updateMeasurement(prevState: any, formData: FormData) {
-  const validatedFields = UpdateMeasurementSchema.safeParse({
-    measurementId: formData.get('measurementId'),
-    clientId: formData.get('clientId'),
-    measurementDate: formData.get('measurementDate'),
-    weightKg: formData.get('weightKg'),
-    bodyFatPercentage: formData.get('bodyFatPercentage'),
-    notes: formData.get('notes'),
-    customMetrics: JSON.parse(formData.get('customMetrics') as string || '[]'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Failed to update measurement.',
-    };
-  }
-
-  const { measurementId, clientId, measurementDate, weightKg, bodyFatPercentage, notes, customMetrics } = validatedFields.data;
-
-  const supabase = createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return { message: "User not authenticated." };
-  }
-
-  try {
-    const client = await prisma.client.findUnique({
-      where: {
-        id: clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
-      return { message: "Client not found or unauthorized." };
-    }
-
-    const measurement = await prisma.clientMeasurement.update({
-      where: {
-        id: measurementId,
-      },
-      data: {
-        measurementDate: new Date(measurementDate),
-        weightKg: weightKg ? parseFloat(weightKg) : null,
-        bodyFatPercentage: bodyFatPercentage ? parseFloat(bodyFatPercentage) : null,
-        notes,
-        customMetrics: customMetrics ? JSON.stringify(customMetrics) : null,
-      },
-    });
-
-    revalidatePath(`/clients/${clientId}`);
-    return { success: true, measurement };
-  } catch (error: any) {
-    console.error("Failed to update measurement:", error);
-    return { message: "Failed to update measurement." };
-  }
+interface MeasurementFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  measurement?: import('@prisma/client').ClientMeasurement;
 }
 
-export async function deleteMeasurement(prevState: any, measurementId: string) {
+// Helper to authorize if client belongs to trainer
+async function authorizeClientAccess(clientId: string, authUserId: string): Promise<boolean> {
+    const client = await prisma.client.findFirst({
+        where: { id: clientId, trainerId: authUser.id }
+    });
+    return !!client;
+}
+
+export async function addMeasurement(prevState: MeasurementFormState | undefined, formData: FormData): Promise<MeasurementFormState> {
+    const supabase = createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return { error: "User not authenticated.", success: false };
+
+    const validatedFields = measurementSchema.safeParse({
+        clientId: formData.get('clientId'),
+        measurementDate: formData.get('measurementDate'),
+        weightKg: formData.get('weightKg'),
+        bodyFatPercentage: formData.get('bodyFatPercentage'),
+        notes: formData.get('notes'),
+        customMetrics: formData.get('customMetrics'),
+    });
+
+    if (!validatedFields.success) {
+        return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+    }
+    
+    const { clientId, measurementDate, weightKg, bodyFatPercentage, notes, customMetrics: customMetricsJson } = validatedFields.data;
+
+    if (!(await authorizeClientAccess(clientId, authUser.id))) {
+        return { error: "Unauthorized access to client.", success: false };
+    }
+
+    try {
+        const measurement = await prisma.clientMeasurement.create({
+            data: {
+                clientId,
+                measurementDate: new Date(measurementDate),
+                weightKg: weightKg ? parseFloat(weightKg) : null,
+                bodyFatPercentage: bodyFatPercentage ? parseFloat(bodyFatPercentage) : null,
+                notes,
+                customMetrics: customMetricsJson ? JSON.parse(customMetricsJson) : undefined,
+            },
+        });
+        revalidatePath(`/clients/${clientId}`);
+        return { success: true, message: "Measurement added.", measurement };
+    } catch (e: any) {
+        return { error: "Failed to add measurement: " + e.message, success: false };
+    }
+}
+
+export async function updateMeasurement(prevState: MeasurementFormState | undefined, formData: FormData): Promise<MeasurementFormState> {
+    const supabase = createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return { error: "User not authenticated.", success: false };
+
+    const validatedFields = updateMeasurementSchema.safeParse({
+        measurementId: formData.get('measurementId'),
+        clientId: formData.get('clientId'),
+        measurementDate: formData.get('measurementDate'),
+        weightKg: formData.get('weightKg'),
+        bodyFatPercentage: formData.get('bodyFatPercentage'),
+        notes: formData.get('notes'),
+        customMetrics: formData.get('customMetrics'),
+    });
+
+    if (!validatedFields.success) {
+        return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+    }
+
+    const { measurementId, clientId, measurementDate, weightKg, bodyFatPercentage, notes, customMetrics: customMetricsJson } = validatedFields.data;
+
+    if (!(await authorizeClientAccess(clientId, authUser.id))) {
+        return { error: "Unauthorized access to client.", success: false };
+    }
+
+    try {
+        const measurement = await prisma.clientMeasurement.update({
+            where: { id: measurementId },
+            data: {
+                measurementDate: new Date(measurementDate),
+                weightKg: weightKg ? parseFloat(weightKg) : null,
+                bodyFatPercentage: bodyFatPercentage ? parseFloat(bodyFatPercentage) : null,
+                notes,
+                customMetrics: customMetricsJson ? JSON.parse(customMetricsJson) : undefined,
+            },
+        });
+        revalidatePath(`/clients/${clientId}`);
+        return { success: true, message: "Measurement updated.", measurement };
+    } catch (e: any) {
+        return { error: "Failed to update measurement: " + e.message, success: false };
+    }
+}
+
+export async function deleteMeasurement(prevState: any, measurementId: string): Promise<{ success: boolean; message?: string; error?: string }> {
   const supabase = createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return { message: "User not authenticated." };
-  }
+  if (!authUser) return { error: "User not authenticated.", success: false };
 
   try {
     const measurement = await prisma.clientMeasurement.findUnique({
-      where: {
-        id: measurementId,
-      },
+      where: { id: measurementId },
+      select: { clientId: true }
     });
 
-    if (!measurement) {
-      return { message: "Measurement not found." };
+    if (!measurement || !(await authorizeClientAccess(measurement.clientId, authUser.id))) {
+      return { error: "Unauthorized to delete this measurement.", success: false };
     }
 
-    const client = await prisma.client.findUnique({
-      where: {
-        id: measurement.clientId,
-        trainerId: authUser.id,
-      },
-    });
+    await prisma.clientMeasurement.delete({ where: { id: measurementId } });
 
-    if (!client) {
-      return { message: "Client not found or unauthorized." };
-    }
-
-    await prisma.clientMeasurement.delete({
-      where: {
-        id: measurementId,
-      },
-    });
-
-    revalidatePath(`/clients/${client.id}`);
+    revalidatePath(`/clients/${measurement.clientId}`);
     return { success: true, message: "Measurement deleted." };
-  } catch (error: any) {
-    console.error("Failed to delete measurement:", error);
-    return { message: "Failed to delete measurement." };
+  } catch (e: any) {
+    return { error: "Failed to delete measurement: " + e.message, success: false };
   }
 }
 
