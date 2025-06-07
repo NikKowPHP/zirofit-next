@@ -4,7 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { addTestimonial, deleteTestimonial, updateTestimonial } from '@/app/profile/actions';
-import { Input, Label, Textarea, Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Textarea } from '@/components/ui/Textarea';
 import { z } from 'zod';
 
 interface Testimonial {
@@ -26,13 +29,12 @@ interface TestimonialFormState {
     newTestimonial?: Testimonial;
 }
 
+interface UpdateTestimonialFormState extends TestimonialFormState {
+    updatedTestimonial?: { id: string; clientName: string; testimonialText: string; createdAt: Date };
+}
+
 const initialAddTestimonialState: TestimonialFormState = {};
 const initialUpdateTestimonialState: UpdateTestimonialFormState = {};
-
-function AddTestimonialButton() {
-  const { pending } = useFormStatus();
-  return <Button type="submit" disabled={pending}>{pending ? 'Adding...' : 'Add Testimonial'}</Button>;
-}
 
 export default function TestimonialsEditor({ initialTestimonials }: TestimonialsEditorProps) {
   const [addState, addFormAction] = useFormState(addTestimonial, initialAddTestimonialState);
@@ -59,7 +61,7 @@ export default function TestimonialsEditor({ initialTestimonials }: Testimonials
   // Effect for update testimonial
   useEffect(() => {
     if (updateState.success && updateState.updatedTestimonial) {
-      setTestimonials(current =>
+      setTestimonials(current => 
         current.map(t => t.id === updateState.updatedTestimonial!.id ? updateState.updatedTestimonial! : t)
                .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       );
@@ -115,8 +117,8 @@ export default function TestimonialsEditor({ initialTestimonials }: Testimonials
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{currentFormState.error}</div>
         )}
 
-        <form
-            action={isEditing ? updateFormAction : addFormAction}
+        <form 
+            action={isEditing ? updateFormAction : addFormAction} 
             key={editingTestimonialId || 'add-testimonial'} // Key to reset form when switching modes
             ref={formRef}
             className="space-y-4 border-b pb-6 mb-6"
@@ -138,9 +140,9 @@ export default function TestimonialsEditor({ initialTestimonials }: Testimonials
             {isEditing && (
               <Button type="button" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
             )}
-            <Button type="submit">
-              {isEditing
-                ? (useFormStatus().pending ? 'Saving...' : 'Save Changes')
+            <Button type="submit"> 
+              {isEditing 
+                ? (useFormStatus().pending ? 'Saving...' : 'Save Changes') 
                 : (useFormStatus().pending ? 'Adding...' : 'Add Testimonial')}
             </Button>
           </div>
