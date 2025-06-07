@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addProgressPhoto, deleteProgressPhoto } from "@/app/clients/actions";
-import { PrismaClient } from '@/generated/prisma';
-
+import { PrismaClient } from "@/generated/prisma"; // Corrected import
 import { revalidatePath } from "next/cache";
-import { useSession } from "next-auth/react";
+// Removed: import { useSession } from "next-auth/react";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;
@@ -56,7 +55,7 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
     initialActionState
   );
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const { data: session } = useSession();
+  // Removed: const { data: session } = useSession();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -104,7 +103,7 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {progressPhotos.map((photo) => (
           <div key={photo.id} style={{ margin: "10px", textAlign: "center" }}>
-            <img src={photo.imagePath} alt={photo.caption} style={{ maxWidth: "200px", maxHeight: "200px" }} />
+            <img src={photo.imagePath} alt={photo.caption || ''} style={{ maxWidth: "200px", maxHeight: "200px" }} />
             <p>{photo.photoDate.toLocaleDateString()}</p>
             <p>{photo.caption}</p>
             <form action={(id) => handleDeletePhoto(photo.id)}>

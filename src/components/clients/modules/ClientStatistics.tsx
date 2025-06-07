@@ -1,7 +1,6 @@
 "use client";
 
-import { PrismaClient } from '@/generated/prisma';
-
+import { PrismaClient } from "@/generated/prisma"; // Corrected import
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -34,7 +33,7 @@ interface ClientStatisticsProps {
 
 export default function ClientStatistics({ measurements }: ClientStatisticsProps) {
   const weightData = {
-    labels: measurements.map(m => m.sessionDate.toLocaleDateString()),
+    labels: measurements.map(m => m.measurementDate.toLocaleDateString()), // Corrected property name from sessionDate to measurementDate
     datasets: [
       {
         label: 'Weight (kg)',
@@ -46,7 +45,7 @@ export default function ClientStatistics({ measurements }: ClientStatisticsProps
   };
 
   const bodyFatData = {
-    labels: measurements.map(m => m.sessionDate.toLocaleDateString()),
+    labels: measurements.map(m => m.measurementDate.toLocaleDateString()), // Corrected property name
     datasets: [
       {
         label: 'Body Fat (%)',

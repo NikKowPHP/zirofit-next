@@ -1,5 +1,5 @@
 // src/lib/prisma.ts
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from '@/generated/prisma';
 
 declare global {
   // allow global `var` declarations

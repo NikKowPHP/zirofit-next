@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addSessionLog, updateSessionLog, deleteSessionLog } from "@/app/clients/actions";
-import { PrismaClient } from '@/generated/prisma';
-
+import { PrismaClient } from "@/generated/prisma"; // Corrected import
 import { revalidatePath } from "next/cache";
 
 interface ManageClientSessionLogsProps {
@@ -115,11 +114,11 @@ export default function ManageClientSessionLogs({ clientId, initialSessionLogs }
               <label>Session Date:</label>
               <input type="date" name="sessionDate" defaultValue={sessionLog.sessionDate.toISOString().split('T')[0]} required />
               <label>Duration (minutes):</label>
-              <input type="number" name="durationMinutes" defaultValue={sessionLog.durationMinutes} required />
+              <input type="number" name="durationMinutes" defaultValue={sessionLog.durationMinutes ?? ''} required />
               <label>Activity Summary:</label>
-              <textarea name="activitySummary" defaultValue={sessionLog.activitySummary} required />
+              <textarea name="activitySummary" defaultValue={sessionLog.activitySummary ?? ''} required />
               <label>Notes:</label>
-              <textarea name="notes" defaultValue={sessionLog.notes} />
+              <textarea name="notes" defaultValue={sessionLog.sessionNotes ?? ''} />
               <button type="submit">Update Session Log</button>
               {updateSessionLogState.errors?.form && (
                 <p style={{ color: "red" }}>{updateSessionLogState.errors.form}</p>

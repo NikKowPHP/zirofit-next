@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import type { Client, ClientSessionLog } from '../../generated/prisma';
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from "@/generated/prisma"; // Corrected import
 import ManageClientMeasurements from './modules/ManageClientMeasurements';
 import ManageClientProgressPhotos from './modules/ManageClientProgressPhotos';
 import ManageClientSessionLogs from './modules/ManageClientSessionLogs';

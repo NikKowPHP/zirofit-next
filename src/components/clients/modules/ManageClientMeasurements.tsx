@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addMeasurement, updateMeasurement, deleteMeasurement } from "@/app/clients/actions";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma"; // Corrected import
 import { revalidatePath } from "next/cache";
 
 interface ManageClientMeasurementsProps {
@@ -157,11 +157,11 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
               <label>Measurement Date:</label>
               <input type="date" name="measurementDate" defaultValue={measurement.measurementDate.toISOString().split('T')[0]} required />
               <label>Weight (kg):</label>
-              <input type="number" name="weightKg" step="0.01" defaultValue={measurement.weightKg} />
+              <input type="number" name="weightKg" step="0.01" defaultValue={measurement.weightKg ?? ''} />
               <label>Body Fat Percentage:</label>
-              <input type="number" name="bodyFatPercentage" step="0.01" defaultValue={measurement.bodyFatPercentage} />
+              <input type="number" name="bodyFatPercentage" step="0.01" defaultValue={measurement.bodyFatPercentage ?? ''} />
               <label>Notes:</label>
-              <textarea name="notes" defaultValue={measurement.notes} />
+              <textarea name="notes" defaultValue={measurement.notes ?? ''} />
               <input type="hidden" name="customMetrics" value={JSON.stringify(customMetrics)} />
               <button type="submit">Update</button>
               {updateMeasurementState.errors?.form && (
