@@ -77,3 +77,110 @@ model Testimonial {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
+model TransformationPhoto {
+  id          String   @id @default(cuid())
+  profileId   String   // Foreign key to Profile model
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  imagePath   String   // Path to the image file (e.g., in Supabase Storage)
+  caption     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ExternalLink {
+  id        String   @id @default(cuid())
+  profileId String   // Foreign key to Profile model
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  linkUrl   String
+  label     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Benefit {
+  id             String   @id @default(cuid())
+  profileId      String   // Foreign key to Profile model
+  profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  iconName       String?  // Name of the icon (e.g., from an icon library)
+  iconStyle      String?  @default("outline") // e.g., 'outline', 'solid'
+  title          String
+  description    String?  @db.Text
+  orderColumn    Int      @default(0) // For ordering benefits
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Client {
+  id                      String    @id @default(cuid())
+  trainerId               String    // Foreign key to User model (trainer)
+  trainer                 User      @relation(fields: [trainerId], references: [id], onDelete: Cascade) // 'trainer' is the User
+
+  name                    String
+  email                   String?   // Email of the client, can be unique per trainer
+  phone                   String?
+  status                  String    @default("active") // e.g., "active", "inactive", "lead"
+  dateOfBirth             DateTime? @db.Date
+  goals                   String?   @db.Text
+  healthNotes             String?   @db.Text
+  emergencyContactName    String?
+  emergencyContactPhone   String?
+
+  measurements            ClientMeasurement[]
+  progressPhotos          ClientProgressPhoto[]
+  sessionLogs             ClientSessionLog[]
+
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  @@unique([trainerId, email]) // Client email should be unique per trainer
+}
+
+model ClientMeasurement {
+  id                 String    @id @default(cuid())
+  clientId           String
+  client             Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  measurementDate    DateTime  @db.Date
+  weightKg           Float?
+  bodyFatPercentage  Float?
+  notes              String?   @db.Text
+  customMetrics      Json?     // To store array of {name: string, value: string}
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model ClientProgressPhoto {
+  id         String   @id @default(cuid())
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  photoDate  DateTime @db.Date
+  imagePath  String   // Path to the image file
+  caption    String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ClientSessionLog {
+  id                  String    @id @default(cuid())
+  clientId            String
+  client              Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  sessionDate         DateTime
+  durationMinutes     Int?
+  activitySummary     String?
+  sessionNotes        String?   @db.Text
+  clientMoodFeedback  String?   // e.g., "energized", "tired"
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
