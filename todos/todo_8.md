@@ -1,23 +1,3 @@
-Okay, I've reviewed the latest XML.
-
-*   **TODO #39: Refactor Profile Editor for Server-Side Initial Data Fetching** - **DONE**
-*   **TODO #40: Services Editor - Component & Actions (Add, List, Initial Data)** - **DONE**
-*   **TODO #41: Services Editor - Delete Functionality** - **DONE**
-*   **TODO #42: Services Editor - Edit Functionality (Part 1: Setup Edit State and Form)** - **DONE**
-*   **TODO #43: Services Editor - Update Functionality** - **DONE**
-*   **TODO #44: Testimonials Editor - Component & Actions (Add, List, Initial Data)** - **DONE**
-*   **TODO #45: Testimonials Editor - Delete & Edit Functionality** - **DONE**
-*   **TODO #46: External Links Editor - Component & Actions (Full CRUD)** - **DONE**
-    *   `getCurrentUserProfileData` in `src/app/profile/actions.ts` now includes `externalLinks`.
-    *   `addExternalLink`, `updateExternalLink`, and `deleteExternalLink` server actions are implemented.
-    *   `src/components/profile/sections/ExternalLinksEditor.tsx` is created and integrated, handling full CRUD.
-    *   The `ui` components now have an `index.d.ts` for barrel exports, which is a good small improvement.
-
-Excellent work on completing the CRUD functionality for Services, Testimonials, and External Links! The profile editor is shaping up nicely.
-
-Now, let's move on to the sections involving file uploads: "Transformation Photos" and "Profile Branding" (profile photo and banner). Supabase Storage will be used for this.
-
----
 
 **Phase 6: Trainer Profile Editor - Collection-Based Sections (Continued) & Image Uploads**
 

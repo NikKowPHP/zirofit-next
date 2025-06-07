@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, Suspense, useEffect } from 'react';
+import type { TransformationPhoto } from './sections/TransformationPhotosEditor';
 import ProfileEditorSidebar from './ProfileEditorSidebar';
 
 // Define a type for the initial data structure
@@ -21,6 +22,7 @@ interface InitialProfileData {
     services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
     testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
     externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
+    transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
     // Add other profile fields as they get editors
   } | null; // Profile can be null if not yet created
 }
@@ -39,7 +41,7 @@ const MethodologyEditor = React.lazy(() => import('./sections/MethodologyEditor'
 const BrandingEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Branding Editor Content</div>;
 const BenefitsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Benefits Editor Content</div>;
 const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
-const PhotosEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Photos Editor Content</div>;
+const PhotosEditor = React.lazy(() => import('./sections/TransformationPhotosEditor'));
 const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEditor'));
 const LinksEditor = React.lazy(() => import('./sections/ExternalLinksEditor'));
 
@@ -73,7 +75,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     'benefits': BenefitsEditor,
     'about-details': AboutDetailsSection,
     'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
-    'photos': PhotosEditor,
+    'photos': () => <PhotosEditor initialTransformationPhotos={initialData.profile?.transformationPhotos as TransformationPhoto[] || []} />,
     'testimonials': () => <TestimonialsEditor initialTestimonials={initialData.profile?.testimonials || []} />,
     'links': () => <LinksEditor initialExternalLinks={initialData.profile?.externalLinks || []} />,
   };

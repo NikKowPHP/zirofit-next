@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { v4 as uuidv4 } from 'uuid'; // npm install uuid @types/uuid
 
 const coreInfoSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -19,6 +20,71 @@ interface CoreInfoFormState {
   errors?: z.ZodIssue[]; // To hold Zod validation errors
   success?: boolean;
   updatedFields?: Partial<z.infer<typeof coreInfoSchema>>; // To send back updated fields
+}
+
+const textContentSchema = z.string().max(65535, "Content is too long.").nullable().optional();
+
+interface TextContentFormState {
+  message?: string | null;
+  error?: string | null;
+  success?: boolean;
+  updatedContent?: string | null;
+}
+
+interface DeleteFormState {
+    message?: string | null;
+    error?: string | null;
+    success?: boolean;
+    deletedId?: string;
+}
+
+interface TestimonialFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newTestimonial?: { id: string; clientName: string; testimonialText: string; createdAt: Date };
+}
+
+interface UpdateTestimonialFormState extends TestimonialFormState {
+    updatedTestimonial?: { id: string; clientName: string; testimonialText: string; createdAt: Date };
+}
+
+interface ExternalLinkFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newLink?: { id: string; label: string; linkUrl: string; createdAt: Date };
+  updatedLink?: { id: string; label: string; linkUrl: string; createdAt: Date }; // For update
+}
+
+interface ServiceFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newService?: { id: string; title: string; description: string; createdAt: Date };
+}
+
+interface UpdateServiceFormState extends ServiceFormState { // Can reuse or extend ServiceFormState
+    updatedService?: { id: string; title: string; description: string; createdAt: Date };
+}
+
+interface TransformationPhotoFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newPhoto?: { id: string; imagePath: string; publicUrl: string; caption: string | null; createdAt: Date };
+}
+
+interface TransformationPhoto {
+  id: string;
+  imagePath: string; // This is the path within the bucket
+  publicUrl: string; // This will be the full public URL from Supabase Storage
+  caption: string | null;
+  createdAt: Date;
 }
 
 export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, formData: FormData): Promise<CoreInfoFormState> {
@@ -132,15 +198,6 @@ export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, f
   }
 }
 
-const textContentSchema = z.string().max(65535, "Content is too long.").nullable().optional();
-
-interface TextContentFormState {
-  message?: string | null;
-  error?: string | null;
-  success?: boolean;
-  updatedContent?: string | null;
-}
-
 async function updateProfileTextField(
     fieldName: 'aboutMe' | 'philosophy' | 'methodology',
     content: string | null,
@@ -227,39 +284,59 @@ export async function getCurrentUserProfileData() {
             externalLinks: { // Add this
               orderBy: { createdAt: 'asc' }
             },
+            transformationPhotos: { // Add this
+              orderBy: { createdAt: 'desc' }
+            },
           },
         },
       },
     });
 
     if (!userWithProfile) {
-      return null; // Or throw an error / return specific state
+      return null; // Or return specific state
     }
     
     // Ensure profile is at least an empty object if it doesn't exist,
     // or handle its creation if User exists but Profile doesn't.
     // The upsert logic in updateCoreInfo handles profile creation.
 
+    const transformationPhotosWithUrls = await Promise.all(
+      (userWithProfile.profile?.transformationPhotos || []).map(async (photo: { id: string; imagePath: string; caption: string | null; createdAt: Date }): Promise<TransformationPhoto> => {
+        const { data: publicUrlData } = await supabase.storage
+          .from('profile-assets')
+          .getPublicUrl(photo.imagePath);
+        return {
+          ...photo,
+          publicUrl: publicUrlData.publicUrl,
+        } as TransformationPhoto;
+      })
+    );
+
     return {
       name: userWithProfile.name,
       username: userWithProfile.username,
       email: userWithProfile.email,
-      profile: userWithProfile.profile ? {
-          ...userWithProfile.profile,
-          services: userWithProfile.profile.services || [], // Ensure services is an array
-      } : { // Provide default structure if profile is null
-          id: '', // This might need a proper default or handling if profile is truly null
-          certifications: null,
-          location: null,
-          phone: null,
-          aboutMe: null,
-          philosophy: null,
-          methodology: null,
-          bannerImagePath: null,
-          profilePhotoPath: null,
-          services: [], // Ensure services is an array in default structure
-          testimonials: [], // Ensure testimonials is an array in default structure
-      },
+      profile: userWithProfile.profile
+        ? {
+            ...userWithProfile.profile,
+            services: userWithProfile.profile.services || [], // Ensure services is an array
+            transformationPhotos: transformationPhotosWithUrls,
+          }
+        : {
+            // Provide default structure if profile is null
+            id: '', // This might need a proper default or handling if profile is truly null
+            certifications: null,
+            location: null,
+            phone: null,
+            aboutMe: null,
+            philosophy: null,
+            methodology: null,
+            bannerImagePath: null,
+            profilePhotoPath: null,
+            services: [], // Ensure services is an array in default structure
+            testimonials: [], // Ensure testimonials is an array in default structure
+            transformationPhotos: [],
+          },
     };
   } catch (error) {
     console.error("Error fetching profile data:", error);
@@ -271,14 +348,6 @@ const testimonialSchema = z.object({
   clientName: z.string().min(2, "Client name is required.").max(255),
   testimonialText: z.string().min(10, "Testimonial text must be at least 10 characters."),
 });
-
-interface TestimonialFormState {
-  message?: string | null;
-  error?: string | null;
-  errors?: z.ZodIssue[];
-  success?: boolean;
-  newTestimonial?: { id: string; clientName: string; testimonialText: string; createdAt: Date };
-}
 
 export async function addTestimonial(prevState: TestimonialFormState | undefined, formData: FormData): Promise<TestimonialFormState> {
   const supabase = createClient();
@@ -328,186 +397,6 @@ export async function addTestimonial(prevState: TestimonialFormState | undefined
   }
 }
 
-const serviceSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters.").max(255),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-});
-
-interface ServiceFormState {
-  message?: string | null;
-  error?: string | null;
-  errors?: z.ZodIssue[];
-  success?: boolean;
-  newService?: { id: string; title: string; description: string; createdAt: Date };
-}
-
-export async function addService(prevState: ServiceFormState | undefined, formData: FormData): Promise<ServiceFormState> {
-  const supabase = createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return { error: "User not authenticated.", success: false };
-  }
-
-  const validatedFields = serviceSchema.safeParse({
-    title: formData.get('title'),
-    description: formData.get('description'),
-  });
-
-  if (!validatedFields.success) {
-    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
-  }
-
-  const { title, description } = validatedFields.data;
-
-  try {
-    const profile = await prisma.profile.findUnique({
-      where: { userId: authUser.id },
-      select: { id: true }
-    });
-
-    if (!profile) {
-      return { error: "Profile not found. Please complete core info first.", success: false };
-    }
-
-    const newService = await prisma.service.create({
-      data: {
-        profileId: profile.id,
-        title,
-        description,
-      },
-    });
-    
-    revalidatePath('/profile/edit'); // Revalidate to show the new service
-    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`); // Revalidate public profile
-
-    return { success: true, message: "Service added successfully!", newService };
-
-  } catch (e: any) {
-    console.error("Error adding service:", e);
-    return { error: "Failed to add service. " + (e.message || ""), success: false };
-  }
-}
-
-interface DeleteFormState {
-    message?: string | null;
-    error?: string | null;
-    success?: boolean;
-    deletedId?: string;
-}
-
-export async function deleteService(serviceId: string): Promise<DeleteFormState> {
-  const supabase = createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return { error: "User not authenticated.", success: false };
-  }
-
-  try {
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-      select: { profile: { select: { userId: true } } }
-    });
-
-    if (!service || service.profile?.userId !== authUser.id) {
-      return { error: "Service not found or you are not authorized to delete it.", success: false };
-    }
-
-    await prisma.service.delete({
-      where: { id: serviceId },
-    });
-    
-    revalidatePath('/profile/edit');
-    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
-
-    return { success: true, message: "Service deleted successfully!", deletedId: serviceId };
-  } catch (e: any) {
-    console.error("Error deleting service:", e);
-    return { error: "Failed to delete service. " + (e.message || ""), success: false };
-  }
-}
-
-interface UpdateServiceFormState extends ServiceFormState { // Can reuse or extend ServiceFormState
-    updatedService?: { id: string; title: string; description: string; createdAt: Date };
-}
-
-export async function updateService(prevState: UpdateServiceFormState | undefined, formData: FormData): Promise<UpdateServiceFormState> {
-  const supabase = createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return { error: "User not authenticated.", success: false };
-  }
-  
-  const serviceId = formData.get('serviceId') as string; // Get serviceId from a hidden input
-  if (!serviceId) {
-    return { error: "Service ID is missing.", success: false };
-  }
-
-  const validatedFields = serviceSchema.safeParse({ // Reuse serviceSchema
-    title: formData.get('title'),
-    description: formData.get('description'),
-  });
-
-  if (!validatedFields.success) {
-    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
-  }
-
-  const { title, description } = validatedFields.data;
-
-  try {
-    const serviceToUpdate = await prisma.service.findFirst({
-      where: {
-        id: serviceId,
-        profile: { userId: authUser.id } // Authorization check
-      },
-    });
-
-    if (!serviceToUpdate) {
-      return { error: "Service not found or you are not authorized to update it.", success: false };
-    }
-
-    const updatedService = await prisma.service.update({
-      where: { id: serviceId },
-      data: { title, description },
-    });
-    
-    revalidatePath('/profile/edit');
-    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
-
-    return { success: true, message: "Service updated successfully!", updatedService };
-
-  } catch (e: any) {
-    console.error("Error updating service:", e);
-    return { error: "Failed to update service. " + (e.message || ""), success: false };
-  }
-}
-
-export async function deleteTestimonial(testimonialId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
-  const supabase = createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-  if (!authUser) return { error: "User not authenticated.", success: false };
-
-  try {
-    const testimonial = await prisma.testimonial.findFirst({
-      where: { id: testimonialId, profile: { userId: authUser.id } },
-    });
-    if (!testimonial) return { error: "Testimonial not found or not authorized.", success: false };
-
-    await prisma.testimonial.delete({ where: { id: testimonialId } });
-    revalidatePath('/profile/edit');
-    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
-    return { success: true, message: "Testimonial deleted.", deletedId: testimonialId };
-  } catch (e: any) {
-    return { error: "Failed to delete testimonial. " + e.message, success: false };
-  }
-}
-
-interface UpdateTestimonialFormState extends TestimonialFormState {
-    updatedTestimonial?: { id: string; clientName: string; testimonialText: string; createdAt: Date };
-}
-
 export async function updateTestimonial(prevState: UpdateTestimonialFormState | undefined, formData: FormData): Promise<UpdateTestimonialFormState> {
     const supabase = createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -544,21 +433,31 @@ export async function updateTestimonial(prevState: UpdateTestimonialFormState | 
     }
 }
 
+export async function deleteTestimonial(testimonialId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated.", success: false };
+
+  try {
+    const testimonial = await prisma.testimonial.findFirst({
+      where: { id: testimonialId, profile: { userId: authUser.id } },
+    });
+    if (!testimonial) return { error: "Testimonial not found or not authorized.", success: false };
+
+    await prisma.testimonial.delete({ where: { id: testimonialId } });
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+    return { success: true, message: "Testimonial deleted.", deletedId: testimonialId };
+  } catch (e: any) {
+    return { error: "Failed to delete testimonial. " + e.message, success: false };
+  }
+}
+
 const externalLinkSchema = z.object({
   label: z.string().min(1, "Label is required.").max(255),
   linkUrl: z.string().url({ message: "Please enter a valid URL." }).max(2048),
 });
 
-interface ExternalLinkFormState {
-  message?: string | null;
-  error?: string | null;
-  errors?: z.ZodIssue[];
-  success?: boolean;
-  newLink?: { id: string; label: string; linkUrl: string; createdAt: Date };
-  updatedLink?: { id: string; label: string; linkUrl: string; createdAt: Date }; // For update
-}
-
-// Add External Link
 export async function addExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
   const supabase = createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -643,5 +542,115 @@ export async function deleteExternalLink(linkId: string): Promise<DeleteFormStat
     return { success: true, message: "External link deleted.", deletedId: linkId };
   } catch (e: any) {
     return { error: "Failed to delete external link. " + e.message, success: false };
+  }
+}
+
+const transformationPhotoSchema = z.object({
+  caption: z.string().max(1000).optional().nullable(),
+  photoFile: z
+    .instanceof(File, { message: "A photo file is required." })
+    .refine(file => file.size > 0, "Photo file cannot be empty.")
+    .refine(file => file.size <= 2 * 1024 * 1024, `Photo must be less than 2MB.`) // Max 2MB
+    .refine(file => ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type),
+      "Invalid file type. Only JPG, PNG, WEBP, GIF allowed."
+    ),
+});
+
+export async function addTransformationPhoto(prevState: TransformationPhotoFormState | undefined, formData: FormData): Promise<TransformationPhotoFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated.", success: false };
+
+  const validatedFields = transformationPhotoSchema.safeParse({
+    caption: formData.get('caption'),
+    photoFile: formData.get('photoFile'),
+  });
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+  }
+  const { caption, photoFile } = validatedFields.data;
+
+  try {
+    const profile = await prisma.profile.findUnique({ where: { userId: authUser.id }, select: { id: true } });
+    if (!profile) return { error: "Profile not found.", success: false };
+
+    const fileExtension = photoFile.name.split('.').pop();
+    const fileName = `${uuidv4()}.${fileExtension}`;
+    const filePath = `transformation_photos/${authUser.id}/${fileName}`; // Supabase User ID as part of path
+
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('profile-assets') // Your bucket name
+      .upload(filePath, photoFile, {
+        cacheControl: '3600', // Cache for 1 hour
+        upsert: false, // Do not overwrite if file exists (uuid should prevent this)
+      });
+
+    if (uploadError) {
+      console.error("Supabase Storage Upload Error:", uploadError);
+      return { error: "Failed to upload photo to storage: " + uploadError.message, success: false };
+    }
+
+    // Get public URL for the uploaded file
+    const { data: publicUrlData } = supabase.storage
+      .from('profile-assets')
+      .getPublicUrl(filePath);
+
+    const newPhotoRecord = await prisma.transformationPhoto.create({
+      data: {
+        profileId: profile.id,
+        imagePath: filePath, // Store the path within the bucket
+        caption,
+      },
+    });
+    
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+
+    return {
+      success: true,
+      message: "Photo uploaded successfully!",
+      newPhoto: { ...newPhotoRecord, publicUrl: publicUrlData.publicUrl }
+    };
+
+  } catch (e: any) {
+    console.error("Error adding transformation photo:", e);
+    return { error: "Failed to add photo. " + e.message, success: false };
+  }
+}
+
+export async function deleteTransformationPhoto(photoId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated.", success: false };
+
+  try {
+    const photo = await prisma.transformationPhoto.findFirst({
+      where: { id: photoId, profile: { userId: authUser.id } },
+      select: { id: true, imagePath: true }
+    });
+    if (!photo) return { error: "Photo not found or not authorized.", success: false };
+
+    // Delete from Supabase Storage
+    if (photo.imagePath) {
+      const { error: storageError } = await supabase.storage
+        .from('profile-assets')
+        .remove([photo.imagePath]);
+      if (storageError) {
+        console.error("Supabase Storage Delete Error:", storageError);
+        // Decide if this is a hard failure or if DB record should still be deleted
+        // For now, let's treat it as a failure.
+        return { error: "Failed to delete photo from storage: " + storageError.message, success: false };
+      }
+    }
+
+    await prisma.transformationPhoto.delete({ where: { id: photoId } });
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+    return { success: true, message: "Photo deleted successfully.", deletedId: photoId };
+  } catch (e: any) {
+    console.error("Error deleting transformation photo:", e);
+    return { error: "Failed to delete photo. " + e.message, success: false };
   }
 }
