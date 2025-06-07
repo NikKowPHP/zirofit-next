@@ -1,15 +1,36 @@
 "use client";
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import ProfileEditorSidebar from './ProfileEditorSidebar';
-// Import section components dynamically later or statically for now
-// For now, we'll just show a placeholder for the content area
 
 // Placeholder components for each section - will be replaced by actual editor components
-const CoreInfoEditor = React.lazy(() => import('./sections/CoreInfoEditor')); // Example, create this file later
+const CoreInfoEditor = React.lazy(() => import('@/components/profile/sections/CoreInfoEditor'));
 const BrandingEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Branding Editor Content</div>;
 const BenefitsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Benefits Editor Content</div>;
-const AboutDetailsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">About & Details Editor Content</div>;
+const AboutMeEditor = React.lazy(() => import('./sections/AboutMeEditor'));
+const PhilosophyEditor = React.lazy(() => import('./sections/PhilosophyEditor'));
+const MethodologyEditor = React.lazy(() => import('./sections/MethodologyEditor'));
+
+const AboutDetailsSection = () => {
+    const [initialData, setInitialData] = useState<{aboutMe: string|null, philosophy: string|null, methodology: string|null} | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        console.warn("AboutDetailsSection: Initial data loading needs to be implemented via server action call from a parent or this component if it becomes async.");
+        setInitialData({ aboutMe: "", philosophy: "", methodology: "" });
+        setLoading(false);
+    }, []);
+
+    if (loading || !initialData) return <SectionLoadingFallback />;
+
+    return (
+        <div className="space-y-6">
+            <AboutMeEditor initialAboutMe={initialData.aboutMe} />
+            <PhilosophyEditor initialPhilosophy={initialData.philosophy} />
+            <MethodologyEditor initialMethodology={initialData.methodology} />
+        </div>
+    );
+};
 const ServicesEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Services Editor Content</div>;
 const PhotosEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Photos Editor Content</div>;
 const TestimonialsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Testimonials Editor Content</div>;
@@ -19,7 +40,7 @@ const sectionComponents: { [key: string]: React.ComponentType<any> } = {
   'core-info': CoreInfoEditor,
   'branding': BrandingEditor,
   'benefits': BenefitsEditor,
-  'about-details': AboutDetailsEditor,
+  'about-details': AboutDetailsSection,
   'services': ServicesEditor,
   'photos': PhotosEditor,
   'testimonials': TestimonialsEditor,

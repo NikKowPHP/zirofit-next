@@ -1,0 +1,192 @@
+"use server";
+
+import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
+
+const coreInfoSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  username: z.string().min(3, "Username must be at least 3 characters").regex(/^[a-z0-9-]+$/, "Username can only contain lowercase letters, numbers, and hyphens."),
+  certifications: z.string().max(255, "Certifications too long").optional().nullable(),
+  location: z.string().max(255, "Location too long").optional().nullable(),
+  phone: z.string().max(50, "Phone number too long").optional().nullable(),
+});
+
+interface CoreInfoFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[]; // To hold Zod validation errors
+  success?: boolean;
+  updatedFields?: Partial<z.infer<typeof coreInfoSchema>>; // To send back updated fields
+}
+
+export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, formData: FormData): Promise<CoreInfoFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { error: "User not authenticated.", success: false };
+  }
+
+  const validatedFields = coreInfoSchema.safeParse({
+    name: formData.get('name'),
+    username: formData.get('username'),
+    certifications: formData.get('certifications'),
+    location: formData.get('location'),
+    phone: formData.get('phone'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.issues,
+      error: "Validation failed. Please check your input.",
+      success: false,
+    };
+  }
+
+  const { name, username, certifications, location, phone } = validatedFields.data;
+
+  try {
+    // Check if username is changing and if it's unique (excluding current user)
+    const currentUser = await prisma.user.findUnique({
+        where: { supabaseAuthUserId: authUser.id },
+        select: { id: true, username: true }
+    });
+
+    if (!currentUser) {
+        return { error: "User profile not found in database.", success: false };
+    }
+
+    if (username !== currentUser.username) {
+        const existingUserWithUsername = await prisma.user.findUnique({
+            where: { username: username },
+        });
+        if (existingUserWithUsername && existingUserWithUsername.id !== currentUser.id) {
+            return { 
+                errors: [{ code: 'custom', path: ['username'], message: 'Username is already taken.' }],
+                error: "Validation failed.",
+                success: false 
+            };
+        }
+    }
+
+    // Update Prisma User (name, username) and Profile (other fields)
+    const updatedUser = await prisma.user.update({
+      where: { supabaseAuthUserId: authUser.id },
+      data: {
+        name,
+        username,
+        profile: {
+          upsert: { // Create profile if it doesn't exist, update if it does
+            create: {
+              certifications,
+              location,
+              phone,
+            },
+            update: {
+              certifications,
+              location,
+              phone,
+            },
+          },
+        },
+      },
+      select: { // Select fields to return for immediate UI update
+        name: true,
+        username: true,
+        profile: {
+            select: {
+                certifications: true,
+                location: true,
+                phone: true
+            }
+        }
+      }
+    });
+    
+    revalidatePath('/profile/edit'); // Revalidate the edit page
+    revalidatePath(`/trainer/${updatedUser.username}`); // Revalidate public profile
+    return {
+      success: true,
+      message: "Core information updated successfully!",
+      updatedFields: {
+        name: updatedUser.name,
+        username: updatedUser.username,
+        certifications: updatedUser.profile?.certifications,
+        location: updatedUser.profile?.location,
+        phone: updatedUser.profile?.phone,
+      }
+    };
+
+  } catch (e: any) {
+    console.error("Error updating core info:", e);
+    if (e.code === 'P2002' && e.meta?.target?.includes('username')) {
+         return {
+            errors: [{ code: 'custom', path: ['username'], message: 'Username is already taken.' }],
+            error: "Validation failed.",
+            success: false
+        };
+    }
+    return { error: "Failed to update profile. " + (e.message || ""), success: false };
+  }
+}
+
+const textContentSchema = z.string().max(65535, "Content is too long.").nullable().optional();
+
+interface TextContentFormState {
+  message?: string | null;
+  error?: string | null;
+  success?: boolean;
+  updatedContent?: string | null;
+}
+
+async function updateProfileTextField(
+    fieldName: 'aboutMe' | 'philosophy' | 'methodology',
+    content: string | null,
+    successMessage: string
+): Promise<TextContentFormState> {
+    const supabase = createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
+    if (!authUser) {
+        return { error: "User not authenticated.", success: false };
+    }
+
+    const validatedContent = textContentSchema.safeParse(content);
+    if (!validatedContent.success) {
+        return { error: validatedContent.error.issues.map(i => i.message).join(', '), success: false };
+    }
+
+    try {
+        const updatedProfile = await prisma.profile.update({
+            where: { userId: authUser.id }, // Assuming profile exists, or handle upsert
+            data: {
+                [fieldName]: validatedContent.data,
+            },
+            select: { [fieldName]: true }
+        });
+
+        revalidatePath('/profile/edit');
+        // Also revalidate public profile if these fields are shown there
+        // const dbUser = await prisma.user.findUnique({ where: { supabaseAuthUserId: authUser.id }, select: { username: true } });
+        // if (dbUser?.username) revalidatePath(`/trainer/${dbUser.username}`);
+        
+        return { success: true, message: successMessage, updatedContent: updatedProfile[fieldName] as string | null };
+    } catch (e: any) {
+        console.error(`Error updating ${fieldName}:`, e);
+        return { error: `Failed to update ${fieldName}. ` + (e.message || ""), success: false };
+    }
+}
+
+export async function updateAboutMe(prevState: TextContentFormState | undefined, formData: FormData): Promise<TextContentFormState> {
+    return updateProfileTextField('aboutMe', formData.get('aboutMeContent') as string | null, 'About Me section updated successfully!');
+}
+
+export async function updatePhilosophy(prevState: TextContentFormState | undefined, formData: FormData): Promise<TextContentFormState> {
+    return updateProfileTextField('philosophy', formData.get('philosophyContent') as string | null, 'Philosophy section updated successfully!');
+}
+
+export async function updateMethodology(prevState: TextContentFormState | undefined, formData: FormData): Promise<TextContentFormState> {
+    return updateProfileTextField('methodology', formData.get('methodologyContent') as string | null, 'Methodology section updated successfully!');
+}
