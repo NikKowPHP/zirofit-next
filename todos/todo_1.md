@@ -501,6 +501,13 @@ Best Practice Reminders: Use Zod for validation. Implement proper error handling
 
 
 
+
+
+
+
+
+
+
 **TODO #24:**
 Objective: Create a Server Action for user login.
 File(s) To Create/Modify: `src/app/auth/actions.ts` (add login function), `src/app/auth/login/page.tsx` (modify).
@@ -845,6 +852,12 @@ Specific Instructions:
     ```
 Expected Outcome: Supabase middleware is set up to refresh sessions and protect routes. Unauthenticated users trying to access `/dashboard` will be redirected to `/auth/login`. Authenticated users trying to access `/auth/login` or `/auth/register` will be redirected to `/dashboard`.
 Best Practice Reminders: The `matcher` config is important to avoid running middleware on static assets. Ensure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are correctly set in `.env.local`.
+
+
+
+
+
+
 
 ---
 This completes the initial setup for Authentication. Please confirm when @roo has completed these tasks, starting with TODO #19.

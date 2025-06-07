@@ -97,3 +97,65 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
   // return { success: true, message: "Registration successful! Please log in." };
   redirect('/auth/login?message=Registration successful! Please log in.'); // Redirect after successful creation
 }
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"), // Min 1, Supabase handles actual length
+});
+
+interface LoginState {
+  message?: string | null;
+  error?: string | null;
+  errors?: {
+    email?: string[];
+    password?: string[];
+    _form?: string[];
+  };
+  success?: boolean;
+}
+
+export async function loginUser(prevState: LoginState | undefined, formData: FormData): Promise<LoginState> {
+  const validatedFields = loginSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid form data.",
+      errors: validatedFields.error.flatten().fieldErrors,
+      success: false,
+    };
+  }
+
+  const { email, password } = validatedFields.data;
+  const supabase = createClient();
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error("Supabase Login Error:", error);
+    return { error: error.message || "Failed to log in.", success: false };
+  }
+
+  // On successful Supabase login, the session cookies are automatically set by the Supabase client.
+  // Redirect to dashboard. The middleware will handle session refresh.
+  redirect('/dashboard'); // Or wherever your authenticated users should go
+}
+
+export async function logoutUser() { // No prevState or formData needed for simple logout
+  const supabase = createClient();
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error("Supabase Logout Error:", error);
+    // Even if logout fails on Supabase, attempt to redirect.
+    // Client-side should clear any local session info if necessary.
+    // Consider how to handle this error more gracefully if needed.
+  }
+  
+  redirect('/auth/login?message=Logged out successfully.'); // Redirect to login page
+}
