@@ -13,3 +13,67 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                 String    @id @default(cuid())
+  supabaseAuthUserId String?   @unique // Stores the UUID from Supabase Auth. Make nullable if user records can exist before linking.
+  name               String
+  email              String    @unique
+  username           String?   @unique // Will be used for public profile URLs
+  role               String    @default("trainer") // e.g., "trainer", "admin"
+  emailVerifiedAt    DateTime?
+
+  profile            Profile?  // One-to-one relation to Profile
+  clients            Client[]  // One-to-many relation: A trainer has many clients
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model Profile {
+  id                 String    @id @default(cuid())
+  userId             String    @unique // Foreign key to User model
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  certifications     String?
+  location           String?
+  phone              String?
+  aboutMe            String?   @db.Text // For longer text
+  philosophy         String?   @db.Text
+  methodology        String?   @db.Text
+  bannerImagePath    String?
+  profilePhotoPath   String?
+
+  services           Service[]
+  testimonials       Testimonial[]
+  transformationPhotos TransformationPhoto[]
+  externalLinks      ExternalLink[]
+  benefits           Benefit[]
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  profileId   String   // Foreign key to Profile model
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String   @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id               String   @id @default(cuid())
+  profileId        String   // Foreign key to Profile model
+  profile          Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  clientName       String
+  testimonialText  String   @db.Text
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
