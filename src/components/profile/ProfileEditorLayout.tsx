@@ -9,7 +9,7 @@ interface InitialProfileData {
   name: string;
   username: string;
   email: string; // If needed by any section
-  profile: {
+  profile?: {
     id: string;
     certifications: string | null;
     location: string | null;
@@ -23,12 +23,48 @@ interface InitialProfileData {
     testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
     externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
     transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
+    benefits: Array<{id: string, title: string, description: string, iconName: string, iconStyle: string, orderColumn: number, createdAt: Date}>;
     // Add other profile fields as they get editors
-  } | null; // Profile can be null if not yet created
+  } | {
+    id: string;
+    certifications: string | null;
+    location: string | null;
+    phone: string | null;
+    aboutMe: string | null;
+    philosophy: string | null;
+    methodology: string | null;
+    bannerImagePath: string | null;
+    profilePhotoPath: string | null;
+    services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
+    testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
+    externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
+    transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
+    benefits: [];
+  }
 }
 
 interface ProfileEditorLayoutProps {
-  initialData: InitialProfileData;
+  initialData: {
+    name: string;
+    username: string;
+    email: string;
+    profile?: {
+      id: string;
+      certifications: string | null;
+      location: string | null;
+      phone: string | null;
+      aboutMe: string | null;
+      philosophy: string | null;
+      methodology: string | null;
+      bannerImagePath: string | null;
+      profilePhotoPath: string | null;
+      services: { id: string; title: string; description: string; createdAt: Date; }[];
+      testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; }[];
+      externalLinks: { id: string; label: string; linkUrl: string; createdAt: Date; }[];
+      transformationPhotos: { id: string; imagePath: string; caption: string | null; createdAt: Date; }[];
+      benefits: { id: string; title: string; description: string; iconName: string; iconStyle: string; orderColumn: number; createdAt: Date; }[];
+    } | undefined;
+  };
 }
 
 // Import section components
@@ -37,9 +73,9 @@ const AboutMeEditor = React.lazy(() => import('./sections/AboutMeEditor'));
 const PhilosophyEditor = React.lazy(() => import('./sections/PhilosophyEditor'));
 const MethodologyEditor = React.lazy(() => import('./sections/MethodologyEditor'));
 
-// ... (placeholder components for Branding, Benefits, etc. remain for now)
-const BrandingEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Branding Editor Content</div>;
-const BenefitsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Benefits Editor Content</div>;
+// Lazy load section components
+const BrandingEditor = React.lazy(() => import('./sections/BrandingEditor'));
+const BenefitsEditor = React.lazy(() => import('./sections/BenefitsEditor'));
 const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
 const PhotosEditor = React.lazy(() => import('./sections/TransformationPhotosEditor'));
 const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEditor'));
@@ -71,8 +107,8 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
         location: initialData.profile?.location ?? null,
         phone: initialData.profile?.phone ?? null,
     }} />,
-    'branding': BrandingEditor,
-    'benefits': BenefitsEditor,
+    'branding': () => <BrandingEditor initialData={initialData.profile || { bannerImagePath: null, profilePhotoPath: null }} />,
+    'benefits': () => <BenefitsEditor initialBenefits={initialData.profile?.benefits ?? []} />,
     'about-details': AboutDetailsSection,
     'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
     'photos': () => <PhotosEditor initialTransformationPhotos={initialData.profile?.transformationPhotos as TransformationPhoto[] || []} />,
