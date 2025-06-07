@@ -18,6 +18,7 @@ interface InitialProfileData {
     methodology: string | null;
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
+    services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
     // Add other profile fields as they get editors
   } | null; // Profile can be null if not yet created
 }
@@ -35,7 +36,7 @@ const MethodologyEditor = React.lazy(() => import('./sections/MethodologyEditor'
 // ... (placeholder components for Branding, Benefits, etc. remain for now)
 const BrandingEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Branding Editor Content</div>;
 const BenefitsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Benefits Editor Content</div>;
-const ServicesEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Services Editor Content</div>;
+const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
 const PhotosEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Photos Editor Content</div>;
 const TestimonialsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Testimonials Editor Content</div>;
 const LinksEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">External Links Editor Content</div>;
@@ -69,7 +70,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     'branding': BrandingEditor,
     'benefits': BenefitsEditor,
     'about-details': AboutDetailsSection,
-    'services': ServicesEditor,
+    'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
     'photos': PhotosEditor,
     'testimonials': TestimonialsEditor,
     'links': LinksEditor,

@@ -329,6 +329,7 @@ Best Practice Reminders: This pattern (Server Component fetching data and passin
 
 
 
+
 ---
 **Phase 6: Trainer Profile Editor - Collection-Based Sections (Services)**
 

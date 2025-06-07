@@ -218,7 +218,9 @@ export async function getCurrentUserProfileData() {
             methodology: true,
             bannerImagePath: true,
             profilePhotoPath: true,
-            // We'll add relations like services, benefits etc. later when their editors are built
+            services: { // Add this
+              orderBy: { createdAt: 'asc' }
+            },
           },
         },
       },
@@ -236,7 +238,10 @@ export async function getCurrentUserProfileData() {
       name: userWithProfile.name,
       username: userWithProfile.username,
       email: userWithProfile.email,
-      profile: userWithProfile.profile || { // Provide default structure if profile is null
+      profile: userWithProfile.profile ? {
+          ...userWithProfile.profile,
+          services: userWithProfile.profile.services || [], // Ensure services is an array
+      } : { // Provide default structure if profile is null
           id: '', // This might need a proper default or handling if profile is truly null
           certifications: null,
           location: null,
@@ -246,10 +251,167 @@ export async function getCurrentUserProfileData() {
           methodology: null,
           bannerImagePath: null,
           profilePhotoPath: null,
+          services: [], // Ensure services is an array in default structure
       },
     };
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null; // Or return an error state
+  }
+}
+
+const serviceSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters.").max(255),
+  description: z.string().min(10, "Description must be at least 10 characters."),
+});
+
+interface ServiceFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newService?: { id: string; title: string; description: string; createdAt: Date };
+}
+
+export async function addService(prevState: ServiceFormState | undefined, formData: FormData): Promise<ServiceFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { error: "User not authenticated.", success: false };
+  }
+
+  const validatedFields = serviceSchema.safeParse({
+    title: formData.get('title'),
+    description: formData.get('description'),
+  });
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+  }
+
+  const { title, description } = validatedFields.data;
+
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: { userId: authUser.id },
+      select: { id: true }
+    });
+
+    if (!profile) {
+      return { error: "Profile not found. Please complete core info first.", success: false };
+    }
+
+    const newService = await prisma.service.create({
+      data: {
+        profileId: profile.id,
+        title,
+        description,
+      },
+    });
+    
+    revalidatePath('/profile/edit'); // Revalidate to show the new service
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`); // Revalidate public profile
+
+    return { success: true, message: "Service added successfully!", newService };
+
+  } catch (e: any) {
+    console.error("Error adding service:", e);
+    return { error: "Failed to add service. " + (e.message || ""), success: false };
+  }
+}
+
+interface DeleteFormState {
+    message?: string | null;
+    error?: string | null;
+    success?: boolean;
+    deletedId?: string;
+}
+
+export async function deleteService(serviceId: string): Promise<DeleteFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { error: "User not authenticated.", success: false };
+  }
+
+  try {
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+      select: { profile: { select: { userId: true } } }
+    });
+
+    if (!service || service.profile?.userId !== authUser.id) {
+      return { error: "Service not found or you are not authorized to delete it.", success: false };
+    }
+
+    await prisma.service.delete({
+      where: { id: serviceId },
+    });
+    
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+
+    return { success: true, message: "Service deleted successfully!", deletedId: serviceId };
+  } catch (e: any) {
+    console.error("Error deleting service:", e);
+    return { error: "Failed to delete service. " + (e.message || ""), success: false };
+  }
+}
+
+interface UpdateServiceFormState extends ServiceFormState { // Can reuse or extend ServiceFormState
+    updatedService?: { id: string; title: string; description: string; createdAt: Date };
+}
+
+export async function updateService(prevState: UpdateServiceFormState | undefined, formData: FormData): Promise<UpdateServiceFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { error: "User not authenticated.", success: false };
+  }
+  
+  const serviceId = formData.get('serviceId') as string; // Get serviceId from a hidden input
+  if (!serviceId) {
+    return { error: "Service ID is missing.", success: false };
+  }
+
+  const validatedFields = serviceSchema.safeParse({ // Reuse serviceSchema
+    title: formData.get('title'),
+    description: formData.get('description'),
+  });
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+  }
+
+  const { title, description } = validatedFields.data;
+
+  try {
+    const serviceToUpdate = await prisma.service.findFirst({
+      where: {
+        id: serviceId,
+        profile: { userId: authUser.id } // Authorization check
+      },
+    });
+
+    if (!serviceToUpdate) {
+      return { error: "Service not found or you are not authorized to update it.", success: false };
+    }
+
+    const updatedService = await prisma.service.update({
+      where: { id: serviceId },
+      data: { title, description },
+    });
+    
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+
+    return { success: true, message: "Service updated successfully!", updatedService };
+
+  } catch (e: any) {
+    console.error("Error updating service:", e);
+    return { error: "Failed to update service. " + (e.message || ""), success: false };
   }
 }
