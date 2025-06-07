@@ -1,3 +1,152 @@
+Of course, I can help you resolve these TypeScript errors. Based on the diagnostics and the provided code, the issues stem from two main areas:
+
+1.  A significant number of server actions expected by your editor components are missing from `src/app/profile/actions.ts`.
+2.  There's a type mismatch for the `testimonials` prop between `ProfileEditorLayout.tsx` and the `TestimonialsEditor.tsx` component it uses.
+
+Here are the fixes for these issues.
+
+### 1. Fix for `ProfileEditorLayout.tsx`
+
+The `InitialProfileData` interface within this file defines the shape of a testimonial with fewer properties than the `TestimonialsEditor` component expects. You need to expand this type to match the full `Testimonial` model from Prisma.
+
+**File:** `src/components/profile/ProfileEditorLayout.tsx`
+
+```typescript
+"use client";
+
+import React, { useState, Suspense, useEffect } from 'react';
+import type { TransformationPhoto } from './sections/TransformationPhotosEditor';
+import ProfileEditorSidebar from './ProfileEditorSidebar';
+
+// Define a type for the initial data structure
+interface InitialProfileData {
+  name: string;
+  username: string;
+  email: string; // If needed by any section
+  profile?: {
+    id: string;
+    certifications: string | null;
+    location: string | null;
+    phone: string | null;
+    aboutMe: string | null;
+    philosophy: string | null;
+    methodology: string | null;
+    bannerImagePath: string | null;
+    profilePhotoPath: string | null;
+    services: Array<{id: string, title: string, description: string, createdAt: Date}>;
+    // FIX: Expanded the Testimonial type to include all fields from the model
+    testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date, updatedAt: Date, profileId: string}>;
+    externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
+    transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
+    benefits: Array<{id: string, title: string, description: string | null, iconName: string | null, iconStyle: string | null, orderColumn: number, createdAt: Date}>;
+  }
+}
+
+interface ProfileEditorLayoutProps {
+  initialData: {
+    name: string;
+    username: string;
+    email: string;
+    profile?: {
+      id: string;
+      certifications: string | null;
+      location: string | null;
+      phone: string | null;
+      aboutMe: string | null;
+      philosophy: string | null;
+      methodology: string | null;
+      bannerImagePath: string | null;
+      profilePhotoPath: string | null;
+      services: { id: string; title: string; description: string; createdAt: Date; }[];
+      // FIX: Expanded the Testimonial type to include all fields from the model
+      testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; updatedAt: Date, profileId: string }[];
+      externalLinks: { id: string; label: string; linkUrl: string; createdAt: Date; }[];
+      transformationPhotos: { id: string; imagePath: string; caption: string | null; createdAt: Date; }[];
+      benefits: { id: string; title: string; description: string | null; iconName: string | null; iconStyle: string | null; orderColumn: number; createdAt: Date; }[];
+    } | undefined;
+  };
+}
+
+// Import section components
+const CoreInfoEditor = React.lazy(() => import('./sections/CoreInfoEditor'));
+const AboutMeEditor = React.lazy(() => import('./sections/AboutMeEditor'));
+const PhilosophyEditor = React.lazy(() => import('./sections/PhilosophyEditor'));
+const MethodologyEditor = React.lazy(() => import('./sections/MethodologyEditor'));
+
+// Lazy load section components
+const BrandingEditor = React.lazy(() => import('./sections/BrandingEditor'));
+const BenefitsEditor = React.lazy(() => import('./sections/BenefitsEditor'));
+const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
+const PhotosEditor = React.lazy(() => import('./sections/TransformationPhotosEditor'));
+const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEditor'));
+const LinksEditor = React.lazy(() => import('./sections/ExternalLinksEditor'));
+
+const SectionLoadingFallback = () => <div className="p-6 bg-white shadow-sm rounded-lg">Loading section...</div>;
+
+export default function ProfileEditorLayout({ initialData }: ProfileEditorLayoutProps) {
+  const [selectedSection, setSelectedSection] = useState('core-info');
+
+  const handleSelectSection = (section: string) => {
+    setSelectedSection(section);
+  };
+  
+  // Wrapper for About/Philosophy/Methodology
+  const AboutDetailsSection = () => (
+    <div className="space-y-6">
+      <AboutMeEditor initialAboutMe={initialData.profile?.aboutMe ?? null} />
+      <PhilosophyEditor initialPhilosophy={initialData.profile?.philosophy ?? null} />
+      <MethodologyEditor initialMethodology={initialData.profile?.methodology ?? null} />
+    </div>
+  );
+
+  const sectionComponents: { [key: string]: React.ComponentType<any> } = {
+    'core-info': () => <CoreInfoEditor initialData={{
+        name: initialData.name,
+        username: initialData.username,
+        certifications: initialData.profile?.certifications ?? null,
+        location: initialData.profile?.location ?? null,
+        phone: initialData.profile?.phone ?? null,
+    }} />,
+    'branding': () => <BrandingEditor initialData={initialData.profile || { bannerImagePath: null, profilePhotoPath: null }} />,
+    'benefits': () => <BenefitsEditor initialBenefits={initialData.profile?.benefits ?? []} />,
+    'about-details': AboutDetailsSection,
+    'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
+    'photos': () => <PhotosEditor initialTransformationPhotos={initialData.profile?.transformationPhotos as TransformationPhoto[] || []} />,
+    'testimonials': () => <TestimonialsEditor initialTestimonials={initialData.profile?.testimonials || []} />,
+    'links': () => <LinksEditor initialExternalLinks={initialData.profile?.externalLinks || []} />,
+  };
+
+  const SelectedComponent = sectionComponents[selectedSection] || (() => <div className="p-6 bg-white shadow-sm rounded-lg">Select a section to edit.</div>);
+
+  return (
+    <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
+      <ProfileEditorSidebar currentSection={selectedSection} onSelectSection={handleSelectSection} />
+      <main className="w-full md:w-3/4 lg:w-4/5">
+        <Suspense fallback={<SectionLoadingFallback />}>
+          <SelectedComponent />
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+```
+
+
+
+
+
+
+
+
+
+
+### 2. Fix for Missing Actions
+
+The file `src/app/profile/actions.ts` is missing most of the server actions your components are trying to use. The following is a complete, corrected version of the file that implements all the required functionality.
+
+**File:** `src/app/profile/actions.ts`
+
+```typescript
 // src/app/profile/actions.ts
 "use server";
 
@@ -382,3 +531,6 @@ export async function deleteTestimonial(id: string, prevState?: TestimonialFormS
         return { success: true, message: "Testimonial deleted.", deletedId: id };
     } catch (e) { return { error: 'Failed to delete testimonial.' }; }
 }
+```
+
+These changes will implement the missing server logic and correct the type definitions, resolving all the reported TypeScript errors and making your profile editor fully functional.

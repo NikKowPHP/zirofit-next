@@ -19,27 +19,12 @@ interface InitialProfileData {
     methodology: string | null;
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
-    services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
-    testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
+    services: Array<{id: string, title: string, description: string, createdAt: Date}>;
+    // FIX: Expanded the Testimonial type to include all fields from the model
+    testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date, updatedAt: Date, profileId: string}>;
     externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
     transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
-    benefits: Array<{id: string, title: string, description: string, iconName: string, iconStyle: string, orderColumn: number, createdAt: Date}>;
-    // Add other profile fields as they get editors
-  } | {
-    id: string;
-    certifications: string | null;
-    location: string | null;
-    phone: string | null;
-    aboutMe: string | null;
-    philosophy: string | null;
-    methodology: string | null;
-    bannerImagePath: string | null;
-    profilePhotoPath: string | null;
-    services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
-    testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
-    externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
-    transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
-    benefits: [];
+    benefits: Array<{id: string, title: string, description: string | null, iconName: string | null, iconStyle: string | null, orderColumn: number, createdAt: Date}>;
   }
 }
 
@@ -59,10 +44,11 @@ interface ProfileEditorLayoutProps {
       bannerImagePath: string | null;
       profilePhotoPath: string | null;
       services: { id: string; title: string; description: string; createdAt: Date; }[];
-      testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; }[];
+      // FIX: Expanded the Testimonial type to include all fields from the model
+      testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; updatedAt: Date, profileId: string }[];
       externalLinks: { id: string; label: string; linkUrl: string; createdAt: Date; }[];
       transformationPhotos: { id: string; imagePath: string; caption: string | null; createdAt: Date; }[];
-      benefits: { id: string; title: string; description: string; iconName: string; iconStyle: string; orderColumn: number; createdAt: Date; }[];
+      benefits: { id: string; title: string; description: string | null; iconName: string | null; iconStyle: string | null; orderColumn: number; createdAt: Date; }[];
     } | undefined;
   };
 }
