@@ -1,21 +1,22 @@
-// src/components/layouts/TrainerDashboardLayout.tsx
 import React from 'react';
 import Link from 'next/link';
-import { HomeIcon, UserCircleIcon, UserGroupIcon, Cog6ToothIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
-import LogoutButton from '../../components/auth/LogoutButton'; // Corrected path
+import { HomeIcon, UserCircleIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import LogoutButton from '../../components/auth/LogoutButton'; // Ensure path is correct
+import { usePathname } from 'next/navigation'; // Import usePathname
 
 interface TrainerDashboardLayoutProps {
   children: React.ReactNode;
   headerTitle?: string;
-  userEmail?: string; // To display user email
+  userEmail?: string;
 }
 
 export default function TrainerDashboardLayout({ children, headerTitle, userEmail }: TrainerDashboardLayoutProps) {
-  // Placeholder navigation items, will be dynamic later
+  const pathname = usePathname(); // Get current path
+
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true }, // Update 'current' based on route later
-    { name: 'Profile Settings', href: '/profile/edit', icon: UserCircleIcon, current: false },
-    { name: 'Manage Clients', href: '/clients', icon: UserGroupIcon, current: false },
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: pathname === '/dashboard' },
+    { name: 'Profile Settings', href: '/profile/edit', icon: UserCircleIcon, current: pathname.startsWith('/profile') },
+    { name: 'Manage Clients', href: '/clients', icon: UserGroupIcon, current: pathname.startsWith('/clients') },
   ];
 
   return (
@@ -24,7 +25,6 @@ export default function TrainerDashboardLayout({ children, headerTitle, userEmai
       <aside className="w-64 bg-white shadow-md flex-shrink-0">
         <div className="p-6">
           <Link href="/dashboard" className="flex items-center space-x-2">
-              {/* Placeholder for logo */}
               <span className="text-2xl font-bold text-indigo-600">ZIRO.FIT</span>
           </Link>
         </div>
@@ -39,7 +39,7 @@ export default function TrainerDashboardLayout({ children, headerTitle, userEmai
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                           }`}
             >
-              <item.icon className="mr-3 h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+              <item.icon className={`mr-3 h-6 w-6 flex-shrink-0 ${item.current ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500'}`} aria-hidden="true" />
               {item.name}
             </Link>
           ))}
