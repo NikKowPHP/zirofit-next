@@ -2,12 +2,21 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useFormState } from 'react-dom';
-import type { Testimonial } from '@/generated/prisma';
 import { addTestimonial, updateTestimonial, deleteTestimonial } from '@/app/profile/actions';
 import { revalidateProfilePath } from '@/app/profile/revalidate';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+
+interface Testimonial {
+  id: string;
+  clientName: string;
+  testimonialText: string;
+  createdAt: Date;
+  updatedAt: Date;   
+  profileId: string; 
+}
+
 
 type FormState = {
   success: boolean;
