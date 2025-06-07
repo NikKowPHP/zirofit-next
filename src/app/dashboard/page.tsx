@@ -1,27 +1,26 @@
 // src/app/dashboard/page.tsx
-import LogoutButton from '../../components/auth/LogoutButton';
-import { createClient } from '../../lib/supabase/server';
+// Remove LogoutButton import from here, it's in the layout
+// import LogoutButton from "'components/auth/LogoutButton"' (see below for file content);
+import { createClient } from "../../lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const supabase = createClient();
-
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/auth/login'); // Protect this page
+    // Middleware should handle this, but as a fallback:
+    return redirect('/auth/login');
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-4">Dashboard</h1>
-        <p className="text-center mb-2">Welcome, {user.email}!</p>
-        <p className="text-center mb-6 text-sm text-gray-600">(Supabase User ID: {user.id})</p>
-        <div className="mt-6 flex justify-center">
-          <LogoutButton />
-        </div>
-      </div>
+    // Content specific to dashboard page
+    <div>
+      <p className="text-gray-700">
+        You are logged in! Your Supabase User ID is: {user.id}.
+      </p>
+      <p className="mt-4">This is the main content area for the dashboard.</p>
+      {/* Add dashboard specific widgets/content here later */}
     </div>
   );
 }
