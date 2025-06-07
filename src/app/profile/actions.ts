@@ -221,6 +221,9 @@ export async function getCurrentUserProfileData() {
             services: { // Add this
               orderBy: { createdAt: 'asc' }
             },
+            testimonials: { // Add this
+              orderBy: { createdAt: 'desc' }
+            },
           },
         },
       },
@@ -252,11 +255,73 @@ export async function getCurrentUserProfileData() {
           bannerImagePath: null,
           profilePhotoPath: null,
           services: [], // Ensure services is an array in default structure
+          testimonials: [], // Ensure testimonials is an array in default structure
       },
     };
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null; // Or return an error state
+  }
+}
+
+const testimonialSchema = z.object({
+  clientName: z.string().min(2, "Client name is required.").max(255),
+  testimonialText: z.string().min(10, "Testimonial text must be at least 10 characters."),
+});
+
+interface TestimonialFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newTestimonial?: { id: string; clientName: string; testimonialText: string; createdAt: Date };
+}
+
+export async function addTestimonial(prevState: TestimonialFormState | undefined, formData: FormData): Promise<TestimonialFormState> {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { error: "User not authenticated.", success: false };
+  }
+
+  const validatedFields = testimonialSchema.safeParse({
+    clientName: formData.get('clientName'),
+    testimonialText: formData.get('testimonialText'),
+  });
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.issues, error: "Validation failed.", success: false };
+  }
+
+  const { clientName, testimonialText } = validatedFields.data;
+
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: { userId: authUser.id },
+      select: { id: true }
+    });
+
+    if (!profile) {
+      return { error: "Profile not found. Please complete core info first.", success: false };
+    }
+
+    const newTestimonial = await prisma.testimonial.create({
+      data: {
+        profileId: profile.id,
+        clientName,
+        testimonialText,
+      },
+    });
+    
+    revalidatePath('/profile/edit');
+    revalidatePath(`/trainer/${authUser.user_metadata?.username || authUser.id}`);
+
+    return { success: true, message: "Testimonial added successfully!", newTestimonial };
+
+  } catch (e: any) {
+    console.error("Error adding testimonial:", e);
+    return { error: "Failed to add testimonial. " + (e.message || ""), success: false };
   }
 }
 

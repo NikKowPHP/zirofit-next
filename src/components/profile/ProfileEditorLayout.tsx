@@ -19,6 +19,7 @@ interface InitialProfileData {
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
     services: Array<{id: string, title: string, description: string, createdAt: Date}>; // Add this
+    testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date}>; // Add this
     // Add other profile fields as they get editors
   } | null; // Profile can be null if not yet created
 }
@@ -38,7 +39,7 @@ const BrandingEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">
 const BenefitsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Benefits Editor Content</div>;
 const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
 const PhotosEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Photos Editor Content</div>;
-const TestimonialsEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">Testimonials Editor Content</div>;
+const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEditor'));
 const LinksEditor = () => <div className="p-6 bg-white shadow-sm rounded-lg">External Links Editor Content</div>;
 
 const SectionLoadingFallback = () => <div className="p-6 bg-white shadow-sm rounded-lg">Loading section...</div>;
@@ -72,7 +73,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     'about-details': AboutDetailsSection,
     'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
     'photos': PhotosEditor,
-    'testimonials': TestimonialsEditor,
+    'testimonials': () => <TestimonialsEditor initialTestimonials={initialData.profile?.testimonials || []} />,
     'links': LinksEditor,
   };
 
