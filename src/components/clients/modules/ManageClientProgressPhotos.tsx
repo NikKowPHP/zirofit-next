@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addProgressPhoto, deleteProgressPhoto } from "@/app/clients/actions";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@/generated/prisma';
+
 import { revalidatePath } from "next/cache";
 import { useSession } from "next-auth/react";
 

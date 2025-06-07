@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addSessionLog, updateSessionLog, deleteSessionLog } from "@/app/clients/actions";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@/generated/prisma';
+
 import { revalidatePath } from "next/cache";
 
 interface ManageClientSessionLogsProps {

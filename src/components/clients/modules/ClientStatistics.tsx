@@ -1,6 +1,7 @@
 "use client";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@/generated/prisma';
+
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
