@@ -5,6 +5,8 @@ import type { Client, ClientSessionLog } from '../../generated/prisma';
 import { PrismaClient } from "@prisma/client";
 import ManageClientMeasurements from './modules/ManageClientMeasurements';
 import ManageClientProgressPhotos from './modules/ManageClientProgressPhotos';
+import ManageClientSessionLogs from './modules/ManageClientSessionLogs';
+import ClientStatisticsComponent from './modules/ClientStatistics';
 
 // Prop type including relations
 type ClientWithDetails = Client & {
@@ -17,8 +19,7 @@ interface ClientDetailViewProps {
   client: ClientWithDetails;
 }
 
-const ManageClientSessionLogs = ({ client }: { client: ClientWithDetails }) => <div className="bg-white p-6 rounded-lg shadow-sm">Session Logs for {client.name} coming soon.</div>;
-const ClientStatistics = ({ client }: { client: ClientWithDetails }) => <div className="bg-white p-6 rounded-lg shadow-sm">Statistics for {client.name} coming soon.</div>;
+const ClientStatistics = ({ measurements }: { measurements: PrismaClient["clientMeasurement"][] }) => <ClientStatisticsComponent measurements={measurements} />;
 
 const tabs = [
   { name: 'Statistics', id: 'stats' },
@@ -37,10 +38,10 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
       case 'photos':
         return <ManageClientProgressPhotos clientId={client.id} initialProgressPhotos={client.progressPhotos} />;
       case 'logs':
-        return <ManageClientSessionLogs client={client} />;
+        return <ManageClientSessionLogs clientId={client.id} initialSessionLogs={client.sessionLogs} />;
       case 'stats':
       default:
-        return <ClientStatistics client={client} />;
+        return <ClientStatistics measurements={client.measurements} />;
     }
   };
 

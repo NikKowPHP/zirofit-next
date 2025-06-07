@@ -548,6 +548,180 @@ export async function deleteProgressPhoto(photoId: string) {
   }
 }
 
+const SessionLogSchema = z.object({
+  clientId: z.string(),
+  sessionDate: z.string(),
+  durationMinutes: z.string(),
+  activitySummary: z.string(),
+  notes: z.string().optional(),
+});
+
+export async function addSessionLog(prevState: any, formData: FormData) {
+  const validatedFields = SessionLogSchema.safeParse({
+    clientId: formData.get('clientId'),
+    sessionDate: formData.get('sessionDate'),
+    durationMinutes: formData.get('durationMinutes'),
+    activitySummary: formData.get('activitySummary'),
+    notes: formData.get('notes'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Failed to add session log.',
+    };
+  }
+
+  const { clientId, sessionDate, durationMinutes, activitySummary, notes } = validatedFields.data;
+
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { message: "User not authenticated." };
+  }
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: {
+        id: clientId,
+        trainerId: authUser.id,
+      },
+    });
+
+    if (!client) {
+      return { message: "Client not found or unauthorized." };
+    }
+
+    const sessionLog = await prisma.clientSessionLog.create({
+      data: {
+        clientId,
+        sessionDate: new Date(sessionDate),
+        durationMinutes: parseInt(durationMinutes),
+        activitySummary,
+        notes,
+      },
+    });
+
+    revalidatePath(`/clients/${clientId}`);
+    return { success: true, sessionLog };
+  } catch (error: any) {
+    console.error("Failed to add session log:", error);
+    return { message: "Failed to add session log." };
+  }
+}
+
+const UpdateSessionLogSchema = z.object({
+  sessionLogId: z.string(),
+  clientId: z.string(),
+  sessionDate: z.string(),
+  durationMinutes: z.string(),
+  activitySummary: z.string(),
+  notes: z.string().optional(),
+});
+
+export async function updateSessionLog(prevState: any, formData: FormData) {
+  const validatedFields = UpdateSessionLogSchema.safeParse({
+    sessionLogId: formData.get('sessionLogId'),
+    clientId: formData.get('clientId'),
+    sessionDate: formData.get('sessionDate'),
+    durationMinutes: formData.get('durationMinutes'),
+    activitySummary: formData.get('activitySummary'),
+    notes: formData.get('notes'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Failed to update session log.',
+    };
+  }
+
+  const { sessionLogId, clientId, sessionDate, durationMinutes, activitySummary, notes } = validatedFields.data;
+
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { message: "User not authenticated." };
+  }
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: {
+        id: clientId,
+        trainerId: authUser.id,
+      },
+    });
+
+    if (!client) {
+      return { message: "Client not found or unauthorized." };
+    }
+
+    const sessionLog = await prisma.clientSessionLog.update({
+      where: {
+        id: sessionLogId,
+      },
+      data: {
+        sessionDate: new Date(sessionDate),
+        durationMinutes: parseInt(durationMinutes),
+        activitySummary,
+        notes,
+      },
+    });
+
+    revalidatePath(`/clients/${clientId}`);
+    return { success: true, sessionLog };
+  } catch (error: any) {
+    console.error("Failed to update session log:", error);
+    return { message: "Failed to update session log." };
+  }
+}
+
+export async function deleteSessionLog(sessionLogId: string) {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { message: "User not authenticated." };
+  }
+
+  try {
+    const sessionLog = await prisma.clientSessionLog.findUnique({
+      where: {
+        id: sessionLogId,
+      },
+    });
+
+    if (!sessionLog) {
+      return { message: "Session log not found." };
+    }
+
+    const client = await prisma.client.findUnique({
+      where: {
+        id: sessionLog.clientId,
+        trainerId: authUser.id,
+      },
+    });
+
+    if (!client) {
+      return { message: "Client not found or unauthorized." };
+    }
+
+    await prisma.clientSessionLog.delete({
+      where: {
+        id: sessionLogId,
+      },
+    });
+
+    revalidatePath(`/clients/${client.id}`);
+    return { success: true, message: "Session log deleted." };
+  } catch (error: any) {
+    console.error("Failed to delete session log:", error);
+    return { message: "Failed to delete session log." };
+  }
+}
+
 export async function getClientDetails(clientId: string) {
   const supabase = createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
