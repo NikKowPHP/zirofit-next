@@ -20,15 +20,15 @@ async function getUserAndProfile() {
   const user = await prisma.user.findUnique({
     where: { supabaseAuthUserId: authUser.id },
   });
-  
+
   if (!user) {
     throw new Error("User not found in database.");
   }
-  
+
   let profile = await prisma.profile.findUnique({
       where: { userId: user.id }
   });
-  
+
   if (!profile) {
     profile = await prisma.profile.create({
       data: { userId: user.id }
@@ -44,7 +44,7 @@ export async function getCurrentUserProfileData() {
     const supabase = createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) return null;
-    
+
     let userWithProfile = await prisma.user.findUnique({
       where: { supabaseAuthUserId: authUser.id },
       include: {
@@ -114,14 +114,14 @@ interface CoreInfoFormState {
     updatedFields?: Partial<User & Profile>;
 }
 
-export async function updateCoreInfo(prevState: CoreInfoFormState, formData: FormData): Promise<CoreInfoFormState> {
+export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, formData: FormData): Promise<CoreInfoFormState> {
   const { user } = await getUserAndProfile();
-  
+
   const validatedFields = CoreInfoSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!validatedFields.success) {
     return { errors: validatedFields.error.issues, error: "Validation failed." };
   }
-  
+
   const { name, username, ...profileData } = validatedFields.data;
 
   try {
@@ -131,15 +131,15 @@ export async function updateCoreInfo(prevState: CoreInfoFormState, formData: For
         return { error: "Username is already taken.", errors: [{ path: ['username'], message: 'Username is already taken.' }] };
       }
     }
-    
+
     const [updatedUser, updatedProfile] = await prisma.$transaction([
       prisma.user.update({ where: { id: user.id }, data: { name, username } }),
       prisma.profile.update({ where: { userId: user.id }, data: profileData })
     ]);
-    
+
     revalidatePath('/profile/edit');
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: "Core info updated successfully!",
       updatedFields: { name: updatedUser.name, username: updatedUser.username, ...updatedProfile }
     };
@@ -154,7 +154,7 @@ export async function updateCoreInfo(prevState: CoreInfoFormState, formData: For
 // 3. Text Content Actions (About, Philosophy, Methodology)
 interface TextContentFormState { message?: string | null; error?: string | null; success?: boolean; updatedContent?: string | null; }
 
-async function updateProfileTextField(fieldName: 'aboutMe' | 'philosophy' | 'methodology', formData: FormData): Promise<TextContentFormState> {
+async function updateProfileTextField(fieldName: 'aboutMe' | 'philosophy' | 'methodology', prevState: TextContentFormState | undefined, formData: FormData): Promise<TextContentFormState> {
   const { profile } = await getUserAndProfile();
   const content = formData.get(`${fieldName}Content`) as string;
 
@@ -166,21 +166,21 @@ async function updateProfileTextField(fieldName: 'aboutMe' | 'philosophy' | 'met
     return { error: `Failed to update ${fieldName}: ` + e.message };
   }
 }
-export async function updateAboutMe(prevState: TextContentFormState, formData: FormData) { return updateProfileTextField('aboutMe', formData); }
-export async function updatePhilosophy(prevState: TextContentFormState, formData: FormData) { return updateProfileTextField('philosophy', formData); }
-export async function updateMethodology(prevState: TextContentFormState, formData: FormData) { return updateProfileTextField('methodology', formData); }
+export async function updateAboutMe(prevState: TextContentFormState | undefined, formData: FormData) { return updateProfileTextField('aboutMe', prevState, formData); }
+export async function updatePhilosophy(prevState: TextContentFormState | undefined, formData: FormData) { return updateProfileTextField('philosophy', prevState, formData); }
+export async function updateMethodology(prevState: TextContentFormState | undefined, formData: FormData) { return updateProfileTextField('methodology', prevState, formData); }
 
 
 // 4. Branding Actions
 interface BrandingFormState { message?: string | null; error?: string | null; success?: boolean; }
-export async function updateBrandingImages(prevState: BrandingFormState, formData: FormData): Promise<BrandingFormState> {
+export async function updateBrandingImages(prevState: BrandingFormState | undefined, formData: FormData): Promise<BrandingFormState> {
     const { user, profile } = await getUserAndProfile();
     const bannerImage = formData.get('bannerImage') as File;
     const profilePhoto = formData.get('profilePhoto') as File;
-    
+
     const updates: { bannerImagePath?: string; profilePhotoPath?: string } = {};
     const supabaseStorage = createClient();
-  
+
     try {
       if (bannerImage?.size > 0) {
         const path = `profile-assets/${user.id}/banner-${uuidv4()}`;
@@ -188,18 +188,18 @@ export async function updateBrandingImages(prevState: BrandingFormState, formDat
         if (error) throw new Error(`Banner upload failed: ${error.message}`);
         updates.bannerImagePath = path;
       }
-      
+
       if (profilePhoto?.size > 0) {
         const path = `profile-assets/${user.id}/profile-photo-${uuidv4()}`;
         const { error } = await supabaseStorage.storage.from('zirofit-storage').upload(path, profilePhoto, { upsert: true });
         if (error) throw new Error(`Photo upload failed: ${error.message}`);
         updates.profilePhotoPath = path;
       }
-  
+
       if (Object.keys(updates).length > 0) {
         await prisma.profile.update({ where: { id: profile.id }, data: updates });
       }
-  
+
       revalidatePath('/profile/edit');
       return { success: true, message: "Branding updated successfully!" };
     } catch (e: any) {
@@ -210,7 +210,7 @@ export async function updateBrandingImages(prevState: BrandingFormState, formDat
 // 5. Benefit Actions
 interface BenefitFormState { message?: string | null; error?: string | null; success?: boolean; }
 const BenefitSchema = z.object({ title: z.string().min(1, "Title is required."), description: z.string().optional(), iconName: z.string().optional(), iconStyle: z.string().optional() });
-export async function addBenefit(prevState: BenefitFormState, formData: FormData): Promise<BenefitFormState> {
+export async function addBenefit(prevState: BenefitFormState | undefined, formData: FormData): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
   const validated = BenefitSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!validated.success) return { error: "Validation failed." };
@@ -221,7 +221,7 @@ export async function addBenefit(prevState: BenefitFormState, formData: FormData
     return { success: true, message: "Benefit added." };
   } catch (e: any) { return { error: "Failed to add benefit." }; }
 }
-export async function updateBenefit(id: string, prevState: BenefitFormState, formData: FormData): Promise<BenefitFormState> {
+export async function updateBenefit(id: string, prevState: BenefitFormState | undefined, formData: FormData): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
   const validated = BenefitSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!validated.success) return { error: "Validation failed." };
@@ -252,7 +252,7 @@ export async function updateBenefitOrder(ids: string[]): Promise<BenefitFormStat
 // 6. Service Actions
 const ServiceSchema = z.object({ title: z.string().min(1, "Title is required."), description: z.string().min(1, "Description is required.") });
 interface ServiceFormState { message?: string | null; error?: string | null; errors?: z.ZodIssue[]; success?: boolean; newService?: Service; updatedService?: Service; deletedId?: string; }
-export async function addService(prevState: ServiceFormState, formData: FormData): Promise<ServiceFormState> {
+export async function addService(prevState: ServiceFormState | undefined, formData: FormData): Promise<ServiceFormState> {
   const { profile } = await getUserAndProfile();
   const validated = ServiceSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!validated.success) return { errors: validated.error.issues, error: 'Validation failed.' };
@@ -262,7 +262,7 @@ export async function addService(prevState: ServiceFormState, formData: FormData
     return { success: true, message: 'Service added.', newService };
   } catch (e) { return { error: 'Failed to add service.' }; }
 }
-export async function updateService(prevState: ServiceFormState, formData: FormData): Promise<ServiceFormState> {
+export async function updateService(prevState: ServiceFormState | undefined, formData: FormData): Promise<ServiceFormState> {
   const { profile } = await getUserAndProfile();
   const serviceId = formData.get('serviceId') as string;
   const validated = ServiceSchema.safeParse(Object.fromEntries(formData.entries()));
@@ -285,7 +285,7 @@ export async function deleteService(serviceId: string): Promise<{ success: boole
 // 7. External Link Actions
 const ExternalLinkSchema = z.object({ label: z.string().min(1, "Label is required."), linkUrl: z.string().url("Must be a valid URL.") });
 interface ExternalLinkFormState { message?: string | null; error?: string | null; errors?: z.ZodIssue[]; success?: boolean; newLink?: ExternalLink; updatedLink?: ExternalLink; deletedId?: string; }
-export async function addExternalLink(prevState: ExternalLinkFormState, formData: FormData): Promise<ExternalLinkFormState> {
+export async function addExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
     const { profile } = await getUserAndProfile();
     const validated = ExternalLinkSchema.safeParse(Object.fromEntries(formData.entries()));
     if (!validated.success) return { errors: validated.error.issues, error: 'Validation failed.' };
@@ -295,7 +295,7 @@ export async function addExternalLink(prevState: ExternalLinkFormState, formData
         return { success: true, message: 'Link added.', newLink };
     } catch (e) { return { error: 'Failed to add link.' }; }
 }
-export async function updateExternalLink(prevState: ExternalLinkFormState, formData: FormData): Promise<ExternalLinkFormState> {
+export async function updateExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
     const { profile } = await getUserAndProfile();
     const linkId = formData.get('linkId') as string;
     const validated = ExternalLinkSchema.safeParse(Object.fromEntries(formData.entries()));
@@ -319,17 +319,17 @@ export async function deleteExternalLink(linkId: string): Promise<{ success: boo
 // 8. Transformation Photo Actions
 const TransformationPhotoSchema = z.object({ caption: z.string().max(255).optional(), photoFile: z.any().refine((file) => file?.size > 0, "Photo file is required.").refine((file) => file?.size <= 2 * 1024 * 1024, `Max file size is 2MB.`) });
 interface TransformationPhotoFormState { message?: string | null; error?: string | null; errors?: z.ZodIssue[]; success?: boolean; newPhoto?: TransformationPhoto & { publicUrl: string }; deletedId?: string; }
-export async function addTransformationPhoto(prevState: TransformationPhotoFormState, formData: FormData): Promise<TransformationPhotoFormState> {
+export async function addTransformationPhoto(prevState: TransformationPhotoFormState | undefined, formData: FormData): Promise<TransformationPhotoFormState> {
     const { user, profile } = await getUserAndProfile();
     const validated = TransformationPhotoSchema.safeParse({ caption: formData.get('caption'), photoFile: formData.get('photoFile') });
     if (!validated.success) return { errors: validated.error.issues, error: 'Validation failed.' };
-    
+
     const { caption, photoFile } = validated.data;
     const filePath = `transformation-photos/${user.id}/${uuidv4()}`;
     const supabaseStorage = createClient();
     const { error: uploadError } = await supabaseStorage.storage.from('zirofit-storage').upload(filePath, photoFile);
     if (uploadError) return { error: `Storage error: ${uploadError.message}` };
-    
+
     try {
         const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit-storage').getPublicUrl(filePath);
         const newPhoto = await prisma.transformationPhoto.create({ data: { profileId: profile.id, imagePath: filePath, caption } });
@@ -354,7 +354,7 @@ export async function deleteTransformationPhoto(photoId: string): Promise<{ succ
 // 9. Testimonial Actions
 const TestimonialSchema = z.object({ clientName: z.string().min(2, "Client Name is required."), testimonialText: z.string().min(10, "Testimonial text is required.") });
 interface TestimonialFormState { message?: string | null; error?: string | null; errors?: z.ZodIssue[]; success?: boolean; newTestimonial?: Testimonial; updatedTestimonial?: Testimonial; deletedId?: string; }
-export async function addTestimonial(prevState: TestimonialFormState, formData: FormData): Promise<TestimonialFormState> {
+export async function addTestimonial(prevState: TestimonialFormState | undefined, formData: FormData): Promise<TestimonialFormState> {
     const { profile } = await getUserAndProfile();
     const validated = TestimonialSchema.safeParse(Object.fromEntries(formData.entries()));
     if (!validated.success) return { errors: validated.error.issues, error: "Validation failed" };
@@ -364,7 +364,7 @@ export async function addTestimonial(prevState: TestimonialFormState, formData: 
         return { success: true, message: "Testimonial added.", newTestimonial };
     } catch (e) { return { error: 'Failed to add testimonial.' }; }
 }
-export async function updateTestimonial(id: string, prevState: TestimonialFormState, formData: FormData): Promise<TestimonialFormState> {
+export async function updateTestimonial(id: string, prevState: TestimonialFormState | undefined, formData: FormData): Promise<TestimonialFormState> {
     const { profile } = await getUserAndProfile();
     const validated = TestimonialSchema.safeParse(Object.fromEntries(formData.entries()));
     if (!validated.success) return { errors: validated.error.issues, error: "Validation failed" };
@@ -374,7 +374,7 @@ export async function updateTestimonial(id: string, prevState: TestimonialFormSt
         return { success: true, message: "Testimonial updated.", updatedTestimonial };
     } catch (e) { return { error: 'Failed to update testimonial.' }; }
 }
-export async function deleteTestimonial(id: string, prevState?: TestimonialFormState): Promise<TestimonialFormState> {
+export async function deleteTestimonial(id: string, prevState?: TestimonialFormState | undefined): Promise<TestimonialFormState> {
     const { profile } = await getUserAndProfile();
     try {
         await prisma.testimonial.delete({ where: { id, profileId: profile.id } });

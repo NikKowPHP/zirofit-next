@@ -14,6 +14,18 @@ interface BrandingEditorProps {
   };
 }
 
+interface BrandingFormState {
+  message?: string | null;
+  error?: string | null;
+  success?: boolean;
+}
+
+const initialFormState: BrandingFormState = {
+  message: null,
+  error: null,
+  success: false,
+};
+
 const DEFAULT_BANNER = '/default-banner.jpg';
 const DEFAULT_PHOTO = '/default-profile.jpg';
 
@@ -23,7 +35,7 @@ function SubmitButton() {
 }
 
 export default function BrandingEditor({ initialData }: BrandingEditorProps) {
-  const [state, formAction] = useFormState(updateBrandingImages, undefined);
+  const [state, formAction] = useFormState(updateBrandingImages, initialFormState);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -37,9 +49,9 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
     setPhotoPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  const getPublicUrl = (path: string | null) => 
-    path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-assets/${path}` : null;
-  
+  const getPublicUrl = (path: string | null) =>
+    path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit-storage/${path}` : null;
+
   const currentBannerUrl = bannerPreview || getPublicUrl(initialData.bannerImagePath);
   const currentProfilePhotoUrl = photoPreview || getPublicUrl(initialData.profilePhotoPath);
 
@@ -53,40 +65,42 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
         {/* Banner Image Section */}
         <div>
           <Label htmlFor="bannerImage">Banner Image (Recommended: 1200x400)</Label>
-          <Image 
-            src={currentBannerUrl || DEFAULT_BANNER} 
-            alt="Banner" 
-            width={1200} 
-            height={400} 
-            className="w-full h-48 object-cover rounded-md mt-2 mb-2 bg-gray-100" 
+          <Image
+            src={currentBannerUrl || DEFAULT_BANNER}
+            alt="Banner"
+            width={1200}
+            height={400}
+            className="w-full h-48 object-cover rounded-md mt-2 mb-2 bg-gray-100"
+            onError={(e) => { e.currentTarget.src = DEFAULT_BANNER }}
           />
-          <Input 
-            id="bannerImage" 
-            name="bannerImage" 
-            type="file" 
-            accept="image/*" 
-            className="text-sm" 
-            onChange={handleBannerChange} 
+          <Input
+            id="bannerImage"
+            name="bannerImage"
+            type="file"
+            accept="image/*"
+            className="text-sm"
+            onChange={handleBannerChange}
           />
         </div>
-        
+
         {/* Profile Photo Section */}
         <div>
           <Label htmlFor="profilePhoto">Profile Photo (Recommended: 400x400)</Label>
-          <Image 
-            src={currentProfilePhotoUrl || DEFAULT_PHOTO} 
-            alt="Profile Photo" 
-            width={400} 
-            height={400} 
-            className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100" 
+          <Image
+            src={currentProfilePhotoUrl || DEFAULT_PHOTO}
+            alt="Profile Photo"
+            width={400}
+            height={400}
+            className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100"
+            onError={(e) => { e.currentTarget.src = DEFAULT_PHOTO }}
           />
-          <Input 
-            id="profilePhoto" 
-            name="profilePhoto" 
-            type="file" 
-            accept="image/*" 
-            className="text-sm" 
-            onChange={handlePhotoChange} 
+          <Input
+            id="profilePhoto"
+            name="profilePhoto"
+            type="file"
+            accept="image/*"
+            className="text-sm"
+            onChange={handlePhotoChange}
           />
         </div>
 

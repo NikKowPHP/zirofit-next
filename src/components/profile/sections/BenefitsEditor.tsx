@@ -5,11 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '@/app/profile/actions';
 import { Input, Label, Button, Textarea } from '@/components/ui';
-import { PrismaClient } from '@prisma/client';
+import type { Benefit } from '@/generated/prisma';
 import SortableJS from 'sortablejs';
 
 interface BenefitsEditorProps {
-  initialBenefits: PrismaClient['benefit'][];
+  initialBenefits: Benefit[];
 }
 
 interface BenefitFormState {
@@ -18,15 +18,21 @@ interface BenefitFormState {
   success?: boolean;
 }
 
+const initialFormState: BenefitFormState = {
+    message: null,
+    error: null,
+    success: false,
+};
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return <Button type="submit" disabled={pending}>{pending ? 'Saving...' : 'Save Benefit'}</Button>;
 }
 
 export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps) {
-  const [benefits, setBenefits] = useState<PrismaClient['benefit'][]>(initialBenefits);
+  const [benefits, setBenefits] = useState<Benefit[]>(initialBenefits);
   const [editingBenefitId, setEditingBenefitId] = useState<string | null>(null);
-  const [formState, formAction] = useFormState(addBenefit, undefined);
+  const [formState, formAction] = useFormState(addBenefit, initialFormState);
 
   useEffect(() => {
     const sortable = new SortableJS(document.getElementById('benefits-list') as HTMLElement, {
@@ -55,7 +61,7 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
     };
   }, []);
 
-  const handleEditBenefit = (benefit: PrismaClient['benefit']) => {
+  const handleEditBenefit = (benefit: Benefit) => {
     setEditingBenefitId(benefit.id);
   };
 
@@ -78,7 +84,13 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
       setBenefits(prevBenefits => {
         return prevBenefits.map(benefit => {
           if (benefit.id === id) {
-            return { ...benefit, title: formData.get('title') as string, description: formData.get('description') as string };
+            return {
+                ...benefit,
+                title: formData.get('title') as string,
+                description: formData.get('description') as string,
+                iconName: formData.get('iconName') as string | null,
+                iconStyle: formData.get('iconStyle') as string | null,
+            };
           }
           return benefit;
         });
@@ -102,15 +114,15 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
         </div>
         <div>
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" rows={3} required />
+          <Textarea id="description" name="description" rows={3} />
         </div>
         <div>
           <Label htmlFor="iconName">Icon Name</Label>
-          <Input id="iconName" name="iconName" type="text" required />
+          <Input id="iconName" name="iconName" type="text" />
         </div>
         <div>
           <Label htmlFor="iconStyle">Icon Style</Label>
-          <Input id="iconStyle" name="iconStyle" type="text" required />
+          <Input id="iconStyle" name="iconStyle" type="text" />
         </div>
         <div className="flex justify-end pt-2">
           <SubmitButton />
@@ -120,13 +132,13 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
       <ul id="benefits-list" className="mt-6 space-y-4">
         {benefits.map(benefit => (
           <li key={benefit.id} data-id={benefit.id} className="flex items-center justify-between p-4 bg-gray-100 rounded-md">
-            <span className="drag-handle cursor-move mr-2">&#9776;</span>
+            <span className="drag-handle cursor-move mr-2">☰</span>
             {editingBenefitId === benefit.id ? (
-              <form action={handleBenefitUpdate.bind(null, benefit.id)} className="flex-1 flex items-center space-x-2">
+              <form action={(formData) => handleBenefitUpdate(benefit.id, formData)} className="flex-1 flex items-center space-x-2">
                 <Input type="text" name="title" defaultValue={benefit.title} className="flex-1" />
-                <Textarea name="description" defaultValue={benefit.description} rows={1} className="flex-1" />
-                <Input type="text" name="iconName" defaultValue={benefit.iconName} className="flex-1" />
-                <Input type="text" name="iconStyle" defaultValue={benefit.iconStyle} className="flex-1" />
+                <Textarea name="description" defaultValue={benefit.description ?? ""} rows={1} className="flex-1" />
+                <Input type="text" name="iconName" defaultValue={benefit.iconName ?? ""} className="flex-1" />
+                <Input type="text" name="iconStyle" defaultValue={benefit.iconStyle ?? ""} className="flex-1" />
                 <Button type="submit" size="sm">Update</Button>
                 <Button type="button" size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
               </form>

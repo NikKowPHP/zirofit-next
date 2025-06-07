@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addProgressPhoto, deleteProgressPhoto } from "@/app/clients/actions";
-import { PrismaClient } from "@/generated/prisma"; // Corrected import
+import type { ClientProgressPhoto } from "@/generated/prisma"; // Import the model type
 import { revalidatePath } from "next/cache";
-// Removed: import { useSession } from "next-auth/react";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;
-  initialProgressPhotos: PrismaClient["clientProgressPhoto"][];
+  initialProgressPhotos: ClientProgressPhoto[]; // Corrected type
 }
 
 interface ActionState {
@@ -21,16 +20,17 @@ interface ActionState {
   };
   message: string;
   success?: boolean;
-  progressPhoto?: PrismaClient["clientProgressPhoto"];
+  progressPhoto?: ClientProgressPhoto; // Corrected type
 }
 
 export default function ManageClientProgressPhotos({ clientId, initialProgressPhotos }: ManageClientProgressPhotosProps) {
-  const [progressPhotos, setProgressPhotos] = useState<PrismaClient["clientProgressPhoto"][]>(initialProgressPhotos);
+  const [progressPhotos, setProgressPhotos] = useState<ClientProgressPhoto[]>(initialProgressPhotos); // Corrected type
   const initialActionState: ActionState = { message: "" };
 
   const addPhotoActionWrapper = async (state: ActionState, formData: FormData): Promise<ActionState> => {
     const result = await addProgressPhoto(state, formData);
     if (result?.success && result.progressPhoto) {
+      // The type now correctly matches the object returned by the server action
       return { ...state, success: true, progressPhoto: result.progressPhoto, message: "" };
     } else {
       return { ...state, errors: result?.errors, message: result?.message || "Failed to add progress photo" };
@@ -55,7 +55,6 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
     initialActionState
   );
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  // Removed: const { data: session } = useSession();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -80,7 +79,6 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
     <div>
       <h2>Manage Progress Photos</h2>
 
-      {/* Add Photo Form */}
       <form action={handleAddPhoto}>
         <input type="hidden" name="clientId" value={clientId} />
         <label>Photo Date:</label>
@@ -98,7 +96,6 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
         )}
       </form>
 
-      {/* Photo Gallery */}
       <h3>Photo Gallery</h3>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {progressPhotos.map((photo) => (
@@ -106,7 +103,7 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
             <img src={photo.imagePath} alt={photo.caption || ''} style={{ maxWidth: "200px", maxHeight: "200px" }} />
             <p>{photo.photoDate.toLocaleDateString()}</p>
             <p>{photo.caption}</p>
-            <form action={(id) => handleDeletePhoto(photo.id)}>
+            <form action={() => handleDeletePhoto(photo.id)}>
               <button type="submit">Delete</button>
             </form>
           </div>
