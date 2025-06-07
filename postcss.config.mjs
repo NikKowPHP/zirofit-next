@@ -1,12 +1,10 @@
-import tailwindcss from '@tailwindcss/postcss';
-
 /** @type {import('postcss-load-config').Config} */
 const config = {
-  plugins: [
-    // Use the imported plugin function
-    tailwindcss({}),
-    // Autoprefixer is no longer needed with Tailwind CSS v4 and is handled by the plugin itself.
-  ],
+  plugins: {
+    // This tells the Next.js loader to find the plugin in the '@tailwindcss/postcss' package.
+    '@tailwindcss/postcss': {},
+    // Autoprefixer is NOT needed with Tailwind v4.
+  },
 };
 
 export default config;
