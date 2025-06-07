@@ -38,7 +38,7 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
   };
 
   const deletePhotoActionWrapper = async (state: ActionState, photoId: string): Promise<ActionState> => {
-    const result = await deleteProgressPhoto(photoId);
+    const result = await deleteProgressPhoto(state, photoId);
     if (result?.success) {
       return { ...state, success: true, message: result.message };
     } else {
@@ -83,9 +83,6 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
       {/* Add Photo Form */}
       <form action={handleAddPhoto}>
         <input type="hidden" name="clientId" value={clientId} />
-        {session?.user && (session.user as any).id ? (
-          <input type="hidden" name="trainerId" value={(session.user as any).id} />
-        ) : null}
         <label>Photo Date:</label>
         <input type="date" name="photoDate" required />
         <label>Caption:</label>
@@ -106,7 +103,7 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {progressPhotos.map((photo) => (
           <div key={photo.id} style={{ margin: "10px", textAlign: "center" }}>
-            <img src={photo.url} alt={photo.caption} style={{ maxWidth: "200px", maxHeight: "200px" }} />
+            <img src={photo.imagePath} alt={photo.caption} style={{ maxWidth: "200px", maxHeight: "200px" }} />
             <p>{photo.photoDate.toLocaleDateString()}</p>
             <p>{photo.caption}</p>
             <form action={(id) => handleDeletePhoto(photo.id)}>

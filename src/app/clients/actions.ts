@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from '../../lib/supabase/server';
 import { prisma } from '../../lib/prisma';
+import type { ClientMeasurement } from '@/generated/prisma';
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "Name must be at least 1 character." }),
@@ -240,13 +241,13 @@ interface MeasurementFormState {
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
-  measurement?: import('@prisma/client').ClientMeasurement;
+  measurement?: ClientMeasurement;
 }
 
 // Helper to authorize if client belongs to trainer
 async function authorizeClientAccess(clientId: string, authUserId: string): Promise<boolean> {
     const client = await prisma.client.findFirst({
-        where: { id: clientId, trainerId: authUser.id }
+        where: { id: clientId, trainerId: authUserId }
     });
     return !!client;
 }
@@ -362,7 +363,6 @@ export async function deleteMeasurement(prevState: any, measurementId: string): 
 
 const ProgressPhotoSchema = z.object({
   clientId: z.string(),
-  trainerId: z.string(),
   photoDate: z.string(),
   caption: z.string().optional(),
   photo: z.any(), // File type
@@ -371,7 +371,6 @@ const ProgressPhotoSchema = z.object({
 export async function addProgressPhoto(prevState: any, formData: FormData) {
   const validatedFields = ProgressPhotoSchema.safeParse({
     clientId: formData.get('clientId'),
-    trainerId: formData.get('trainerId'),
     photoDate: formData.get('photoDate'),
     caption: formData.get('caption'),
     photo: formData.get('photo'),
@@ -384,7 +383,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
     };
   }
 
-  const { clientId, trainerId, photoDate, caption, photo } = validatedFields.data;
+  const { clientId, photoDate, caption, photo } = validatedFields.data;
 
   const supabase = createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -394,23 +393,16 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
   }
 
   try {
-    const client = await prisma.client.findUnique({
-      where: {
-        id: clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
-      return { message: "Client not found or unauthorized." };
+    if (!(await authorizeClientAccess(clientId, authUser.id))) {
+        return { message: "Client not found or unauthorized." };
     }
 
     const file = photo as File;
     const fileExt = file.name.split('.').pop();
     const fileName = `${clientId}-${Date.now()}.${fileExt}`;
-    const filePath = `client_progress_photos/${trainerId}/${clientId}/${fileName}`;
+    const filePath = `client_progress_photos/${authUser.id}/${clientId}/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('zirofit-storage')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -422,15 +414,12 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
       return { message: "Failed to upload photo." };
     }
 
-    const imageUrl = `https://supabasestorageurl/${filePath}`; // Replace with your Supabase URL
-
     const progressPhoto = await prisma.clientProgressPhoto.create({
       data: {
         clientId,
-        trainerId,
         photoDate: new Date(photoDate),
         caption,
-        url: imageUrl,
+        imagePath: filePath, // Store the path, not the full URL
       },
     });
 
@@ -442,7 +431,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
   }
 }
 
-export async function deleteProgressPhoto(photoId: string) {
+export async function deleteProgressPhoto(prevState: any, photoId: string) {
   const supabase = createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
 
@@ -452,28 +441,18 @@ export async function deleteProgressPhoto(photoId: string) {
 
   try {
     const photo = await prisma.clientProgressPhoto.findUnique({
-      where: {
-        id: photoId,
-      },
+      where: { id: photoId },
     });
 
     if (!photo) {
       return { message: "Photo not found." };
     }
 
-    const client = await prisma.client.findUnique({
-      where: {
-        id: photo.clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
+    if (!(await authorizeClientAccess(photo.clientId, authUser.id))) {
       return { message: "Client not found or unauthorized." };
     }
 
-    // Extract file path from URL
-    const filePath = photo.url.replace('https://supabasestorageurl/', ''); // Replace with your Supabase URL
+    const filePath = photo.imagePath;
 
     // Delete from Supabase storage
     const { error: storageError } = await supabase.storage
@@ -482,7 +461,7 @@ export async function deleteProgressPhoto(photoId: string) {
 
     if (storageError) {
       console.error("Supabase storage delete error:", storageError);
-      return { message: "Failed to delete photo from storage." };
+      // Don't block DB deletion if storage fails, but log it.
     }
 
     // Delete from Prisma
@@ -492,7 +471,7 @@ export async function deleteProgressPhoto(photoId: string) {
       },
     });
 
-    revalidatePath(`/clients/${client.id}`);
+    revalidatePath(`/clients/${photo.clientId}`);
     return { success: true, message: "Progress photo deleted." };
   } catch (error: any) {
     console.error("Failed to delete progress photo:", error);
@@ -534,14 +513,7 @@ export async function addSessionLog(prevState: any, formData: FormData) {
   }
 
   try {
-    const client = await prisma.client.findUnique({
-      where: {
-        id: clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
+     if (!(await authorizeClientAccess(clientId, authUser.id))) {
       return { message: "Client not found or unauthorized." };
     }
 
@@ -599,14 +571,7 @@ export async function updateSessionLog(prevState: any, formData: FormData) {
   }
 
   try {
-    const client = await prisma.client.findUnique({
-      where: {
-        id: clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
+    if (!(await authorizeClientAccess(clientId, authUser.id))) {
       return { message: "Client not found or unauthorized." };
     }
 
@@ -649,14 +614,7 @@ export async function deleteSessionLog(sessionLogId: string) {
       return { message: "Session log not found." };
     }
 
-    const client = await prisma.client.findUnique({
-      where: {
-        id: sessionLog.clientId,
-        trainerId: authUser.id,
-      },
-    });
-
-    if (!client) {
+    if (!(await authorizeClientAccess(sessionLog.clientId, authUser.id))) {
       return { message: "Client not found or unauthorized." };
     }
 
@@ -666,7 +624,7 @@ export async function deleteSessionLog(sessionLogId: string) {
       },
     });
 
-    revalidatePath(`/clients/${client.id}`);
+    revalidatePath(`/clients/${sessionLog.clientId}`);
     return { success: true, message: "Session log deleted." };
   } catch (error: any) {
     console.error("Failed to delete session log:", error);
