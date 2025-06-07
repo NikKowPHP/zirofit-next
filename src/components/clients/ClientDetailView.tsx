@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, Suspense } from 'react';
-import type { Client, ClientMeasurement, ClientProgressPhoto, ClientSessionLog } from '../../generated/prisma';
+import type { Client, ClientProgressPhoto, ClientSessionLog } from '../../generated/prisma';
+import { PrismaClient } from "@prisma/client";
+import ManageClientMeasurements from './modules/ManageClientMeasurements';
 
 // Prop type including relations
 type ClientWithDetails = Client & {
-  measurements: ClientMeasurement[];
+  measurements: PrismaClient["clientMeasurement"][];
   progressPhotos: ClientProgressPhoto[];
   sessionLogs: ClientSessionLog[];
 };
@@ -14,8 +16,6 @@ interface ClientDetailViewProps {
   client: ClientWithDetails;
 }
 
-// Placeholders for now - will be built in next TODOs
-const ManageClientMeasurements = ({ client }: { client: ClientWithDetails }) => <div className="bg-white p-6 rounded-lg shadow-sm">Measurements for {client.name} coming soon.</div>;
 const ManageClientProgressPhotos = ({ client }: { client: ClientWithDetails }) => <div className="bg-white p-6 rounded-lg shadow-sm">Progress Photos for {client.name} coming soon.</div>;
 const ManageClientSessionLogs = ({ client }: { client: ClientWithDetails }) => <div className="bg-white p-6 rounded-lg shadow-sm">Session Logs for {client.name} coming soon.</div>;
 const ClientStatistics = ({ client }: { client: ClientWithDetails }) => <div className="bg-white p-6 rounded-lg shadow-sm">Statistics for {client.name} coming soon.</div>;
@@ -33,7 +33,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
   const renderContent = () => {
     switch (activeTab) {
       case 'measurements':
-        return <ManageClientMeasurements client={client} />;
+        return <ManageClientMeasurements clientId={client.id} initialMeasurements={client.measurements} />;
       case 'photos':
         return <ManageClientProgressPhotos client={client} />;
       case 'logs':
