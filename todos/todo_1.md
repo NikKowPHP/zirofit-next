@@ -3,8 +3,8 @@
 
 **Phase 2: Authentication (Supabase Auth) & Core API Setup**
 
-**TODO #20:**
-Objective: Create Supabase client utility functions for client and server components.
+**TODO #20:** !!!!!!!!!!!!
+Objective: Create Supabase clientutility  functions for client and server components.
 File(s) To Create/Modify: `src/lib/supabase/client.ts`, `src/lib/supabase/server.ts`.
 Specific Instructions:
 1.  Create a directory `src/lib/supabase`.
@@ -64,7 +64,7 @@ Expected Outcome: Utility functions are created to initialize Supabase clients f
 Best Practice Reminders: These helpers abstract client creation and handle cookies for server-side authentication.
 
 **TODO #21:**
-Objective: Create a basic Register page component.
+Objective: Create a basic Register page component. !!!!!!!!!!!!
 File(s) To Create/Modify: `src/app/auth/register/page.tsx`.
 Specific Instructions:
 1.  Create the directory structure: `src/app/auth/register/`.
@@ -178,6 +178,10 @@ Specific Instructions:
     ```
 Expected Outcome: A basic, non-functional (in terms of backend) registration page is accessible at `/auth/register`.
 Best Practice Reminders: Use semantic HTML for form elements. Minimal client-side validation for now.
+
+
+
+
 
 **TODO #22:**
 Objective: Create a basic Login page component.
@@ -488,6 +492,14 @@ Specific Instructions:
     ```
 Expected Outcome: Registration form now submits to the server action. Supabase Auth user and Prisma User are created. Redirect to login on success.
 Best Practice Reminders: Use Zod for validation. Implement proper error handling and user feedback. The username generation logic is a simplified version of the Laravel one; ensure it's robust.
+
+
+
+
+
+
+
+
 
 **TODO #24:**
 Objective: Create a Server Action for user login.
