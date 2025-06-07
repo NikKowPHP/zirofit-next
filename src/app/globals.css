@@ -1,6 +1,4 @@
 @import "tailwindcss/preflight";
-@tailwind utilities;
-
 /* Your existing global styles from the XML, if any, or new ones */
 :root {
   --background: #ffffff;
