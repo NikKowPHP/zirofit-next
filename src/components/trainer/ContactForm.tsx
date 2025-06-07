@@ -1,6 +1,7 @@
 // src/components/trainer/ContactForm.tsx
 "use client";
 
+import { z } from 'zod';
 import { useFormState, useFormStatus } from 'react-dom';
 import { submitContactForm } from '@/app/trainer/actions'; // Adjust path if actions.ts is elsewhere
 import { Input } from '@/components/ui/Input';
@@ -8,7 +9,6 @@ import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 import { useEffect, useRef } from 'react';
-import { ZodIssue } from 'zod'; // Import ZodIssue
 
 interface ContactFormProps {
   trainerEmail: string;
@@ -18,7 +18,7 @@ interface ContactFormProps {
 interface ContactFormState {
     message?: string | null;
     error?: string | null;
-    errors?: ZodIssue[]; // Use ZodIssue directly
+    errors?: z.ZodIssue[];
     success?: boolean;
 }
 
@@ -50,7 +50,9 @@ export default function ContactForm({ trainerEmail, trainerName }: ContactFormPr
   
   // Helper to get error message for a specific field
   const getFieldError = (fieldName: string) => {
-    return state.errors?.find(err => err.path[0] === fieldName)?.message;
+    // ZodIssue has a path array, so we need to check if the fieldName matches any part of the path
+    // For simplicity, assuming fieldName directly matches the first element of the path for now.
+    return state.errors?.find(err => err.path && err.path[0] === fieldName)?.message;
   };
 
   return (

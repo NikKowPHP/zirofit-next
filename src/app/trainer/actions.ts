@@ -2,7 +2,7 @@
 "use server";
 
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
+import { prisma } from 'src/lib/prisma';
 // Import a mail sending library/service SDK if you were to actually send emails.
 // For this migration, we'll simulate it. In a real app, you'd use Resend, SendGrid, etc.
 // import { Resend } from 'resend'; (Example)

@@ -4,16 +4,31 @@ import { getTrainerProfileByUsername } from '@/lib/api/trainers';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { PhoneIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/react/24/outline';
-// Import your UI components (Button, etc.) if needed for CTAs
-// import { Button } from '@/components/ui/Button';
-import ContactForm from '@/components/trainer/ContactForm'; // Import the form
+import ContactForm from '@/components/trainer/ContactForm';
 
-// Define types for the data fetched from Prisma
+// Define interfaces for the data structure
 interface Benefit {
   id: string;
   title: string;
   description: string;
-  orderColumn: number;
+}
+
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface TransformationPhoto {
+  id: string;
+  imagePath: string;
+  caption: string | null;
+}
+
+interface Testimonial {
+  id: string;
+  testimonialText: string;
+  clientName: string;
 }
 
 interface ExternalLink {
@@ -22,50 +37,29 @@ interface ExternalLink {
   linkUrl: string;
 }
 
-interface Service {
+interface TrainerProfile {
   id: string;
-  title: string;
-  description: string;
-  createdAt: Date;
-}
-
-interface Testimonial {
-  id: string;
-  clientName: string;
-  testimonialText: string;
-  createdAt: Date;
-}
-
-interface TransformationPhoto {
-  id: string;
-  imagePath: string;
-  caption: string | null;
-  createdAt: Date;
-}
-
-interface ProfileWithRelations {
-  id: string;
-  location: string | null;
-  profilePhotoPath: string | null;
-  bannerImagePath: string | null;
-  certifications: string | null;
+  userId: string;
   aboutMe: string | null;
   philosophy: string | null;
   methodology: string | null;
+  certifications: string | null;
+  location: string | null;
   phone: string | null;
-  services: Service[];
-  testimonials: Testimonial[];
-  transformationPhotos: TransformationPhoto[];
-  externalLinks: ExternalLink[];
+  bannerImagePath: string | null;
+  profilePhotoPath: string | null;
   benefits: Benefit[];
+  services: Service[];
+  transformationPhotos: TransformationPhoto[];
+  testimonials: Testimonial[];
+  externalLinks: ExternalLink[];
 }
 
 interface UserWithProfile {
   id: string;
   name: string | null;
   email: string;
-  username: string;
-  profile: ProfileWithRelations | null;
+  profile: TrainerProfile | null;
 }
 
 // Placeholder for default images
@@ -84,7 +78,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
     notFound(); // Or return a custom "Profile not found" component
   }
 
-  const { profile, name, email: trainerActualEmail } = userWithProfile; // Get trainer's actual email
+  const { profile, name, email: trainerActualEmail } = userWithProfile;
+  const trainerName = name || ''; // Ensure name is a string
+  const trainerEmail = trainerActualEmail || ''; // Ensure email is a string
 
   // Helper to render HTML content safely
   const renderHTML = (htmlString: string | null | undefined) => {
@@ -272,7 +268,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
       <section id="contact-section" className="py-16 md:py-24 bg-white text-gray-800">
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-8">Get In Touch</h2>
-          <ContactForm trainerEmail={trainerActualEmail} trainerName={name || ''} />
+          <ContactForm trainerEmail={trainerEmail} trainerName={trainerName} />
         </div>
       </section>
     </PublicLayout>
