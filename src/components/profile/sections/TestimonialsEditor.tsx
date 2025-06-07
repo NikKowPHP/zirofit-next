@@ -31,7 +31,7 @@ const initialUpdateState: FormState = {
   error: null 
 };
 
-export function TestimonialsEditor({ initialTestimonials }: { initialTestimonials: Testimonial[] }) {
+export default function TestimonialsEditor({ initialTestimonials }: { initialTestimonials: Testimonial[] }) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
   const [editingTestimonialId, setEditingTestimonialId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
