@@ -1,6 +1,6 @@
 "use client";
 
-import { PrismaClient } from "@/generated/prisma"; // Corrected import
+import type { ClientMeasurement } from "@/generated/prisma"; // Import the data type
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -28,7 +28,7 @@ ChartJS.register(
 );
 
 interface ClientStatisticsProps {
-  measurements: PrismaClient["clientMeasurement"][]
+  measurements: ClientMeasurement[]
 }
 
 export default function ClientStatistics({ measurements }: ClientStatisticsProps) {

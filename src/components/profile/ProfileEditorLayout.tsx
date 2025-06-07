@@ -19,7 +19,7 @@ interface InitialProfileData {
     methodology: string | null;
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
-    services: Array<{id: string, title: string, description: string, createdAt: Date}>;
+    services: Array<{id: string, title: string, description: string, createdAt: Date, profileId: string, updatedAt: Date}>;
     // FIX: Expanded the Testimonial type to include all fields from the model
     testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date, updatedAt: Date, profileId: string}>;
     externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
@@ -43,7 +43,7 @@ interface ProfileEditorLayoutProps {
       methodology: string | null;
       bannerImagePath: string | null;
       profilePhotoPath: string | null;
-      services: { id: string; title: string; description: string; createdAt: Date; }[];
+      services: { id: string; title: string; description: string; createdAt: Date; profileId: string; updatedAt: Date }[];
       // FIX: Expanded the Testimonial type to include all fields from the model
       testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; updatedAt: Date, profileId: string }[];
       externalLinks: { id: string; label: string; linkUrl: string; createdAt: Date; }[];

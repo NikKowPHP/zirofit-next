@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, Suspense } from 'react';
-import type { Client, ClientSessionLog } from '../../generated/prisma';
-import { PrismaClient } from "@/generated/prisma"; // Corrected import
+import type { Client, ClientSessionLog, ClientMeasurement, ClientProgressPhoto } from '../../generated/prisma';
 import ManageClientMeasurements from './modules/ManageClientMeasurements';
 import ManageClientProgressPhotos from './modules/ManageClientProgressPhotos';
 import ManageClientSessionLogs from './modules/ManageClientSessionLogs';
@@ -10,8 +9,8 @@ import ClientStatisticsComponent from './modules/ClientStatistics';
 
 // Prop type including relations
 type ClientWithDetails = Client & {
-  measurements: PrismaClient["clientMeasurement"][];
-  progressPhotos: PrismaClient["clientProgressPhoto"][];
+  measurements: ClientMeasurement[];
+  progressPhotos: ClientProgressPhoto[];
   sessionLogs: ClientSessionLog[];
 };
 
@@ -19,7 +18,7 @@ interface ClientDetailViewProps {
   client: ClientWithDetails;
 }
 
-const ClientStatistics = ({ measurements }: { measurements: PrismaClient["clientMeasurement"][] }) => <ClientStatisticsComponent measurements={measurements} />;
+const ClientStatistics = ({ measurements }: { measurements: ClientMeasurement[] }) => <ClientStatisticsComponent measurements={measurements} />;
 
 const tabs = [
   { name: 'Statistics', id: 'stats' },

@@ -12,8 +12,8 @@ interface ClientFormProps {
   initialData: {
     id: string;
     name: string;
-    email: string;
-    phone: string;
+    email: string | null;
+    phone: string | null;
     status: string;
   } | null;
   action: (prevState: any, formData: FormData) => Promise<any>;
@@ -56,7 +56,6 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
           id="email"
           name="email"
           defaultValue={initialData?.email || ""}
-          required
         />
         {state?.errors?.email && (
           <p className="text-red-500 text-sm">{state?.errors?.email[0]}</p>
@@ -69,7 +68,6 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
           id="phone"
           name="phone"
           defaultValue={initialData?.phone || ""}
-          required
         />
         {state?.errors?.phone && (
           <p className="text-red-500 text-sm">{state?.errors?.phone[0]}</p>

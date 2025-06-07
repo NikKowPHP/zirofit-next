@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { addService } from '@/app/profile/actions';
+import type { Service } from '@/generated/prisma';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
@@ -11,13 +12,6 @@ import { z } from 'zod';
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { deleteService, updateService } from '@/app/profile/actions';
 
-
-interface Service {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: Date;
-}
 
 interface ServicesEditorProps {
   initialServices: Service[];
@@ -44,8 +38,14 @@ function AddServiceButton() {
 }
 
 export default function ServicesEditor({ initialServices }: ServicesEditorProps) {
-  const [addState, addFormAction] = useFormState(addService, initialAddState);
-  const [updateState, updateFormAction] = useFormState(updateService, initialUpdateState);
+  const [addState, addFormAction] = useFormState(
+    (state: ServiceFormState, formData: FormData) => addService(state, formData),
+    initialAddState
+  );
+  const [updateState, updateFormAction] = useFormState(
+    (state: UpdateServiceFormState, formData: FormData) => updateService(state, formData),
+    initialUpdateState
+  );
   const formRef = useRef<HTMLFormElement>(null);
   const [services, setServices] = useState<Service[]>(initialServices);
   

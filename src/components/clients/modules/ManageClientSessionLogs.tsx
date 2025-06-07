@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addSessionLog, updateSessionLog, deleteSessionLog } from "@/app/clients/actions";
-import { PrismaClient } from "@/generated/prisma"; // Corrected import
+import { PrismaClient, ClientSessionLog } from "@/generated/prisma"; // Corrected import
 import { revalidatePath } from "next/cache";
 
 interface ManageClientSessionLogsProps {
   clientId: string;
-  initialSessionLogs: PrismaClient["clientSessionLog"][];
+  initialSessionLogs: ClientSessionLog[];
 }
 
 interface ActionState {
@@ -21,11 +21,11 @@ interface ActionState {
   };
   message: string;
   success?: boolean;
-  sessionLog?: PrismaClient["clientSessionLog"];
+  sessionLog?: ClientSessionLog;
 }
 
 export default function ManageClientSessionLogs({ clientId, initialSessionLogs }: ManageClientSessionLogsProps) {
-  const [sessionLogs, setSessionLogs] = useState<PrismaClient["clientSessionLog"][]>(initialSessionLogs);
+  const [sessionLogs, setSessionLogs] = useState<ClientSessionLog[]>(initialSessionLogs);
   const initialActionState: ActionState = { message: "" };
 
   const addSessionLogActionWrapper = async (state: ActionState, formData: FormData): Promise<ActionState> => {
