@@ -190,3 +190,66 @@ export async function updatePhilosophy(prevState: TextContentFormState | undefin
 export async function updateMethodology(prevState: TextContentFormState | undefined, formData: FormData): Promise<TextContentFormState> {
     return updateProfileTextField('methodology', formData.get('methodologyContent') as string | null, 'Methodology section updated successfully!');
 }
+
+export async function getCurrentUserProfileData() {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    // This should ideally not be reached if middleware protects the route
+    return null;
+  }
+
+  try {
+    const userWithProfile = await prisma.user.findUnique({
+      where: { supabaseAuthUserId: authUser.id },
+      select: {
+        name: true,
+        username: true,
+        email: true, // For display, not editing here
+        profile: {
+          select: {
+            id: true,
+            certifications: true,
+            location: true,
+            phone: true,
+            aboutMe: true,
+            philosophy: true,
+            methodology: true,
+            bannerImagePath: true,
+            profilePhotoPath: true,
+            // We'll add relations like services, benefits etc. later when their editors are built
+          },
+        },
+      },
+    });
+
+    if (!userWithProfile) {
+      return null; // Or throw an error / return specific state
+    }
+    
+    // Ensure profile is at least an empty object if it doesn't exist,
+    // or handle its creation if User exists but Profile doesn't.
+    // The upsert logic in updateCoreInfo handles profile creation.
+
+    return {
+      name: userWithProfile.name,
+      username: userWithProfile.username,
+      email: userWithProfile.email,
+      profile: userWithProfile.profile || { // Provide default structure if profile is null
+          id: '', // This might need a proper default or handling if profile is truly null
+          certifications: null,
+          location: null,
+          phone: null,
+          aboutMe: null,
+          philosophy: null,
+          methodology: null,
+          bannerImagePath: null,
+          profilePhotoPath: null,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
+    return null; // Or return an error state
+  }
+}

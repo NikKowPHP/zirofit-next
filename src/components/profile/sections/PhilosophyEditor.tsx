@@ -33,6 +33,7 @@ export default function PhilosophyEditor({ initialPhilosophy }: PhilosophyEditor
   const [state, formAction] = useFormState(updatePhilosophy, initialState);
   const [content, setContent] = useState(initialPhilosophy || '');
 
+  // Update content state if server action returns updatedContent
   useEffect(() => {
     if (state.success && typeof state.updatedContent === 'string') {
       setContent(state.updatedContent);

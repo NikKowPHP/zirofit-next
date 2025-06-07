@@ -33,6 +33,7 @@ export default function AboutMeEditor({ initialAboutMe }: AboutMeEditorProps) {
   const [state, formAction] = useFormState(updateAboutMe, initialState);
   const [content, setContent] = useState(initialAboutMe || '');
 
+  // Update content state if server action returns updatedContent
   useEffect(() => {
     if (state.success && typeof state.updatedContent === 'string') {
       setContent(state.updatedContent);

@@ -33,6 +33,7 @@ export default function MethodologyEditor({ initialMethodology }: MethodologyEdi
   const [state, formAction] = useFormState(updateMethodology, initialState);
   const [content, setContent] = useState(initialMethodology || '');
 
+  // Update content state if server action returns updatedContent
   useEffect(() => {
     if (state.success && typeof state.updatedContent === 'string') {
       setContent(state.updatedContent);
