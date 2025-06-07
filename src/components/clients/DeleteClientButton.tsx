@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteClient } from 'src/app/clients/actions';
+import { deleteClient } from '../../app/clients/actions';
 
 interface DeleteClientButtonProps {
   clientId: string;

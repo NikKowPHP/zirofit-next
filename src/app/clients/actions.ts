@@ -221,3 +221,27 @@ export async function deleteClient(clientId: string) {
     return { message: "Failed to delete client." };
   }
 }
+
+export async function getClientDetails(clientId: string) {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) throw new Error("User not authenticated.");
+
+  try {
+    const client = await prisma.client.findFirst({
+      where: {
+        id: clientId,
+        trainerId: authUser.id, // Authorization check
+      },
+      include: {
+        measurements: { orderBy: { measurementDate: 'desc' } },
+        progressPhotos: { orderBy: { photoDate: 'desc' } },
+        sessionLogs: { orderBy: { sessionDate: 'desc' } },
+      },
+    });
+    return client;
+  } catch (error) {
+    console.error("Failed to fetch client details:", error);
+    return null;
+  }
+}
