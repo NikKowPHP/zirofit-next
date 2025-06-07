@@ -408,6 +408,146 @@ export async function deleteMeasurement(prevState: any, measurementId: string) {
   }
 }
 
+const ProgressPhotoSchema = z.object({
+  clientId: z.string(),
+  trainerId: z.string(),
+  photoDate: z.string(),
+  caption: z.string().optional(),
+  photo: z.any(), // File type
+});
+
+export async function addProgressPhoto(prevState: any, formData: FormData) {
+  const validatedFields = ProgressPhotoSchema.safeParse({
+    clientId: formData.get('clientId'),
+    trainerId: formData.get('trainerId'),
+    photoDate: formData.get('photoDate'),
+    caption: formData.get('caption'),
+    photo: formData.get('photo'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Failed to add progress photo.',
+    };
+  }
+
+  const { clientId, trainerId, photoDate, caption, photo } = validatedFields.data;
+
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { message: "User not authenticated." };
+  }
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: {
+        id: clientId,
+        trainerId: authUser.id,
+      },
+    });
+
+    if (!client) {
+      return { message: "Client not found or unauthorized." };
+    }
+
+    const file = photo as File;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${clientId}-${Date.now()}.${fileExt}`;
+    const filePath = `client_progress_photos/${trainerId}/${clientId}/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('zirofit-storage')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error("Supabase upload error:", error);
+      return { message: "Failed to upload photo." };
+    }
+
+    const imageUrl = `https://supabasestorageurl/${filePath}`; // Replace with your Supabase URL
+
+    const progressPhoto = await prisma.clientProgressPhoto.create({
+      data: {
+        clientId,
+        trainerId,
+        photoDate: new Date(photoDate),
+        caption,
+        url: imageUrl,
+      },
+    });
+
+    revalidatePath(`/clients/${clientId}`);
+    return { success: true, progressPhoto };
+  } catch (error: any) {
+    console.error("Failed to create progress photo:", error);
+    return { message: "Failed to create progress photo." };
+  }
+}
+
+export async function deleteProgressPhoto(photoId: string) {
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return { message: "User not authenticated." };
+  }
+
+  try {
+    const photo = await prisma.clientProgressPhoto.findUnique({
+      where: {
+        id: photoId,
+      },
+    });
+
+    if (!photo) {
+      return { message: "Photo not found." };
+    }
+
+    const client = await prisma.client.findUnique({
+      where: {
+        id: photo.clientId,
+        trainerId: authUser.id,
+      },
+    });
+
+    if (!client) {
+      return { message: "Client not found or unauthorized." };
+    }
+
+    // Extract file path from URL
+    const filePath = photo.url.replace('https://supabasestorageurl/', ''); // Replace with your Supabase URL
+
+    // Delete from Supabase storage
+    const { error: storageError } = await supabase.storage
+      .from('zirofit-storage')
+      .remove([filePath]);
+
+    if (storageError) {
+      console.error("Supabase storage delete error:", storageError);
+      return { message: "Failed to delete photo from storage." };
+    }
+
+    // Delete from Prisma
+    await prisma.clientProgressPhoto.delete({
+      where: {
+        id: photoId,
+      },
+    });
+
+    revalidatePath(`/clients/${client.id}`);
+    return { success: true, message: "Progress photo deleted." };
+  } catch (error: any) {
+    console.error("Failed to delete progress photo:", error);
+    return { message: "Failed to delete progress photo." };
+  }
+}
+
 export async function getClientDetails(clientId: string) {
   const supabase = createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
