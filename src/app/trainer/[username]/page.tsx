@@ -3,6 +3,7 @@ import PublicLayout from '@/components/layouts/PublicLayout';
 import { getTrainerProfileByUsername } from '@/lib/api/trainers';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import { BannerImage, ProfileImage, TransformationImage } from '@/components/ui/ImageComponents';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 import ContactForm from '@/components/trainer/ContactForm';
 
@@ -94,24 +95,24 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
     <PublicLayout>
       {/* Hero Section */}
       <section id="hero-section" className="relative bg-gray-800 text-white">
-        <Image
+        <BannerImage
           src={profile.bannerImagePath || DEFAULT_BANNER_IMAGE}
           alt={`${name}'s banner`}
           layout="fill"
           objectFit="cover"
           quality={85}
           className="absolute inset-0 opacity-40"
-          onError={(e) => (e.currentTarget.src = DEFAULT_BANNER_IMAGE)}
+          defaultSrc={DEFAULT_BANNER_IMAGE}
         />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
           <div className="mb-8">
-            <Image
+            <ProfileImage
               src={profile.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
               alt={`${name}'s profile photo`}
               width={160}
               height={160}
               className="w-40 h-40 rounded-full object-cover mx-auto border-4 border-white shadow-lg"
-              onError={(e) => (e.currentTarget.src = DEFAULT_PROFILE_IMAGE)}
+              defaultSrc={DEFAULT_PROFILE_IMAGE}
             />
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3">
@@ -207,13 +208,12 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {profile.transformationPhotos.map((photo: TransformationPhoto) => (
                 <div key={photo.id} className="rounded-lg overflow-hidden shadow-lg">
-                  <Image
+                  <TransformationImage
                     src={photo.imagePath} // This will be a Supabase Storage URL
                     alt={photo.caption || 'Transformation photo'}
                     width={400}
                     height={300}
                     className="w-full h-auto object-cover"
-                    onError={(e) => (e.currentTarget.style.display = 'none')} // Hide if image fails to load
                   />
                   {photo.caption && (
                     <p className="p-3 text-sm text-gray-600 bg-white text-center">{photo.caption}</p>
