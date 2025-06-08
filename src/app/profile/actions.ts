@@ -1,4 +1,4 @@
-// src/app/profile/actions.ts
+
 "use server";
 
 import { revalidatePath } from 'next/cache';
@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit } from '@generated/prisma';
+import type { AuthUser } from '@supabase/supabase-js';
 
 
 // Helper function to get user and profile, creating profile if it doesn't exist.
@@ -35,7 +36,7 @@ async function getUserAndProfile() {
     });
   }
 
-  return { user, profile };
+  return { user, profile, authUser }; // Return authUser as well
 }
 
 // 1. Get current user profile data
@@ -82,7 +83,7 @@ export async function getCurrentUserProfileData() {
     if (!userWithProfile) return null;
 
     if (userWithProfile.profile && userWithProfile.profile.transformationPhotos) {
-        const supabaseStorage = await createClient();
+        const supabaseStorage = await createClient(); // Re-use the existing client or create a new one as needed
         userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map(photo => {
             const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit').getPublicUrl(photo.imagePath);
             return { ...photo, publicUrl };
@@ -174,7 +175,7 @@ export async function updateMethodology(prevState: TextContentFormState | undefi
 // 4. Branding Actions
 interface BrandingFormState { message?: string | null; error?: string | null; success?: boolean; }
 export async function updateBrandingImages(prevState: BrandingFormState | undefined, formData: FormData): Promise<BrandingFormState> {
-    const { user, profile } = await getUserAndProfile();
+    const { user, profile, authUser } = await getUserAndProfile(); // authUser is the Supabase authenticated user
     const bannerImage = formData.get('bannerImage') as File;
     const profilePhoto = formData.get('profilePhoto') as File;
 
@@ -183,14 +184,21 @@ export async function updateBrandingImages(prevState: BrandingFormState | undefi
 
     try {
       if (bannerImage?.size > 0) {
-        const path = `profile-assets/${user.id}/banner-${uuidv4()}`;
+        // Use authUser.id (Supabase Auth UUID) for the path
+        const path = `profile-assets/${authUser.id}/banner-${uuidv4()}`;
+
+        console.log(`[AUTHN DEBUG] Uploading to path: ${path}`);
+console.log(`[AUTHN DEBUG] authUser.id for path: ${authUser.id}`);
+
+        
         const { error } = await supabaseStorage.storage.from('zirofit').upload(path, bannerImage, { upsert: true });
         if (error) throw new Error(`Banner upload failed: ${error.message}`);
         updates.bannerImagePath = path;
       }
 
       if (profilePhoto?.size > 0) {
-        const path = `profile-assets/${user.id}/profile-photo-${uuidv4()}`;
+        // Use authUser.id (Supabase Auth UUID) for the path
+        const path = `profile-assets/${authUser.id}/profile-photo-${uuidv4()}`;
         const { error } = await supabaseStorage.storage.from('zirofit').upload(path, profilePhoto, { upsert: true });
         if (error) throw new Error(`Photo upload failed: ${error.message}`);
         updates.profilePhotoPath = path;
@@ -320,12 +328,13 @@ export async function deleteExternalLink(linkId: string): Promise<{ success: boo
 const TransformationPhotoSchema = z.object({ caption: z.string().max(255).optional(), photoFile: z.any().refine((file) => file?.size > 0, "Photo file is required.").refine((file) => file?.size <= 2 * 1024 * 1024, `Max file size is 2MB.`) });
 interface TransformationPhotoFormState { message?: string | null; error?: string | null; errors?: z.ZodIssue[]; success?: boolean; newPhoto?: TransformationPhoto & { publicUrl: string }; deletedId?: string; }
 export async function addTransformationPhoto(prevState: TransformationPhotoFormState | undefined, formData: FormData): Promise<TransformationPhotoFormState> {
-    const { user, profile } = await getUserAndProfile();
+    const { user, profile, authUser } = await getUserAndProfile(); // Use authUser for path consistency if RLS is based on auth.uid()
     const validated = TransformationPhotoSchema.safeParse({ caption: formData.get('caption'), photoFile: formData.get('photoFile') });
     if (!validated.success) return { errors: validated.error.issues, error: 'Validation failed.' };
 
     const { caption, photoFile } = validated.data;
-    const filePath = `transformation-photos/${user.id}/${uuidv4()}`;
+    // Using authUser.id for the path, similar to branding and client progress photos.
+    const filePath = `transformation-photos/${authUser.id}/${uuidv4()}`;
     const supabaseStorage = await createClient();
     const { error: uploadError } = await supabaseStorage.storage.from('zirofit').upload(filePath, photoFile);
     if (uploadError) return { error: `Storage error: ${uploadError.message}` };

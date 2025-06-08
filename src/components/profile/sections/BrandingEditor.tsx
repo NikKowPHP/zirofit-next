@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 import { updateBrandingImages } from '@/app/profile/actions';
 import { Input, Label, Button } from '@/components/ui';
 import Image from 'next/image';
@@ -35,7 +36,7 @@ function SubmitButton() {
 }
 
 export default function BrandingEditor({ initialData }: BrandingEditorProps) {
-  const [state, formAction] = useFormState(updateBrandingImages, initialFormState);
+  const [state, formAction] = useActionState(updateBrandingImages, initialFormState);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 

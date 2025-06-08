@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '@/app/profile/actions';
 import { Input, Label, Button, Textarea } from '@/components/ui';
 import type { Benefit } from '@generated/prisma';
@@ -32,7 +33,7 @@ function SubmitButton() {
 export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps) {
   const [benefits, setBenefits] = useState<Benefit[]>(initialBenefits);
   const [editingBenefitId, setEditingBenefitId] = useState<string | null>(null);
-  const [formState, formAction] = useFormState(addBenefit, initialFormState);
+  const [formState, formAction] = useActionState(addBenefit, initialFormState);
 
   useEffect(() => {
     const sortable = new SortableJS(document.getElementById('benefits-list') as HTMLElement, {
