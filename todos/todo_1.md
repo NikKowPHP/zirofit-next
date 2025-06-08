@@ -317,7 +317,7 @@ Specific Instructions:
       }
 
       const { name, email, password } = validatedFields.data;
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -548,7 +548,7 @@ Specific Instructions:
       }
 
       const { email, password } = validatedFields.data;
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -669,7 +669,7 @@ Specific Instructions:
     // ... (keep existing registerUser, loginUser and imports)
 
     export async function logoutUser() { // No prevState or formData needed for simple logout
-      const supabase = createClient();
+      const supabase = await createClient();
       const { error } = await supabase.auth.signOut();
 
       if (error) {
@@ -725,7 +725,7 @@ Specific Instructions:
     import { redirect } from "next/navigation";
 
     export default async function DashboardPage() {
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const { data: { user } } = await supabase.auth.getUser();
 

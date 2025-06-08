@@ -92,7 +92,7 @@ Specific Instructions:
     
     // Add External Link
     export async function addExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 
@@ -123,7 +123,7 @@ Specific Instructions:
 
     // Update External Link
     export async function updateExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 
@@ -159,7 +159,7 @@ Specific Instructions:
 
     // Delete External Link
     export async function deleteExternalLink(linkId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 

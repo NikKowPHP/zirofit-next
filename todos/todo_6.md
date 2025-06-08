@@ -47,7 +47,7 @@ Specific Instructions:
     }
 
     export async function addTestimonial(prevState: TestimonialFormState | undefined, formData: FormData): Promise<TestimonialFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
@@ -237,7 +237,7 @@ Specific Instructions:
     // ... (addTestimonial and other actions) ...
 
     export async function deleteTestimonial(testimonialId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 
@@ -261,7 +261,7 @@ Specific Instructions:
     }
 
     export async function updateTestimonial(prevState: UpdateTestimonialFormState | undefined, formData: FormData): Promise<UpdateTestimonialFormState> {
-        const supabase = createClient();
+        const supabase = await createClient();
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (!authUser) return { error: "User not authenticated.", success: false };
 

@@ -25,7 +25,7 @@ export async function addSessionLog(prevState: any, formData: FormData) {
   }
 
   const { clientId, ...data } = validatedFields.data;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser || !(await authorizeClientAccess(clientId, authUser.id))) {
     return { message: "Unauthorized." };
@@ -55,7 +55,7 @@ export async function updateSessionLog(prevState: any, formData: FormData) {
   }
 
   const { sessionLogId, clientId, ...data } = validatedFields.data;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser || !(await authorizeClientAccess(clientId, authUser.id))) {
     return { message: "Unauthorized." };
@@ -79,7 +79,7 @@ export async function updateSessionLog(prevState: any, formData: FormData) {
 }
 
 export async function deleteSessionLog(sessionLogId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 

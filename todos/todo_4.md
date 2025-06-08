@@ -141,7 +141,7 @@ Specific Instructions:
     }: {
       children: React.ReactNode;
     }) {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
       return (
@@ -285,7 +285,7 @@ Specific Instructions:
     }
 
     export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, formData: FormData): Promise<CoreInfoFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
@@ -659,7 +659,7 @@ Specific Instructions:
         content: string | null,
         successMessage: string
     ): Promise<TextContentFormState> {
-        const supabase = createClient();
+        const supabase = await createClient();
         const { data: { user: authUser } } = await supabase.auth.getUser();
 
         if (!authUser) {

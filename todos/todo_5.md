@@ -17,7 +17,7 @@ Specific Instructions:
     // ... (existing actions and imports)
 
     export async function getCurrentUserProfileData() {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
@@ -395,7 +395,7 @@ Specific Instructions:
     }
 
     export async function addService(prevState: ServiceFormState | undefined, formData: FormData): Promise<ServiceFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
@@ -589,7 +589,7 @@ Specific Instructions:
     }
 
     export async function deleteService(serviceId: string): Promise<DeleteFormState> { // Can take ID directly if not using form
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
@@ -848,7 +848,7 @@ Specific Instructions:
     }
 
     export async function updateService(prevState: UpdateServiceFormState | undefined, formData: FormData): Promise<UpdateServiceFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {

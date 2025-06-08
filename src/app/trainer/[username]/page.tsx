@@ -71,7 +71,7 @@ interface TrainerProfilePageProps {
 }
 
 export default async function TrainerProfilePage({ params }: TrainerProfilePageProps) {
-  const { username } = params;
+  const { username } = await params;
   const userWithProfile: UserWithProfile | null = await getTrainerProfileByUsername(username);
 
   if (!userWithProfile || !userWithProfile.profile) {

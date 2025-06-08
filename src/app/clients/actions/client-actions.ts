@@ -18,7 +18,7 @@ const UpdateFormSchema = FormSchema.extend({
 });
 
 export async function getTrainerClients() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) throw new Error("User not authenticated.");
 
@@ -34,7 +34,7 @@ export async function getTrainerClients() {
 }
 
 export async function addClient(prevState: any, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
   
@@ -58,7 +58,7 @@ export async function addClient(prevState: any, formData: FormData) {
 }
 
 export async function getClientById(clientId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) throw new Error("User not authenticated.");
 
@@ -73,7 +73,7 @@ export async function getClientById(clientId: string) {
 }
 
 export async function updateClient(prevState: any, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
   
@@ -100,7 +100,7 @@ export async function updateClient(prevState: any, formData: FormData) {
 }
 
 export async function deleteClient(clientId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 
@@ -119,7 +119,7 @@ export async function deleteClient(clientId: string) {
 }
 
 export async function getClientDetails(clientId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) throw new Error("User not authenticated.");
 

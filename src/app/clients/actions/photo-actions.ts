@@ -20,7 +20,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
   }
 
   const { clientId, photoDate, caption, photo } = validatedFields.data;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 
@@ -51,7 +51,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
 }
 
 export async function deleteProgressPhoto(prevState: any, photoId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 
