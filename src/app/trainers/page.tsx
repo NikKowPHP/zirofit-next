@@ -1,8 +1,8 @@
 // src/app/trainers/page.tsx
-import PublicLayout from '@/components/layouts/PublicLayout';
-import { getPublishedTrainers } from '@/lib/api/trainers';
-import Image from 'next/image';
-import Link from 'next/link';
+import PublicLayout from "@/components/layouts/PublicLayout";
+import { getPublishedTrainers } from "@/lib/api/trainers";
+import Image from "next/image";
+import Link from "next/link";
 
 // Define the type for a trainer based on the getPublishedTrainers function's return type
 interface Trainer {
@@ -16,7 +16,7 @@ interface Trainer {
 }
 
 // Placeholder for default profile image if none is set
-const DEFAULT_PROFILE_IMAGE = '/next.svg'; // Replace with an actual placeholder image later
+const DEFAULT_PROFILE_IMAGE = "/next.svg"; // Replace with an actual placeholder image later
 
 export default async function TrainersPage({
   searchParams,
@@ -32,14 +32,16 @@ export default async function TrainersPage({
       <PublicLayout>
         <div className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-bold mb-6 text-center">Find a Trainer</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">
+              Find a Trainer
+            </h1>
             <p className="text-red-500 text-center">{data.error}</p>
           </div>
         </div>
       </PublicLayout>
     );
   }
-  
+
   const { trainers, totalTrainers, totalPages } = data;
 
   return (
@@ -60,12 +62,17 @@ export default async function TrainersPage({
                   >
                     <div className="flex-shrink-0 mb-4 text-center">
                       <Image
-                        src={trainer.profile?.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
+                        src={
+                          trainer.profile?.profilePhotoPath ||
+                          DEFAULT_PROFILE_IMAGE
+                        }
                         alt={`${trainer.name}'s profile photo`}
                         width={128}
                         height={128}
                         className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-indigo-100"
-                        onError={(e) => (e.currentTarget.src = DEFAULT_PROFILE_IMAGE)} // Fallback for broken image links
+                        onError={(e) =>
+                          (e.currentTarget.src = DEFAULT_PROFILE_IMAGE)
+                        } // Fallback for broken image links
                       />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-1 text-center">
@@ -73,9 +80,22 @@ export default async function TrainersPage({
                     </h3>
                     {trainer.profile?.location && (
                       <p className="text-sm text-gray-500 mb-4 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="inline-block h-4 w-4 mr-1 text-gray-400">
-                          <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001zm.612-1.426a.75.75 0 01-.001-1.061C10.294 16.126 10 15.837 10 15.5c0-.338.293-.626.31-.647a.75.75 0 111.04 1.083C11.293 16.063 11 16.427 11 16.75c0 .322.293.626.309.647a.75.75 0 01-1.04 1.083zM10 2a.75.75 0 01.75.75v.008c0 .005 0 .01 0 .016l.002.005a.75.75 0 01-1.502-.026l-.002-.005A.75.75 0 0110 2z" clipRule="evenodd" />
-                          <path fillRule="evenodd" d="M10 1a9 9 0 100 18 9 9 0 000-18zM2.407 9.51a.75.75 0 010 1.058 7.5 7.5 0 0010.246 8.332.75.75 0 11.01-1.06 5.996 5.996 0 01-8.18-6.696.75.75 0 01-1.018-.028A7.46 7.46 0 002.5 10c0-.026.002-.052.005-.078a.75.75 0 01-.098-.412z" clipRule="evenodd" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="inline-block h-4 w-4 mr-1 text-gray-400"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001zm.612-1.426a.75.75 0 01-.001-1.061C10.294 16.126 10 15.837 10 15.5c0-.338.293-.626.31-.647a.75.75 0 111.04 1.083C11.293 16.063 11 16.427 11 16.75c0 .322.293.626.309.647a.75.75 0 01-1.04 1.083zM10 2a.75.75 0 01.75.75v.008c0 .005 0 .01 0 .016l.002.005a.75.75 0 01-1.502-.026l-.002-.005A.75.75 0 0110 2z"
+                            clipRule="evenodd"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            d="M10 1a9 9 0 100 18 9 9 0 000-18zM2.407 9.51a.75.75 0 010 1.058 7.5 7.5 0 0010.246 8.332.75.75 0 11.01-1.06 5.996 5.996 0 01-8.18-6.696.75.75 0 01-1.018-.028A7.46 7.46 0 002.5 10c0-.026.002-.052.005-.078a.75.75 0 01-.098-.412z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                         {trainer.profile.location}
                       </p>
@@ -95,18 +115,33 @@ export default async function TrainersPage({
               {totalPages > 1 && (
                 <div className="mt-12 flex justify-center space-x-2">
                   {currentPage > 1 && (
-                    <Link href={`/trainers?page=${currentPage - 1}`} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
+                    <Link
+                      href={`/trainers?page=${currentPage - 1}`}
+                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                    >
                       Previous
                     </Link>
                   )}
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <Link key={page} href={`/trainers?page=${page}`}
-                          className={`px-4 py-2 border rounded-md text-sm font-medium ${page === currentPage ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-300 hover:bg-gray-50'}`}>
-                      {page}
-                    </Link>
-                  ))}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <Link
+                        key={page}
+                        href={`/trainers?page=${page}`}
+                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                          page === currentPage
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "border-gray-300 hover:bg-gray-50"
+                        }`}
+                      >
+                        {page}
+                      </Link>
+                    )
+                  )}
                   {currentPage < totalPages && (
-                    <Link href={`/trainers?page=${currentPage + 1}`} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
+                    <Link
+                      href={`/trainers?page=${currentPage + 1}`}
+                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                    >
                       Next
                     </Link>
                   )}
@@ -114,7 +149,9 @@ export default async function TrainersPage({
               )}
             </>
           ) : (
-            <p className="text-gray-500 text-center italic">No trainers found at the moment. Check back soon!</p>
+            <p className="text-gray-500 text-center italic">
+              No trainers found at the moment. Check back soon!
+            </p>
           )}
         </div>
       </div>

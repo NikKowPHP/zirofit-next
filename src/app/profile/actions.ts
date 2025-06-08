@@ -6,12 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit } from '@/generated/prisma';
+import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit } from '@generated/prisma';
 
 
 // Helper function to get user and profile, creating profile if it doesn't exist.
 async function getUserAndProfile() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) {
     throw new Error("User not authenticated.");
@@ -41,7 +41,7 @@ async function getUserAndProfile() {
 // 1. Get current user profile data
 export async function getCurrentUserProfileData() {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) return null;
 
@@ -82,7 +82,7 @@ export async function getCurrentUserProfileData() {
     if (!userWithProfile) return null;
 
     if (userWithProfile.profile && userWithProfile.profile.transformationPhotos) {
-        const supabaseStorage = createClient();
+        const supabaseStorage = await createClient();
         userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map(photo => {
             const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit-storage').getPublicUrl(photo.imagePath);
             return { ...photo, publicUrl };
@@ -128,7 +128,7 @@ export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, f
     if (username !== user.username) {
       const existingUser = await prisma.user.findUnique({ where: { username } });
       if (existingUser) {
-        return { error: "Username is already taken.", errors: [{ path: ['username'], message: 'Username is already taken.' }] };
+        return { error: "Username is already taken.", errors: [{ code: "custom", path: ['username'], message: 'Username is already taken.' }] };
       }
     }
 
@@ -145,7 +145,7 @@ export async function updateCoreInfo(prevState: CoreInfoFormState | undefined, f
     };
   } catch (e: any) {
     if (e.code === 'P2002' && e.meta?.target.includes('username')) {
-      return { error: "Username is already taken.", errors: [{ path: ['username'], message: 'Username is already taken.' }] };
+      return { error: "Username is already taken.", errors: [{ code: "custom", path: ['username'], message: 'Username is already taken.' }] };
     }
     return { error: "Failed to update core info: " + e.message };
   }
@@ -179,7 +179,7 @@ export async function updateBrandingImages(prevState: BrandingFormState | undefi
     const profilePhoto = formData.get('profilePhoto') as File;
 
     const updates: { bannerImagePath?: string; profilePhotoPath?: string } = {};
-    const supabaseStorage = createClient();
+    const supabaseStorage = await createClient();
 
     try {
       if (bannerImage?.size > 0) {
@@ -326,7 +326,7 @@ export async function addTransformationPhoto(prevState: TransformationPhotoFormS
 
     const { caption, photoFile } = validated.data;
     const filePath = `transformation-photos/${user.id}/${uuidv4()}`;
-    const supabaseStorage = createClient();
+    const supabaseStorage = await createClient();
     const { error: uploadError } = await supabaseStorage.storage.from('zirofit-storage').upload(filePath, photoFile);
     if (uploadError) return { error: `Storage error: ${uploadError.message}` };
 
@@ -344,7 +344,8 @@ export async function deleteTransformationPhoto(photoId: string): Promise<{ succ
     const { profile } = await getUserAndProfile();
     try {
         const photo = await prisma.transformationPhoto.findFirstOrThrow({ where: { id: photoId, profileId: profile.id } });
-        await createClient().storage.from('zirofit-storage').remove([photo.imagePath]);
+        const supabase = await createClient();
+        await supabase.storage.from('zirofit-storage').remove([photo.imagePath]);
         await prisma.transformationPhoto.delete({ where: { id: photoId } });
         revalidatePath('/profile/edit');
         return { success: true, deletedId: photoId };

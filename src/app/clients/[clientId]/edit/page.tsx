@@ -2,12 +2,17 @@ import ClientForm from '@/components/clients/ClientForm';
 import { getClientById, updateClient } from '@/app/clients/actions';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
-interface Props {
+export const metadata: Metadata = {
+  title: 'Edit Client',
+};
+
+export default async function EditClientPage({
+  params: { clientId }
+}: {
   params: { clientId: string };
-}
-
-export default async function EditClientPage({ params: { clientId } }: Props) {
+}) {
   const client = await getClientById(clientId);
 
   if (!client) {
