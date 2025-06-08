@@ -75,7 +75,7 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
     
     await prisma.user.create({
       data: {
-        supabaseAuthUserId: authData.user.id,
+        id: authData.user.id, // Use Supabase Auth UUID as the primary key
         name,
         email,
         username, // Add username

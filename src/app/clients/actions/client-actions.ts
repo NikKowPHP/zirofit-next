@@ -37,6 +37,61 @@ export async function addClient(prevState: any, formData: FormData) {
   const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
+
+  // Ensure the authenticated user exists in the Prisma User table, or create/update it
+  let userInDb = await prisma.user.findUnique({ where: { id: authUser.id } });
+
+  if (!userInDb) {
+    // If user not found by ID, try finding by email
+    userInDb = await prisma.user.findUnique({ where: { email: authUser.email || '' } });
+
+    if (userInDb) {
+      // If user found by email but not by ID, update their ID to match Supabase auth ID
+      try {
+        userInDb = await prisma.user.update({
+          where: { id: userInDb.id },
+          data: { id: authUser.id },
+        });
+      } catch (dbError: any) {
+        console.error("Failed to update user ID in DB during client creation:", dbError);
+        return { message: "Failed to link trainer account. Please contact support." };
+      }
+    } else {
+      // If user doesn't exist in DB by ID or email, create them.
+      try {
+        const name = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'New User';
+        const email = authUser.email || '';
+
+        let baseSlug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        if (!baseSlug) {
+            const emailParts = email.split('@');
+            baseSlug = emailParts[0].toLowerCase().replace(/[^a-z0-9-]/g, '') || Math.random().toString(36).substring(2, 10);
+        }
+        let username = baseSlug;
+        let count = 1;
+        while (await prisma.user.findUnique({ where: { username } })) {
+            username = `${baseSlug}-${count}`;
+            count++;
+        }
+
+        userInDb = await prisma.user.create({
+          data: {
+            id: authUser.id,
+            name: name,
+            email: email,
+            username: username,
+            role: "trainer",
+          },
+        });
+      } catch (dbError: any) {
+        console.error("Failed to create user in DB during client creation:", dbError);
+        if (dbError.code === 'P2002' && dbError.meta?.target?.includes('email')) {
+          return { message: "Your trainer account email already exists in the system. Please use a different email or contact support." };
+        }
+        return { message: "Failed to ensure trainer account exists in database." };
+      }
+    }
+  }
   
   const validatedFields = FormSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!validatedFields.success) {

@@ -19,7 +19,7 @@ async function getUserAndProfile() {
   }
 
   const user = await prisma.user.findUnique({
-    where: { supabaseAuthUserId: authUser.id },
+    where: { id: authUser.id },
   });
 
   if (!user) {
@@ -47,7 +47,7 @@ export async function getCurrentUserProfileData() {
     if (!authUser) return null;
 
     let userWithProfile = await prisma.user.findUnique({
-      where: { supabaseAuthUserId: authUser.id },
+      where: { id: authUser.id },
       include: {
         profile: {
           include: {
@@ -65,7 +65,7 @@ export async function getCurrentUserProfileData() {
         await prisma.profile.create({ data: { userId: userWithProfile.id } });
         // Re-fetch to get the new profile and its relations (which will be empty)
         userWithProfile = await prisma.user.findUnique({
-            where: { supabaseAuthUserId: authUser.id },
+            where: { id: authUser.id },
             include: {
               profile: {
                 include: {

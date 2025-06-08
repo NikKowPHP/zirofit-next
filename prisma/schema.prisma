@@ -15,8 +15,7 @@ datasource db {
 }
 
 model User {
-  id                 String    @id @default(cuid())
-  supabaseAuthUserId String?   @unique // Stores the UUID from Supabase Auth. Make nullable if user records can exist before linking.
+  id                 String    @id @unique // Use Supabase Auth UUID as the primary key
   name               String
   email              String    @unique
   username           String?   @unique // Will be used for public profile URLs
