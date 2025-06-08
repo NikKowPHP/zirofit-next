@@ -3,20 +3,20 @@ import PublicLayout from '@/components/layouts/PublicLayout';
 import { getTrainerProfileByUsername } from '@/lib/api/trainers';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { PhoneIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { MapPinIcon } from '@heroicons/react/24/outline';
 import ContactForm from '@/components/trainer/ContactForm';
 
 // Define interfaces for the data structure
 interface Benefit {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
 }
 
 interface Service {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
 }
 
 interface TransformationPhoto {
@@ -27,7 +27,7 @@ interface TransformationPhoto {
 
 interface Testimonial {
   id: string;
-  testimonialText: string;
+  testimonialText: string | null;
   clientName: string;
 }
 
@@ -233,7 +233,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
             <div className="space-y-8">
               {profile.testimonials.map((testimonial: Testimonial) => (
                 <blockquote key={testimonial.id} className="p-6 bg-gray-50 rounded-lg shadow">
-                  <p className="text-gray-600 italic mb-4">"{testimonial.testimonialText}"</p>
+                  <p className="text-gray-600 italic mb-4">&ldquo;{testimonial.testimonialText}&rdquo;</p>
                   <footer className="text-right font-semibold text-gray-700">- {testimonial.clientName}</footer>
                 </blockquote>
               ))}
