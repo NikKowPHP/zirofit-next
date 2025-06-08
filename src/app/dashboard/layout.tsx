@@ -1,13 +1,13 @@
 // src/app/dashboard/layout.tsx
 import TrainerDashboardLayout from '../../components/layouts/TrainerDashboardLayout';
-import { createClient } from '../../lib/supabase/server'; // For fetching user session
+import { createClient } from '../../lib/supabase/server';
 
 export default async function DashboardSectionLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   return (

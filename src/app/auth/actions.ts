@@ -5,7 +5,6 @@ import { createClient } from "../../lib/supabase/server";
 import { prisma } from "../../lib/prisma";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { revalidatePath } from "next/cache"; // For later use if needed
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -41,7 +40,7 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
   }
 
   const { name, email, password } = validatedFields.data;
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
@@ -84,11 +83,12 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
         // emailVerifiedAt: authData.user.email_confirmed_at ? new Date(authData.user.email_confirmed_at) : null, // If email confirmation is set up
       },
     });
-  } catch (dbError: any) {
+  } catch (dbError: unknown) { // eslint-disable-line @typescript-eslint/no-explicit-any
     console.error("Prisma DB Error:", dbError);
     // Potentially delete the Supabase auth user if Prisma creation fails (for consistency)
     // await supabase.auth.admin.deleteUser(authData.user.id); // Requires admin privileges
-    return { error: "Failed to save user details to database. " + (dbError.message || ""), success: false };
+    const errorMessage = dbError instanceof Error ? dbError.message : "Unknown database error";
+    return { error: "Failed to save user details to database. " + errorMessage, success: false };
   }
 
   // For now, redirect to login. Later, might redirect to a "check your email" page if confirmation is enabled.
@@ -129,7 +129,7 @@ export async function loginUser(prevState: LoginState | undefined, formData: For
   }
 
   const { email, password } = validatedFields.data;
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -147,7 +147,7 @@ export async function loginUser(prevState: LoginState | undefined, formData: For
 }
 
 export async function logoutUser() { // No prevState or formData needed for simple logout
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
 
   if (error) {

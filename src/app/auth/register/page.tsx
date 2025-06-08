@@ -1,10 +1,10 @@
 // src/app/auth/register/page.tsx
 "use client";
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 import { registerUser } from '../actions';
-import PublicLayout from '../../../components/layouts/PublicLayout'; // Import
-import { useEffect } from 'react';
+import PublicLayout from '../../../components/layouts/PublicLayout';
 
 interface FormState {
   message: string | null;
@@ -39,7 +39,7 @@ function SubmitButton() {
 }
 
 export default function RegisterPage() {
-  const [state, formAction] = useFormState(registerUser, initialState);
+  const [state, formAction] = useActionState(registerUser, initialState);
   
   // useEffect(() => { // For client-side redirect or message handling if not using server redirect
   //   if (state?.success && state.message) {
@@ -67,7 +67,7 @@ export default function RegisterPage() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
               />
-              {state?.errors?.name && state.errors.name.map((err) => (
+              {state?.errors?.name && state.errors.name.map((err: string) => (
                 <p key={err} className="text-red-500 text-xs mt-1">{err}</p>
               ))}
             </div>
@@ -81,7 +81,7 @@ export default function RegisterPage() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
               />
-              {state?.errors?.email && state.errors.email.map((err) => (
+              {state?.errors?.email && state.errors.email.map((err: string) => (
                 <p key={err} className="text-red-500 text-xs mt-1">{err}</p>
               ))}
             </div>

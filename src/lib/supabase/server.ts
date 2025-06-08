@@ -1,43 +1,18 @@
-// src/lib/supabase/server.ts
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import { cookies } from "next/headers";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export async function createClient() {
   const cookieStore = await cookies();
-  const authToken = cookieStore.get('sb-auth-token')?.value;
 
-  const supabase = createSupabaseClient(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      auth: {
-        storageKey: 'sb-auth-token',
-        autoRefreshToken: true,
-        detectSessionInUrl: false,
-        persistSession: true,
-      },
-      global: {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-        },
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        }
       }
     }
   );
-
-  // Set up auth state change handling
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT') {
-      cookieStore.delete('sb-auth-token');
-    } else if (session?.access_token) {
-      cookieStore.set({
-        name: 'sb-auth-token',
-        value: session.access_token,
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-      });
-    }
-  });
-
-  return supabase;
 }
