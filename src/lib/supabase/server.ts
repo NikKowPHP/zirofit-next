@@ -1,37 +1,43 @@
 // src/lib/supabase/server.ts
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { cookies } from "next/headers";
 
 export async function createClient() {
   const cookieStore = await cookies();
+  const authToken = cookieStore.get('sb-auth-token')?.value;
 
-  return createServerClient(
+  const supabase = createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options });
-          } catch (_error) {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: "", ...options });
-          } catch (_error) {
-            // The `delete` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
-        },
+      auth: {
+        storageKey: 'sb-auth-token',
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+        persistSession: true,
       },
+      global: {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      }
     }
   );
+
+  // Set up auth state change handling
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      cookieStore.delete('sb-auth-token');
+    } else if (session?.access_token) {
+      cookieStore.set({
+        name: 'sb-auth-token',
+        value: session.access_token,
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+    }
+  });
+
+  return supabase;
 }
