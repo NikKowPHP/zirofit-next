@@ -42,7 +42,7 @@ Specific Instructions:
     }
 
     export async function updateBrandingImages(prevState: BrandingFormState | undefined, formData: FormData): Promise<BrandingFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 

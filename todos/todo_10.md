@@ -30,7 +30,7 @@ Specific Instructions:
     import { prisma } from '@/lib/prisma';
 
     export async function getTrainerClients() {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
@@ -66,7 +66,7 @@ Specific Instructions:
     }: {
       children: React.ReactNode;
     }) {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
       return (

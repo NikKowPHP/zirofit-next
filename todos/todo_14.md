@@ -160,7 +160,7 @@ import type { User, Profile, Service, Testimonial, TransformationPhoto, External
 
 // Helper function to get user and profile, creating profile if it doesn't exist.
 async function getUserAndProfile() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) {
     throw new Error("User not authenticated.");
@@ -190,7 +190,7 @@ async function getUserAndProfile() {
 // 1. Get current user profile data
 export async function getCurrentUserProfileData() {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) return null;
     

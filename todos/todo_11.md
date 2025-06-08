@@ -29,7 +29,7 @@ Specific Instructions:
     // ... (existing client actions)
 
     export async function getClientDetails(clientId: string) {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) throw new Error("User not authenticated.");
 

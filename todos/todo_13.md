@@ -43,7 +43,7 @@ async function authorizeClientAccess(clientId: string, authUserId: string): Prom
 }
 
 export async function addMeasurement(prevState: MeasurementFormState | undefined, formData: FormData): Promise<MeasurementFormState> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) return { error: "User not authenticated.", success: false };
 
@@ -85,7 +85,7 @@ export async function addMeasurement(prevState: MeasurementFormState | undefined
 }
 
 export async function updateMeasurement(prevState: MeasurementFormState | undefined, formData: FormData): Promise<MeasurementFormState> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) return { error: "User not authenticated.", success: false };
 
@@ -128,7 +128,7 @@ export async function updateMeasurement(prevState: MeasurementFormState | undefi
 }
 
 export async function deleteMeasurement(measurementId: string): Promise<{ success: boolean; message?: string; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { error: "User not authenticated.", success: false };
 

@@ -121,7 +121,7 @@ Specific Instructions:
     }
 
     export async function addTransformationPhoto(prevState: TransformationPhotoFormState | undefined, formData: FormData): Promise<TransformationPhotoFormState> {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 
@@ -344,7 +344,7 @@ Specific Instructions:
     // ... (addTransformationPhoto and other actions) ...
 
     export async function deleteTransformationPhoto(photoId: string): Promise<DeleteFormState> { // Reusing DeleteFormState
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return { error: "User not authenticated.", success: false };
 
