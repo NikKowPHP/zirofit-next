@@ -3,12 +3,13 @@ import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react"
 
 // Define the type for a trainer based on the getPublishedTrainers function's return type
 interface Trainer {
   id: string;
   name: string;
-  username: string;
+  username: string | null;
   profile: {
     location: string | null;
     profilePhotoPath: string | null;
@@ -42,7 +43,7 @@ export default async function TrainersPage({
     );
   }
 
-  const { trainers, totalTrainers, totalPages } = data;
+  const { trainers, totalPages } = data;
 
   return (
     <PublicLayout>
@@ -70,9 +71,6 @@ export default async function TrainersPage({
                         width={128}
                         height={128}
                         className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-indigo-100"
-                        onError={(e) =>
-                          (e.currentTarget.src = DEFAULT_PROFILE_IMAGE)
-                        } // Fallback for broken image links
                       />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-1 text-center">
