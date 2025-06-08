@@ -50,7 +50,7 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
   };
 
   const getPublicUrl = (path: string | null) =>
-    path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit-storage/${path}` : null;
+    path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}` : null;
 
   const currentBannerUrl = bannerPreview || getPublicUrl(initialData.bannerImagePath);
   const currentProfilePhotoUrl = photoPreview || getPublicUrl(initialData.profilePhotoPath);

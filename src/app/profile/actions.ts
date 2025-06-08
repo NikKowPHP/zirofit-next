@@ -84,7 +84,7 @@ export async function getCurrentUserProfileData() {
     if (userWithProfile.profile && userWithProfile.profile.transformationPhotos) {
         const supabaseStorage = await createClient();
         userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map(photo => {
-            const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit-storage').getPublicUrl(photo.imagePath);
+            const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit').getPublicUrl(photo.imagePath);
             return { ...photo, publicUrl };
         });
     }
@@ -184,14 +184,14 @@ export async function updateBrandingImages(prevState: BrandingFormState | undefi
     try {
       if (bannerImage?.size > 0) {
         const path = `profile-assets/${user.id}/banner-${uuidv4()}`;
-        const { error } = await supabaseStorage.storage.from('zirofit-storage').upload(path, bannerImage, { upsert: true });
+        const { error } = await supabaseStorage.storage.from('zirofit').upload(path, bannerImage, { upsert: true });
         if (error) throw new Error(`Banner upload failed: ${error.message}`);
         updates.bannerImagePath = path;
       }
 
       if (profilePhoto?.size > 0) {
         const path = `profile-assets/${user.id}/profile-photo-${uuidv4()}`;
-        const { error } = await supabaseStorage.storage.from('zirofit-storage').upload(path, profilePhoto, { upsert: true });
+        const { error } = await supabaseStorage.storage.from('zirofit').upload(path, profilePhoto, { upsert: true });
         if (error) throw new Error(`Photo upload failed: ${error.message}`);
         updates.profilePhotoPath = path;
       }
@@ -327,16 +327,16 @@ export async function addTransformationPhoto(prevState: TransformationPhotoFormS
     const { caption, photoFile } = validated.data;
     const filePath = `transformation-photos/${user.id}/${uuidv4()}`;
     const supabaseStorage = await createClient();
-    const { error: uploadError } = await supabaseStorage.storage.from('zirofit-storage').upload(filePath, photoFile);
+    const { error: uploadError } = await supabaseStorage.storage.from('zirofit').upload(filePath, photoFile);
     if (uploadError) return { error: `Storage error: ${uploadError.message}` };
 
     try {
-        const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit-storage').getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit').getPublicUrl(filePath);
         const newPhoto = await prisma.transformationPhoto.create({ data: { profileId: profile.id, imagePath: filePath, caption } });
         revalidatePath('/profile/edit');
         return { success: true, message: "Photo uploaded.", newPhoto: { ...newPhoto, publicUrl } };
     } catch (e: any) {
-        await supabaseStorage.storage.from('zirofit-storage').remove([filePath]);
+        await supabaseStorage.storage.from('zirofit').remove([filePath]);
         return { error: "Failed to save photo details." };
     }
 }
@@ -345,7 +345,7 @@ export async function deleteTransformationPhoto(photoId: string): Promise<{ succ
     try {
         const photo = await prisma.transformationPhoto.findFirstOrThrow({ where: { id: photoId, profileId: profile.id } });
         const supabase = await createClient();
-        await supabase.storage.from('zirofit-storage').remove([photo.imagePath]);
+        await supabase.storage.from('zirofit').remove([photo.imagePath]);
         await prisma.transformationPhoto.delete({ where: { id: photoId } });
         revalidatePath('/profile/edit');
         return { success: true, deletedId: photoId };

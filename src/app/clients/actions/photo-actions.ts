@@ -33,7 +33,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
   const fileName = `${clientId}-${Date.now()}.${fileExt}`;
   const filePath = `client_progress_photos/${authUser.id}/${clientId}/${fileName}`;
 
-  const { error } = await supabase.storage.from('zirofit-storage').upload(filePath, file);
+  const { error } = await supabase.storage.from('zirofit').upload(filePath, file);
   if (error) {
     console.error("Supabase upload error:", error);
     return { message: "Failed to upload photo." };
@@ -61,7 +61,7 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
       return { message: "Unauthorized to delete photo." };
     }
     
-    await supabase.storage.from('zirofit-storage').remove([photo.imagePath]);
+    await supabase.storage.from('zirofit').remove([photo.imagePath]);
     await prisma.clientProgressPhoto.delete({ where: { id: photoId } });
     
     revalidatePath(`/clients/${photo.clientId}`);
