@@ -22,9 +22,10 @@ const DEFAULT_PROFILE_IMAGE = "/next.svg"; // Replace with an actual placeholder
 export default async function TrainersPage({
   searchParams,
 }: {
-  searchParams?: { page?: string };
+  searchParams?: Promise<{ page?: string }>;
 }) {
-  const currentPage = Number(searchParams?.page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const currentPage = Number(resolvedSearchParams?.page) || 1;
   const data = await getPublishedTrainers(currentPage);
 
   // Handle error case from getPublishedTrainers

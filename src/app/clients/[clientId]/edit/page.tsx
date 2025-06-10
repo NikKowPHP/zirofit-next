@@ -9,14 +9,15 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     clientId: string;
-  };
+  }>;
 }
 
 export default async function EditClientPage({
-  params: { clientId }
+  params
 }: PageProps) {
+  const { clientId } = await params;
   const client = await getClientById(clientId);
 
   if (!client) {

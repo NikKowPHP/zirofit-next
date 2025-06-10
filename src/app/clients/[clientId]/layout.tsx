@@ -7,9 +7,10 @@ export default async function ClientDetailLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { clientId: string };
+  params: Promise<{ clientId: string }>;
 }) {
-  const client = await getClientById(params.clientId);
+  const { clientId } = await params;
+  const client = await getClientById(clientId);
   if (!client) {
     notFound();
   }

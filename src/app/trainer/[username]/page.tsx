@@ -68,7 +68,7 @@ const DEFAULT_BANNER_IMAGE = '/next.svg'; // Replace with actual default banner
 const DEFAULT_PROFILE_IMAGE = '/next.svg'; // Replace with actual default profile image
 
 interface TrainerProfilePageProps {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }
 
 export default async function TrainerProfilePage({ params }: TrainerProfilePageProps) {
