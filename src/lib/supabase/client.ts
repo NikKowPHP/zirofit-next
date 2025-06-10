@@ -9,7 +9,6 @@ export function createClient() {
   const _agent: HttpsProxyAgent<string> | undefined = undefined;
   if (process.env.NEXT_PUBLIC_HTTP_PROXY) {
     // This agent is never used in the browser
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const agent = new HttpsProxyAgent(process.env.NEXT_PUBLIC_HTTP_PROXY);
   }
 

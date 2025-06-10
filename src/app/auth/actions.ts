@@ -83,7 +83,7 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
         // emailVerifiedAt: authData.user.email_confirmed_at ? new Date(authData.user.email_confirmed_at) : null, // If email confirmation is set up
       },
     });
-  } catch (dbError: unknown) { // eslint-disable-line @typescript-eslint/no-explicit-any
+  } catch (dbError: unknown) {
     console.error("Prisma DB Error:", dbError);
     // Potentially delete the Supabase auth user if Prisma creation fails (for consistency)
     // await supabase.auth.admin.deleteUser(authData.user.id); // Requires admin privileges

@@ -89,7 +89,13 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
         <label>Photo:</label>
         <input type="file" name="photo" accept="image/*" onChange={handleImageChange} required />
         {selectedImage && (
-          <img src={selectedImage} alt="Preview" style={{ maxWidth: "200px", maxHeight: "200px" }} />
+          <Image
+            src={selectedImage}
+            alt="Preview"
+            width={200}
+            height={200}
+            style={{ maxWidth: "200px", maxHeight: "200px" }}
+          />
         )}
         <button type="submit">Add Photo</button>
         {addPhotoState.errors?.form && (

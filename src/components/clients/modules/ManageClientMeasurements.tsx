@@ -11,12 +11,9 @@ interface ManageClientMeasurementsProps {
   initialMeasurements: ClientMeasurement[];
 }
 
-// ActionState should align with MeasurementFormState from the actions file
-interface ActionState extends MeasurementFormState {}
-
 export default function ManageClientMeasurements({ clientId, initialMeasurements }: ManageClientMeasurementsProps) {
   const [measurements, setMeasurements] = useState<ClientMeasurement[]>(initialMeasurements);
-  const initialActionState: ActionState = { message: "" };
+  const initialActionState: MeasurementFormState = { message: "" };
 
   const addMeasurementActionWrapper = async (state: MeasurementFormState, formData: FormData): Promise<MeasurementFormState> => {
     const result = await addMeasurement(state, formData);
