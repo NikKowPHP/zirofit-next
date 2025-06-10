@@ -48,10 +48,11 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
   );
   const formRef = useRef<HTMLFormElement>(null);
   const [services, setServices] = useState<Service[]>(initialServices);
-  
+
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const formStatus = useFormStatus();
 
   useEffect(() => {
     if (addState.success && addState.newService) {
@@ -146,9 +147,9 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
               <Button type="button" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
             )}
             <Button type="submit"> 
-              {isEditing 
-                ? (useFormStatus().pending ? 'Saving...' : 'Save Changes') 
-                : (useFormStatus().pending ? 'Adding...' : 'Add Service')}
+              {isEditing
+                ? (formStatus.pending ? 'Saving...' : 'Save Changes')
+                : (formStatus.pending ? 'Adding...' : 'Add Service')}
             </Button>
           </div>
         </form>

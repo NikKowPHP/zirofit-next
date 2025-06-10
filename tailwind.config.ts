@@ -19,6 +19,6 @@ theme: {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'), // Add forms plugin
+    (await import('@tailwindcss/forms')).default, // Add forms plugin
   ],
 } satisfies Config;

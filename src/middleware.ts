@@ -56,8 +56,7 @@ export async function middleware(request: NextRequest) {
   );
 
   // Refresh session if expired - important to keep user logged in
-  const { data: { session } } = await supabase.auth.getSession();
-
+  // Get user info
   const { data: { user } } = await supabase.auth.getUser();
 
   // Define protected and auth routes

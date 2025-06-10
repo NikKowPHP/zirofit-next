@@ -8,11 +8,15 @@ export const metadata: Metadata = {
   title: 'Edit Client',
 };
 
+interface PageProps {
+  params: {
+    clientId: string;
+  };
+}
+
 export default async function EditClientPage({
   params: { clientId }
-}: {
-  params: { clientId: string };
-}) {
+}: PageProps) {
   const client = await getClientById(clientId);
 
   if (!client) {

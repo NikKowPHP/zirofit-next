@@ -5,6 +5,7 @@ import { useFormState } from "react-dom";
 import { addProgressPhoto, deleteProgressPhoto } from "@/app/clients/actions";
 import type { ClientProgressPhoto } from "@/generated/prisma"; // Import the model type
 import { revalidatePath } from "next/cache";
+import Image from "next/image";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;
@@ -100,7 +101,7 @@ export default function ManageClientProgressPhotos({ clientId, initialProgressPh
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {progressPhotos.map((photo) => (
           <div key={photo.id} style={{ margin: "10px", textAlign: "center" }}>
-            <img src={photo.imagePath} alt={photo.caption || ''} style={{ maxWidth: "200px", maxHeight: "200px" }} />
+            <Image src={photo.imagePath} alt={photo.caption || ''} width={200} height={200} style={{ maxWidth: "200px", maxHeight: "200px" }} />
             <p>{photo.photoDate.toLocaleDateString()}</p>
             <p>{photo.caption}</p>
             <form action={() => handleDeletePhoto(photo.id)}>

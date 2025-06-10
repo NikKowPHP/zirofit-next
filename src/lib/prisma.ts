@@ -2,8 +2,7 @@
 import { PrismaClient } from '@/generated/prisma';
 
 declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-unused-vars
+  // allow global declarations
   var prisma: PrismaClient | undefined;
 }
 

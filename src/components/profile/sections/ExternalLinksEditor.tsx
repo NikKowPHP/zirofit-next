@@ -9,9 +9,11 @@ import { z } from 'zod';
 
 interface ExternalLink {
   id: string;
+  profileId: string;
   label: string;
   linkUrl: string;
-  createdAt: Date; // Assuming Prisma adds this
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface ExternalLinksEditorProps {
@@ -38,9 +40,10 @@ export default function ExternalLinksEditor({ initialExternalLinks }: ExternalLi
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  
+
   const isEditing = !!editingLinkId;
   const currentEditingLink = isEditing ? links.find(link => link.id === editingLinkId) : null;
+  const formStatus = useFormStatus();
 
   // Effect for add link
   useEffect(() => {
@@ -143,9 +146,9 @@ export default function ExternalLinksEditor({ initialExternalLinks }: ExternalLi
           <div className="flex justify-end space-x-3">
             {isEditing && <Button type="button" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>}
             <Button type="submit">
-              {isEditing 
-                ? (useFormStatus().pending ? 'Saving...' : 'Save Changes') 
-                : (useFormStatus().pending ? 'Adding...' : 'Add Link')}
+              {isEditing
+                ? (formStatus.pending ? 'Saving...' : 'Save Changes')
+                : (formStatus.pending ? 'Adding...' : 'Add Link')}
             </Button>
           </div>
         </form>
