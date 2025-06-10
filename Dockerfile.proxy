@@ -8,12 +8,14 @@ ENV HTTPS_PROXY=${HTTPS_PROXY}
 ENV http_proxy=${HTTP_PROXY}
 ENV https_proxy=${HTTPS_PROXY}
 
-ENV NO_PROXY=localhost,127.0.0.1,.docker.internal,supabase.com,dl-cdn.alpinelinux.org
+# Add .local to NO_PROXY for internal network resolution
+ENV NO_PROXY=localhost,127.0.0.1,.local,.docker.internal,supabase.com,dl-cdn.alpinelinux.org
 WORKDIR /app
 
 RUN if [ -n "${HTTP_PROXY}" ]; then \
       npm config set proxy ${HTTP_PROXY} && \
       npm config set https-proxy ${HTTPS_PROXY} && \
+      npm config set strict-ssl false; \
       { echo "proxy=${HTTP_PROXY}"; \
         echo "http-proxy=${HTTP_PROXY}"; \
         echo "https-proxy=${HTTPS_PROXY}"; } > /root/.curlrc; \
