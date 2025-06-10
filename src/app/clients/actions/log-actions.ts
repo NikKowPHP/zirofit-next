@@ -38,7 +38,7 @@ export async function addSessionLog(prevState: any, formData: FormData) {
         sessionDate: new Date(data.sessionDate),
         durationMinutes: parseInt(data.durationMinutes),
         activitySummary: data.activitySummary,
-        notes: data.notes,
+        // notes: data.notes, // Removed temporarily until Prisma schema is updated
       },
     });
     revalidatePath(`/clients/${clientId}`);
@@ -68,7 +68,7 @@ export async function updateSessionLog(prevState: any, formData: FormData) {
         sessionDate: new Date(data.sessionDate),
         durationMinutes: parseInt(data.durationMinutes),
         activitySummary: data.activitySummary,
-        notes: data.notes,
+        // notes: data.notes, // Temporarily removed until Prisma schema is updated
       },
     });
     revalidatePath(`/clients/${clientId}`);

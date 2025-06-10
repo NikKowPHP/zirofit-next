@@ -10,10 +10,12 @@ import { z } from 'zod';
 
 export type TransformationPhoto = {
   id: string;
-  imagePath: string; // This is the path within the bucket
-  publicUrl: string; // This will be the full public URL from Supabase Storage
+  imagePath: string;
+  publicUrl: string;
   caption: string | null;
   createdAt: Date;
+  updatedAt: Date;
+  profileId: string;
 }
 
 interface TransformationPhotosEditorProps {

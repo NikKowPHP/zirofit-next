@@ -4,6 +4,16 @@ import React, { useState, Suspense, useEffect } from 'react';
 import type { TransformationPhoto } from './sections/TransformationPhotosEditor';
 import ProfileEditorSidebar from './ProfileEditorSidebar';
 
+// Temporary local type until we import from shared types
+interface ExternalLink {
+  id: string;
+  label: string;
+  linkUrl: string;
+  createdAt: Date;
+  profileId: string;
+  updatedAt: Date;
+}
+
 // Define a type for the initial data structure
 interface InitialProfileData {
   name: string;
@@ -99,7 +109,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     'services': () => <ServicesEditor initialServices={initialData.profile?.services || []} />,
     'photos': () => <PhotosEditor initialTransformationPhotos={initialData.profile?.transformationPhotos as TransformationPhoto[] || []} />,
     'testimonials': () => <TestimonialsEditor initialTestimonials={initialData.profile?.testimonials || []} />,
-    'links': () => <LinksEditor initialExternalLinks={initialData.profile?.externalLinks || []} />,
+    'links': () => <LinksEditor initialExternalLinks={initialData.profile?.externalLinks as ExternalLink[] || []} />,
   };
 
   const SelectedComponent = sectionComponents[selectedSection] || (() => <div className="p-6 bg-white shadow-sm rounded-lg">Select a section to edit.</div>);
