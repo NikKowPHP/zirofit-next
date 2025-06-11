@@ -55,7 +55,7 @@ export function BannerImage({ src, alt, quality, className, defaultSrc }: Banner
 }
 
 interface TransformationImageProps {
-  src: string;
+  src: string | null;
   alt: string;
   width: number;
   height: number;
@@ -69,13 +69,18 @@ export function TransformationImage({ src, alt, width, height, className }: Tran
   if (error) {
     return null; // Or a placeholder div
   }
+  if (!src) {
+    return null;
+  }
 
   // Validate URL format
   const isValidSrc = src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://');
-  
+  if (!isValidSrc) {
+    return null;
+  }
   return (
     <Image
-      src={isValidSrc ? imageSrc : '/default-image.jpg'}
+      src={isValidSrc ? imageSrc! : '/default-image.jpg'}
       alt={alt}
       width={width}
       height={height}

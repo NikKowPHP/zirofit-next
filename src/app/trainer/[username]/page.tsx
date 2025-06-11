@@ -212,13 +212,17 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {profile.transformationPhotos.map((photo: TransformationPhoto) => (
                 <div key={photo.id} className="rounded-lg overflow-hidden shadow-lg">
-                  <TransformationImage
-                    src={photo.imagePath} // This will be a Supabase Storage URL
+                  {photo.imagePath && (
+ <TransformationImage
+                    src={getPublicUrl(photo.imagePath)} // This will be a Supabase Storage URL
                     alt={photo.caption || 'Transformation photo'}
                     width={400}
                     height={300}
                     className="w-full h-auto object-cover"
                   />
+
+                  ) }
+                 
                   {photo.caption && (
                     <p className="p-3 text-sm text-gray-600 bg-white text-center">{photo.caption}</p>
                   )}
