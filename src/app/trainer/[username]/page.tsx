@@ -91,12 +91,16 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
     return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
   };
 
+    const getPublicUrl = (path: string | null) =>
+    path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}` : null;
+
+
   return (
     <PublicLayout>
       {/* Hero Section */}
       <section id="hero-section" className="relative bg-gray-800 text-white">
         <BannerImage
-          src={profile.bannerImagePath || DEFAULT_BANNER_IMAGE}
+          src={profile.bannerImagePath ? `${getPublicUrl(profile.bannerImagePath)}` : DEFAULT_BANNER_IMAGE}
           alt={`${name}'s banner`}
           layout="fill"
           objectFit="cover"
@@ -107,7 +111,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
           <div className="mb-8">
             <ProfileImage
-              src={profile.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
+              src={getPublicUrl(profile.profilePhotoPath) || DEFAULT_PROFILE_IMAGE}
               alt={`${name}'s profile photo`}
               width={160}
               height={160}

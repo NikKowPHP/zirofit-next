@@ -37,18 +37,19 @@ interface BannerImageProps {
   defaultSrc: string;
 }
 
-export function BannerImage({ src, alt, layout, objectFit, quality, className, defaultSrc }: BannerImageProps) {
+export function BannerImage({ src, alt, quality, className, defaultSrc }: BannerImageProps) {
   const [imageSrc, setImageSrc] = React.useState(src);
 
   return (
     <Image
       src={imageSrc}
       alt={alt}
-      layout={layout}
-      objectFit={objectFit}
+      fill
       quality={quality}
       className={className}
+      style={{ objectFit: 'cover' }}
       onError={() => setImageSrc(defaultSrc)}
+      priority
     />
   );
 }
@@ -69,14 +70,18 @@ export function TransformationImage({ src, alt, width, height, className }: Tran
     return null; // Or a placeholder div
   }
 
+  // Validate URL format
+  const isValidSrc = src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://');
+  
   return (
     <Image
-      src={imageSrc}
+      src={isValidSrc ? imageSrc : '/default-image.jpg'}
       alt={alt}
       width={width}
       height={height}
       className={className}
       onError={() => setError(true)}
+      priority
     />
   );
 }
