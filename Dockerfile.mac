@@ -7,6 +7,7 @@ RUN apk add --no-cache postgresql-client
 # 2) Set workdir and install app deps
 WORKDIR /app
 COPY package*.json ./
+COPY prisma ./
 RUN npm install
 
 # 3) Copy the rest of your code and generate Prisma client

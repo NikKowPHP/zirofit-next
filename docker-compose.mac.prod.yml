@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.mac
     ports:
-      - '3000:3000'
+      - '3450:3000'
     env_file:
       - .env
     environment:
