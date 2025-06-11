@@ -60,6 +60,15 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
 
   // Create user in Prisma database, linking to Supabase Auth user
   try {
+    // Check if email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return { error: "Email already registered.", errors: { _form: ["This email is already in use."] }, success: false };
+    }
+
     // Username generation logic from Laravel (simplified)
     let baseSlug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     if (!baseSlug) {
@@ -73,16 +82,23 @@ export async function registerUser(prevState: RegisterState | undefined, formDat
         count++;
     }
     
-    await prisma.user.create({
-      data: {
-        id: authData.user.id, // Use Supabase Auth UUID as the primary key
-        name,
-        email,
-        username, // Add username
-        role: "trainer", // Default role
-        // emailVerifiedAt: authData.user.email_confirmed_at ? new Date(authData.user.email_confirmed_at) : null, // If email confirmation is set up
-      },
-    });
+    const [newUser] = await prisma.$transaction([
+      prisma.user.create({
+        data: {
+          id: authData.user.id, // Use Supabase Auth UUID as the primary key
+          name,
+          email,
+          username, // Add username
+          role: "trainer", // Default role
+          // emailVerifiedAt: authData.user.email_confirmed_at ? new Date(authData.user.email_confirmed_at) : null,
+        },
+      }),
+      prisma.profile.create({
+        data: {
+          userId: authData.user.id,
+        },
+      }),
+    ]);
   } catch (dbError: unknown) {
     console.error("Prisma DB Error:", dbError);
     // Potentially delete the Supabase auth user if Prisma creation fails (for consistency)
