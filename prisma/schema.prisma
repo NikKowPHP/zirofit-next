@@ -24,6 +24,7 @@ model User {
 
   profile            Profile?  // One-to-one relation to Profile
   clients            Client[]  // One-to-many relation: A trainer has many clients
+  notifications      Notification[]
 
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -182,4 +183,17 @@ model ClientSessionLog {
 
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  message     String
+  type        String   // e.g., "milestone", "system", "reminder"
+  readStatus  Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
