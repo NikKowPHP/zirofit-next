@@ -32,7 +32,7 @@ The Prisma client fails to initialize properly during the build process, prevent
   - **Verification**: The `Dockerfile.mac` contains the updated command order, with `RUN npx prisma generate` before `COPY . .`.
 
 ### Task 2: Modify Docker Compose to Rebuild Image
-- [ ] **Update Docker Compose to Force Rebuild**
+- [x] **Update Docker Compose to Force Rebuild**
   - **LLM Prompt**: "Modify the `docker-compose.yml` file to include a `build:` section with a `cache:` setting to false. This will force Docker to rebuild the image from scratch, ensuring the Prisma client is generated correctly. Add the following to the `app` service:
     ```yaml
     build:

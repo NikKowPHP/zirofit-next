@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.mac
+      cache: false
     ports:
       - "3000:3000"
     env_file:
