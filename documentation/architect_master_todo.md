@@ -3,5 +3,5 @@
 ## Dashboard Completion Tasks
 
 - [x] Generate `todos/dashboard_phase_1_todo.md` (Client Spotlight visualization + Profile Checklist fixes)
-- [ ] Implement notification system for client milestones
-- [ ] Add bulk actions for client management
+- [x] Implement notification system for client milestones
+- [x] Add bulk actions for client management

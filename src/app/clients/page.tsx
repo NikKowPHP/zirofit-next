@@ -27,10 +27,38 @@ export default async function ClientListPage() {
         </Link>
       </div>
 
+      {/* Bulk Actions Toolbar */}
+      <div className="mb-4 p-3 bg-gray-50 rounded-lg shadow-sm hidden" id="bulkActionsToolbar">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            <span id="selectedCount">0</span> clients selected
+          </div>
+          <div className="space-x-2">
+            <button
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed"
+              id="bulkDeleteButton"
+              disabled
+            >
+              Delete Selected
+            </button>
+            <button
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed"
+              id="bulkExportButton"
+              disabled
+            >
+              Export Selected
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+              </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>

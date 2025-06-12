@@ -173,6 +173,148 @@ export async function deleteClient(clientId: string) {
   }
 }
 
+export async function bulkDeleteClients(clientIds: string[]) {
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { message: "User not authenticated." };
+
+  try {
+    const { count } = await prisma.client.deleteMany({
+      where: {
+        id: { in: clientIds },
+        trainerId: authUser.id
+      },
+    });
+
+    revalidatePath('/clients');
+    return {
+      message: count === clientIds.length
+        ? "All selected clients deleted successfully."
+        : `Only ${count} of ${clientIds.length} clients were deleted.`
+    };
+  } catch (error: any) {
+    console.error("Bulk delete failed:", error);
+    return { message: "Failed to delete clients." };
+  }
+}
+
+interface Client {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  status: string;
+  trainerId: string;
+}
+
+interface ClientWithRelations extends Client {
+  measurements: {
+    measurementDate: Date;
+    weight?: number;
+    bodyFatPercentage?: number;
+  }[];
+  progressPhotos: {
+    photoDate: Date;
+    photoUrl: string;
+  }[];
+  sessionLogs: {
+    sessionDate: Date;
+    notes?: string;
+  }[];
+}
+
+interface Client {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  status: string;
+  trainerId: string;
+}
+
+interface ClientWithRelations extends Client {
+  measurements: {
+    measurementDate: Date;
+    weight?: number;
+    bodyFatPercentage?: number;
+  }[];
+  progressPhotos: {
+    photoDate: Date;
+    photoUrl: string;
+  }[];
+  sessionLogs: {
+    sessionDate: Date;
+    notes?: string;
+  }[];
+}
+
+export async function bulkExportClients(clientIds: string[]) {
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { error: "User not authenticated." };
+
+  try {
+    const clients = await prisma.client.findMany({
+      where: {
+        id: { in: clientIds },
+        trainerId: authUser.id
+      },
+      include: {
+        measurements: { orderBy: { measurementDate: 'desc' } },
+        progressPhotos: { orderBy: { photoDate: 'desc' } },
+        sessionLogs: { orderBy: { sessionDate: 'desc' } },
+      },
+    });
+
+    if (clients.length === 0) {
+      return { error: "No clients found for export." };
+    }
+
+    // Convert to CSV format
+    const csvHeader = [
+      'Name', 'Email', 'Phone', 'Status',
+      'Last Measurement Date', 'Last Measurement Weight', 'Last Measurement Body Fat',
+      'Last Progress Photo Date', 'Last Progress Photo URL',
+      'Last Session Date', 'Last Session Notes'
+    ].join(',');
+
+    const csvRows = clients.map((client: {
+      name: string;
+      email: string | null;
+      phone: string | null;
+      status: string;
+      measurements: Array<{ measurementDate?: Date; weight?: number; bodyFatPercentage?: number }>;
+      progressPhotos: Array<{ photoDate?: Date; photoUrl: string }>;
+      sessionLogs: Array<{ sessionDate?: Date; notes?: string }>;
+    }) => {
+      const lastMeasurement = client.measurements[0] || {};
+      const lastPhoto = client.progressPhotos[0] || {};
+      const lastSession = client.sessionLogs[0] || {};
+
+      return [
+        `"${client.name}"`,
+        `"${client.email}"`,
+        `"${client.phone}"`,
+        `"${client.status}"`,
+        lastMeasurement.measurementDate || '',
+        lastMeasurement.weight || '',
+        lastMeasurement.bodyFatPercentage || '',
+        lastPhoto.photoDate || '',
+        lastPhoto.photoUrl || '',
+        lastSession.sessionDate || '',
+        `"${lastSession.notes?.replace(/"/g, '""') || ''}"`
+      ].join(',');
+    });
+
+    const csvContent = [csvHeader, ...csvRows].join('\n');
+    return { data: csvContent };
+
+  } catch (error: any) {
+    console.error("Bulk export failed:", error);
+    return { error: "Failed to export clients." };
+  }
+}
+
 export async function getClientDetails(clientId: string) {
   const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();

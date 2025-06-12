@@ -19,7 +19,7 @@ Your operation follows a two-tiered loop. Adherence is mandatory.
 4.  **Extract Plan Path:** From the **Active Target** line, extract the file path (e.g., `/documentation/2_development_plan/dev_todo_phase_2.md`). This is your **Active Plan**.
 5.  **Announce:** "Now executing master roadmap task: [Active Target line]".
 6.  **Execute Phase:** Initiate the **Tier 2 Loop** for the **Active Plan** file.
-7.  **Handle Phase Success:** If the Tier 2 Loop completes successfully, modify the `documentation/architect_master_todo.md` file to change the `[ ]` on the **Active Target** line to `[x]`. Save the file. Then, **switch to the Orchestrator role** to re-evaluate the project state by executing the command `<mode>orchestrator-2</mode>`.
+7.  **Handle Phase Success:** If the Tier 2 Loop completes successfully, modify the `documentation/architect_master_todo.md` file to change the `[ ]` on the **Active Target** line to `[x]`. Save the file. Then, **switch to the Orchestrator role** to re-evaluate the project state by executing the command `<mode>orchestrator-senior</mode>`.
 8.  **Handle Phase Failure:** If the Tier 2 Loop signals failure at any point, **immediately switch to EMERGENCY MODE** (Rule 6).
 
 **Tier 2: Atomic Task Loop (The Worker)**
@@ -57,14 +57,32 @@ Your `(Verification)` step for each atomic task can now be one of two types, as 
 ## 5.1. THE COMMIT PROTOCOL
 (Unchanged from previous version - commits after each atomic task).
 
-## 6. EMERGENCY MODE & ESCALATION PROTOCOL
-(Mostly unchanged, but now includes `repomix` context).
+# 6. FAILURE & ESCALATION PROTOCOL
+
+If any task verification fails after 3 retries, you must determine if you are executing a normal task or a fix plan.
+
+### 6.1. Standard Task Failure
+
+If the failing task is from a normal `dev_todo_phase_*.md` file:
 1.  **Stop all work.**
-2.  **Create Distress Signal (`NEEDS_ASSISTANCE.md`):**
-    *   Include the failing **Active Plan** file path and task title.
-    *   Include the action attempted and the verbatim error message.
-    *   **If the failure occurred during the Project State Verification Protocol, you MUST include the full contents of `repomix-output.xml` in the distress signal.**
+2.  **Create Distress Signal (`NEEDS_ASSISTANCE.md`):** Include the file path, task, command/prompt attempted, and the verification error.
 3.  **Switch to `<mode>emergency</mode>`.**
+
+### 6.2. **[NEW]** Fix Plan Failure & Strategic Escalation
+
+If the failing task is from a `FIX_PLAN.md` file, this indicates a deep strategic error.
+1.  **Stop all work.**
+2.  **Announce Escalation:** "Tactical fix has failed. The problem is systemic. Escalating to Senior Architect for strategic review."
+3.  **Gather Evidence:** Read the contents of the original `NEEDS_ASSISTANCE.md` (or `NEEDS_ARCHITECTURAL_REVIEW.md`) and the contents of the failing `FIX_PLAN.md`.
+4.  **Create Escalation Report (`NEEDS_ARCHITECTURAL_REVIEW.md`):**
+    *   Create a new file with this name.
+    *   In this file, write a clear report:
+        *   `## Original Problem:` (Paste the contents of the original distress signal).
+        *   `## Failed Fix Attempt:` (Paste the contents of the `FIX_PLAN.md` that you just failed to execute).
+        *   `## New Error:` (Provide the specific error that occurred when you tried to execute the fix plan).
+5.  **Clean Up State:** Delete the failed `FIX_PLAN.md` file and the original `NEEDS_ASSISTANCE.md` file.
+6.  **Handoff to Leadership:** Switch to `<mode>orchestrator-senior</mode>`.
+
 
 ## 7. CRITICAL DIRECTIVES
 (Unchanged, but reiterated for clarity)
