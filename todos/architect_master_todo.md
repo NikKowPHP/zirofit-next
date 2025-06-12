@@ -32,7 +32,7 @@ Prioritize the implementation into two phases as outlined below.
     *   The `_components` directory is created and ready for new widget components.
     *   A primary data-fetching function is defined and successfully retrieves initial data.
 
-### Task 2: "At a Glance" Statistics Widget
+### Task 2: "At a Glance" Statistics Widget [x]
 
 *   **Objective:** Provide trainers with an immediate, high-level overview of their business activity.
 *   **Key Components:**
@@ -48,7 +48,7 @@ Prioritize the implementation into two phases as outlined below.
     *   The numbers displayed are accurate based on the trainer's database records.
     *   The widget is styled to be prominent at the top of the dashboard.
 
-### Task 3: Profile Completion Checklist Widget
+### Task 3: Profile Completion Checklist Widget [x]
 
 *   **Objective:** Gamify the profile setup process to encourage trainers to create a complete and attractive public profile.
 *   **Key Components:**
@@ -69,7 +69,7 @@ Prioritize the implementation into two phases as outlined below.
     *   A checklist shows which sections are complete (checked) and incomplete (unchecked).
     *   Clicking an incomplete item navigates the user to the correct editing interface.
 
-### Task 4: Quick Actions Widget
+### Task 4: Quick Actions Widget [x]
 
 *   **Objective:** Provide low-friction access to the most common, high-frequency actions a trainer performs.
 *   **Key Components:**
@@ -104,7 +104,7 @@ Prioritize the implementation into two phases as outlined below.
     *   The feed is sorted chronologically.
     *   It gracefully handles the case where there is no activity.
 
-### Task 6: Client Spotlight Widget
+### Task 6: Client Spotlight Widget [x]
 
 *   **Objective:** Celebrate client success by visualizing recent progress directly on the dashboard, reinforcing the value of the platform.
 *   **Key Components:**

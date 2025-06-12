@@ -1,9 +1,37 @@
 import React from 'react';
 import Link from 'next/link';
 
-const ProfileChecklist: React.FC = () => {
-  // Placeholder for actual completion percentage calculation
-  const completionPercentage = 60;
+type ProfileChecklistProps = {
+  profile: {
+    profilePhotoPath?: string;
+    bannerImagePath?: string;
+    aboutMe?: string;
+    services?: { id: string }[];
+    testimonials?: { id: string }[];
+    benefits?: { id: string }[];
+    transformationPhotos?: { id: string }[];
+  };
+};
+
+const ProfileChecklist: React.FC<ProfileChecklistProps> = ({ profile }) => {
+  // Calculate completion percentage based on profile fields
+  const hasProfilePhoto = !!profile.profilePhotoPath;
+  const hasBannerImage = !!profile.bannerImagePath;
+  const hasAboutMe = !!profile.aboutMe?.trim();
+  const hasServices = (profile.services ?? []).length > 0;
+  const hasTestimonials = (profile.testimonials ?? []).length > 0;
+  const hasBenefits = (profile.benefits ?? []).length > 1;
+  const hasTransformationPhotos = (profile.transformationPhotos ?? []).length > 0;
+
+  const completionPercentage = (
+    (hasProfilePhoto ? 20 : 0) +
+    (hasBannerImage ? 10 : 0) +
+    (hasAboutMe ? 15 : 0) +
+    (hasServices ? 15 : 0) +
+    (hasTestimonials ? 15 : 0) +
+    (hasBenefits ? 15 : 0) +
+    (hasTransformationPhotos ? 10 : 0)
+  );
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
