@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { TransformationPhoto } from './sections/TransformationPhotosEditor';
 import ProfileEditorSidebar from './ProfileEditorSidebar';
 
@@ -80,10 +81,13 @@ const LinksEditor = React.lazy(() => import('./sections/ExternalLinksEditor'));
 const SectionLoadingFallback = () => <div className="p-6 bg-white shadow-sm rounded-lg">Loading section...</div>;
 
 export default function ProfileEditorLayout({ initialData }: ProfileEditorLayoutProps) {
-  const [selectedSection, setSelectedSection] = useState('core-info');
+  const searchParams = useSearchParams();
+  const selectedSection = searchParams.get('section') || 'core-info';
 
   const handleSelectSection = (section: string) => {
-    setSelectedSection(section);
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('section', section);
+    window.history.pushState(null, '', `?${newSearchParams.toString()}`);
   };
   
   // Wrapper for About/Philosophy/Methodology

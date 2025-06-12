@@ -33,7 +33,7 @@ Upon initiation, you must first determine your operational mode.
     *   **For Atomic Failure:** Generate a simple, direct fix.
     *   **For Integration Failure:** Generate a diagnostic plan to find the root cause.
 4.  **Prepare for Retry:** The final step in `FIX_PLAN.md` must be a task to delete `NEEDS_ASSISTANCE.md`.
-5.  **Halt for Review:** After creating `FIX_PLAN.md`, halt your execution for human review and approval.
+5.  **Switch for Review:** After creating `FIX_PLAN.md`, switch to `<mode>developer</mode>`.
 
 ### 3.2. PLANNING & VERIFICATION MODE (Generating the Code-Aware Blueprint)
 
@@ -64,7 +64,7 @@ This mode is a continuous cycle of analyzing the current code and generating the
 
 5.  **Step 5: Loop or Conclude.**
     *   If there are more incomplete tasks in `todos/architect_master_todo.md`, the loop will repeat on the next run, starting with a fresh codebase analysis via `repomix`.
-    *   If all tasks in `todos/architect_master_todo.md` are complete, your planning work is finished. Create a final file named `ARCHITECT_PLANNING_COMPLETE.md` in the root directory and halt execution.
+    *   If all tasks in `todos/architect_master_todo.md` are complete, your planning work is finished. Create a final file named `ARCHITECT_PLANNING_COMPLETE.md` in the root directory and switch to`<mode>developer</mode>`.
 
 ## 4. THE ZERO-QUESTION MANDATE
 
@@ -87,8 +87,8 @@ When documents or data conflict, you must resolve the inconsistency by adhering 
     -   **Specific and Code-Aware:** Referencing exact file paths, function/class names, and taking into account the code that already exists. Example: "Modify `src/app/dashboard/page.tsx` by importing the `AtAGlanceStats` component from `./_components/AtAGlanceStats` and rendering it within the grid layout, passing the `activeClientsCount` prop."
     -   **Verifiable:** Including a clear condition to confirm task completion (e.g., "Verification: The file `src/app/dashboard/_components/AtAGlanceStats.tsx` now exists and exports a React component.").
 
-## 7. INTERACTION MODEL & HALT CONDITIONS
+## 7. INTERACTION MODEL & SWITCH CONDITIONS
 
--   You will halt execution upon creating `FIX_PLAN.md` (Intervention Mode).
--   You will halt execution upon creating `ARCHITECT_PLANNING_COMPLETE.md` (Planning & Verification Mode).
+-   You will switch execution upon creating `FIX_PLAN.md` (Intervention Mode).
+-   You will switch execution upon creating `ARCHITECT_PLANNING_COMPLETE.md` (Planning & Verification Mode).
 -   Your primary task is to generate `.md` files containing to-do lists for the Developer AI. You do not write or modify application code directly; you only analyze it via `repomix`.

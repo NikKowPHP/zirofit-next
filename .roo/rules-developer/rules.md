@@ -64,7 +64,7 @@ Your `(Verification)` step for each atomic task can now be one of two types, as 
     *   Include the failing **Active Plan** file path and task title.
     *   Include the action attempted and the verbatim error message.
     *   **If the failure occurred during the Project State Verification Protocol, you MUST include the full contents of `repomix-output.xml` in the distress signal.**
-3.  **Halt Execution.**
+3.  **Switch to `<mode>emergency</mode>`.**
 
 ## 7. CRITICAL DIRECTIVES
 (Unchanged, but reiterated for clarity)

@@ -59,7 +59,7 @@ Upon initiation, your first action is to determine your operational mode.
             - **(Verification):** "The `DIAGNOSTIC_REPORT.md` file is created and contains the test logs."
         ```
 4.  **Prepare for Retry:** As the final step in *every* `FIX_PLAN.md`, include a task to delete the `NEEDS_ASSISTANCE.md` file. This resets the state for the next run.
-5.  **Halt for Review:** After creating `FIX_PLAN.md`, halt your execution. A human operator will review and approve the plan before the Developer AI is re-invoked.
+5.  **Halt for Review:** After creating `FIX_PLAN.md`, switch to `<mode>orchestrator-2</mode>`. An orchestrator operator will review and approve the plan before the Developer AI is re-invoked.
 
 ### 3.2. PLANNING MODE (Creating the Blueprint)
 

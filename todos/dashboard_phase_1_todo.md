@@ -25,7 +25,7 @@
 - All sections remain accessible via checklist
 - TypeScript compiles without errors
 
-## 3. Refactor Profile Checklist Links
+## 3. Refactor Profile Checklist Links ✅
 **Update `src/components/profile/ProfileEditorLayout.tsx`:**
 - Change useState to read from URL search params
 - Add fallback to 'core-info' if no section param
