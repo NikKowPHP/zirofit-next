@@ -18,7 +18,7 @@ Prioritize the implementation into two phases as outlined below.
 
 ## Phase 1: Core Value & Onboarding
 
-### Task 1: Establish the Dashboard Foundation
+### Task 1: Establish the Dashboard Foundation [x]
 
 *   **Objective:** Refactor the existing placeholder dashboard page into a modular, grid-based layout and create a centralized data-fetching mechanism.
 *   **Key Components:**
@@ -86,7 +86,7 @@ Prioritize the implementation into two phases as outlined below.
 
 ---
 
-## Phase 2: Engagement & Insights
+## Phase 2: Engagement & Insights [x]
 
 ### Task 5: Upcoming & Recent Activity Feed
 
