@@ -13,7 +13,7 @@ The build error occurs because Node.js-specific modules (`net`, `https-proxy-age
 - **LLM Prompt:** "Remove all `https-proxy-agent` imports and usage from `src/lib/supabase/client.ts`"
 - **Verification:** The file should no longer reference `https-proxy-agent` or `HttpsProxyAgent`
 
-### Task 3: Update Package Dependencies
+### Task 3: Update Package Dependencies [x]
 - **LLM Prompt:** "Run `npm uninstall https-proxy-agent agent-base` to remove unused dependencies"
 - **Verification:** `package.json` should no longer list these dependencies
 
