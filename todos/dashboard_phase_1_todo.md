@@ -1,41 +1,38 @@
-# Dashboard Phase 1 Implementation Plan [x]
+# Dashboard Phase 1 Implementation Tasks
 
-## Task 1: Establish Dashboard Foundation [x]
+## 1. Implement Client Spotlight Chart Visualization ✅
+**Modify `src/app/dashboard/_components/ClientSpotlight.tsx`:**
+- Import Chart.js and register required components
+- Create useEffect hook to initialize bar chart with client measurement data
+- Add responsive container with aspect ratio 16/9
+- Style chart with brand colors and proper axis labels
+- Add cleanup function to destroy chart instance
 
-1. **Modify `src/app/dashboard/page.tsx`**:
-   - Refactor into server component with grid layout
-   - Add `async function getDashboardData(trainerId: string)`
-   - Implement grid layout: `className="grid grid-cols-1 lg:grid-cols-3 gap-6"`
-   - Verification: Page renders grid layout without errors
+**Verification:**
+- Chart renders with all client measurements
+- Resizes correctly on window resize
+- Updates when new measurements are added
 
-2. **Create directory `src/app/dashboard/_components`**:
-   - Verification: Directory exists with proper structure
+## 2. Fix Profile Checklist Navigation
+**Modify `src/components/profile/ProfileChecklist.tsx`:**
+- Replace hardcoded section names with URLSearchParams
+- Update onClick handlers to set ?section parameter
+- Add TypeScript interface for checklist items
+- Ensure proper query parameter encoding
 
-## Task 2: "At a Glance" Statistics Widget
+**Verification:**
+- Clicking checklist items updates URL correctly
+- All sections remain accessible via checklist
+- TypeScript compiles without errors
 
-1. **Create `src/app/dashboard/_components/AtAGlanceStats.tsx`**:
-   - Accepts props: `{ activeClients: number, sessionsThisMonth: number, pendingClients: number }`
-   - Verification: Component exports React component with proper prop types
+## 3. Refactor Profile Checklist Links
+**Update `src/components/profile/ProfileEditorLayout.tsx`:**
+- Change useState to read from URL search params
+- Add fallback to 'core-info' if no section param
+- Ensure section names match checklist items
+- Add useEffect to sync state with URL changes
 
-2. **Update `getDashboardData` in page.tsx**:
-   - Add Prisma queries for:
-     - Active clients count
-     - Sessions this month count
-     - Pending clients count
-   - Verification: Data is passed correctly to AtAGlanceStats component
-
-## Task 3: Profile Completion Checklist [x]
-
-1. **Create `src/app/dashboard/_components/ProfileChecklist.tsx`**:
-   - Calculate completion percentage based on profile fields
-   - Include progress bar and checklist items
-   - Verification: Progress bar displays correct percentage
-
-## Task 4: Quick Actions Widget [x]
-
-1. **Create `src/app/dashboard/_components/QuickActions.tsx`**:
-   - Add buttons for:
-     - "Add New Client" (links to `/clients/create`)
-     - "Log Session" (links to `/clients`)
-     - "Add Measurement" (links to `/clients`)
-   - Verification: Buttons navigate to correct pages
+**Verification:**
+- URL changes update active section
+- Direct links with ?section= work correctly
+- Default section loads when no param present
