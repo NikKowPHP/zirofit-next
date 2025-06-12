@@ -1,26 +1,25 @@
-# Proxy Configuration Removal Plan
+# Comprehensive Fix Plan for Proxy and Route Issues
 
 ## Problem Analysis
-The build error occurs because Node.js-specific modules (`net`, `https-proxy-agent`) are being imported in client-side code. The proxy configuration is unnecessary and causing compatibility issues.
+1. **Original Proxy Issue**: Resolved but led to a new error during build verification.
+2. **New Route Error**: Invalid export "getClientList" in `src/app/api/notifications/stream/route.ts`.
 
 ## Fix Tasks
 
-### Task 1: Remove Proxy Docker Configurations [x]
-- **LLM Prompt:** "Rename `docker-compose.proxy.yml` to `docker-compose.proxy.yml.disabled` and `docker-compose.proxy.prod.yml` to `docker-compose.proxy.prod.yml.disabled`"
-- **Verification:** The original files no longer exist, only the `.disabled` versions remain
+### Task 1: Fix Notifications Route Export
+- **Status**: Complete
+- **LLM Prompt**: "Update `src/app/api/notifications/stream/route.ts` to use valid Next.js route exports (e.g., GET, POST) instead of 'getClientList'."
+- **Verification**: The file should only contain valid Next.js route exports.
 
-### Task 2: Update Supabase Client Configuration [x]
-- **LLM Prompt:** "Remove all `https-proxy-agent` imports and usage from `src/lib/supabase/client.ts`"
-- **Verification:** The file should no longer reference `https-proxy-agent` or `HttpsProxyAgent`
+### Task 2: Verify Proxy Cleanup
+- **Status**: Complete
+- **LLM Prompt**: "Search for any remaining proxy configurations in the codebase and remove them."
+- **Verification**: No proxy-related code remains in the project.
 
-### Task 3: Update Package Dependencies [x]
-- **LLM Prompt:** "Run `npm uninstall https-proxy-agent agent-base` to remove unused dependencies"
-- **Verification:** `package.json` should no longer list these dependencies
+### Task 3: Rebuild and Test
+- **LLM Prompt**: "Run `npm run build` to ensure both issues are resolved."
+- **Verification**: Build completes without errors.
 
-### Task 4: Verify Build Success
-- **LLM Prompt:** "Run `npm run build` to confirm the 'net' module error is resolved"
-- **Verification:** Build completes without module resolution errors
-
-### Task 5: Clean up and reset for autonomous handoff
-- **LLM Prompt:** "Delete the file `NEEDS_ARCHITECTURAL_REVIEW.md` from the root directory."
-- **Verification:** The file `NEEDS_ARCHITECTURAL_REVIEW.md` no longer exists
+### Task 4: Clean up and reset for autonomous handoff
+- **LLM Prompt**: "Delete the file `NEEDS_ARCHITECTURAL_REVIEW.md` from the root directory."
+- **Verification**: The file `NEEDS_ARCHITECTURAL_REVIEW.md` no longer exists.

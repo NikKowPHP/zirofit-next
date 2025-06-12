@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getClientList, broadcastToClients } from '../stream/route';
+import { getClientList, broadcastToClients } from '@/lib/notifications';
 
 export async function POST(request: Request) {
   const { userId } = await request.json();
