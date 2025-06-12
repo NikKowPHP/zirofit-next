@@ -9,10 +9,9 @@ interface ChecklistItem {
 
 interface ProfileChecklistProps {
   items: ChecklistItem[];
-  activeSection?: string;
 }
 
-export default function ProfileChecklist({ items, activeSection }: ProfileChecklistProps) {
+export default function ProfileChecklist({ items }: ProfileChecklistProps) {
   const searchParams = useSearchParams();
   
   return (
@@ -22,8 +21,8 @@ export default function ProfileChecklist({ items, activeSection }: ProfileCheckl
           <Link 
             href={`?section=${item.section}`}
             className={`px-4 py-2 w-full rounded-md ${
-              activeSection === item.section 
-                ? 'bg-blue-100 text-blue-700' 
+              searchParams.get('section') === item.section
+                ? 'bg-blue-100 text-blue-700'
                 : 'hover:bg-gray-100'
             }`}
           >
