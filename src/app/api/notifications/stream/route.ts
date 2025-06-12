@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getClientList, broadcastToClients, clients } from '@/lib/notifications';
+import { Client, getClientList, broadcastToClients, clients } from '@/lib/notifications';
 
 export async function GET(request: NextRequest) {
   const userId = request.headers.get('user-id');
