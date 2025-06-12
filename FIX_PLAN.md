@@ -9,7 +9,7 @@ The build error occurs because Node.js-specific modules (`net`, `https-proxy-age
 - **LLM Prompt:** "Rename `docker-compose.proxy.yml` to `docker-compose.proxy.yml.disabled` and `docker-compose.proxy.prod.yml` to `docker-compose.proxy.prod.yml.disabled`"
 - **Verification:** The original files no longer exist, only the `.disabled` versions remain
 
-### Task 2: Update Supabase Client Configuration
+### Task 2: Update Supabase Client Configuration [x]
 - **LLM Prompt:** "Remove all `https-proxy-agent` imports and usage from `src/lib/supabase/client.ts`"
 - **Verification:** The file should no longer reference `https-proxy-agent` or `HttpsProxyAgent`
 
