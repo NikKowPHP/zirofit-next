@@ -1,4 +1,3 @@
-# Dockerfile.mac
 FROM node:20.11-alpine3.19
 
 # 1) Install psql (PostgreSQL client)
@@ -10,9 +9,11 @@ COPY package*.json ./
 COPY prisma ./
 RUN npm install
 
-# 3) Copy the rest of your code and generate Prisma client
-COPY . .
+# Generate Prisma client BEFORE copying the rest of the code
 RUN npx prisma generate
+
+# 3) Copy the rest of your code
+COPY . .
 
 EXPOSE 3000
 CMD ["npm", "run", "dev"]

@@ -1,33 +1,63 @@
 ## Original Problem:
-1. **Original Proxy Issue**: Resolved but led to a new error during build verification.
-2. **New Route Error**: Invalid export "getClientList" in `src/app/api/notifications/stream/route.ts`.
+The Prisma client fails to initialize properly during the build process, preventing the application from building successfully. This is due to an incorrect import path in `src/lib/prisma.ts`, a missing singleton pattern for PrismaClient, and possible timing issues during the build process.
 
 ## Failed Fix Attempt:
-# Comprehensive Fix Plan for Proxy and Route Issues
+# Comprehensive Fix for Prisma Client Initialization
 
 ## Problem Analysis
-1. **Original Proxy Issue**: Resolved but led to a new error during build verification.
-2. **New Route Error**: Invalid export "getClientList" in `src/app/api/notifications/stream/route.ts`.
+The Prisma client fails to initialize properly due to:
+1. Incorrect import path in `src/lib/prisma.ts`
+2. Missing singleton pattern for PrismaClient
+3. Possible timing issues during build process
 
 ## Fix Tasks
 
-### Task 1: Fix Notifications Route Export
-- **Status**: Complete
-- **LLM Prompt**: "Update `src/app/api/notifications/stream/route.ts` to use valid Next.js route exports (e.g., GET, POST) instead of 'getClientList'."
-- **Verification**: The file should only contain valid Next.js route exports.
+### Task 1: Update Prisma Client Configuration
+- [x] **Update Prisma Client Import and Implementation**
+  - **LLM Prompt**: "Update `src/lib/prisma.ts` to use the following code: 
+    ```typescript
+    import { PrismaClient } from '@prisma/client';
+    
+    const globalForPrisma = global as unknown as { prisma: PrismaClient };
+    const prisma = globalForPrisma.prisma || new PrismaClient();
+    
+    if (process.env.NODE_ENV !== 'production') {
+      globalForPrisma.prisma = prisma;
+    }
+    
+    export { prisma };
+    ```"
+  - **Verification**: The file `src/lib/prisma.ts` contains exactly the specified content
 
-### Task 2: Verify Proxy Cleanup
-- **Status**: Complete
-- **LLM Prompt**: "Search for any remaining proxy configurations in the codebase and remove them."
-- **Verification**: No proxy-related code remains in the project.
+### Task 2: Update Build Process
+- [x] **Add Prisma Generate to Build Script**
+  - **LLM Prompt**: "Modify the `build` script in package.json to be `prisma generate && next build`"
+  - **Verification**: The package.json file shows the updated build command
 
-### Task 3: Rebuild and Test
-- **LLM Prompt**: "Run `npm run build` to ensure both issues are resolved."
-- **Verification**: Build completes without errors.
+### Task 3: Verify Fix
+- [ ] **Test the Application Build**
+  - **LLM Prompt**: "Run `npm run build` to verify the Prisma client initializes correctly"
+  - **Verification**: Build completes without any Prisma client initialization errors
 
 ### Task 4: Clean up and reset for autonomous handoff
-- **LLM Prompt**: "Delete the file `NEEDS_ARCHITECTURAL_REVIEW.md` from the root directory."
-- **Verification**: The file `NEEDS_ARCHITECTURAL_REVIEW.md` no longer exists.
+- [ ] **Remove Architectural Review File**
+  - **LLM Prompt**: "Delete the file `NEEDS_ARCHITECTURAL_REVIEW.md` from the root directory"
+  - **Verification**: The file `NEEDS_ARCHITECTURAL_REVIEW.md` no longer exists
 
 ## New Error:
-The build failed with the error: "@prisma/client did not initialize yet. Please run 'prisma generate' and try to import it again." This occurred despite successfully generating the Prisma client multiple times and updating to the latest version. The issue persists across multiple routes and pages, indicating a systemic problem with Prisma client initialization in the project setup that requires architectural review.
+The `npm run build` command failed with the following error:
+```
+[Error: Failed to collect configuration for /trainer/[username]] {
+  [cause]: Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+      at 31183 (.next/server/app/trainer/[username]/page.js:6:1902)
+      at t (.next/server/webpack-runtime.js:1:128)
+      at 65636 (.next/server/app/trainer/[username]/page.js:6:5521)
+      at t (.next/server/webpack-runtime.js:1:128)
+      at 18461 (.next/server/app/trainer/[username]/page.js:1:2180)
+      at Function.t (.next/server/webpack-runtime.js:1:128)
+}
+
+> Build error occurred
+[Error: Failed to collect page data for /trainer/[username]] {
+  type: 'Error'
+}
