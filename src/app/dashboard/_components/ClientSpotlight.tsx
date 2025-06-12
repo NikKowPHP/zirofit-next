@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef } from 'react';
 import { Chart, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js';
 
