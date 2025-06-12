@@ -4,15 +4,44 @@ import { useState, useEffect } from 'react'
 import { BellIcon } from '@heroicons/react/24/outline'
 import { Notification } from '@/types/notifications'
 import NotificationList from './NotificationList'
+import { createClient } from '@/lib/supabase/client'
 
 export default function NotificationIndicator() {
   const [isOpen, setIsOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const [userId, setUserId] = useState<string | null>(null)
+  const supabase = createClient()
 
   useEffect(() => {
+    const getUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) setUserId(user.id)
+    }
+    getUserId()
+  }, [supabase.auth])
+
+  useEffect(() => {
+    if (!userId) return
+
     fetchNotifications()
-  }, [])
+    
+    const eventSource = new EventSource(`/api/notifications/stream?userId=${userId}`)
+    
+    eventSource.onmessage = (event) => {
+      if (event.data === 'ping') return
+      fetchNotifications()
+    }
+
+    eventSource.onerror = (error) => {
+      console.error('EventSource failed:', error)
+      eventSource.close()
+    }
+
+    return () => {
+      eventSource.close()
+    }
+  }, [userId])
 
   const fetchNotifications = async () => {
     try {

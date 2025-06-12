@@ -40,7 +40,7 @@
 - Notifications created when milestones are hit
 - Test cases cover major milestone types
 
-## 5. Real-time Updates
+## 5. Real-time Updates ✅
 **Setup WebSocket:**
 - Implement basic WS server
 - Add notification event publishing
