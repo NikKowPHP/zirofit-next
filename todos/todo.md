@@ -1,3 +1,5 @@
+PLEASE REMOVE ANY PROXY SETTINGS AND PROXY CONFIGURATION, GET RID OF PROXY  TO RESOLVE THIS ISSUE 
+
 Build Error
 
 Module not found: Can't resolve 'net'
@@ -20,3 +22,4 @@ Import trace for requested module:
 ./src/lib/supabase/client.ts
 ./src/components/notifications/NotificationIndicator.tsx
 ./src/components/layouts/TrainerDashboardLayout.tsx
+
