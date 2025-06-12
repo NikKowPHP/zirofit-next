@@ -11,7 +11,7 @@
 - **Verification:** Use regex search to confirm no remaining references to port 5433
 
 ### Task 3: Validate Prisma Configuration
-- **Action:** Check `prisma/schema.prisma` and ensure it uses the environment variable:
+- [x] **Action:** Check `prisma/schema.prisma` and ensure it uses the environment variable:
   ```prisma
   datasource db {
     provider = "postgresql"
