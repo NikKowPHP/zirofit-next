@@ -38,9 +38,25 @@ export async function addSessionLog(prevState: any, formData: FormData) {
         sessionDate: new Date(data.sessionDate),
         durationMinutes: parseInt(data.durationMinutes),
         activitySummary: data.activitySummary,
-        // notes: data.notes, // Removed temporarily until Prisma schema is updated
       },
     });
+
+    // Check for milestone
+    const sessionCount = await prisma.clientSessionLog.count({
+      where: { clientId }
+    });
+
+    const milestones = [5, 10, 20, 50, 100];
+    if (milestones.includes(sessionCount)) {
+      await prisma.notification.create({
+        data: {
+          userId: authUser.id,
+          message: `🎉 Milestone reached! Client has completed ${sessionCount} sessions.`,
+          type: 'milestone',
+        }
+      });
+    }
+
     revalidatePath(`/clients/${clientId}`);
     return { success: true, sessionLog };
   } catch (error: any) {
@@ -68,7 +84,6 @@ export async function updateSessionLog(prevState: any, formData: FormData) {
         sessionDate: new Date(data.sessionDate),
         durationMinutes: parseInt(data.durationMinutes),
         activitySummary: data.activitySummary,
-        // notes: data.notes, // Temporarily removed until Prisma schema is updated
       },
     });
     revalidatePath(`/clients/${clientId}`);
