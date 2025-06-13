@@ -6,6 +6,11 @@ import ProfileChecklist from './_components/ProfileChecklist'
 import QuickActions from './_components/QuickActions'
 import ActivityFeed from './_components/ActivityFeed'
 import ClientSpotlight from './_components/ClientSpotlight'
+import SkeletonAtAGlanceStats from './_components/skeleton-at-a-glance-stats'
+import SkeletonProfileChecklist from './_components/skeleton-profile-checklist'
+import SkeletonQuickActions from './_components/skeleton-quick-actions'
+import SkeletonActivityFeed from './_components/skeleton-activity-feed'
+import SkeletonClientSpotlight from './_components/skeleton-client-spotlight'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
@@ -16,7 +21,11 @@ export default function DashboardContent() {
   })
 
   if (error) return <div>Failed to load dashboard data</div>
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <SkeletonAtAGlanceStats />
+    </div>
+  )
 
   const {
     activeClients,
