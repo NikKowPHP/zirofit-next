@@ -28,7 +28,7 @@ export async function getDashboardData(trainerId: string) {
   });
 
   const profile = await prisma.profile.findUnique({
-    where: { trainerId },
+    where: { userId: trainerId },
     include: {
       services: true,
       testimonials: true,
@@ -79,11 +79,12 @@ export async function getDashboardData(trainerId: string) {
       clientName: session.client.name,
       message: `Session with ${session.client.name} at ${session.sessionDate.toLocaleTimeString()}`
     })),
-    ...recentMeasurements.map((measurement: { type: string; createdAt: Date; client: { name: string } }) => ({
+    // FIX 1: Removed incorrect type annotation and simplified the message.
+    ...recentMeasurements.map(measurement => ({
       type: 'NEW_MEASUREMENT' as const,
       date: measurement.createdAt,
       clientName: measurement.client.name,
-      message: `New ${measurement.type} measurement for ${measurement.client.name}`
+      message: `New measurement logged for ${measurement.client.name}`
     })),
     ...pastSessions.map((session: { sessionDate: Date; client: { name: string } }) => ({
       type: 'PAST_SESSION' as const,
@@ -147,17 +148,20 @@ async function getSpotlightClient(trainerId: string) {
       clientId: client.id
     },
     orderBy: {
-      createdAt: 'asc'
+      measurementDate: 'asc' // Order by measurementDate
     },
     take: 10 // Get last 10 measurements
   });
 
   return {
     name: client.name,
-    measurements: measurements.map((m: { createdAt: Date; value: number; type: string }) => ({
-      date: m.createdAt,
-      value: m.value,
-      type: m.type
-    }))
+    // FIX 2: Correctly map the ClientMeasurement to the shape the chart expects.
+    measurements: measurements
+      .filter(m => m.weightKg != null) // Ensure we only plot measurements with a weight
+      .map(m => ({
+        date: m.measurementDate, // Use the actual date of the measurement
+        value: m.weightKg!,     // Use the weightKg as the value
+        type: 'weight'          // Explicitly define the type for the chart
+      }))
   };
 }
