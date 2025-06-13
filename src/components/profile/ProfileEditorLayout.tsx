@@ -3,9 +3,9 @@
 import React, { Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { TransformationPhoto } from './sections/TransformationPhotosEditor';
+import type { SocialLink } from './sections/SocialLinksEditor';
 import ProfileEditorSidebar from './ProfileEditorSidebar';
 
-// Temporary local type until we import from shared types
 interface ExternalLink {
   id: string;
   label: string;
@@ -15,11 +15,10 @@ interface ExternalLink {
   updatedAt: Date;
 }
 
-// Define a type for the initial data structure
 interface InitialProfileData {
   name: string;
   username: string;
-  email: string; // If needed by any section
+  email: string;
   profile?: {
     id: string;
     certifications: string | null;
@@ -31,52 +30,29 @@ interface InitialProfileData {
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
     services: Array<{id: string, title: string, description: string, createdAt: Date, profileId: string, updatedAt: Date}>;
-    // FIX: Expanded the Testimonial type to include all fields from the model
     testimonials: Array<{id: string, clientName: string, testimonialText: string, createdAt: Date, updatedAt: Date, profileId: string}>;
     externalLinks: Array<{id: string, label: string, linkUrl: string, createdAt: Date}>;
+    socialLinks: Array<{id: string, platform: string, username: string, profileUrl: string, createdAt: Date, profileId: string, updatedAt: Date}>;
     transformationPhotos: Array<{id: string, imagePath: string, caption: string | null, createdAt: Date}>;
     benefits: Array<{id: string, title: string, description: string | null, iconName: string | null, iconStyle: string | null, orderColumn: number, createdAt: Date, profileId: string, updatedAt: Date}>;
   }
 }
 
 interface ProfileEditorLayoutProps {
-  initialData: {
-    name: string;
-    username: string;
-    email: string;
-    profile?: {
-      id: string;
-      certifications: string | null;
-      location: string | null;
-      phone: string | null;
-      aboutMe: string | null;
-      philosophy: string | null;
-      methodology: string | null;
-      bannerImagePath: string | null;
-      profilePhotoPath: string | null;
-      services: { id: string; title: string; description: string; createdAt: Date; profileId: string; updatedAt: Date }[];
-      // FIX: Expanded the Testimonial type to include all fields from the model
-      testimonials: { id: string; clientName: string; testimonialText: string; createdAt: Date; updatedAt: Date, profileId: string }[];
-      externalLinks: { id: string; label: string; linkUrl: string; createdAt: Date; }[];
-      transformationPhotos: { id: string; imagePath: string; caption: string | null; createdAt: Date; }[];
-      benefits: { id: string; title: string; description: string | null; iconName: string | null; iconStyle: string | null; orderColumn: number; createdAt: Date; profileId: string; updatedAt: Date; }[];
-    } | undefined;
-  };
+  initialData: InitialProfileData;
 }
 
-// Import section components
 const CoreInfoEditor = React.lazy(() => import('./sections/CoreInfoEditor'));
 const AboutMeEditor = React.lazy(() => import('./sections/AboutMeEditor'));
 const PhilosophyEditor = React.lazy(() => import('./sections/PhilosophyEditor'));
 const MethodologyEditor = React.lazy(() => import('./sections/MethodologyEditor'));
-
-// Lazy load section components
 const BrandingEditor = React.lazy(() => import('./sections/BrandingEditor'));
 const BenefitsEditor = React.lazy(() => import('./sections/BenefitsEditor'));
 const ServicesEditor = React.lazy(() => import('./sections/ServicesEditor'));
 const PhotosEditor = React.lazy(() => import('./sections/TransformationPhotosEditor'));
 const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEditor'));
 const LinksEditor = React.lazy(() => import('./sections/ExternalLinksEditor'));
+const SocialLinksEditor = React.lazy(() => import('./sections/SocialLinksEditor'));
 
 const SectionLoadingFallback = () => <div className="p-6 bg-white shadow-sm rounded-lg">Loading section...</div>;
 
@@ -90,7 +66,6 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     window.history.pushState(null, '', `?${newSearchParams.toString()}`);
   };
   
-  // Wrapper for About/Philosophy/Methodology
   const AboutDetailsSection = () => (
     <div className="space-y-6">
       <AboutMeEditor initialAboutMe={initialData.profile?.aboutMe ?? null} />
@@ -114,6 +89,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     'photos': () => <PhotosEditor initialTransformationPhotos={initialData.profile?.transformationPhotos as TransformationPhoto[] || []} />,
     'testimonials': () => <TestimonialsEditor initialTestimonials={initialData.profile?.testimonials || []} />,
     'links': () => <LinksEditor initialExternalLinks={initialData.profile?.externalLinks as ExternalLink[] || []} />,
+    'social-links': () => <SocialLinksEditor initialSocialLinks={initialData.profile?.socialLinks as SocialLink[] || []} />,
   };
 
   const SelectedComponent = sectionComponents[selectedSection] || (() => <div className="p-6 bg-white shadow-sm rounded-lg">Select a section to edit.</div>);
