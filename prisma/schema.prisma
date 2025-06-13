@@ -49,6 +49,7 @@ model Profile {
   transformationPhotos TransformationPhoto[]
   externalLinks      ExternalLink[]
   benefits           Benefit[]
+  socialLinks        SocialLink[]
 
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -85,6 +86,19 @@ model TransformationPhoto {
 
   imagePath   String   // Path to the image file (e.g., in Supabase Storage)
   caption     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SocialLink {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  platform    String
+  username    String
+  profileUrl  String
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

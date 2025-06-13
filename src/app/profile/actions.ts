@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit } from '@generated/prisma';
+import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit, SocialLink } from '@generated/prisma';
 import type { AuthUser } from '@supabase/supabase-js';
 
 
@@ -290,7 +290,59 @@ export async function deleteService(serviceId: string): Promise<{ success: boole
   } catch (e) { return { success: false, error: 'Failed to delete service.' }; }
 }
 
-// 7. External Link Actions
+// 7. Social Link Actions
+const SocialLinkSchema = z.object({
+  platform: z.string().min(1, "Platform is required."),
+  username: z.string().min(1, "Username is required."),
+  profileUrl: z.string().url("Must be a valid URL.")
+});
+
+interface SocialLinkFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newLink?: SocialLink;
+  updatedLink?: SocialLink;
+  deletedId?: string;
+}
+
+export async function addSocialLink(prevState: SocialLinkFormState | undefined, formData: FormData): Promise<SocialLinkFormState> {
+  const { profile } = await getUserAndProfile();
+  const validated = SocialLinkSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!validated.success) return { errors: validated.error.issues, error: 'Validation failed.' };
+  try {
+    const newLink = await prisma.socialLink.create({ data: { ...validated.data, profileId: profile.id } });
+    revalidatePath('/profile/edit');
+    return { success: true, message: 'Social link added.', newLink };
+  } catch (e) { return { error: 'Failed to add social link.' }; }
+}
+
+export async function updateSocialLink(prevState: SocialLinkFormState | undefined, formData: FormData): Promise<SocialLinkFormState> {
+  const { profile } = await getUserAndProfile();
+  const linkId = formData.get('linkId') as string;
+  const validated = SocialLinkSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!validated.success) return { errors: validated.error.issues, error: 'Validation failed.' };
+  try {
+    const updatedLink = await prisma.socialLink.update({
+      where: { id: linkId, profileId: profile.id },
+      data: validated.data
+    });
+    revalidatePath('/profile/edit');
+    return { success: true, message: 'Social link updated.', updatedLink };
+  } catch (e) { return { error: 'Failed to update social link.' }; }
+}
+
+export async function deleteSocialLink(linkId: string): Promise<{ success: boolean, error?: string, deletedId?: string }> {
+  const { profile } = await getUserAndProfile();
+  try {
+    await prisma.socialLink.delete({ where: { id: linkId, profileId: profile.id } });
+    revalidatePath('/profile/edit');
+    return { success: true, deletedId: linkId };
+  } catch (e) { return { success: false, error: 'Failed to delete social link.' }; }
+}
+
+// 8. External Link Actions
 const ExternalLinkSchema = z.object({ label: z.string().min(1, "Label is required."), linkUrl: z.string().url("Must be a valid URL.") });
 interface ExternalLinkFormState { message?: string | null; error?: string | null; errors?: z.ZodIssue[]; success?: boolean; newLink?: ExternalLink; updatedLink?: ExternalLink; deletedId?: string; }
 export async function addExternalLink(prevState: ExternalLinkFormState | undefined, formData: FormData): Promise<ExternalLinkFormState> {

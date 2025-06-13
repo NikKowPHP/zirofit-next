@@ -9,5 +9,5 @@
   - **Plan File:** `todos/dev_todo_phase_2.md`
 
 ## Phase 3: User Profile Features
-- [ ] **Task 3:** Add advanced profile customization
+- [x] **Task 3:** Add advanced profile customization
   - **Plan File:** `todos/dev_todo_phase_3.md`
