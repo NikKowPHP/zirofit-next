@@ -5,7 +5,7 @@
   - **LLM Prompt:** "Create a WebSocket server in `src/lib/websocket.ts` that broadcasts notifications to connected clients"
   - **Verification:** Server runs without errors and accepts connections
 
-- [ ] **Subtask 1.2:** Create notification UI components
+- [x] **Subtask 1.2:** Create notification UI components
   - **LLM Prompt:** "Implement a notification bell icon and dropdown list in `src/components/notifications/NotificationIndicator.tsx`"
   - **Verification:** Component renders correctly and shows unread count
 

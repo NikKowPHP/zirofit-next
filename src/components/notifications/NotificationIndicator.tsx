@@ -26,20 +26,31 @@ export default function NotificationIndicator() {
 
     fetchNotifications()
     
-    const eventSource = new EventSource(`/api/notifications/stream?userId=${userId}`)
-    
-    eventSource.onmessage = (event) => {
-      if (event.data === 'ping') return
-      fetchNotifications()
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`)
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: 'auth',
+        userId: userId
+      }))
     }
 
-    eventSource.onerror = (error) => {
-      console.error('EventSource failed:', error)
-      eventSource.close()
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data)
+      if (message.type === 'notification') {
+        setNotifications(prev => [message.data, ...prev])
+        setUnreadCount(prev => prev + 1)
+      }
+    }
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+      ws.close()
     }
 
     return () => {
-      eventSource.close()
+      ws.close()
     }
   }, [userId])
 
