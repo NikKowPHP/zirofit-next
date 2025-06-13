@@ -12,7 +12,7 @@ The `public.Notification` table is missing from the database despite being defin
   - **LLM Prompt:** "Run `npx prisma migrate dev --name add_notification_model` to create and apply a new migration"
   - **Verification:** New migration file appears in `prisma/migrations/` folder
 
-- [ ] **Task 2: Verify database schema**
+- [x] **Task 2: Verify database schema**
   - **LLM Prompt:** "Run `npx prisma studio` and visually confirm Notification table exists"
   - **Verification:** Notification table appears in Prisma Studio with correct columns
 
