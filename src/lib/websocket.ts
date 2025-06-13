@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws';
 import { Server } from 'http';
+import type { Notification } from '@/types/notifications';
 
 interface ActiveConnection {
   userId: string;
@@ -27,14 +28,26 @@ export function setupWebSocket(server: Server) {
         activeConnections.splice(index, 1);
       }
     });
+
+    ws.on('error', (error) => {
+      console.error('WebSocket error:', error);
+    });
   });
 
+  console.log(`WebSocket server running on ws://localhost:${(server.address() as any).port}`);
   return wss;
 }
 
-export function broadcastToUser(userId: string, message: any) {
+export function broadcastNotification(userId: string, notification: Notification) {
   const connections = activeConnections.filter(conn => conn.userId === userId);
   connections.forEach(conn => {
-    conn.ws.send(JSON.stringify(message));
+    try {
+      conn.ws.send(JSON.stringify({
+        type: 'notification',
+        data: notification
+      }));
+    } catch (error) {
+      console.error('Failed to send notification:', error);
+    }
   });
 }
