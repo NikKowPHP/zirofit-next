@@ -9,7 +9,7 @@
   - **LLM Prompt:** "Implement a notification bell icon and dropdown list in `src/components/notifications/NotificationIndicator.tsx`"
   - **Verification:** Component renders correctly and shows unread count
 
-- [ ] **Subtask 1.3:** Add mark-as-read functionality
+- [x] **Subtask 1.3:** Add mark-as-read functionality
   - **LLM Prompt:** "Create API endpoint `POST /api/notifications/mark-read` in `src/app/api/notifications/mark-read/route.ts`"
   - **Verification:** Endpoint updates readStatus in database
 
