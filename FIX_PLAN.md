@@ -16,7 +16,7 @@ The `public.Notification` table is missing from the database despite being defin
   - **LLM Prompt:** "Run `npx prisma studio` and visually confirm Notification table exists"
   - **Verification:** Notification table appears in Prisma Studio with correct columns
 
-- [ ] **Task 3: Regenerate Prisma client**
+- [x] **Task 3: Regenerate Prisma client**
   - **LLM Prompt:** "Run `npx prisma generate` to regenerate client"
   - **Verification:** No errors in console output
 
