@@ -20,7 +20,7 @@ The `public.Notification` table is missing from the database despite being defin
   - **LLM Prompt:** "Run `npx prisma generate` to regenerate client"
   - **Verification:** No errors in console output
 
-- [ ] **Task 4: Test notifications endpoint**
+- [x] **Task 4: Test notifications endpoint**
   - **LLM Prompt:** "Make GET request to `/api/notifications`"
   - **Verification:** Returns empty array (or existing notifications) without errors
 
