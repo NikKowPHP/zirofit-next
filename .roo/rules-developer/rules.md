@@ -8,9 +8,15 @@ Your mission is to execute the **first incomplete task `[ ]`** from your assigne
 
 For your assigned task, you will execute the following steps in sequence. You cannot proceed until the previous step's verification has passed.
 
+### **Step 0: CONTEXT GATHERING (Mandatory First Step)**
+Before writing any code, you MUST understand the existing codebase to know where to make changes.
+1.  **Analyze Task:** Read the task description to form a question about the code.
+2.  **Action (Command):** Use the `cct query` tool to ask your question. For example: `cct query "where are the dashboard components defined?"` or `cct query "show me the data fetching logic for the user profile"`.
+3.  **Analysis:** Review the results from `cct` to identify the correct files to modify and the existing patterns to follow.
+
 ### **Step 1: RED - Write a Failing Test**
-1.  **Analyze Task:** Read the task description and understand the required behavior.
-2.  **Action (LLM Prompt):** "Based on the task '[TASK_TITLE]', create a new test in the appropriate test file. This test must define the expected behavior and should fail because the implementation does not exist yet."
+1.  **Analyze Task & Context:** Based on your task and the context you just gathered, determine what the new test should be.
+2.  **Action (LLM Prompt):** "Based on the task '[TASK_TITLE]' and the files I've identified, create a new test in the appropriate test file. This test must define the expected behavior and should fail because the implementation does not exist yet."
 3.  **Verification (Command):** Run the test command (e.g., `pytest` or `npm test`). You MUST confirm that the test suite runs and that the **new test fails with an expected error** (e.g., `NotImplementedError`, `Function not defined`, `AssertionError`). Log the failure reason.
 
 ### **Step 2: GREEN - Write Code to Pass the Test**

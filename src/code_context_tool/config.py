@@ -12,8 +12,8 @@ QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 # The default embedding model. BAAI/bge-large-en-v1.5 is a top-tier open-source
 # model on the MTEB leaderboard, excellent for code retrieval and semantic search.
 # Sentence-Transformers will download and cache it locally on first use.
-EMBEDDING_MODEL_NAME = "BAAI/bge-large-en-v1.5"
-
+# EMBEDDING_MODEL_NAME = "BAAI/bge-large-en-v1.5"
+EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 # The default collection name prefix. The final name will be derived from the
 # project's root folder name to ensure isolation between projects.
 DEFAULT_COLLECTION_NAME_PREFIX = "cct"
