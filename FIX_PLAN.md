@@ -6,12 +6,12 @@
 
 ## Solution Steps:
 
-1. **Add Test IDs to Skeleton Components**:
+1. **Add Test IDs to Skeleton Components** [x]:
    - Edit each skeleton component file:
      - `src/app/dashboard/_components/SkeletonProfileChecklist.tsx`
-     - `src/app/dashboard/_components/SkeletonQuickActions.tsx`
-     - `src/app/dashboard/_components/SkeletonActivityFeed.tsx`
-     - `src/app/dashboard/_components/SkeletonClientSpotlight.tsx`
+     - `src/app/dashboard/_components/SkeletonQuickActions.tsx` [x]
+     - `src/app/dashboard/_components/SkeletonActivityFeed.tsx` [x]
+     - `src/app/dashboard/_components/SkeletonClientSpotlight.tsx` [x]
    - Add `data-testid` attributes to root elements:
      ```tsx
      <div className="..." data-testid="skeleton-profile-checklist">

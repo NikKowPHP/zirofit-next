@@ -8,5 +8,5 @@ const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'mock-url';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-key';
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://mock-url.com';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-key-valid-format';
