@@ -1,37 +1,59 @@
 import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import NotificationIndicator from './NotificationIndicator'
-import { vi } from 'vitest'
 
 // Mock WebSocket
 class WebSocket {
   constructor() {
-    this.onopen = vi.fn()
-    this.onmessage = vi.fn()
-    this.onerror = vi.fn()
-    this.close = vi.fn()
+    this.onopen = jest.fn()
+    this.onmessage = jest.fn((event?: MessageEvent) => {})
+    this.onerror = jest.fn()
+    this.close = jest.fn()
+    Object.assign(WebSocket, {
+      CONNECTING: 0,
+      OPEN: 1,
+      CLOSING: 2,
+      CLOSED: 3
+    })
   }
   onopen() {}
-  onmessage() {}
+  onmessage(event?: MessageEvent) {}
   onerror() {}
   close() {}
 }
 
-global.WebSocket = WebSocket
+global.WebSocket = WebSocket as any
+;(global.WebSocket as any).CONNECTING = 0
+;(global.WebSocket as any).OPEN = 1
+;(global.WebSocket as any).CLOSING = 2
+;(global.WebSocket as any).CLOSED = 3
 
 // Mock API calls
-global.fetch = vi.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve([
-      { id: '1', message: 'Test notification', readStatus: false }
-    ]),
-    ok: true
-  })
-)
+const mockFetchResponse = {
+  ok: true,
+  json: () => Promise.resolve([
+    { id: '1', message: 'Test notification', readStatus: false }
+  ]),
+  headers: new Headers(),
+  redirected: false,
+  status: 200,
+  statusText: 'OK',
+  type: 'basic',
+  url: '',
+  clone: jest.fn(),
+  text: jest.fn(),
+  blob: jest.fn(),
+  formData: jest.fn(),
+  arrayBuffer: jest.fn(),
+  bodyUsed: false,
+  body: null
+} as unknown as Response;
+
+global.fetch = jest.fn(() => Promise.resolve(mockFetchResponse))
 
 describe('NotificationIndicator', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
   })
 
   it('displays unread count', async () => {
@@ -62,9 +84,37 @@ describe('NotificationIndicator', () => {
         type: 'notification',
         data: { id: '2', message: 'New notification', readStatus: false }
       }
-      WebSocket.prototype.onmessage({
-        data: JSON.stringify(newNotification)
-      })
+      const mockEvent = {
+        data: JSON.stringify(newNotification),
+        lastEventId: '',
+        origin: '',
+        ports: [],
+        source: null,
+        bubbles: false,
+        cancelBubble: false,
+        cancelable: false,
+        composed: false,
+        currentTarget: null,
+        defaultPrevented: false,
+        eventPhase: 0,
+        isTrusted: true,
+        returnValue: true,
+        srcElement: null,
+        target: null,
+        timeStamp: 0,
+        type: 'message',
+        composedPath: () => [],
+        initEvent: () => {},
+        preventDefault: () => {},
+        stopImmediatePropagation: () => {},
+        stopPropagation: () => {},
+        NONE: 0,
+        CAPTURING_PHASE: 1,
+        AT_TARGET: 2,
+        BUBBLING_PHASE: 3
+      } as unknown as MessageEvent;
+      
+      WebSocket.prototype.onmessage?.(mockEvent)
     })
     
     await waitFor(() => {

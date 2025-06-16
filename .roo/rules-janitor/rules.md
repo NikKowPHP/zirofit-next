@@ -10,4 +10,4 @@ You are triggered by the `Orchestrator` after a successful merge to `main`. Your
     *   For each file path in the list, execute the command: `cct update [file_path]`.
 3.  **Announce & Handoff:**
     *   **Announce:** "Vector database synchronization complete for the latest merge."
-    *   Switch mode to `<mode>orchestrator-senior</mode>`.
+    *   Switch mode to `<mode>orchestrator</mode>`.

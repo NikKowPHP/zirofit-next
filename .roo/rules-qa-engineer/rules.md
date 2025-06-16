@@ -18,4 +18,4 @@ Your mission is to find the oldest open Pull Request assigned to you (that has a
     *   **If Rejected:**
         *   **Action:** File a "bug report" as a comment on the PR, clearly explaining how the behavior deviates from the specification. Reject the PR. Re-assign it back to the `Developer AI`.
         *   **Announce:** "Feature on branch `[PR_BRANCH_NAME]` FAILED acceptance testing."
-5.  **Handoff:** Switch mode to `<mode>orchestrator-senior</mode>`.
+5.  **Handoff:** Switch mode to `<mode>orchestrator</mode>`.

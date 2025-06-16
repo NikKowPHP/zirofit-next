@@ -1,9 +1,20 @@
 module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx|ts|tsx|mjs)$': ['babel-jest', { configFile: './babel.test.babelrc' }]
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.jest.json',
+      },
+    ],
+    '^.+\\.jsx?$': 'babel-jest'
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(node-fetch)/)'
+    'node_modules/(?!(node-fetch|data-uri-to-buffer|fetch-blob)/)'
   ],
-  setupFilesAfterEnv: ['./jest.setup.mjs']
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };

@@ -1,27 +1,30 @@
-# Fix Plan: Resolve Testing Setup Issues
+# Test Configuration Fix Plan
 
-## 1. Temporary React Version Adjustment
-```bash
-npm install react@18.2.0 react-dom@18.2.0 --save-exact
-```
+## Issues Addressed:
+1. Missing test IDs in skeleton components
+2. Invalid Supabase mock URL format
 
-## 2. Testing Infrastructure Setup
-```bash
-npm install --save-dev @testing-library/react@15.0.0 jest@30.0.0 @types/jest@30.0.0 babel-jest@30.0.0 --force
-```
+## Solution Steps:
 
-## 3. Jest Configuration
-Create `jest.config.js` with:
-```javascript
-module.exports = {
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.test.babelrc' }]
-  },
-  setupFilesAfterEnv: ['./jest.setup.mjs']
-};
-```
+1. **Add Test IDs to Skeleton Components**:
+   - Edit each skeleton component file:
+     - `src/app/dashboard/_components/SkeletonProfileChecklist.tsx`
+     - `src/app/dashboard/_components/SkeletonQuickActions.tsx`
+     - `src/app/dashboard/_components/SkeletonActivityFeed.tsx`
+     - `src/app/dashboard/_components/SkeletonClientSpotlight.tsx`
+   - Add `data-testid` attributes to root elements:
+     ```tsx
+     <div className="..." data-testid="skeleton-profile-checklist">
+     ```
 
-## Verification Steps
-1. Run `npm test src/app/dashboard/DashboardContent.test.tsx`
-2. Confirm tests execute without JSX parsing errors
-3. Check that all skeleton components render during loading state
+2. **Fix Supabase Mock Configuration**:
+   - Update `jest.setup.js`:
+     ```javascript
+     process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://mock-url.com';
+     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-key-valid-format';
+     ```
+
+3. **Verify Fixes**:
+   - Run tests to confirm all issues are resolved:
+     ```bash
+     npm test

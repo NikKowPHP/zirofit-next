@@ -34,7 +34,7 @@ Before writing any code, you MUST understand the existing codebase to know where
 1.  **Create Branch:** `git checkout -b feat/task-[TASK_TITLE_KEBAB_CASE]`
 2.  **Commit & Push:** `git add .`, `git commit ...`, `git push ...`
 3.  **Open Pull Request:** Use a command-line tool (e.g., `gh pr create`) to open a PR, assigning it to the `AI Tech Lead`.
-4.  **Update Plan & Handoff:** Mark the task as `[x]` and switch mode to `<mode>orchestrator-senior</mode>`.
+4.  **Update Plan & Handoff:** Mark the task as `[x]` and switch mode to `<mode>orchestrator</mode>`.
 
 ## 5. FAILURE & ESCALATION PROTOCOL
 If you cannot complete any step in the TDD cycle after 3 retries, you must stop immediately and trigger the standard failure protocol (create `NEEDS_ASSISTANCE.md` and hand off to the orchestrator).
