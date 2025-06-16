@@ -17,7 +17,7 @@
      <div className="..." data-testid="skeleton-profile-checklist">
      ```
 
-2. **Fix Supabase Mock Configuration**:
+2. **Fix Supabase Mock Configuration** [x]:
    - Update `jest.setup.js`:
      ```javascript
      process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://mock-url.com';
