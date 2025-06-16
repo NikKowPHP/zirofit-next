@@ -1,1 +1,6 @@
+app
 code_context_tool
+components
+generated
+lib
+types

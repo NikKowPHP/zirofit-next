@@ -23,7 +23,11 @@ export default function DashboardContent() {
   if (error) return <div>Failed to load dashboard data</div>
   if (isLoading) return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <SkeletonAtAGlanceStats />
+      <SkeletonAtAGlanceStats data-testid="skeleton-at-a-glance" />
+      <SkeletonProfileChecklist data-testid="skeleton-profile-checklist" />
+      <SkeletonQuickActions data-testid="skeleton-quick-actions" />
+      <SkeletonActivityFeed data-testid="skeleton-activity-feed" />
+      <SkeletonClientSpotlight data-testid="skeleton-client-spotlight" />
     </div>
   )
 
