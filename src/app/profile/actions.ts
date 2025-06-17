@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit, SocialLink } from '@generated/prisma';
+import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit, SocialLink } from '@prisma/client';
 import type { AuthUser } from '@supabase/supabase-js';
 
 

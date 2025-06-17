@@ -6,7 +6,7 @@ import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
 import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '@/app/profile/actions';
 import { Input, Label, Button, Textarea } from '@/components/ui';
-import type { Benefit } from '@generated/prisma';
+import type { Benefit } from '@prisma/client';
 import SortableJS from 'sortablejs';
 
 interface BenefitsEditorProps {
