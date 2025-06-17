@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from 'react';
-import type { Client, ClientSessionLog, ClientMeasurement, ClientProgressPhoto } from '../../generated/prisma';
+import type { Client, ClientSessionLog, ClientMeasurement, ClientProgressPhoto } from '@prisma/client';
 import ManageClientMeasurements from './modules/ManageClientMeasurements';
 import ManageClientProgressPhotos from './modules/ManageClientProgressPhotos';
 import ManageClientSessionLogs from './modules/ManageClientSessionLogs';

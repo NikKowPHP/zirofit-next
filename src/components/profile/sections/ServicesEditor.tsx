@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { addService } from '@/app/profile/actions';
-import type { Service } from '@/generated/prisma';
+import type { Service } from '@prisma/client';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';

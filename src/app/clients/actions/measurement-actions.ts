@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import type { ClientMeasurement } from '@/generated/prisma';
+import type { ClientMeasurement } from '@prisma/client';
 import { authorizeClientAccess } from './_utils';
 
 const measurementSchema = z.object({

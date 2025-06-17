@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addProgressPhoto, deleteProgressPhoto } from "@/app/clients/actions";
-import type { ClientProgressPhoto } from "@/generated/prisma"; // Import the model type
+import type { ClientProgressPhoto } from "@prisma/client"; // Import the model type
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
 
