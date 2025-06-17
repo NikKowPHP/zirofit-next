@@ -2,6 +2,8 @@ import ProfileEditorLayout from '@/components/profile/ProfileEditorLayout';
 import { getCurrentUserProfileData } from '@/app/profile/actions';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic'; // Force dynamic rendering
+
 export default async function EditProfilePage() {
   const initialProfileData = await getCurrentUserProfileData();
 
