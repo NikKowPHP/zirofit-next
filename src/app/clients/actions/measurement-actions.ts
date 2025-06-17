@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { ClientMeasurement } from '@prisma/client';
 import { authorizeClientAccess } from './_utils';
 
 const measurementSchema = z.object({
@@ -25,7 +25,7 @@ export interface MeasurementFormState {
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
-  measurement?: Prisma.ClientMeasurementGetPayload<{}>;
+  measurement?: ClientMeasurement;
 }
 
 export async function addMeasurement(prevState: MeasurementFormState | undefined, formData: FormData): Promise<MeasurementFormState> {
