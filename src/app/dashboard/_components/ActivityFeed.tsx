@@ -18,7 +18,7 @@ export default function ActivityFeed({ activityFeed }: ActivityFeedProps) {
         activityFeed.map((activity, index) => (
           <div key={index} className="p-4 bg-white rounded-lg shadow">
             <p className="text-sm text-gray-600">
-              {activity.date.toLocaleDateString()} - {activity.message}
+              {new Date(activity.date).toLocaleDateString()} - {activity.message}
             </p>
           </div>
         ))

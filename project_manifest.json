@@ -1,7 +1,7 @@
 {
   "project_root": ".",
   "log_file": "logs/system_events.log",
-  "active_plan_file": "work_items/dev_todo_phase_2_loading_states.md",
+  "active_plan_file": "work_items/dev_todo_dark_mode.md",
   "work_items_dir": "work_items/",
   "signal_files": {
     "needs_refactor": "NEEDS_REFACTOR.md",
@@ -15,6 +15,7 @@
   "architectural_map": {
     "authentication": "user authentication, session management",
     "dashboard": "dashboard components, charts, stats",
-    "notifications": "notification system, real-time updates"
+    "notifications": "notification system, real-time updates",
+    "theming": "UI themes, dark mode, styling"
   }
 }
