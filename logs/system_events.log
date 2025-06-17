@@ -30,3 +30,7 @@
 {"timestamp": "2025-06-17T11:05:55Z", "agent": "Orchestrator", "event": "handoff", "target_agent": "Developer", "details": "Refactoring needed for package.json version"}
 {"timestamp": "2025-06-17T11:11:47Z", "agent": "Orchestrator", "event": "handoff", "target_agent": "Tech_Lead", "details": "Commit ready for review: Fix invalid package version"}
 {"timestamp": "2025-06-17T11:13:52Z", "agent": "Tech Lead", "event": "review_started", "details": "Starting technical review of latest commit"}
+{"timestamp": "2025-06-17T11:47:06Z", "agent": "Janitor", "event": "action_start", "details": "Starting post-commit maintenance."}
+{"timestamp": "2025-06-17T11:48:00Z", "agent": "Janitor", "event": "action_complete", "details": "Cleanup complete."}
+{"timestamp": "2025-06-17T12:07:16+02:00", "agent": "Janitor", "event": "action_start", "details": "Starting post-commit maintenance."}
+{"timestamp": "2025-06-17T12:08:15+02:00", "agent": "Janitor", "event": "action_complete", "details": "Cleanup complete."}

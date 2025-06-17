@@ -5,12 +5,12 @@ import AtAGlanceStats from './_components/AtAGlanceStats'
 import ProfileChecklist from './_components/ProfileChecklist'
 import QuickActions from './_components/QuickActions'
 import ActivityFeed from './_components/ActivityFeed'
-import ClientSpotlight from './_components/ClientSpotlight'
+import ClientProgressChart from './_components/ClientProgressChart'
+import MonthlyActivityChart from './_components/MonthlyActivityChart'
 import SkeletonAtAGlanceStats from './_components/skeleton-at-a-glance-stats'
 import SkeletonProfileChecklist from './_components/skeleton-profile-checklist'
 import SkeletonQuickActions from './_components/skeleton-quick-actions'
 import SkeletonActivityFeed from './_components/skeleton-activity-feed'
-import SkeletonClientSpotlight from './_components/skeleton-client-spotlight'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
@@ -27,7 +27,6 @@ export default function DashboardContent() {
       <SkeletonProfileChecklist data-testid="skeleton-profile-checklist" />
       <SkeletonQuickActions data-testid="skeleton-quick-actions" />
       <SkeletonActivityFeed data-testid="skeleton-activity-feed" />
-      <SkeletonClientSpotlight data-testid="skeleton-client-spotlight" />
     </div>
   )
 
@@ -37,7 +36,8 @@ export default function DashboardContent() {
     pendingClients,
     profile,
     activityFeed,
-    spotlightClient
+    clientProgressData,  // Array of {x: string, y: number}
+    monthlyActivityData  // Array of {x: string, y: number}
   } = data
 
   return (
@@ -50,10 +50,18 @@ export default function DashboardContent() {
       <ProfileChecklist profile={profile} />
       <QuickActions />
       <ActivityFeed activityFeed={activityFeed} />
-      <ClientSpotlight
-        clientName={spotlightClient?.name}
-        measurements={spotlightClient?.measurements}
-      />
+      
+      {/* Chart Section */}
+      <div className="lg:col-span-2 space-y-6">
+        <ClientProgressChart
+          data={clientProgressData}
+          title="Client Progress"
+        />
+        <MonthlyActivityChart
+          data={monthlyActivityData}
+          title="Monthly Activity"
+        />
+      </div>
     </div>
   )
 }
