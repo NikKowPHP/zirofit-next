@@ -56,6 +56,7 @@ export async function getCurrentUserProfileData() {
             transformationPhotos: { orderBy: { createdAt: 'desc' } },
             externalLinks: { orderBy: { createdAt: 'asc' } },
             benefits: { orderBy: { orderColumn: 'asc' } },
+            socialLinks: { orderBy: { createdAt: 'asc' } }, // Added socialLinks
           },
         },
       },
@@ -74,6 +75,7 @@ export async function getCurrentUserProfileData() {
                   transformationPhotos: { orderBy: { createdAt: 'desc' } },
                   externalLinks: { orderBy: { createdAt: 'asc' } },
                   benefits: { orderBy: { orderColumn: 'asc' } },
+                  socialLinks: { orderBy: { createdAt: 'asc' } }, // Added socialLinks
                 },
               },
             },
@@ -84,7 +86,7 @@ export async function getCurrentUserProfileData() {
 
     if (userWithProfile.profile && userWithProfile.profile.transformationPhotos) {
         const supabaseStorage = await createClient(); // Re-use the existing client or create a new one as needed
-        userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map((photo: { imagePath: string; [key: string]: any }) => {
+        userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map((photo) => {
             const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit').getPublicUrl(photo.imagePath);
             return { ...photo, publicUrl };
         });

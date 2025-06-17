@@ -283,9 +283,9 @@ export async function bulkExportClients(clientIds: string[]) {
       email: string | null;
       phone: string | null;
       status: string;
-      measurements: Array<{ measurementDate?: Date; weight?: number; bodyFatPercentage?: number }>;
-      progressPhotos: Array<{ photoDate?: Date; photoUrl: string }>;
-      sessionLogs: Array<{ sessionDate?: Date; notes?: string }>;
+      measurements: Array<{ measurementDate: Date; weightKg: number | null; bodyFatPercentage: number | null; }>;
+      progressPhotos: Array<{ photoDate: Date; imagePath: string }>;
+      sessionLogs: Array<{ sessionDate: Date; sessionNotes: string | null }>;
     }) => {
       const lastMeasurement = client.measurements[0] || {};
       const lastPhoto = client.progressPhotos[0] || {};
@@ -297,12 +297,12 @@ export async function bulkExportClients(clientIds: string[]) {
         `"${client.phone}"`,
         `"${client.status}"`,
         lastMeasurement.measurementDate || '',
-        lastMeasurement.weight || '',
+        lastMeasurement.weightKg || '',
         lastMeasurement.bodyFatPercentage || '',
         lastPhoto.photoDate || '',
-        lastPhoto.photoUrl || '',
+        lastPhoto.imagePath || '',
         lastSession.sessionDate || '',
-        `"${lastSession.notes?.replace(/"/g, '""') || ''}"`
+        `"${lastSession.sessionNotes?.replace(/"/g, '""') || ''}"`
       ].join(',');
     });
 
