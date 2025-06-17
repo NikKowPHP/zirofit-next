@@ -1,17 +1,63 @@
-# FIX_PLAN: Resolve Missing Refactoring Instructions
+# Emergency Fix: Dashboard Chart Data Mismatch
 
-## Problem
-The `NEEDS_REFACTOR.md` file was present in VSCode open tabs but not found on disk, preventing the Developer AI from proceeding with refactoring tasks.
+## Diagnosis
+The `ClientProgressChart` component expects data in a format that does not match the output of `ChartDataService.formatProgressData`. This causes a runtime error when rendering the chart.
 
-## Resolution Steps
-1. Recreated `NEEDS_REFACTOR.md` with placeholder content
-2. Updated project manifest to document recovery action
-3. Created this FIX_PLAN.md to document the resolution
-4. Set FIX_PLAN.md as active plan in manifest
-5. Deleted NEEDS_ASSISTANCE.md signal file
+## Steps
 
-## Implementation Details
-- Created placeholder NEEDS_REFACTOR.md with instructions to check work items
-- Added "system_recovery" entry to architectural_map in manifest
-- Set active_plan_file to FIX_PLAN.md in manifest
-- This file serves as the resolution record
+1. **Refactor ClientProgressChart component**  
+   - Change the component's props to accept data in the format provided by `ChartDataService`  
+   - Update the component to transform this data into the structure required by Chart.js  
+
+   File: [`src/app/dashboard/_components/ClientProgressChart.tsx`](src/app/dashboard/_components/ClientProgressChart.tsx)  
+
+   Changes:  
+   ```diff
+   interface ClientProgressChartProps {
+   -  data: {
+   -    labels: string[]
+   -    measurements: number[]
+   -  }
+   +  data: Array<{ x: string; y: number }>
+     title?: string
+   }
+   
+   export default function ClientProgressChart({ data, title }: ClientProgressChartProps) {
+     const chartData = {
+   -    labels: data.labels,
+   -    datasets: [
+   -      {
+   -        label: 'Progress',
+   -        data: data.measurements,
+   +    labels: data.map(d => d.x),
+   +    datasets: [
+   +      {
+   +        label: 'Progress',
+   +        data: data.map(d => d.y),
+         borderColor: 'rgb(75, 192, 192)',
+         backgroundColor: 'rgba(75, 192, 192, 0.5)',
+         tension: 0.4,
+   ```
+
+2. **Update Tests**  
+   Update test data in [`src/app/dashboard/_components/ClientProgressChart.test.tsx`](src/app/dashboard/_components/ClientProgressChart.test.tsx) to match new data format:
+   
+   ```diff
+   const testData = {
+   -  labels: ['2025-01-01', '2025-01-02', '2025-01-03'],
+   -  measurements: [65, 59, 80]
+   +  [
+   +    { x: '2025-01-01', y: 65 },
+   +    { x: '2025-01-02', y: 59 },
+   +    { x: '2025-01-03', y: 80 }
+   +  ]
+   ```
+
+3. **Verify Integration**  
+   Confirm that `DashboardContent` passes data correctly without transformation:
+   ```typescript
+   <ClientProgressChart data={chartData} title="Client Progress" />
+   ```
+
+## Expected Outcome
+The chart will render without errors, using the data provided by `ChartDataService`.
