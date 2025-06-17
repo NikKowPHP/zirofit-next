@@ -5,7 +5,7 @@ Correctly implement data visualization charts on the dashboard as specified in t
 
 ## Tasks:
 - [x] (LOGIC) Create data service in `lib/services/ChartDataService.ts` to format data for charts
-- [ ] (UI) Implement functional line chart in `src/app/dashboard/_components/ClientProgressChart.tsx`
+- [x] (UI) Implement functional line chart in `src/app/dashboard/_components/ClientProgressChart.tsx`
 - [ ] (UI) Create new `MonthlyActivityChart.tsx` component for bar chart visualization
 - [ ] (UI) Integrate both charts into `src/app/dashboard/DashboardContent.tsx`
 - [ ] (LOGIC) Write Jest tests for chart components in `src/app/dashboard/_components/ClientProgressChart.test.tsx` and `MonthlyActivityChart.test.tsx`
