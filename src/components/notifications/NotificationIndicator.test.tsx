@@ -32,7 +32,7 @@ global.WebSocket = WebSocket as any
 const mockFetchResponse = {
   ok: true,
   json: () => Promise.resolve([
-    { id: '1', message: 'Test notification', readStatus: false }
+    { id: '1', message: 'Test notification', readStatus: false, createdAt: new Date().toISOString() }
   ]),
   headers: new Headers(),
   redirected: false,
@@ -51,17 +51,47 @@ const mockFetchResponse = {
 
 global.fetch = jest.fn(() => Promise.resolve(mockFetchResponse))
 
+// Mock the WebSocket
+const mockWebSocket = {
+  onopen: jest.fn(),
+  onmessage: jest.fn(),
+  onerror: jest.fn(),
+  close: jest.fn(),
+  send: jest.fn(),
+  readyState: 1, // OPEN
+  CONNECTING: 0,
+  OPEN: 1,
+  CLOSING: 2,
+  CLOSED: 3
+};
+
+global.WebSocket = jest.fn(() => mockWebSocket) as any;
+
 describe('NotificationIndicator', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    const mockSupabase = {
+      auth: {
+        getUser: jest.fn().mockResolvedValue({
+          data: { user: { id: 'test-user-id' } }
+        })
+      }
+    }
+    jest.mock('@/lib/supabase/client', () => ({
+      createClient: () => mockSupabase
+    }))
   })
 
   it('displays unread count', async () => {
     render(<NotificationIndicator />)
-    
+
+    // Trigger the fetchNotifications call
+    const button = screen.getByRole('button')
+    await userEvent.click(button)
+
     await waitFor(() => {
-      expect(screen.getByText('1')).toBeInTheDocument()
-    })
+      expect(screen.getByTestId('notification-count')).toHaveTextContent('1')
+    }, { timeout: 3000 })
   })
 
   it('toggles dropdown when clicked', async () => {
@@ -78,47 +108,28 @@ describe('NotificationIndicator', () => {
 
   it('updates when receiving new notifications', async () => {
     render(<NotificationIndicator />)
-    
+
+    // Trigger the fetchNotifications call
+    const button = screen.getByRole('button')
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-count')).toHaveTextContent('1')
+    }, { timeout: 3000 })
+
     act(() => {
       const newNotification = {
         type: 'notification',
-        data: { id: '2', message: 'New notification', readStatus: false }
+        data: { id: '2', message: 'New notification', readStatus: false, createdAt: new Date().toISOString() }
       }
-      const mockEvent = {
-        data: JSON.stringify(newNotification),
-        lastEventId: '',
-        origin: '',
-        ports: [],
-        source: null,
-        bubbles: false,
-        cancelBubble: false,
-        cancelable: false,
-        composed: false,
-        currentTarget: null,
-        defaultPrevented: false,
-        eventPhase: 0,
-        isTrusted: true,
-        returnValue: true,
-        srcElement: null,
-        target: null,
-        timeStamp: 0,
-        type: 'message',
-        composedPath: () => [],
-        initEvent: () => {},
-        preventDefault: () => {},
-        stopImmediatePropagation: () => {},
-        stopPropagation: () => {},
-        NONE: 0,
-        CAPTURING_PHASE: 1,
-        AT_TARGET: 2,
-        BUBBLING_PHASE: 3
+      const event = {
+        data: JSON.stringify(newNotification)
       } as unknown as MessageEvent;
-      
-      WebSocket.prototype.onmessage?.(mockEvent)
+      mockWebSocket.onmessage(event);
     })
-    
+
     await waitFor(() => {
-      expect(screen.getByText('2')).toBeInTheDocument()
+      expect(screen.getByTestId('notification-count')).toHaveTextContent('2')
     })
   })
 })

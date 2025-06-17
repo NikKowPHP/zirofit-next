@@ -1,0 +1,3 @@
+{"timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)", "agent": "Orchestrator", "event": "handoff", "target_agent": "Tech_Lead", "reason": "New commit is ready for review"}
+{"timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)", "agent": "Orchestrator", "event": "handoff", "target_agent": "Emergency", "reason": "Distress signal detected in NotificationIndicator tests"}
+{"timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)", "agent": "Orchestrator", "event": "handoff", "target_agent": "Developer", "reason": "Pending development tasks found in FIX_PLAN.md"}
