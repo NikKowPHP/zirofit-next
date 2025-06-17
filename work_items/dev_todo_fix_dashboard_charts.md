@@ -4,7 +4,7 @@
 Correctly implement data visualization charts on the dashboard as specified in ticket_fix_dashboard_charts.md
 
 ## Tasks:
-- [ ] (LOGIC) Create data service in `lib/services/ChartDataService.ts` to format data for charts
+- [x] (LOGIC) Create data service in `lib/services/ChartDataService.ts` to format data for charts
 - [ ] (UI) Implement functional line chart in `src/app/dashboard/_components/ClientProgressChart.tsx`
 - [ ] (UI) Create new `MonthlyActivityChart.tsx` component for bar chart visualization
 - [ ] (UI) Integrate both charts into `src/app/dashboard/DashboardContent.tsx`

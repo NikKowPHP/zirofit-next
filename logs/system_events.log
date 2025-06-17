@@ -15,3 +15,6 @@
 {"timestamp": "2025-06-17T08:08:31Z", "agent": "Janitor", "event": "action_complete", "details": "Vector DB synchronized."}
 {"timestamp": "2025-06-17T08:09:29Z", "agent": "Orchestrator", "event": "handoff", "target_agent": "Architect", "details": "Open work items detected. Handing off to Architect for planning."}
 {"timestamp": "2025-06-17T08:17:19Z", "agent": "Orchestrator", "event": "handoff", "target_agent": "Developer", "details": "Active development plan with incomplete tasks detected."}
+{"timestamp": "2025-06-17T08:40:21Z", "agent": "Tech Lead", "event": "review_started", "details": "Starting review of latest commit"}
+{"timestamp": "2025-06-17T08:42:22Z", "agent": "Tech Lead", "event": "approval", "details": "Commit approved"}
+{"timestamp": "2025-06-17T08:44:56Z", "agent": "QA Engineer", "event": "acceptance_started", "details": "Starting acceptance testing for dark mode implementation"}
