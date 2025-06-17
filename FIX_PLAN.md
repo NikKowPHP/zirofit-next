@@ -8,7 +8,7 @@
 
 1. **Add Test IDs to Skeleton Components** [x]:
    - Edit each skeleton component file:
-     - `src/app/dashboard/_components/SkeletonProfileChecklist.tsx`
+     - `src/app/dashboard/_components/SkeletonProfileChecklist.tsx` [x]
      - `src/app/dashboard/_components/SkeletonQuickActions.tsx` [x]
      - `src/app/dashboard/_components/SkeletonActivityFeed.tsx` [x]
      - `src/app/dashboard/_components/SkeletonClientSpotlight.tsx` [x]
@@ -18,7 +18,7 @@
      ```
 
 2. **Fix Supabase Mock Configuration** [x]:
-   - Update `jest.setup.js`:
+   - Update `jest.setup.js` [x]:
      ```javascript
      process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://mock-url.com';
      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-key-valid-format';

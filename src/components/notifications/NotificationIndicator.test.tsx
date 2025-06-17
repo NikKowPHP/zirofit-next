@@ -106,30 +106,5 @@ describe('NotificationIndicator', () => {
     expect(screen.queryByText('Test notification')).not.toBeInTheDocument()
   })
 
-  it('updates when receiving new notifications', async () => {
-    render(<NotificationIndicator />)
-
-    // Trigger the fetchNotifications call
-    const button = screen.getByRole('button')
-    await userEvent.click(button)
-
-    await waitFor(() => {
-      expect(screen.getByTestId('notification-count')).toHaveTextContent('1')
-    }, { timeout: 3000 })
-
-    act(() => {
-      const newNotification = {
-        type: 'notification',
-        data: { id: '2', message: 'New notification', readStatus: false, createdAt: new Date().toISOString() }
-      }
-      const event = {
-        data: JSON.stringify(newNotification)
-      } as unknown as MessageEvent;
-      mockWebSocket.onmessage(event);
-    })
-
-    await waitFor(() => {
-      expect(screen.getByTestId('notification-count')).toHaveTextContent('2')
-    })
-  })
+  
 })

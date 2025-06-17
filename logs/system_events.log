@@ -1,3 +1,4 @@
 {"timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)", "agent": "Orchestrator", "event": "handoff", "target_agent": "Tech_Lead", "reason": "New commit is ready for review"}
 {"timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)", "agent": "Orchestrator", "event": "handoff", "target_agent": "Emergency", "reason": "Distress signal detected in NotificationIndicator tests"}
 {"timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)", "agent": "Orchestrator", "event": "handoff", "target_agent": "Developer", "reason": "Pending development tasks found in FIX_PLAN.md"}
+{"timestamp": "2025-06-17T07:35:45Z", "agent": "Tech Lead", "event": "review_start", "details": "Starting technical review of latest commit"}
