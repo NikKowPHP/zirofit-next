@@ -10,4 +10,4 @@ Add full dark mode support to the application as specified in ticket_implement_d
 - [x] (LOGIC) Implement localStorage persistence for user's theme preference
 - [x] (UI) Add theme-toggle button to `TrainerDashboardLayout.tsx`
 - [x] (UI) Apply `dark:` variant styles to all major components
-- [ ] (UI) Verify dark mode functionality across all application screens
+- [x] (UI) Verify dark mode functionality across all application screens

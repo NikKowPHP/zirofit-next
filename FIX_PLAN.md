@@ -1,30 +1,17 @@
-# Test Configuration Fix Plan
+# FIX_PLAN: Resolve Missing Refactoring Instructions
 
-## Issues Addressed:
-1. Missing test IDs in skeleton components
-2. Invalid Supabase mock URL format
+## Problem
+The `NEEDS_REFACTOR.md` file was present in VSCode open tabs but not found on disk, preventing the Developer AI from proceeding with refactoring tasks.
 
-## Solution Steps:
+## Resolution Steps
+1. Recreated `NEEDS_REFACTOR.md` with placeholder content
+2. Updated project manifest to document recovery action
+3. Created this FIX_PLAN.md to document the resolution
+4. Set FIX_PLAN.md as active plan in manifest
+5. Deleted NEEDS_ASSISTANCE.md signal file
 
-1. **Add Test IDs to Skeleton Components** [x]:
-   - Edit each skeleton component file:
-     - `src/app/dashboard/_components/SkeletonProfileChecklist.tsx` [x]
-     - `src/app/dashboard/_components/SkeletonQuickActions.tsx` [x]
-     - `src/app/dashboard/_components/SkeletonActivityFeed.tsx` [x]
-     - `src/app/dashboard/_components/SkeletonClientSpotlight.tsx` [x]
-   - Add `data-testid` attributes to root elements:
-     ```tsx
-     <div className="..." data-testid="skeleton-profile-checklist">
-     ```
-
-2. **Fix Supabase Mock Configuration** [x]:
-   - Update `jest.setup.js` [x]:
-     ```javascript
-     process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://mock-url.com';
-     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-key-valid-format';
-     ```
-
-3. **Verify Fixes**:
-   - Run tests to confirm all issues are resolved:
-     ```bash
-     npm test
+## Implementation Details
+- Created placeholder NEEDS_REFACTOR.md with instructions to check work items
+- Added "system_recovery" entry to architectural_map in manifest
+- Set active_plan_file to FIX_PLAN.md in manifest
+- This file serves as the resolution record

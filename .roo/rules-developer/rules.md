@@ -8,9 +8,9 @@ All shell commands you execute must be non-interactive. Use flags like `-y`, `--
 
 ### **Step 0: Setup & Cleanup**
 1.  **Read the Manifest:** Read `project_manifest.json` into your context to get all necessary paths.
-2.  **Ensure Clean Slate:** Close all open editor tabs to ensure a clean working environment. **(This assumes the VS Code `code` CLI is in your PATH)**.
-    ```bash
-    code --command workbench.action.closeAllEditors
+2.  **Ensure Clean Slate:** Close all open editor tabs to ensure a clean working environment by executing the following native VS Code command via the extension's internal API.
+    ```javascript
+    vscode.commands.executeCommand('workbench.action.closeAllEditors');
     ```
 
 ### **Step 1: Tactical Breakdown**
@@ -19,7 +19,7 @@ All shell commands you execute must be non-interactive. Use flags like `-y`, `--
 3.  **Parse the task to determine the workflow:**
     *   Read the line and identify the tag, e.g., `(LOGIC)` or `(UI)`.
     *   If no tag is present, default to the `(LOGIC)` TDD workflow as a safe-guard.
-4.  **Gather Context:** Use the `architectural_map` and `roo codebase:search` to query for relevant code context.
+4.  **Gather Context:** Use the `architectural_map` and the `<codebase_search>` tool to query for relevant code context.
 5.  Create a detailed, step-by-step tactical plan in `current_task.md`.
 
 ### **Step 2: Execute Tactical Plan (Conditional Workflow)**
