@@ -24,3 +24,7 @@
 {"timestamp": "2025-06-17T10:09:08Z", "agent": "Janitor", "event": "action_start", "details": "Starting post-commit maintenance."}
 {"timestamp": "2025-06-17T10:12:14Z", "agent": "Janitor", "event": "error", "details": "Failed to update vector database: roo command not found"}
 {"timestamp": "2025-06-17T10:14:25Z", "agent": "Janitor", "event": "error", "details": "Breaking loop: roo command not found"}
+{"timestamp": "2025-06-17T10:46:30Z", "agent": "Orchestrator", "event": "handoff", "target_agent": "Tech_Lead", "details": "Commit ready for review: Verify dark mode functionality"}
+{"timestamp": "2025-06-17T10:48:42Z", "agent": "Tech_Lead", "event": "review_started", "details": "Starting review of dark mode verification"}
+{"timestamp": "2025-06-17T10:53:49Z", "agent": "Tech_Lead", "event": "rejection", "details": "Invalid version string in package.json for @supabase/ssr"}
+{"timestamp": "2025-06-17T11:05:55Z", "agent": "Orchestrator", "event": "handoff", "target_agent": "Developer", "details": "Refactoring needed for package.json version"}
