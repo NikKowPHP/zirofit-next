@@ -1,24 +1,18 @@
 import type { Config } from "tailwindcss";
 
 export default {
+  darkMode: 'class',
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-theme: {
+  theme: {
     extend: {
       // You can extend your theme here if needed later
-      // Example from Laravel project:
-      // colors: {
-      //   action: '#0171e3',
-      // },
-      // fontFamily: {
-      //   sans: ['Instrument Sans', ...defaultTheme.fontFamily.sans],
-      // }
     },
   },
   plugins: [
-    (await import('@tailwindcss/forms')).default, // Add forms plugin
+    (await import('@tailwindcss/forms')).default,
   ],
 } satisfies Config;

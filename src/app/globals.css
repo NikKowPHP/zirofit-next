@@ -1,21 +1,21 @@
 @import "tailwindcss";
-/* Your existing global styles from the XML, if any, or new ones */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
-/* Remove dark mode specific styles for now as per requirement "we dont have dark mode on the frontend" */
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans); /* Using Geist from default Next.js setup */
+  font-family: var(--font-geist-sans);
 }
+
 html {
-  scroll-behavior: smooth; /* From Laravel app.css */
+  scroll-behavior: smooth;
 }
