@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import React, { useEffect, useRef, useState, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { addService } from '@/app/profile/actions';
 import type { Service } from '@prisma/client';
 import { Input } from '@/components/ui/Input';
@@ -33,11 +33,11 @@ const initialAddState: ServiceFormState = {};
 const initialUpdateState: UpdateServiceFormState = {};
 
 export default function ServicesEditor({ initialServices }: ServicesEditorProps) {
-  const [addState, addFormAction] = useFormState(
+  const [addState, addFormAction] = useActionState(
     (state: ServiceFormState, formData: FormData) => addService(state, formData),
     initialAddState
   );
-  const [updateState, updateFormAction] = useFormState(
+  const [updateState, updateFormAction] = useActionState(
     (state: UpdateServiceFormState, formData: FormData) => updateService(state, formData),
     initialUpdateState
   );
@@ -156,7 +156,7 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
       <div>
         <h4 className="text-md font-medium text-gray-800 mb-3">Your Services</h4>
         {services.length === 0 ? (
-          <p className="text-gray-500">You haven't added any services yet.</p>
+          <p className="text-gray-500">You haven&#39;t added any services yet.</p>
         ) : (
           <div className="space-y-4">
             {services.map((service) => (
