@@ -6,7 +6,7 @@ import { addTestimonial, updateTestimonial, deleteTestimonial } from '@/app/prof
 import { revalidateProfilePath } from '@/app/profile/revalidate';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 
 interface Testimonial {
   id: string;
@@ -44,7 +44,7 @@ export default function TestimonialsEditor({ initialTestimonials }: { initialTes
   const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
   const [editingTestimonialId, setEditingTestimonialId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [_deleteError, setDeleteError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const [addState, addFormAction] = useFormState<FormState, FormData>(
@@ -112,7 +112,7 @@ export default function TestimonialsEditor({ initialTestimonials }: { initialTes
   };
 
   const currentFormState = isEditing ? updateState : addState;
-  const getFieldError = (fieldName: 'clientName' | 'testimonialText') => {
+  const getFieldError = (_fieldName: 'clientName' | 'testimonialText') => {
     return currentFormState?.error ? currentFormState?.error?.toString() : undefined;
   };
 
@@ -133,11 +133,11 @@ export default function TestimonialsEditor({ initialTestimonials }: { initialTes
           {getFieldError('clientName') && (
             <p className="text-sm text-red-500">{getFieldError('clientName')}</p>
           )}
-          <Textarea
+          <RichTextEditor
+            label="Testimonial Text"
             name="testimonialText"
-            placeholder="Testimonial text"
-            defaultValue={isEditing ? testimonials.find(t => t.id === editingTestimonialId)?.testimonialText : ''}
-            className={getFieldError('testimonialText') ? 'border-red-500' : ''}
+            initialValue={isEditing ? testimonials.find(t => t.id === editingTestimonialId)?.testimonialText ?? '' : ''}
+            className={getFieldError('testimonialText') ? 'border border-red-500 rounded-md' : ''}
           />
           {getFieldError('testimonialText') && (
             <p className="text-sm text-red-500">{getFieldError('testimonialText')}</p>

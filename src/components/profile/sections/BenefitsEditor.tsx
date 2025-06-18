@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
-import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '../../../../app/profile/actions';
+import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '@/app/profile/actions';
 import { Input, Label, Button } from '../../ui';
 import type { Benefit } from '@prisma/client';
 import SortableJS from 'sortablejs';

@@ -6,11 +6,11 @@ import { addService } from '@/app/profile/actions';
 import type { Service } from '@prisma/client';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 import { z } from 'zod';
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { deleteService, updateService } from '@/app/profile/actions';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 
 
 interface ServicesEditorProps {
@@ -31,11 +31,6 @@ interface UpdateServiceFormState extends ServiceFormState {
 
 const initialAddState: ServiceFormState = {};
 const initialUpdateState: UpdateServiceFormState = {};
-
-function AddServiceButton() {
-  const { pending } = useFormStatus();
-  return <Button type="submit" disabled={pending}>{pending ? 'Adding...' : 'Add Service'}</Button>;
-}
 
 export default function ServicesEditor({ initialServices }: ServicesEditorProps) {
   const [addState, addFormAction] = useFormState(
@@ -134,11 +129,10 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
             {getFieldError('title') && <p className="text-red-500 text-xs mt-1">{getFieldError('title')}</p>}
           </div>
           <div>
-            <Label htmlFor="description">Service Description</Label>
-            <Textarea 
-                id="description" name="description" rows={4} required 
-                defaultValue={isEditing ? services.find(s => s.id === editingServiceId)?.description : ''}
-                className="mt-1" 
+            <RichTextEditor
+              label="Service Description"
+              name="description"
+              initialValue={isEditing ? services.find(s => s.id === editingServiceId)?.description ?? '' : ''}
             />
              {getFieldError('description') && <p className="text-red-500 text-xs mt-1">{getFieldError('description')}</p>}
           </div>
