@@ -143,24 +143,24 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* About, Philosophy, Methodology Section */}
       {(profile.aboutMe || profile.philosophy || profile.methodology) && (
-        <section id="about-section" className="py-16 md:py-24 bg-white text-gray-800">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose lg:prose-xl">
+        <section id="about-section" className="py-16 md:py-24 bg-white dark:bg-gray-900">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose lg:prose-xl dark:prose-invert">
             {profile.aboutMe && (
               <>
-                <h2 className="text-2xl font-semibold mb-3">About Me</h2>
+                <h2 className='text-3xl font-semibold mt-8 mb-3'>About Me</h2>
                 {renderHTML(profile.aboutMe)}
               </>
             )}
             {profile.philosophy && (
               <>
-                <h2 className="text-2xl font-semibold mt-8 mb-3">My Philosophy</h2>
-                {renderHTML(profile.philosophy)}
+                <h2 className="text-3xl font-semibold mt-8 mb-3">My Philosophy</h2>
+                <div className="prose lg:prose-xl dark:prose-invert">{renderHTML(profile.philosophy)}</div>
               </>
             )}
             {profile.methodology && (
               <>
-                <h2 className="text-2xl font-semibold mt-8 mb-3">My Methodology</h2>
-                {renderHTML(profile.methodology)}
+                <h2 className="text-3xl font-semibold mt-8 mb-3">My Methodology</h2>
+                <div className="prose lg:prose-xl dark:prose-invert">{renderHTML(profile.methodology)}</div>
               </>
             )}
           </div>
@@ -169,15 +169,15 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* Benefits Section */}
       {profile.benefits && profile.benefits.length > 0 && (
-        <section id="benefits-section" className="py-16 md:py-24 bg-gray-50 text-gray-800">
+        <section id="benefits-section" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">Why Train With Me?</h2>
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Why Train With Me?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {profile.benefits.map((benefit: Benefit) => (
-                <div key={benefit.id} className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div key={benefit.id} className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md text-center">
                   {/* Add icon rendering here if you have an icon component */}
-                  <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-gray-600 text-sm">{benefit.description}</p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">{benefit.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">{benefit.description}</p>
                 </div>
               ))}
             </div>
@@ -187,14 +187,14 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* Services Section */}
       {profile.services && profile.services.length > 0 && (
-        <section id="services-section" className="py-16 md:py-24 bg-white text-gray-800">
+        <section id="services-section" className="py-16 md:py-24 bg-white dark:bg-gray-900">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">Services Offered</h2>
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Services Offered</h2>
             <div className="space-y-8">
               {profile.services.map((service: Service) => (
-                <div key={service.id} className="bg-gray-50 p-6 rounded-lg shadow">
-                  <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                  <p className="text-gray-600 whitespace-pre-wrap">{service.description}</p>
+                <div key={service.id} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">{service.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{service.description}</p>
                 </div>
               ))}
             </div>
@@ -204,9 +204,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* Transformation Photos Section */}
       {profile.transformationPhotos && profile.transformationPhotos.length > 0 && (
-        <section id="transformations-section" className="py-16 md:py-24 bg-gray-50 text-gray-800">
+        <section id="transformations-section" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">Client Transformations</h2>
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Client Transformations</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {profile.transformationPhotos.map((photo: TransformationPhoto) => (
                 <div key={photo.id} className="rounded-lg overflow-hidden shadow-lg">
@@ -222,7 +222,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
                   ) }
                  
                   {photo.caption && (
-                    <p className="p-3 text-sm text-gray-600 bg-white text-center">{photo.caption}</p>
+                    <p className="p-3 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 text-center">{photo.caption}</p>
                   )}
                 </div>
               ))}
@@ -233,9 +233,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* Testimonials Section */}
       {profile.testimonials && profile.testimonials.length > 0 && (
-        <section id="testimonials-section" className="py-16 md:py-24 bg-white text-gray-800">
+        <section id="testimonials-section" className="py-16 md:py-24 bg-white dark:bg-gray-900">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">What Clients Say</h2>
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">What Clients Say</h2>
             <div className="space-y-8">
               {profile.testimonials.map((testimonial: Testimonial) => (
                 <blockquote key={testimonial.id} className="p-6 bg-gray-50 rounded-lg shadow">
@@ -250,9 +250,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* External Links Section */}
       {profile.externalLinks && profile.externalLinks.length > 0 && (
-         <section id="links-section" className="py-16 md:py-24 bg-gray-50 text-gray-800">
+         <section id="links-section" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 className="text-3xl font-bold mb-8">Find Me Online</h2>
+                <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Find Me Online</h2>
                 <div className="flex flex-wrap justify-center gap-4">
                     {profile.externalLinks.map((link: ExternalLink) => (
                         <a
@@ -271,9 +271,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
       )}
 
       {/* Contact Form Section - MODIFIED */}
-      <section id="contact-section" className="py-16 md:py-24 bg-white text-gray-800">
+      <section id="contact-section" className="py-16 md:py-24 bg-white dark:bg-gray-900">
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-8">Get In Touch</h2>
+          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Get In Touch</h2>
           <ContactForm trainerEmail={trainerEmail} trainerName={trainerName} />
         </div>
       </section>
