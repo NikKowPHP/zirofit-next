@@ -287,7 +287,7 @@ export async function getClientDetails(clientId: string) {
   }
 }
 
-// Exporting types for client components to consume, avoiding direct imports that can fail in some build contexts.
-export type Client = Prisma.ClientGetPayload<{}>;
-export type ClientSessionLog = Prisma.ClientSessionLogGetPayload<{}>;
-export type ClientProgressPhoto = Prisma.ClientProgressPhotoGetPayload<{}>;
+// Infer types for client components to consume, avoiding direct imports that can fail in some build contexts.
+export type Client = Awaited<ReturnType<typeof prisma.client.findUniqueOrThrow>>;
+export type ClientSessionLog = Awaited<ReturnType<typeof prisma.clientSessionLog.create>>;
+export type ClientProgressPhoto = Awaited<ReturnType<typeof prisma.clientProgressPhoto.create>>;
