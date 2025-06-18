@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import type { Client, ClientSessionLog, ClientProgressPhoto } from '@/app/clients/actions/client-actions';
 import type { ClientMeasurement } from '@/app/clients/actions/measurement-actions';
-import ManageClientMeasurements from './modules/ManageClientMeasurements';
-import ManageClientProgressPhotos from './modules/ManageClientProgressPhotos';
-import ManageClientSessionLogs from './modules/ManageClientSessionLogs';
-import ClientStatisticsComponent from './modules/ClientStatistics';
+const ManageClientMeasurements = lazy(() => import('./modules/ManageClientMeasurements'));
+const ManageClientProgressPhotos = lazy(() => import('./modules/ManageClientProgressPhotos'));
+const ManageClientSessionLogs = lazy(() => import('./modules/ManageClientSessionLogs'));
+const ClientStatistics = lazy(() => import('./modules/ClientStatistics'));
 
 type ClientWithDetails = Client & {
   measurements: ClientMeasurement[];
@@ -18,7 +18,6 @@ interface ClientDetailViewProps {
   client: ClientWithDetails;
 }
 
-const ClientStatistics = ({ measurements }: { measurements: ClientMeasurement[] }) => <ClientStatisticsComponent measurements={measurements} />;
 
 const tabs = [
   { name: 'Statistics', id: 'stats' },
@@ -30,18 +29,11 @@ const tabs = [
 export default function ClientDetailView({ client }: ClientDetailViewProps) {
   const [activeTab, setActiveTab] = useState('stats');
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'measurements':
-        return <ManageClientMeasurements clientId={client.id} initialMeasurements={client.measurements} />;
-      case 'photos':
-        return <ManageClientProgressPhotos clientId={client.id} initialProgressPhotos={client.progressPhotos} />;
-      case 'logs':
-        return <ManageClientSessionLogs clientId={client.id} initialSessionLogs={client.sessionLogs} />;
-      case 'stats':
-      default:
-        return <ClientStatistics measurements={client.measurements} />;
-    }
+  const tabContent: { [key: string]: React.ReactNode } = {
+    'stats': <ClientStatistics measurements={client.measurements} />,
+    'measurements': <ManageClientMeasurements clientId={client.id} initialMeasurements={client.measurements} />,
+    'photos': <ManageClientProgressPhotos clientId={client.id} initialProgressPhotos={client.progressPhotos} />,
+    'logs': <ManageClientSessionLogs clientId={client.id} initialSessionLogs={client.sessionLogs} />,
   };
 
   return (
@@ -65,7 +57,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
       </div>
       <div className="mt-6">
         <Suspense fallback={<div className="text-gray-600 dark:text-gray-400">Loading...</div>}>
-          {renderContent()}
+          {tabContent[activeTab]}
         </Suspense>
       </div>
     </div>
