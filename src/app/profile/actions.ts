@@ -6,8 +6,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import type { User, Profile, Service, Testimonial, TransformationPhoto, ExternalLink, Benefit, SocialLink } from '@prisma/client';
-import type { AuthUser } from '@supabase/supabase-js';
+
+// Infer types from Prisma client methods to avoid direct import issues in some build environments.
+type User = Awaited<ReturnType<typeof prisma.user.findUniqueOrThrow>>;
+type Profile = Awaited<ReturnType<typeof prisma.profile.create>>;
+type Service = Awaited<ReturnType<typeof prisma.service.create>>;
+type Testimonial = Awaited<ReturnType<typeof prisma.testimonial.create>>;
+type TransformationPhoto = Awaited<ReturnType<typeof prisma.transformationPhoto.create>>;
+type ExternalLink = Awaited<ReturnType<typeof prisma.externalLink.create>>;
+type Benefit = Awaited<ReturnType<typeof prisma.benefit.create>>;
+type SocialLink = Awaited<ReturnType<typeof prisma.socialLink.create>>;
 
 
 // Helper function to get user and profile, creating profile if it doesn't exist.
