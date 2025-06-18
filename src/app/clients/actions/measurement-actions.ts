@@ -2,18 +2,16 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { createClient } from '@/lib/supabase/server';
-import { prisma } from '@/lib/prisma';
-import { Prisma } from "@prisma/client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
+import { authorizeClientAccess } from "./_utils";
 
-import { authorizeClientAccess } from './_utils';
-
-// Define the ClientMeasurement type using Prisma's utility type. This is more robust
-// for server-side modules where direct type imports can sometimes fail.
-type ClientMeasurement = Awaited<ReturnType<typeof prisma.clientMeasurement.create>>;
+// Exporting ClientMeasurement type for other modules to use
+export type ClientMeasurement = Prisma.ClientMeasurementGetPayload<{}>;
 
 
-const measurementSchema = z.object({
+export const measurementSchema = z.object({
   clientId: z.string(),
   measurementDate: z.string().refine((d) => !isNaN(Date.parse(d)), { message: "Invalid date" }),
   weightKg: z.string().optional().nullable(),
@@ -22,7 +20,7 @@ const measurementSchema = z.object({
   customMetrics: z.string().optional().nullable(),
 });
 
-const updateMeasurementSchema = measurementSchema.extend({
+export const updateMeasurementSchema = measurementSchema.extend({
   measurementId: z.string(),
 });
 

@@ -70,3 +70,11 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
     return { message: "Failed to delete progress photo." };
   }
 }
+
+export type ClientProgressPhoto = {
+  id: string;
+  clientId: string;
+  photoDate: Date;
+  caption: string | null;
+  imagePath: string;
+};

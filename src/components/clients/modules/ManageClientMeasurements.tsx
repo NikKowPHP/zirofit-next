@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
-import { addMeasurement, updateMeasurement, deleteMeasurement, MeasurementFormState } from "@/app/clients/actions";
-import type { ClientMeasurement } from "@prisma/client";
+import { addMeasurement, updateMeasurement, deleteMeasurement, type MeasurementFormState } from "@/app/clients/actions/measurement-actions";
+import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
 import { ZodIssue } from "zod";
 
 interface ManageClientMeasurementsProps {

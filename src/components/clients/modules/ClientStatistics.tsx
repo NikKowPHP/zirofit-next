@@ -1,6 +1,6 @@
 "use client";
 
-import type { ClientMeasurement } from "@prisma/client"; // Import the data type
+import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,

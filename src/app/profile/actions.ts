@@ -6,18 +6,20 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
+import type { AuthUser } from '@supabase/supabase-js';
 
-// Infer types from Prisma client methods to avoid direct import issues in some build environments.
-type User = Awaited<ReturnType<typeof prisma.user.findUniqueOrThrow>>;
-type Profile = Awaited<ReturnType<typeof prisma.profile.create>>;
-type Service = Awaited<ReturnType<typeof prisma.service.create>>;
-type Testimonial = Awaited<ReturnType<typeof prisma.testimonial.create>>;
-type TransformationPhoto = Awaited<ReturnType<typeof prisma.transformationPhoto.create>>;
-type TransformationPhotoWithPublicUrl = TransformationPhoto & { publicUrl: string };
-type ExternalLink = Awaited<ReturnType<typeof prisma.externalLink.create>>;
-type Benefit = Awaited<ReturnType<typeof prisma.benefit.create>>;
-type SocialLink = Awaited<ReturnType<typeof prisma.socialLink.create>>;
+// Export types for client components to consume, avoiding direct imports that can fail in some build contexts.
+export type User = Prisma.UserGetPayload<{}>;
+export type Profile = Prisma.ProfileGetPayload<{}>;
+export type Service = Prisma.ServiceGetPayload<{}>;
+export type Testimonial = Prisma.TestimonialGetPayload<{}>;
+export type TransformationPhoto = Prisma.TransformationPhotoGetPayload<{}>;
+export type ExternalLink = Prisma.ExternalLinkGetPayload<{}>;
+export type Benefit = Prisma.BenefitGetPayload<{}>;
+export type SocialLink = Prisma.SocialLinkGetPayload<{}>;
 
+export type TransformationPhotoWithPublicUrl = TransformationPhoto & { publicUrl: string };
 
 // Helper function to get user and profile, creating profile if it doesn't exist.
 async function getUserAndProfile() {

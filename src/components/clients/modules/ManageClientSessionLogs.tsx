@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
-import { addSessionLog, updateSessionLog, deleteSessionLog } from "@/app/clients/actions";
-import type { PrismaClient, ClientSessionLog } from "@prisma/client"; // Corrected import
+import { addSessionLog, updateSessionLog, deleteSessionLog, type ClientSessionLog } from "@/app/clients/actions/log-actions";
 import { revalidatePath } from "next/cache";
 
 interface ManageClientSessionLogsProps {
@@ -106,7 +105,7 @@ export default function ManageClientSessionLogs({ clientId, initialSessionLogs }
       <ul>
         {sessionLogs.map((sessionLog) => (
           <li key={sessionLog.id}>
-            {sessionLog.sessionDate.toLocaleDateString()} - {sessionLog.durationMinutes} minutes - {sessionLog.activitySummary}
+            {sessionLog.sessionDate.toLocaleDateString()} - {sessionLog.durationMinutes ?? "N/A"} minutes - {sessionLog.activitySummary ?? "N/A"}
             {/* Update Session Log Form */}
             <form action={handleUpdateSessionLog}>
               <input type="hidden" name="sessionLogId" value={sessionLog.id} />

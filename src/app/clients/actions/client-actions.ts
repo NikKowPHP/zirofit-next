@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "Name must be at least 1 character." }),
@@ -198,55 +199,6 @@ export async function bulkDeleteClients(clientIds: string[]) {
   }
 }
 
-interface Client {
-  id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  status: string;
-  trainerId: string;
-}
-
-interface ClientWithRelations extends Client {
-  measurements: {
-    measurementDate: Date;
-    weight?: number;
-    bodyFatPercentage?: number;
-  }[];
-  progressPhotos: {
-    photoDate: Date;
-    photoUrl: string;
-  }[];
-  sessionLogs: {
-    sessionDate: Date;
-    notes?: string;
-  }[];
-}
-
-interface Client {
-  id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  status: string;
-  trainerId: string;
-}
-
-interface ClientWithRelations extends Client {
-  measurements: {
-    measurementDate: Date;
-    weight?: number;
-    bodyFatPercentage?: number;
-  }[];
-  progressPhotos: {
-    photoDate: Date;
-    photoUrl: string;
-  }[];
-  sessionLogs: {
-    sessionDate: Date;
-    notes?: string;
-  }[];
-}
 
 export async function bulkExportClients(clientIds: string[]) {
   const supabase = await createClient();
@@ -334,3 +286,9 @@ export async function getClientDetails(clientId: string) {
     return null;
   }
 }
+
+// Exporting types for client components to consume, avoiding direct imports that can fail in some build contexts.
+export type Client = Prisma.ClientGetPayload<{}>;
+export type ClientSessionLog = Prisma.ClientSessionLogGetPayload<{}>;
+export type ClientMeasurement = Prisma.ClientMeasurementGetPayload<{}>;
+export type ClientProgressPhoto = Prisma.ClientProgressPhotoGetPayload<{}>;
