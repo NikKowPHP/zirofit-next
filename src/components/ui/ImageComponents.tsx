@@ -13,7 +13,8 @@ interface ProfileImageProps {
 }
 
 export function ProfileImage({ src, alt, width, height, className, defaultSrc }: ProfileImageProps) {
-  const [imageSrc, setImageSrc] = React.useState(src);
+  // If the src is invalid or null, immediately use the default.
+  const [imageSrc, setImageSrc] = React.useState(src && (src.startsWith('http') || src.startsWith('/')) ? src : defaultSrc);
 
   return (
     <Image
@@ -38,7 +39,7 @@ interface BannerImageProps {
 }
 
 export function BannerImage({ src, alt, quality, className, defaultSrc }: BannerImageProps) {
-  const [imageSrc, setImageSrc] = React.useState(src);
+  const [imageSrc, setImageSrc] = React.useState(src && (src.startsWith('http') || src.startsWith('/')) ? src : defaultSrc);
 
   return (
     <Image
@@ -63,7 +64,7 @@ interface TransformationImageProps {
 }
 
 export function TransformationImage({ src, alt, width, height, className }: TransformationImageProps) {
-  const [imageSrc, setImageSrc] = React.useState(src);
+  const [imageSrc] = React.useState(src);
   const [error, setError] = React.useState(false);
 
   if (error) {

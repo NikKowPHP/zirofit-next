@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import type { Prisma } from '@prisma/client';
+import { transformImagePath } from '@/lib/utils';
 import type { AuthUser } from '@supabase/supabase-js';
 
 // Export types for client components to consume, avoiding direct imports that can fail in some build contexts.
@@ -95,12 +96,12 @@ export async function getCurrentUserProfileData() {
 
     if (!userWithProfile) return null;
 
-    if (userWithProfile.profile && userWithProfile.profile.transformationPhotos) {
-        const supabaseStorage = await createClient(); // Re-use the existing client or create a new one as needed
-        userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map((photo: TransformationPhoto) => {
-            const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit').getPublicUrl(photo.imagePath);
-            return { ...photo, publicUrl };
-        }) as TransformationPhotoWithPublicUrl[];
+    if (userWithProfile.profile) {
+      userWithProfile.profile.bannerImagePath = transformImagePath(userWithProfile.profile.bannerImagePath);
+      userWithProfile.profile.profilePhotoPath = transformImagePath(userWithProfile.profile.profilePhotoPath);
+      userWithProfile.profile.transformationPhotos.forEach(photo => {
+        (photo as any).imagePath = transformImagePath(photo.imagePath);
+      });
     }
 
     return userWithProfile;

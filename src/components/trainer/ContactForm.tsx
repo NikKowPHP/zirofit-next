@@ -56,7 +56,7 @@ export default function ContactForm({ trainerEmail, trainerName }: ContactFormPr
   };
 
   return (
-    <div className="bg-gray-100 p-8 rounded-lg shadow-md">
+    <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg shadow-md">
       {state.success && state.message && (
         <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm border border-green-200">
           {state.message}
@@ -72,22 +72,22 @@ export default function ContactForm({ trainerEmail, trainerName }: ContactFormPr
         <input type="hidden" name="trainerEmail" value={trainerEmail} />
         <input type="hidden" name="trainerName" value={trainerName} />
         <div>
-          <Label htmlFor="contact-name">Your Name</Label>
+          <Label htmlFor="contact-name" className="dark:text-gray-200">Your Name</Label>
           <Input type="text" id="contact-name" name="name" required className="mt-1" />
           {getFieldError('name') && <p className="text-red-500 text-xs mt-1">{getFieldError('name')}</p>}
         </div>
         <div>
-          <Label htmlFor="contact-email">Your Email</Label>
+          <Label htmlFor="contact-email" className="dark:text-gray-200">Your Email</Label>
           <Input type="email" id="contact-email" name="email" required className="mt-1" />
           {getFieldError('email') && <p className="text-red-500 text-xs mt-1">{getFieldError('email')}</p>}
         </div>
-        {/* Honeypot field (optional but good practice) */}
-        <div className="hidden" style={{ position: 'absolute', left: '-5000px' }} aria-hidden="true">
-          <Label htmlFor="website_url">Do not fill this out</Label>
+        {/* Honeypot field to deter bots */}
+        <div className="hidden">
+          <Label htmlFor="website_url">Website URL</Label>
           <Input type="text" id="website_url" name="website_url" tabIndex={-1} autoComplete="off" />
         </div>
         <div>
-          <Label htmlFor="contact-message">Message</Label>
+          <Label htmlFor="contact-message" className="dark:text-gray-200">Message</Label>
           <Textarea id="contact-message" name="message" rows={5} required className="mt-1" />
           {getFieldError('message') && <p className="text-red-500 text-xs mt-1">{getFieldError('message')}</p>}
         </div>

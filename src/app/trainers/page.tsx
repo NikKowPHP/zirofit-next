@@ -50,17 +50,17 @@ export default async function TrainersPage({
     <PublicLayout>
       <div className="py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
+          <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
             Meet Our Trainers
           </h1>
 
           {trainers.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
                 {trainers.map((trainer: Trainer) => (
                   <div
                     key={trainer.id}
-                    className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col"
+                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col"
                   >
                     <div className="flex-shrink-0 mb-4 text-center">
                       <Image
@@ -74,11 +74,11 @@ export default async function TrainersPage({
                         className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-indigo-100"
                       />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1 text-center">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1 text-center">
                       {trainer.name}
                     </h3>
                     {trainer.profile?.location && (
-                      <p className="text-sm text-gray-500 mb-4 text-center">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
@@ -115,8 +115,8 @@ export default async function TrainersPage({
                 <div className="mt-12 flex justify-center space-x-2">
                   {currentPage > 1 && (
                     <Link
-                      href={`/trainers?page=${currentPage - 1}`}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                      href={`/trainers?page=${currentPage - 1}`} //
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       Previous
                     </Link>
@@ -127,9 +127,9 @@ export default async function TrainersPage({
                         key={page}
                         href={`/trainers?page=${page}`}
                         className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                          page === currentPage
-                            ? "bg-indigo-600 text-white border-indigo-600"
-                            : "border-gray-300 hover:bg-gray-50"
+                          page === currentPage //
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                       >
                         {page}
@@ -139,7 +139,7 @@ export default async function TrainersPage({
                   {currentPage < totalPages && (
                     <Link
                       href={`/trainers?page=${currentPage + 1}`}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       Next
                     </Link>
@@ -148,7 +148,7 @@ export default async function TrainersPage({
               )}
             </>
           ) : (
-            <p className="text-gray-500 text-center italic">
+            <p className="text-gray-500 dark:text-gray-400 text-center italic">
               No trainers found at the moment. Check back soon!
             </p>
           )}

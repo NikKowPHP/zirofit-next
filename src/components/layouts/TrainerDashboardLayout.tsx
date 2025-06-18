@@ -24,12 +24,14 @@ export default function TrainerDashboardLayout({ children, headerTitle, userEmai
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className={`flex h-screen ${theme === 'dark' ? 'dark' : ''}`}>
       {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-gray-800 shadow-md flex-shrink-0">
+      <aside className="w-64 bg-white dark:bg-gray-800 shadow-md flex-shrink-0 flex flex-col">
         <div className="p-6">
           <Link href="/dashboard" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">ZIRO.FIT</span>
+              <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                ZIRO.FIT
+              </span>
           </Link>
         </div>
         <nav className="mt-6 px-4">
@@ -48,7 +50,7 @@ export default function TrainerDashboardLayout({ children, headerTitle, userEmai
             </Link>
           ))}
         </nav>
-        <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
           {userEmail && <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Logged in as: {userEmail}</p>}
           <LogoutButton />
         </div>

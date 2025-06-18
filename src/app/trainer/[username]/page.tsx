@@ -2,7 +2,6 @@
 import PublicLayout from '@/components/layouts/PublicLayout';
 import { getTrainerProfileByUsername } from '@/lib/api/trainers';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import { BannerImage, ProfileImage, TransformationImage } from '@/components/ui/ImageComponents';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 import ContactForm from '@/components/trainer/ContactForm';
@@ -91,8 +90,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
     return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
   };
 
-    const getPublicUrl = (path: string | null) =>
-    path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}` : null;
+ 
 
 
   return (
@@ -100,7 +98,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
       {/* Hero Section */}
       <section id="hero-section" className="relative bg-gray-800 text-white">
         <BannerImage
-          src={profile.bannerImagePath ? `${getPublicUrl(profile.bannerImagePath)}` : DEFAULT_BANNER_IMAGE}
+          src={profile.bannerImagePath || DEFAULT_BANNER_IMAGE}
           alt={`${name}'s banner`}
           layout="fill"
           objectFit="cover"
@@ -111,7 +109,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
           <div className="mb-8">
             <ProfileImage
-              src={getPublicUrl(profile.profilePhotoPath) || DEFAULT_PROFILE_IMAGE}
+              src={profile.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
               alt={`${name}'s profile photo`}
               width={160}
               height={160}
@@ -212,9 +210,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {profile.transformationPhotos.map((photo: TransformationPhoto) => (
                 <div key={photo.id} className="rounded-lg overflow-hidden shadow-lg">
-                  {photo.imagePath && (
- <TransformationImage
-                    src={getPublicUrl(photo.imagePath)} // This will be a Supabase Storage URL
+                  {photo.imagePath && ( //
+                    <TransformationImage
+                    src={photo.imagePath}
                     alt={photo.caption || 'Transformation photo'}
                     width={400}
                     height={300}

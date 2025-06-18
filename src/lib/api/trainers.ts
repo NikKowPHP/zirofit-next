@@ -1,5 +1,6 @@
 // src/lib/api/trainers.ts
 import { prisma } from '@/lib/prisma';
+import { transformImagePath } from '../utils';
 
 export async function getPublishedTrainers(page = 1, pageSize = 15) {
   const skip = (page - 1) * pageSize;
@@ -8,8 +9,6 @@ export async function getPublishedTrainers(page = 1, pageSize = 15) {
       where: {
         role: 'trainer',
         profile: {
-          // Add conditions for a "published" profile if that becomes a feature
-          // For now, any user with a profile is considered.
           isNot: null,
         },
       },
@@ -19,16 +18,25 @@ export async function getPublishedTrainers(page = 1, pageSize = 15) {
         username: true,
         profile: {
           select: {
+            profilePhotoPath: true,
             location: true,
-            profilePhotoPath: true, // For display on the list
+            certifications: true,
           },
         },
       },
       orderBy: {
         name: 'asc',
       },
-      skip: skip,
+      skip,
       take: pageSize,
+    });
+
+    // Transform the image paths to full URLs
+    const trainersWithUrls = trainers.map(trainer => {
+      if (trainer.profile) {
+        trainer.profile.profilePhotoPath = transformImagePath(trainer.profile.profilePhotoPath);
+      }
+      return trainer;
     });
 
     const totalTrainers = await prisma.user.count({
@@ -39,9 +47,8 @@ export async function getPublishedTrainers(page = 1, pageSize = 15) {
         },
       },
     });
-    
     return {
-      trainers,
+      trainers: trainersWithUrls,
       totalTrainers,
       currentPage: page,
       totalPages: Math.ceil(totalTrainers / pageSize),
@@ -73,6 +80,17 @@ export async function getTrainerProfileByUsername(username: string) {
     if (!userWithProfile || !userWithProfile.profile) {
       return null; // Or throw a NotFound error
     }
+
+    // Transform all image paths in the profile
+    const profile = userWithProfile.profile;
+    profile.bannerImagePath = transformImagePath(profile.bannerImagePath);
+    profile.profilePhotoPath = transformImagePath(profile.profilePhotoPath);
+    profile.transformationPhotos.forEach(photo => {
+      // Note: Here we transform the path directly on the object.
+      // The component will just use `photo.imagePath`.
+      (photo as any).imagePath = transformImagePath(photo.imagePath);
+    });
+
     return userWithProfile; // Contains user and their full profile
   } catch (error) {
     console.error(`Failed to fetch profile for username ${username}:`, error);
