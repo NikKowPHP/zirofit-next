@@ -10,7 +10,8 @@ import { authorizeClientAccess } from './_utils';
 
 // Define the ClientMeasurement type using Prisma's utility type. This is more robust
 // for server-side modules where direct type imports can sometimes fail.
-type ClientMeasurement = Prisma.ClientMeasurementGetPayload<{}>;
+type ClientMeasurement = Awaited<ReturnType<typeof prisma.clientMeasurement.create>>;
+
 
 const measurementSchema = z.object({
   clientId: z.string(),
