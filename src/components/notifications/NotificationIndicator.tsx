@@ -27,7 +27,7 @@ export default function NotificationIndicator() {
     fetchNotifications()
     
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`)
+    const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`) // Explicitly connect to /ws
 
     ws.onopen = () => {
       ws.send(JSON.stringify({

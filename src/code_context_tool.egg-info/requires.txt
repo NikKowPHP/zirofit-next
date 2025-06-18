@@ -1,4 +1,0 @@
-qdrant-client>=1.7.0
-sentence-transformers>=2.2.2
-tree-sitter>=0.20.0
-rich>=13.5.2

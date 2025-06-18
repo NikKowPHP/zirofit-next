@@ -1,2 +1,0 @@
-[console_scripts]
-cct = code_context_tool.cli:main

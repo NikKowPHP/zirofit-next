@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import next from 'next';
-import { setupWebSocket } from './src/lib/websocket';
+import { WebSocketServer } from 'ws';
+import { parse } from 'url';
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -12,10 +13,36 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  setupWebSocket(server);
+  // Create the WebSocket server without attaching it to the HTTP server
+  const wss = new WebSocketServer({ noServer: true });
+
+  // Handle our application's WebSocket connections
+  wss.on('connection', (ws, _req) => {
+    // Your existing connection logic can go here if needed,
+    // for now we can keep it simple as the client drives the logic.
+    console.log('Client connected to application WebSocket');
+
+    ws.on('close', () => {
+      console.log('Client disconnected from application WebSocket');
+    });
+  });
+
+  // Handle HTTP -> WebSocket upgrade requests
+  server.on('upgrade', (request, socket, head) => {
+    const { pathname } = parse(request.url!, true);
+
+    // Route requests for '/ws' to our application's WebSocket server
+    if (pathname === '/ws') {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+      });
+    } else {
+      // For all other paths (like Next.js HMR), do nothing and let them fail gracefully.
+      socket.destroy();
+    }
+  });
 
   server.listen(port, () => {
-  console.log(`> Ready on http://localhost:${port}`);
-
+    console.log(`> Ready on http://localhost:${port}`);
   });
 });
