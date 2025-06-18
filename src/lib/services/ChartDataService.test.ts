@@ -35,6 +35,7 @@ describe('ChartDataService', () => {
     });
 
     it('should throw error for invalid input', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(() => ChartDataService.formatProgressData(null as any)).toThrow('Invalid input: expected array of ProgressDataPoint');
     });
   });
@@ -60,6 +61,7 @@ describe('ChartDataService', () => {
     });
 
     it('should throw error for invalid input', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(() => ChartDataService.formatActivityData('invalid' as any)).toThrow('Invalid input: expected array of ActivityDataPoint');
     });
   });

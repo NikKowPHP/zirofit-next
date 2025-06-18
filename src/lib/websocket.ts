@@ -1,10 +1,10 @@
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 import { Server } from 'http';
 import type { Notification } from '@/types/notifications';
 
 interface ActiveConnection {
   userId: string;
-  ws: any;
+  ws: WebSocket;
 }
 
 const activeConnections: ActiveConnection[] = [];
@@ -34,7 +34,10 @@ export function setupWebSocket(server: Server) {
     });
   });
 
-  console.log(`WebSocket server running on ws://localhost:${(server.address() as any).port}`);
+  const address = server.address();
+  if (address && typeof address !== 'string') {
+    console.log(`WebSocket server running on ws://localhost:${address.port}`);
+  }
   return wss;
 }
 
