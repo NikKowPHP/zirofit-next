@@ -56,12 +56,12 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
 
   const currentBannerUrl = bannerPreview || getPublicUrl(initialData.bannerImagePath);
   const currentProfilePhotoUrl = photoPreview || getPublicUrl(initialData.profilePhotoPath);
-
-  return (
-    <div className="p-6 bg-white shadow-sm rounded-lg">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Profile Branding</h3>
-      {state?.success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">{state.message}</div>}
-      {state?.error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{state.error}</div>}
+ 
+   return (
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Manage Profile Branding</h3>
+      {state?.success && <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">{state.message}</div>}
+      {state?.error && <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">{state.error}</div>}
 
       <form action={formAction} className="space-y-6">
         {/* Banner Image Section */}
@@ -72,7 +72,7 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
             alt="Banner"
             width={1200}
             height={400}
-            className="w-full h-48 object-cover rounded-md mt-2 mb-2 bg-gray-100"
+            className="w-full h-48 object-cover rounded-md mt-2 mb-2 bg-gray-100 dark:bg-gray-700"
             onError={(e) => { e.currentTarget.src = DEFAULT_BANNER }}
           />
           <Input
@@ -84,7 +84,7 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
             onChange={handleBannerChange}
           />
         </div>
-
+ 
         {/* Profile Photo Section */}
         <div>
           <Label htmlFor="profilePhoto">Profile Photo (Recommended: 400x400)</Label>
@@ -93,7 +93,7 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
             alt="Profile Photo"
             width={400}
             height={400}
-            className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100"
+            className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100 dark:bg-gray-700"
             onError={(e) => { e.currentTarget.src = DEFAULT_PHOTO }}
           />
           <Input

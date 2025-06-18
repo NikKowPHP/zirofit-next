@@ -91,43 +91,43 @@ export default function ExternalLinksEditor({ initialExternalLinks }: ExternalLi
   const getFieldError = (fieldName: 'label' | 'linkUrl') => {
     return currentFormState.errors?.find(err => err.path && err.path.includes(fieldName))?.message;
   };
-
-  return (
-    <div className="p-6 bg-white shadow-sm rounded-lg space-y-6">
+ 
+   return (
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
           {isEditing ? `Edit Link: ${currentEditingLink?.label}` : 'Add New External Link'}
         </h3>
         {currentFormState.success && currentFormState.message && (
-          <div className="rounded-md bg-green-50 p-4">
+          <div className="rounded-md bg-green-50 dark:bg-green-900/50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
                 {/* Success icon */}
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">{currentFormState.message}</h3>
+                <h3 className="text-sm font-medium text-green-800 dark:text-green-300">{currentFormState.message}</h3>
               </div>
             </div>
           </div>
         )}
         {currentFormState.error && (
-          <div className="rounded-md bg-red-50 p-4">
+          <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
                 {/* Error icon */}
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">{currentFormState.error}</h3>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">{currentFormState.error}</h3>
               </div>
             </div>
           </div>
         )}
 
-        <form
+        <form 
             action={isEditing ? updateFormAction : addFormAction} 
             key={editingLinkId || 'add-link'}
             ref={formRef}
-            className="space-y-4 border-b pb-6 mb-6"
+            className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && <input type="hidden" name="linkId" value={editingLinkId} />}
           <div>
@@ -153,30 +153,30 @@ export default function ExternalLinksEditor({ initialExternalLinks }: ExternalLi
           </div>
         </form>
       </div>
-
+ 
       {deleteError && (
-        <div className="rounded-md bg-red-50 p-4">
+        <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               {/* Error icon */}
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">{deleteError}</h3>
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">{deleteError}</h3>
             </div>
           </div>
         </div>
       )}
       
       <div>
-        <h4 className="text-md font-medium text-gray-800 mb-3">Your External Links</h4>
+        <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Your External Links</h4>
         {links.length === 0 ? (
-          <p className="text-gray-500">No external links added yet.</p>
+          <p className="text-gray-500 dark:text-gray-400">No external links added yet.</p>
         ) : (
           <div className="space-y-3">
             {links.map((link) => (
-              <div key={link.id} className="p-3 border rounded-md flex justify-between items-center">
+              <div key={link.id} className="p-3 border dark:border-gray-700 rounded-md flex justify-between items-center">
                 <div>
-                  <span className="font-medium text-gray-700">{link.label}</span>: {' '}
+                  <span className="font-medium text-gray-700 dark:text-gray-200">{link.label}</span>: {' '}
                   <a href={link.linkUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline text-sm truncate">
                     {link.linkUrl}
                   </a>

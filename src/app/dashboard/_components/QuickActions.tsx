@@ -8,19 +8,19 @@ const QuickActions: React.FC = () => {
       <div className="space-y-2">
         <Link
           href="/clients/create"
-          className="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="block w-full text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
         >
           Add New Client
         </Link>
         <Link
           href="/clients"
-          className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="block w-full text-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
         >
           Log Session
         </Link>
         <Link
           href="/clients"
-          className="inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+          className="block w-full text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 dark:bg-yellow-500 dark:hover:bg-yellow-600"
         >
           Add Measurement
         </Link>

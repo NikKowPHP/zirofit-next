@@ -41,15 +41,15 @@ export default function AboutMeEditor({ initialAboutMe }: AboutMeEditorProps) {
       setContent('');
     }
   }, [state.success, state.updatedContent]);
-
-  return (
-    <div className="p-6 bg-white shadow-sm rounded-lg">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">About Me</h3>
+ 
+   return (
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">About Me</h3>
       {state.success && state.message && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">{state.message}</div>
+        <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">{state.message}</div>
       )}
       {state.error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{state.error}</div>
+        <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">{state.error}</div>
       )}
       <form action={formAction}>
         <RichTextEditor

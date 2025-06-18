@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 export default function SkeletonProfileChecklist() {
   return (
     <div
-      className="space-y-4 p-4 border rounded-lg bg-background"
+      className="space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800"
       data-testid="skeleton-profile-checklist"
     >
       <Skeleton className="h-6 w-1/4 mb-4" />

@@ -72,18 +72,18 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
   };
 
   // Removed the isLoading check and fallback UI
-
-  return (
-    <div className="p-6 bg-white shadow-sm rounded-lg">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Core Information</h3>
+ 
+   return (
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Core Information</h3>
       
       {state.success && state.message && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm border border-green-200">
+        <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 border border-green-200 dark:border-green-800 rounded-md text-sm">
           {state.message}
         </div>
       )}
       {state.error && (
-         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm border border-red-200">
+         <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-md text-sm">
           {state.error}
         </div>
       )}
@@ -102,7 +102,7 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
                  value={formData.username} onChange={handleInputChange}
                  className="mt-1" />
           {getFieldError('username') && <p className="text-red-500 text-xs mt-1">{getFieldError('username')}</p>}
-          <p className="mt-1 text-xs text-gray-500">Used for your public profile URL. Lowercase letters, numbers, and hyphens only.</p>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Used for your public profile URL. Lowercase letters, numbers, and hyphens only.</p>
         </div>
         <div>
           <Label htmlFor="certifications">Certifications</Label>

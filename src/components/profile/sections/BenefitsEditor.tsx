@@ -4,10 +4,11 @@
 import React, { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
-import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '@/app/profile/actions';
-import { Input, Label, Button, Textarea } from '@/components/ui';
+import { addBenefit, updateBenefit, deleteBenefit, updateBenefitOrder } from '../../../../app/profile/actions';
+import { Input, Label, Button } from '../../ui';
 import type { Benefit } from '@prisma/client';
 import SortableJS from 'sortablejs';
+import { RichTextEditor } from '../../ui/RichTextEditor';
 
 interface BenefitsEditorProps {
   initialBenefits: Benefit[];
@@ -101,12 +102,12 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
       console.error("Failed to update benefit: ", result?.error);
     }
   };
-
-  return (
-    <div className="p-6 bg-white shadow-sm rounded-lg">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Benefits</h3>
-      {formState?.success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">{formState.message}</div>}
-      {formState?.error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{formState.error}</div>}
+ 
+   return (
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Manage Benefits</h3>
+      {formState?.success && <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">{formState.message}</div>}
+      {formState?.error && <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">{formState.error}</div>}
 
       <form action={formAction} className="space-y-6">
         <div>
@@ -114,8 +115,11 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
           <Input id="title" name="title" type="text" required />
         </div>
         <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" rows={3} />
+          <RichTextEditor
+            label="Description (Optional)"
+            name="description"
+            initialValue=""
+          />
         </div>
         <div>
           <Label htmlFor="iconName">Icon Name</Label>
@@ -132,12 +136,14 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
 
       <ul id="benefits-list" className="mt-6 space-y-4">
         {benefits.map(benefit => (
-          <li key={benefit.id} data-id={benefit.id} className="flex items-center justify-between p-4 bg-gray-100 rounded-md">
+          <li key={benefit.id} data-id={benefit.id} className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
             <span className="drag-handle cursor-move mr-2">☰</span>
             {editingBenefitId === benefit.id ? (
               <form action={(formData) => handleBenefitUpdate(benefit.id, formData)} className="flex-1 flex items-center space-x-2">
                 <Input type="text" name="title" defaultValue={benefit.title} className="flex-1" />
-                <Textarea name="description" defaultValue={benefit.description ?? ""} rows={1} className="flex-1" />
+                <div className="flex-1">
+                   <RichTextEditor label="" name="description" initialValue={benefit.description ?? ""} />
+                </div>
                 <Input type="text" name="iconName" defaultValue={benefit.iconName ?? ""} className="flex-1" />
                 <Input type="text" name="iconStyle" defaultValue={benefit.iconStyle ?? ""} className="flex-1" />
                 <Button type="submit" size="sm">Update</Button>
@@ -146,8 +152,8 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
             ) : (
               <>
                 <div className="flex-1">
-                  <div className="font-medium">{benefit.title}</div>
-                  <div className="text-gray-600 text-sm">{benefit.description}</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">{benefit.title}</div>
+                  <div className="text-gray-600 dark:text-gray-300 text-sm">{benefit.description}</div>
                 </div>
                 <div className="flex space-x-2">
                   <Button type="button" size="sm" onClick={() => handleEditBenefit(benefit)}>Edit</Button>

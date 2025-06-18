@@ -92,33 +92,33 @@ export default function SocialLinksEditor({ initialSocialLinks }: SocialLinksEdi
   const getFieldError = (fieldName: 'platform' | 'username' | 'profileUrl') => {
     return currentFormState.errors?.find(err => err.path && err.path.includes(fieldName))?.message;
   };
-
-  return (
-    <div className="p-6 bg-white shadow-sm rounded-lg space-y-6">
+ 
+   return (
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
           {isEditing ? `Edit Social Link: ${currentEditingLink?.platform}` : 'Add New Social Link'}
         </h3>
         {currentFormState.success && currentFormState.message && (
-          <div className="rounded-md bg-green-50 p-4">
+          <div className="rounded-md bg-green-50 dark:bg-green-900/50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
                 {/* Success icon */}
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">{currentFormState.message}</h3>
+                <h3 className="text-sm font-medium text-green-800 dark:text-green-300">{currentFormState.message}</h3>
               </div>
             </div>
           </div>
         )}
         {currentFormState.error && (
-          <div className="rounded-md bg-red-50 p-4">
+          <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
                 {/* Error icon */}
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">{currentFormState.error}</h3>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">{currentFormState.error}</h3>
               </div>
             </div>
           </div>

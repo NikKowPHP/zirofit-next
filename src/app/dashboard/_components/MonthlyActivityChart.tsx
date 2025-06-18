@@ -90,7 +90,7 @@ export default function MonthlyActivityChart({ data, title }: MonthlyActivityCha
 
   return (
     <div className="flex flex-col h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+      {title && <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">{title}</h3>}
       <div className="relative h-64">
         <Bar options={chartOptions} data={chartData} />
       </div>
