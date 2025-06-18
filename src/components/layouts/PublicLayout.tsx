@@ -1,11 +1,14 @@
 // src/components/layouts/PublicLayout.tsx
 "use client"; // This component now uses a hook, so it must be a client component.
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 // import Image from 'next/image'; // For logo
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { createClient } from '@/lib/supabase/client';
+import LogoutButton from '@/components/auth/LogoutButton';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -14,6 +17,24 @@ interface PublicLayoutProps {
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const { theme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    // Initial check
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark' : ''}`}>
@@ -26,19 +47,31 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               </Link>
             </div>
             <div className="hidden md:block">
-              <div className="ml-4 flex items-center md:ml-6 space-x-4 ">
-                <Link href="/auth/login" className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                  Login
-                </Link>
-                <Link
-                  href="/auth/register"
-                  className="text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Sign Up
-                </Link>
-                <Link href="/trainers" className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                  Find Trainers
-                </Link>
+              <div className="ml-4 flex items-center md:ml-6 space-x-4">
+                {!loading && (
+                  <>
+                    <Link href="/trainers" className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      Find Trainers
+                    </Link>
+                    {user ? (
+                      <>
+                        <Link href="/dashboard" className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                          Dashboard
+                        </Link>
+                        <LogoutButton />
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/auth/login" className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                          Trainer Login
+                        </Link>
+                        <Link href="/auth/register" className="text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium">
+                          Trainer Sign Up
+                        </Link>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </div>
             {/* Mobile Menu Button */}
@@ -62,11 +95,24 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       {/* Mobile Menu Panel */}
       {isMobileMenuOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link href="/trainers" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Find Trainers</Link>
-            <Link href="/auth/login" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Login</Link>
-            <Link href="/auth/register" className="block text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-base font-medium">Sign Up</Link>
-          </div>
+          {!loading && (
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <Link href="/trainers" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Find Trainers</Link>
+              {user ? (
+                <>
+                  <Link href="/dashboard" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Dashboard</Link>
+                  <div className="px-3 py-2">
+                    <LogoutButton />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Trainer Login</Link>
+                  <Link href="/auth/register" className="block text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-base font-medium">Trainer Sign Up</Link>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
 
