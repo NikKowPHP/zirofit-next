@@ -11,7 +11,7 @@ import { authorizeClientAccess } from "./_utils";
 export type ClientMeasurement = Prisma.ClientMeasurementGetPayload<{}>;
 
 
-export const measurementSchema = z.object({
+const measurementSchema = z.object({
   clientId: z.string(),
   measurementDate: z.string().refine((d) => !isNaN(Date.parse(d)), { message: "Invalid date" }),
   weightKg: z.string().optional().nullable(),
@@ -20,7 +20,7 @@ export const measurementSchema = z.object({
   customMetrics: z.string().optional().nullable(),
 });
 
-export const updateMeasurementSchema = measurementSchema.extend({
+const updateMeasurementSchema = measurementSchema.extend({
   measurementId: z.string(),
 });
 
