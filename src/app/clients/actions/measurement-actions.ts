@@ -4,9 +4,13 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import type { ClientMeasurement } from '@prisma/client';
+import { Prisma } from "@prisma/client";
 
 import { authorizeClientAccess } from './_utils';
+
+// Define the ClientMeasurement type using Prisma's utility type. This is more robust
+// for server-side modules where direct type imports can sometimes fail.
+type ClientMeasurement = Prisma.ClientMeasurementGetPayload<{}>;
 
 const measurementSchema = z.object({
   clientId: z.string(),
