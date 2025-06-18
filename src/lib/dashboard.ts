@@ -1,5 +1,6 @@
 import { prisma } from './prisma';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import { ChartDataService } from './services/ChartDataService';
 
 interface ActivityItem {
   type: 'UPCOMING_SESSION' | 'NEW_MEASUREMENT' | 'PROGRESS_PHOTO' | 'PAST_SESSION';
@@ -100,13 +101,30 @@ export async function getDashboardData(trainerId: string) {
     }))
   ].sort((a, b) => b.date.getTime() - a.date.getTime());
 
+  const spotlight = await getSpotlightClient(trainerId);
+
+  // Format data for charts, providing empty arrays as fallbacks
+  const clientProgressData = spotlight
+    ? ChartDataService.formatProgressData(spotlight.measurements)
+    : [];
+
+  // Create sample data for the monthly activity chart
+  const monthlyActivityData = ChartDataService.formatActivityData([
+    { week: 1, count: 5 },
+    { week: 2, count: 8 },
+    { week: 3, count: 3 },
+    { week: 4, count: 12 },
+  ]);
+
   return {
     activeClients,
     sessionsThisMonth,
     pendingClients,
     profile,
     activityFeed,
-    spotlightClient: await getSpotlightClient(trainerId),
+    // Add the required chart data keys to the response
+    clientProgressData,
+    monthlyActivityData,
   };
 }
 

@@ -11,6 +11,7 @@ import {
   Legend,
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import { ChartData } from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -24,9 +25,9 @@ ChartJS.register(
 
 interface ClientProgressChartProps {
   data: {
-    labels: string[]
-    measurements: number[]
-  }
+    date: Date;
+    value: number;
+  }[];
   title?: string
 }
 
@@ -53,26 +54,37 @@ export const chartOptions = {
   },
 }
 
+interface ChartDataProps {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    borderColor: string;
+    backgroundColor: string;
+    tension: number;
+  }[];
+}
+
 export default function ClientProgressChart({ data, title }: ClientProgressChartProps) {
-  const chartData = {
-    labels: data.labels,
+  const chartData: ChartDataProps = {
+    labels: data.map(d => d.date.toLocaleDateString()),
     datasets: [
       {
         label: 'Progress',
-        data: data.measurements,
+        data: data.map(d => d.value),
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.5)',
         tension: 0.4,
       },
     ],
-  }
+  };
 
   return (
     <div className="flex flex-col h-full">
       {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
-      <div className="relative h-64">
+      <div className="relative h-64" data-testid="chart-canvas">
         <Line options={chartOptions} data={chartData} />
       </div>
     </div>
-  )
+  );
 }

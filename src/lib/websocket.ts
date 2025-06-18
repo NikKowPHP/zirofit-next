@@ -1,6 +1,7 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server } from 'http';
 import type { Notification } from '@/types/notifications';
+import type { AddressInfo } from 'net';
 
 interface ActiveConnection {
   userId: string;
@@ -34,8 +35,8 @@ export function setupWebSocket(server: Server) {
     });
   });
 
-  const address = server.address();
-  if (address && typeof address !== 'string') {
+  const address = server.address() as AddressInfo;
+  if (address) {
     console.log(`WebSocket server running on ws://localhost:${address.port}`);
   }
   return wss;

@@ -36,8 +36,8 @@ export default function DashboardContent() {
     pendingClients,
     profile,
     activityFeed,
-    clientProgressData,  // Array of {x: string, y: number}
-    monthlyActivityData  // Array of {x: string, y: number}
+    clientProgressData = [],  // Array of {x: string, y: number}
+    monthlyActivityData = []  // Array of {x: string, y: number}
   } = data
 
   return (
@@ -47,7 +47,9 @@ export default function DashboardContent() {
         sessionsThisMonth={sessionsThisMonth}
         pendingClients={pendingClients}
       />
-      <ProfileChecklist profile={profile} />
+      {profile ? (
+        <ProfileChecklist profile={profile} />
+      ) : <SkeletonProfileChecklist />}
       <QuickActions />
       <ActivityFeed activityFeed={activityFeed} />
       
