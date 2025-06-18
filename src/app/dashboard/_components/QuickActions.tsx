@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 const QuickActions: React.FC = () => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Quick Actions</h2>
       <div className="space-y-2">
         <Link
           href="/clients/create"

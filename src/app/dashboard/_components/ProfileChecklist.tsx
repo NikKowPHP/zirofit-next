@@ -34,35 +34,35 @@ const ProfileChecklist: React.FC<ProfileChecklistProps> = ({ profile }) => {
   );
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Profile Completion</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Profile Completion</h2>
       <div className="mb-4">
-        <div className="w-full bg-gray-200 rounded-full h-4">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
           <div
             className="bg-blue-500 h-4 rounded-full"
             style={{ width: `${completionPercentage}%` }}
           ></div>
         </div>
-        <span>{completionPercentage}% complete</span>
+        <span className="text-gray-600 dark:text-gray-400">{completionPercentage}% complete</span>
       </div>
       <ul className="space-y-2">
         <li>
-          <Link href="/profile/edit/about" className="text-blue-500 hover:underline">
+          <Link href="/profile/edit/about" className="text-blue-600 dark:text-blue-400 hover:underline">
             About Me
           </Link>
         </li>
         <li>
-          <Link href="/profile/edit/services" className="text-blue-500 hover:underline">
+          <Link href="/profile/edit/services" className="text-blue-600 dark:text-blue-400 hover:underline">
             Services
           </Link>
         </li>
         <li>
-          <Link href="/profile/edit/testimonials" className="text-blue-500 hover:underline">
+          <Link href="/profile/edit/testimonials" className="text-blue-600 dark:text-blue-400 hover:underline">
             Testimonials
           </Link>
         </li>
         <li>
-          <Link href="/profile/edit/photos" className="text-blue-500 hover:underline">
+          <Link href="/profile/edit/photos" className="text-blue-600 dark:text-blue-400 hover:underline">
             Transformation Photos
           </Link>
         </li>

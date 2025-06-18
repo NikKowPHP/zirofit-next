@@ -12,9 +12,9 @@ const AtAGlanceStats: React.FC<AtAGlanceStatsProps> = ({
   pendingClients,
 }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">At a Glance</h2>
-      <div className="space-y-2">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">At a Glance</h2>
+      <div className="space-y-2 text-gray-700 dark:text-gray-300">
         <div>
           <span className="font-semibold">Active Clients:</span> {activeClients}
         </div>

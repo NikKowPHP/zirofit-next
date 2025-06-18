@@ -20,7 +20,7 @@ export default function DashboardContent() {
     revalidateOnFocus: true
   })
 
-  if (error) return <div>Failed to load dashboard data</div>
+  if (error) return <div className="text-red-500 p-4 bg-red-100 dark:bg-red-900/20 rounded-md">Failed to load dashboard data</div>
   if (isLoading) return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <SkeletonAtAGlanceStats data-testid="skeleton-at-a-glance" />
