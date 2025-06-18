@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, Suspense } from 'react';
-import type { Client, ClientSessionLog, ClientMeasurement, ClientProgressPhoto } from '@/app/clients/actions/client-actions';
+import type { Client, ClientSessionLog, ClientProgressPhoto } from '@/app/clients/actions/client-actions';
+import type { ClientMeasurement } from '@/app/clients/actions/measurement-actions';
 import ManageClientMeasurements from './modules/ManageClientMeasurements';
 import ManageClientProgressPhotos from './modules/ManageClientProgressPhotos';
 import ManageClientSessionLogs from './modules/ManageClientSessionLogs';

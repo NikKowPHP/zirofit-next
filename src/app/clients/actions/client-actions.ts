@@ -290,5 +290,4 @@ export async function getClientDetails(clientId: string) {
 // Exporting types for client components to consume, avoiding direct imports that can fail in some build contexts.
 export type Client = Prisma.ClientGetPayload<{}>;
 export type ClientSessionLog = Prisma.ClientSessionLogGetPayload<{}>;
-export type ClientMeasurement = Prisma.ClientMeasurementGetPayload<{}>;
 export type ClientProgressPhoto = Prisma.ClientProgressPhotoGetPayload<{}>;
