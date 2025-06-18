@@ -1,5 +1,6 @@
 'use client'
 
+import { useTheme } from '@/context/ThemeContext'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,37 +29,61 @@ interface MonthlyActivityChartProps {
   title?: string
 }
 
-export const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Monthly Activity',
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
+export default function MonthlyActivityChart({ data, title }: MonthlyActivityChartProps) {
+  const { theme } = useTheme()
+
+  const textColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
+  const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+        labels: {
+          color: textColor,
+        }
+      },
       title: {
-        display: true,
-        text: 'Activities',
+        display: !!title,
+        text: title,
+        color: textColor,
       },
     },
-  },
-}
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Activities',
+          color: textColor,
+        },
+        ticks: {
+          color: textColor,
+        },
+        grid: {
+          color: gridColor,
+        },
+      },
+      x: {
+        ticks: {
+          color: textColor,
+        },
+        grid: {
+          color: gridColor,
+        },
+      }
+    },
+  }
 
-export default function MonthlyActivityChart({ data, title }: MonthlyActivityChartProps) {
   const chartData = {
     labels: data.map(d => d.x),
     datasets: [
       {
         label: 'Activities',
         data: data.map(d => d.y),
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.7)' : 'rgba(59, 130, 246, 0.5)',
       },
     ],
   }

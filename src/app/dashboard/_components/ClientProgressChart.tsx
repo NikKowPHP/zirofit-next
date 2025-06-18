@@ -1,5 +1,6 @@
 'use client'
 
+import { useTheme } from '@/context/ThemeContext'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +12,6 @@ import {
   Legend,
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
-import { ChartData } from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -31,29 +31,6 @@ interface ClientProgressChartProps {
   title?: string
 }
 
-export const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Client Progress',
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Measurements',
-      },
-    },
-  },
-}
-
 interface ChartDataProps {
   labels: string[];
   datasets: {
@@ -66,6 +43,53 @@ interface ChartDataProps {
 }
 
 export default function ClientProgressChart({ data, title }: ClientProgressChartProps) {
+  const { theme } = useTheme()
+
+  const textColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
+  const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+        labels: {
+          color: textColor,
+        }
+      },
+      title: {
+        display: !!title,
+        text: title,
+        color: textColor,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Progress Value',
+          color: textColor,
+        },
+        ticks: {
+          color: textColor,
+        },
+        grid: {
+          color: gridColor,
+        },
+      },
+      x: {
+        ticks: {
+          color: textColor,
+        },
+        grid: {
+          color: gridColor,
+        },
+      }
+    },
+  }
+
   const chartData: ChartDataProps = {
     labels: data.map(d => d.date.toLocaleDateString()),
     datasets: [
