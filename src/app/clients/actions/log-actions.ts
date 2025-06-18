@@ -112,11 +112,3 @@ export async function deleteSessionLog(sessionLogId: string) {
   }
 }
 
-export type ClientSessionLog = {
-  id: string;
-  clientId: string;
-  sessionDate: Date;
-  durationMinutes: number | null;
-  activitySummary: string | null;
-  sessionNotes: string | null;
-};

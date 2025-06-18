@@ -71,10 +71,10 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
   }
 }
 
-export type ClientProgressPhoto = {
-  id: string;
-  clientId: string;
-  photoDate: Date;
-  caption: string | null;
-  imagePath: string;
-};
+// export type ClientProgressPhoto = {
+//   id: string;
+//   clientId: string;
+//   photoDate: Date;
+//   caption: string | null;
+//   imagePath: string;
+// };

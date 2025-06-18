@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addProgressPhoto, deleteProgressPhoto } from "@/app/clients/actions/photo-actions";
-import type { ClientProgressPhoto } from "@/app/clients/actions/photo-actions";
+
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
+import { ClientProgressPhoto } from "@/app/clients/actions";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;

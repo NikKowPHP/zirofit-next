@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
-import { addSessionLog, updateSessionLog, deleteSessionLog, type ClientSessionLog } from "@/app/clients/actions/log-actions";
+// import { addSessionLog, updateSessionLog, deleteSessionLog, type ClientSessionLog } from "@/app/clients/actions/log-actions";
 import { revalidatePath } from "next/cache";
+import { addSessionLog, ClientSessionLog, deleteSessionLog, updateSessionLog } from "@/app/clients/actions";
 
 interface ManageClientSessionLogsProps {
   clientId: string;
