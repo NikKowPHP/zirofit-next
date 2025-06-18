@@ -13,6 +13,7 @@ type Profile = Awaited<ReturnType<typeof prisma.profile.create>>;
 type Service = Awaited<ReturnType<typeof prisma.service.create>>;
 type Testimonial = Awaited<ReturnType<typeof prisma.testimonial.create>>;
 type TransformationPhoto = Awaited<ReturnType<typeof prisma.transformationPhoto.create>>;
+type TransformationPhotoWithPublicUrl = TransformationPhoto & { publicUrl: string };
 type ExternalLink = Awaited<ReturnType<typeof prisma.externalLink.create>>;
 type Benefit = Awaited<ReturnType<typeof prisma.benefit.create>>;
 type SocialLink = Awaited<ReturnType<typeof prisma.socialLink.create>>;
@@ -94,10 +95,10 @@ export async function getCurrentUserProfileData() {
 
     if (userWithProfile.profile && userWithProfile.profile.transformationPhotos) {
         const supabaseStorage = await createClient(); // Re-use the existing client or create a new one as needed
-        userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map((photo) => {
+        userWithProfile.profile.transformationPhotos = userWithProfile.profile.transformationPhotos.map((photo: TransformationPhoto) => {
             const { data: { publicUrl } } = supabaseStorage.storage.from('zirofit').getPublicUrl(photo.imagePath);
             return { ...photo, publicUrl };
-        });
+        }) as TransformationPhotoWithPublicUrl[];
     }
 
     return userWithProfile;
