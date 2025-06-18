@@ -1,8 +1,11 @@
 // src/components/layouts/PublicLayout.tsx
 "use client"; // This component now uses a hook, so it must be a client component.
-import React from 'react';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+// import Image from 'next/image'; // For logo
 import { useTheme } from '../../context/ThemeContext';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -10,9 +13,11 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const { theme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <div className={`min-h-screen flex relative flex-col ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'}`}>
-      <header className="sticky top-0 left-0 bg-white dark:bg-gray-800 shadow-sm">
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark' : ''}`}>
+      <header className="bg-white/80 dark:bg-gray-800/80 shadow-sm sticky top-0 z-50 backdrop-blur-md">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -27,7 +32,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Sign Up
                 </Link>
@@ -36,12 +41,36 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 </Link>
               </div>
             </div>
-            {/* Mobile menu button can be added later if needed */}
+            {/* Mobile Menu Button */}
+            <div className="-mr-2 flex md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              >
+                <span className="sr-only">Open main menu</span>
+                {isMobileMenuOpen ? (
+                  <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                )}
+              </button>
+            </div>
           </div>
         </nav>
       </header>
 
-      <main className="flex-grow">
+      {/* Mobile Menu Panel */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <Link href="/trainers" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Find Trainers</Link>
+            <Link href="/auth/login" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Login</Link>
+            <Link href="/auth/register" className="block text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-base font-medium">Sign Up</Link>
+          </div>
+        </div>
+      )}
+
+      <main className="flex-grow bg-white dark:bg-gray-900">
         {children}
       </main>
 
