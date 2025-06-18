@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { addMeasurement, updateMeasurement, deleteMeasurement, MeasurementFormState } from "@/app/clients/actions";
-import { ClientMeasurement } from "@prisma/client";
+import type { ClientMeasurement } from "@prisma/client";
 import { ZodIssue } from "zod";
 
 interface ManageClientMeasurementsProps {
