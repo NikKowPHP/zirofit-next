@@ -10,7 +10,8 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = createServer((req, res) => {
-    handle(req, res);
+    const parsedUrl = parse(req.url!, true);
+    handle(req, res, parsedUrl);
   });
 
   // Create the WebSocket server without attaching it to the HTTP server
@@ -36,9 +37,6 @@ app.prepare().then(() => {
       wss.handleUpgrade(request, socket, head, (ws) => {
         wss.emit('connection', ws, request);
       });
-    } else {
-      // For all other paths (like Next.js HMR), do nothing and let them fail gracefully.
-      socket.destroy();
     }
   });
 

@@ -39,10 +39,10 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
   useEffect(() => {
     const sortable = new SortableJS(document.getElementById('benefits-list') as HTMLElement, {
       handle: '.drag-handle',
-      onEnd: (event: any) => {
+      onEnd: () => {
         const newOrder = Array.from(document.getElementById('benefits-list')?.children || []).map(
-          (item: any) => item.dataset.id
-        );
+          (item) => (item as HTMLElement).dataset.id
+        ).filter((id): id is string => id !== undefined);
         updateBenefitOrder(newOrder);
         setBenefits(prevBenefits => {
           const newBenefits = [...prevBenefits];
@@ -75,7 +75,7 @@ export default function BenefitsEditor({ initialBenefits }: BenefitsEditorProps)
     try {
       await deleteBenefit(id);
       setBenefits(prevBenefits => prevBenefits.filter(benefit => benefit.id !== id));
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Failed to delete benefit: ", e);
     }
   };
