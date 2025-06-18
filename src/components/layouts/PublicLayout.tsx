@@ -11,8 +11,8 @@ interface PublicLayoutProps {
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const { theme } = useTheme();
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'}`}>
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
+    <div className={`min-h-screen flex relative flex-col ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'}`}>
+      <header className="sticky top-0 left-0 bg-white dark:bg-gray-800 shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">

@@ -238,9 +238,9 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">What Clients Say</h2>
             <div className="space-y-8">
               {profile.testimonials.map((testimonial: Testimonial) => (
-                <blockquote key={testimonial.id} className="p-6 bg-gray-50 rounded-lg shadow">
-                  <p className="text-gray-600 italic mb-4">&ldquo;{testimonial.testimonialText}&rdquo;</p>
-                  <footer className="text-right font-semibold text-gray-700">- {testimonial.clientName}</footer>
+                <blockquote key={testimonial.id} className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+                  <p className="text-gray-600 dark:text-gray-200 italic mb-4">&ldquo;{testimonial.testimonialText}&rdquo;</p>
+                  <footer className="text-right font-semibold text-gray-700 dark:text-gray-100">- {testimonial.clientName}</footer>
                 </blockquote>
               ))}
             </div>
