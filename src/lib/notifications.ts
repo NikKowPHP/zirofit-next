@@ -1,18 +1,2 @@
-export interface Client {
-  userId: string;
-  writer: WritableStreamDefaultWriter;
-  encoder: TextEncoder;
-}
-
-export const clients: Client[] = [];
-
-export function getClientList() {
-  return clients.map(client => client.userId);
-}
-
-export function broadcastToClients(userId: string, message: unknown) {
-  const targetClients = clients.filter(client => client.userId === userId);
-  targetClients.forEach(client => {
-    client.writer.write(client.encoder.encode(`data: ${JSON.stringify(message)}\n\n`));
-  });
-}
+// This file is no longer used after migrating from real-time notifications (SSE/WebSockets)
+// to the default Next.js server with API polling.

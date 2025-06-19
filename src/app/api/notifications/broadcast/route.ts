@@ -1,13 +1,8 @@
-import { NextResponse } from 'next/server';
-import { getClientList, broadcastToClients } from '@/lib/notifications';
+// This file is no longer used after migrating from real-time notifications (SSE/WebSockets)
+// to the default Next.js server with API polling.
 
-export async function POST(request: Request) {
-  const { userId } = await request.json();
-  const clients = getClientList();
-  
-  if (clients.length > 0) {
-    broadcastToClients(userId, { type: 'new-notification' });
-  }
+import { NextResponse } from "next/server";
 
-  return NextResponse.json({ success: true });
+export async function POST() {
+    return NextResponse.json({ message: "This endpoint is deprecated." }, { status: 410 });
 }

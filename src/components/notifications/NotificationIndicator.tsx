@@ -22,35 +22,8 @@ export default function NotificationIndicator() {
   }, [supabase.auth])
 
   useEffect(() => {
-    if (!userId) return
-
-    fetchNotifications()
-    
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`) // Explicitly connect to /ws
-
-    ws.onopen = () => {
-      ws.send(JSON.stringify({
-        type: 'auth',
-        userId: userId
-      }))
-    }
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data)
-      if (message.type === 'notification') {
-        setNotifications(prev => [message.data, ...prev])
-        setUnreadCount(prev => prev + 1)
-      }
-    }
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error)
-      ws.close()
-    }
-
-    return () => {
-      ws.close()
+    if (userId) {
+      fetchNotifications()
     }
   }, [userId])
 
