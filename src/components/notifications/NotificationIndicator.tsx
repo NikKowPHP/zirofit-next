@@ -10,17 +10,24 @@ export default function NotificationIndicator() {
   const [isOpen, setIsOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
-  const [userId, setUserId] = useState<string | null>(null)
+  const [_userId, setUserId] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
-    const getUserId = async () => {
+    const getUserIdAndInitialNotifications = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) setUserId(user.id)
+      if (user) {
+        setUserId(user.id)
+        // Fetch initial count on page load
+        fetchNotifications(true);
+      }
     }
-    getUserId()
+    getUserIdAndInitialNotifications()
   }, [supabase.auth])
 
+  // WebSocket logic is now disabled to simplify the development environment.
+  // The system will fall back to fetching notifications on-demand.
+  /*
   useEffect(() => {
     if (!userId) return
 
@@ -53,14 +60,18 @@ export default function NotificationIndicator() {
       ws.close()
     }
   }, [userId])
+  */
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (isInitialFetch = false) => {
     try {
       const response = await fetch('/api/notifications')
       if (!response.ok) throw new Error('Failed to fetch notifications')
       
       const data = await response.json()
-      setNotifications(data)
+      // Only update the full list when the dropdown is open
+      if (!isInitialFetch) {
+        setNotifications(data)
+      }
       
       const unread = data.filter((n: Notification) => !n.readStatus).length
       setUnreadCount(unread)
@@ -74,7 +85,10 @@ export default function NotificationIndicator() {
       <button 
         onClick={() => {
           setIsOpen(!isOpen)
-          fetchNotifications()
+          if (!isOpen) {
+            // Fetch fresh data when opening the list
+            fetchNotifications()
+          }
         }}
         className="p-2 rounded-full hover:bg-gray-100 relative"
       >

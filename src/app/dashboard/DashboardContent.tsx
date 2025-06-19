@@ -21,7 +21,7 @@ export default function DashboardContent() {
   })
 
   if (error) return <div className="text-red-500 p-4 bg-red-100 dark:bg-red-900/20 rounded-md">Failed to load dashboard data</div>
-  if (isLoading) return (
+  if (isLoading || !data) return ( // Added !data check for extra safety
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <SkeletonAtAGlanceStats data-testid="skeleton-at-a-glance" />
       <SkeletonProfileChecklist data-testid="skeleton-profile-checklist" />
@@ -35,9 +35,10 @@ export default function DashboardContent() {
     sessionsThisMonth,
     pendingClients,
     profile,
-    activityFeed,
-    clientProgressData = [],  // Array of {x: string, y: number}
-    monthlyActivityData = []  // Array of {x: string, y: number}
+    // FIX: Provide a default empty array for activityFeed to prevent runtime errors.
+    activityFeed = [],
+    clientProgressData = [],
+    monthlyActivityData = []
   } = data
 
   return (
@@ -55,14 +56,26 @@ export default function DashboardContent() {
       
       {/* Chart Section */}
       <div className="lg:col-span-2 space-y-6">
-        <ClientProgressChart
-          data={clientProgressData}
-          title="Client Progress"
-        />
-        <MonthlyActivityChart
-          data={monthlyActivityData}
-          title="Monthly Activity"
-        />
+        {clientProgressData.length > 0 ? (
+          <ClientProgressChart
+            data={clientProgressData}
+            title="Client Progress"
+          />
+        ) : (
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center text-gray-500">
+            No client progress data to display. Add some measurements to a client to see the chart.
+          </div>
+        )}
+        {monthlyActivityData.length > 0 ? (
+          <MonthlyActivityChart
+            data={monthlyActivityData}
+            title="Monthly Activity"
+          />
+        ) : (
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center text-gray-500">
+            No monthly activity data available.
+          </div>
+        )}
       </div>
     </div>
   )

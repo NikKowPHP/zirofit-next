@@ -2,7 +2,7 @@
   "name": "zirofit-next",
   "version": "1.0.0",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "next dev",
     "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "eslint .",
@@ -56,7 +56,6 @@
     "roo": "latest",
     "swr": "^2.3.3",
     "tailwindcss": "^4.1.10",
-    "ts-jest": "^29.4.0",
-    "tsx": "^4.20.3"
+    "ts-jest": "^29.4.0"
   }
 }
