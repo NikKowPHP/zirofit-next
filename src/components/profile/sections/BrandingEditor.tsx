@@ -6,7 +6,7 @@ import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
 import { updateBrandingImages } from '@/app/profile/actions';
 import { Input, Label, Button } from '@/components/ui';
-import Image from 'next/image';
+import { BannerImage, ProfileImage } from '@/components/ui/ImageComponents';
 
 interface BrandingEditorProps {
   initialData: {
@@ -50,12 +50,8 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
     setPhotoPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  const getPublicUrl = (path: string | null) => {
-    return path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}` : '';
-  }
-
-  const currentBannerUrl = bannerPreview || getPublicUrl(initialData.bannerImagePath);
-  const currentProfilePhotoUrl = photoPreview || getPublicUrl(initialData.profilePhotoPath);
+  const currentBannerUrl = bannerPreview || initialData.bannerImagePath;
+  const currentProfilePhotoUrl = photoPreview || initialData.profilePhotoPath;
  
    return (
     <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg">
@@ -65,16 +61,19 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
 
       <form action={formAction} className="space-y-6">
         {/* Banner Image Section */}
-        <div>
+        <div className="relative">
           <Label htmlFor="bannerImage">Banner Image (Recommended: 1200x400)</Label>
-          <Image
-            src={currentBannerUrl || DEFAULT_BANNER}
-            alt="Banner"
-            width={1200}
-            height={400}
-            className="w-full h-48 object-cover rounded-md mt-2 mb-2 bg-gray-100 dark:bg-gray-700"
-            onError={(e) => { e.currentTarget.src = DEFAULT_BANNER }}
-          />
+          <div className="w-full h-48 mt-2 mb-2 bg-gray-100 dark:bg-gray-700 rounded-md relative overflow-hidden">
+            <BannerImage
+              src={currentBannerUrl || ''}
+              alt="Banner"
+              defaultSrc={DEFAULT_BANNER}
+              layout="fill"
+              objectFit="cover"
+              quality={85}
+              className="object-cover"
+            />
+          </div>
           <Input
             id="bannerImage"
             name="bannerImage"
@@ -88,13 +87,13 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
         {/* Profile Photo Section */}
         <div>
           <Label htmlFor="profilePhoto">Profile Photo (Recommended: 400x400)</Label>
-          <Image
-            src={currentProfilePhotoUrl || DEFAULT_PHOTO}
+          <ProfileImage
+            src={currentProfilePhotoUrl || ''}
             alt="Profile Photo"
             width={400}
             height={400}
             className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100 dark:bg-gray-700"
-            onError={(e) => { e.currentTarget.src = DEFAULT_PHOTO }}
+            defaultSrc={DEFAULT_PHOTO}
           />
           <Input
             id="profilePhoto"

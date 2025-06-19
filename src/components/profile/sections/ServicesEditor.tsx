@@ -101,9 +101,9 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
   };
 
   return (
-    <div className="p-6 bg-white shadow-sm rounded-lg space-y-6">
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
           {isEditing ? `Edit Service` : 'Add New Service'}
         </h3>
         {currentFormState.success && currentFormState.message && (
@@ -113,10 +113,10 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{currentFormState.error}</div>
         )}
 
-        <form 
-            action={isEditing ? updateFormAction : addFormAction} 
+        <form
+            action={isEditing ? updateFormAction : addFormAction}
             key={editingServiceId || 'add'}
-            className="space-y-4 border-b pb-6 mb-6"
+            className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && <input type="hidden" name="serviceId" value={editingServiceId} />}
           <div>
@@ -154,16 +154,16 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
       )}
 
       <div>
-        <h4 className="text-md font-medium text-gray-800 mb-3">Your Services</h4>
+        <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Your Services</h4>
         {services.length === 0 ? (
           <p className="text-gray-500">You haven&#39;t added any services yet.</p>
         ) : (
           <div className="space-y-4">
             {services.map((service) => (
-              <div key={service.id} className="p-4 border rounded-md flex justify-between items-start">
+              <div key={service.id} className="p-4 border dark:border-gray-700 rounded-md flex justify-between items-start">
                 <div>
-                  <h5 className="font-semibold text-gray-800">{service.title}</h5>
-                  <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{service.description}</p>
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100">{service.title}</h5>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 whitespace-pre-wrap">{service.description}</p>
                 </div>
                 <div className="flex space-x-2 flex-shrink-0">
                     <Button variant="secondary" size="sm" onClick={() => handleEditClick(service)} disabled={deletingId === service.id || (isEditing && editingServiceId === service.id) }>
