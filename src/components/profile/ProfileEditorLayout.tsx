@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { TransformationPhoto } from './sections/TransformationPhotosEditor';
 import type { SocialLink } from './sections/SocialLinksEditor';
@@ -54,7 +54,7 @@ const TestimonialsEditor = React.lazy(() => import('./sections/TestimonialsEdito
 const LinksEditor = React.lazy(() => import('./sections/ExternalLinksEditor'));
 const SocialLinksEditor = React.lazy(() => import('./sections/SocialLinksEditor'));
 
-const SectionLoadingFallback = () => <div className="p-6 bg-white shadow-sm rounded-lg">Loading section...</div>;
+const SectionLoadingFallback = () => <div className="p-6  dark:bg-gray-800 shadow-sm rounded-lg">Loading section...</div>;
 
 export default function ProfileEditorLayout({ initialData }: ProfileEditorLayoutProps) {
   const searchParams = useSearchParams();
@@ -74,7 +74,7 @@ export default function ProfileEditorLayout({ initialData }: ProfileEditorLayout
     </div>
   );
 
-  const sectionComponents: { [key: string]: React.ComponentType<any> } = {
+  const sectionComponents: { [key: string]: React.ComponentType<unknown> } = {
     'core-info': () => <CoreInfoEditor initialData={{
         name: initialData.name,
         username: initialData.username,

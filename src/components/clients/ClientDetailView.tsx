@@ -56,7 +56,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
         </nav>
       </div>
       <div className="mt-6">
-        <Suspense fallback={<div className="text-gray-600 dark:text-gray-400">Loading...</div>}>
+        <Suspense fallback={<div className="text-gray-600 dark:text-gray-200 bg-white dark:bg-gray-800">Loading...</div>}>
           {tabContent[activeTab]}
         </Suspense>
       </div>

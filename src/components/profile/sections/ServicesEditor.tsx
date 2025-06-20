@@ -164,8 +164,7 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
                 <div>
                   <h5 className="font-semibold text-gray-800 dark:text-gray-100">{service.title}</h5>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 whitespace-pre-wrap">{service.description}</p>
-                </div>
-                <div className="flex space-x-2 flex-shrink-0">
+                   <div className="flex space-x-2 justify-end flex-shrink-0 mt-10">
                     <Button variant="secondary" size="sm" onClick={() => handleEditClick(service)} disabled={deletingId === service.id || (isEditing && editingServiceId === service.id) }>
                         <PencilIcon className="h-4 w-4 mr-1.5" /> Edit
                     </Button>
@@ -173,6 +172,8 @@ export default function ServicesEditor({ initialServices }: ServicesEditorProps)
                         <TrashIcon className="h-4 w-4 mr-1.5" /> {deletingId === service.id ? 'Deleting...' : 'Delete'}
                     </Button>
                 </div>
+                </div>
+               
               </div>
             ))}
           </div>

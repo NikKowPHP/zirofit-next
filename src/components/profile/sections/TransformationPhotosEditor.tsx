@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { addTransformationPhoto, deleteTransformationPhoto } from '@/app/profile/actions'; // Adjust
-import { Input, Label, Textarea, Button } from '@/components/ui';
-import Image from 'next/image';
-import { z } from 'zod';
+import React, { useEffect, useRef, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import {
+  addTransformationPhoto,
+  deleteTransformationPhoto,
+} from "@/app/profile/actions"; // Adjust
+import { Input, Label, Textarea, Button } from "@/components/ui";
+import Image from "next/image";
+import { z } from "zod";
+import { TransformationImage } from "@/components/ui/ImageComponents";
 
 export type TransformationPhoto = {
   id: string;
@@ -16,7 +20,7 @@ export type TransformationPhoto = {
   createdAt: Date;
   updatedAt: Date;
   profileId: string;
-}
+};
 
 interface TransformationPhotosEditorProps {
   initialTransformationPhotos: TransformationPhoto[];
@@ -30,33 +34,61 @@ interface TransformationPhotoFormState {
   newPhoto?: TransformationPhoto;
 }
 
-const initialState: TransformationPhotoFormState = { /* ... */ };
+const initialState: TransformationPhotoFormState = {
+  /* ... */
+};
 
 function SubmitPhotoButton() {
   const { pending } = useFormStatus();
-  return <Button type="submit" disabled={pending}>{pending ? 'Uploading...' : 'Upload Photo'}</Button>;
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? "Uploading..." : "Upload Photo"}
+    </Button>
+  );
 }
 
-export default function TransformationPhotosEditor({ initialTransformationPhotos }: TransformationPhotosEditorProps) {
-  const [state, formAction] = useFormState(addTransformationPhoto, initialState);
+export default function TransformationPhotosEditor({
+  initialTransformationPhotos,
+}: TransformationPhotosEditorProps) {
+  const [state, formAction] = useActionState(
+    addTransformationPhoto,
+    initialState
+  );
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [photos, setPhotos] = useState<TransformationPhoto[]>(initialTransformationPhotos);
+  const [photos, setPhotos] = useState<TransformationPhoto[]>(
+    initialTransformationPhotos
+  );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (state.success && state.newPhoto) {
-      setPhotos(current => [state.newPhoto!, ...current].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      setPhotos((current) =>
+        [state.newPhoto!, ...current].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      );
       formRef.current?.reset();
       setPreviewUrl(null);
       if (fileInputRef.current) fileInputRef.current.value = ""; // Clear file input
     }
-     if (initialTransformationPhotos !== photos && !state.success && !deletingId) {
-         setPhotos(initialTransformationPhotos);
+    if (
+      initialTransformationPhotos !== photos &&
+      !state.success &&
+      !deletingId
+    ) {
+      setPhotos(initialTransformationPhotos);
     }
-  }, [initialTransformationPhotos, state.success, deletingId, photos, state.newPhoto]);
+  }, [
+    initialTransformationPhotos,
+    state.success,
+    deletingId,
+    photos,
+    state.newPhoto,
+  ]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -66,9 +98,10 @@ export default function TransformationPhotosEditor({ initialTransformationPhotos
       setPreviewUrl(null);
     }
   };
-  
-  const getFieldError = (fieldName: 'caption' | 'photoFile') => {
-    return state.errors?.find(err => err.path && err.path.includes(fieldName))?.message;
+
+  const getFieldError = (fieldName: "caption" | "photoFile") => {
+    return state.errors?.find((err) => err.path && err.path.includes(fieldName))
+      ?.message;
   };
 
   const handleDeletePhoto = async (photoId: string) => {
@@ -77,7 +110,7 @@ export default function TransformationPhotosEditor({ initialTransformationPhotos
     setDeleteError(null);
     const result = await deleteTransformationPhoto(photoId);
     if (result.success && result.deletedId) {
-      setPhotos(current => current.filter(p => p.id !== result.deletedId));
+      setPhotos((current) => current.filter((p) => p.id !== result.deletedId));
     } else if (result.error) {
       setDeleteError(result.error);
     }
@@ -85,32 +118,65 @@ export default function TransformationPhotosEditor({ initialTransformationPhotos
   };
 
   return (
-    <div className="p-6 bg-white shadow-sm rounded-lg space-y-6">
+    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Transformation Photos</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">
+          Manage Transformation Photos
+        </h3>
         {state.success && state.message && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">{state.message}</div>
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+            {state.message}
+          </div>
         )}
         {state.error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{state.error}</div>
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+            {state.error}
+          </div>
         )}
-        <form action={formAction} ref={formRef} className="space-y-4 border-b pb-6 mb-6" encType="multipart/form-data">
+        <form
+          action={formAction}
+          ref={formRef}
+          className="space-y-4 border-b pb-6 mb-6"
+          encType="multipart/form-data"
+        >
           <div>
             <Label htmlFor="photoFile">Photo File (Max 2MB)</Label>
-            <Input id="photoFile" name="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required 
-                   className="mt-1" onChange={handleFileChange} ref={fileInputRef} />
-            {getFieldError('photoFile') && <p className="text-red-500 text-xs mt-1">{getFieldError('photoFile')}</p>}
+            <Input
+              id="photoFile"
+              name="photoFile"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              required
+              className="mt-1"
+              onChange={handleFileChange}
+              ref={fileInputRef}
+            />
+            {getFieldError("photoFile") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("photoFile")}
+              </p>
+            )}
           </div>
           {previewUrl && (
             <div className="mt-2">
               <p className="text-sm text-gray-500 mb-1">Preview:</p>
-              <Image src={previewUrl} alt="Selected preview" width={200} height={200} className="max-h-48 w-auto rounded border" />
+              <Image
+                src={previewUrl}
+                alt="Selected preview"
+                width={200}
+                height={200}
+                className="max-h-48 w-auto rounded border"
+              />
             </div>
           )}
           <div>
             <Label htmlFor="caption">Caption (Optional)</Label>
             <Textarea id="caption" name="caption" rows={3} className="mt-1" />
-            {getFieldError('caption') && <p className="text-red-500 text-xs mt-1">{getFieldError('caption')}</p>}
+            {getFieldError("caption") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("caption")}
+              </p>
+            )}
           </div>
           <div className="flex justify-end">
             <SubmitPhotoButton />
@@ -119,29 +185,49 @@ export default function TransformationPhotosEditor({ initialTransformationPhotos
       </div>
 
       {deleteError && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{deleteError}</div>
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+          {deleteError}
+        </div>
       )}
 
       <div>
-        <h4 className="text-md font-medium text-gray-800 mb-3">Your Uploaded Photos</h4>
+        <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
+          Your Uploaded Photos
+        </h4>
         {photos.length === 0 ? (
           <p className="text-gray-500">No photos uploaded yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {photos.map((photo) => (
-              <div key={photo.id} className="relative border rounded-lg overflow-hidden shadow group">
-                <Image src={photo.publicUrl} alt={photo.caption || 'Transformation photo'} 
-                       width={300} height={200} className="w-full h-48 object-cover" 
-                       onError={(e) => (e.currentTarget.style.display = 'none')} />
-                {photo.caption && <p className="p-3 text-sm text-gray-600 bg-white/80 backdrop-blur-sm absolute bottom-0 left-0 right-0">{photo.caption}</p>}
+              <div
+                key={photo.id}
+                className="relative border rounded-lg overflow-hidden shadow group"
+              >
+                <TransformationImage
+                  src={photo.imagePath}
+                  alt={photo.caption || "Transformation photo"}
+                  width={300}
+                  height={200}
+                  className="w-full h-48 object-cover"
+                />
+                {photo.caption && (
+                  <p className="p-3 text-sm text-gray-600 bg-white/80 backdrop-blur-sm absolute bottom-0 left-0 right-0">
+                    {photo.caption}
+                  </p>
+                )}
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
-                    variant="danger" size="sm"
+                    variant="danger"
+                    size="sm"
                     onClick={() => handleDeletePhoto(photo.id)}
                     disabled={deletingId === photo.id}
                     title="Delete photo"
                   >
-                    {deletingId === photo.id ? <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span> : <TrashIcon className="h-4 w-4" />}
+                    {deletingId === photo.id ? (
+                      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                    ) : (
+                      <TrashIcon className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
