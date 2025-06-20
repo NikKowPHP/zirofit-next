@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/Skeleton'
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function SkeletonProfileChecklist() {
   return (
@@ -16,5 +16,5 @@ export default function SkeletonProfileChecklist() {
         <Skeleton className="h-10 w-24" />
       </div>
     </div>
-  )
+  );
 }

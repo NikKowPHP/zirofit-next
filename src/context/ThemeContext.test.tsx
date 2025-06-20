@@ -1,5 +1,5 @@
-import { renderHook, act } from '@testing-library/react';
-import { useTheme, ThemeProvider } from './ThemeContext';
+import { renderHook, act } from "@testing-library/react";
+import { useTheme, ThemeProvider } from "./ThemeContext";
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -15,33 +15,33 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
 });
 
-describe('ThemeContext', () => {
+describe("ThemeContext", () => {
   beforeEach(() => {
     window.localStorage.clear();
   });
 
-  it('should have light theme as default', () => {
+  it("should have light theme as default", () => {
     const { result } = renderHook(() => useTheme(), {
       wrapper: ThemeProvider,
     });
-    expect(result.current.theme).toBe('light');
+    expect(result.current.theme).toBe("light");
   });
 
-  it('should toggle theme from light to dark', () => {
+  it("should toggle theme from light to dark", () => {
     const { result } = renderHook(() => useTheme(), {
       wrapper: ThemeProvider,
     });
     act(() => {
       result.current.toggleTheme();
     });
-    expect(result.current.theme).toBe('dark');
+    expect(result.current.theme).toBe("dark");
   });
 
-  it('should toggle theme from dark to light', () => {
+  it("should toggle theme from dark to light", () => {
     const { result } = renderHook(() => useTheme(), {
       wrapper: ThemeProvider,
     });
@@ -53,24 +53,24 @@ describe('ThemeContext', () => {
     act(() => {
       result.current.toggleTheme();
     });
-    expect(result.current.theme).toBe('light');
+    expect(result.current.theme).toBe("light");
   });
 
-  it('should save theme preference to localStorage', () => {
+  it("should save theme preference to localStorage", () => {
     const { result } = renderHook(() => useTheme(), {
       wrapper: ThemeProvider,
     });
     act(() => {
       result.current.toggleTheme();
     });
-    expect(localStorage.getItem('theme')).toBe('dark');
+    expect(localStorage.getItem("theme")).toBe("dark");
   });
 
-  it('should load initial theme from localStorage', () => {
-    localStorage.setItem('theme', 'dark');
+  it("should load initial theme from localStorage", () => {
+    localStorage.setItem("theme", "dark");
     const { result } = renderHook(() => useTheme(), {
       wrapper: ThemeProvider,
     });
-    expect(result.current.theme).toBe('dark');
+    expect(result.current.theme).toBe("dark");
   });
 });

@@ -52,12 +52,12 @@ export default function TransformationPhotosEditor({
 }: TransformationPhotosEditorProps) {
   const [state, formAction] = useActionState(
     addTransformationPhoto,
-    initialState
+    initialState,
   );
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photos, setPhotos] = useState<TransformationPhoto[]>(
-    initialTransformationPhotos
+    initialTransformationPhotos,
   );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -68,8 +68,8 @@ export default function TransformationPhotosEditor({
       setPhotos((current) =>
         [state.newPhoto!, ...current].sort(
           (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
       );
       formRef.current?.reset();
       setPreviewUrl(null);

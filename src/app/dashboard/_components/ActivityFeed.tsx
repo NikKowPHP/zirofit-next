@@ -1,5 +1,9 @@
 interface ActivityItem {
-  type: 'UPCOMING_SESSION' | 'NEW_MEASUREMENT' | 'PROGRESS_PHOTO' | 'PAST_SESSION';
+  type:
+    | "UPCOMING_SESSION"
+    | "NEW_MEASUREMENT"
+    | "PROGRESS_PHOTO"
+    | "PAST_SESSION";
   date: Date;
   clientName: string;
   message: string;
@@ -16,9 +20,13 @@ export default function ActivityFeed({ activityFeed }: ActivityFeedProps) {
         <p className="text-gray-500 dark:text-gray-400">No recent activity</p>
       ) : (
         activityFeed.map((activity, index) => (
-          <div key={index} className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div
+            key={index}
+            className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow"
+          >
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              {new Date(activity.date).toLocaleDateString()} - {activity.message}
+              {new Date(activity.date).toLocaleDateString()} -{" "}
+              {activity.message}
             </p>
           </div>
         ))

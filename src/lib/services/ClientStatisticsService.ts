@@ -16,12 +16,21 @@ export const getBodyFatProgress = (measurements: ClientMeasurement[]) => {
   }));
 };
 
-export const getCustomMetricProgress = (measurements: ClientMeasurement[], metricName: string) => {
+export const getCustomMetricProgress = (
+  measurements: ClientMeasurement[],
+  metricName: string,
+) => {
   return measurements.map((measurement) => {
-    const customMetrics = typeof measurement.customMetrics === 'string'
-      ? JSON.parse(measurement.customMetrics)
-      : (measurement.customMetrics || []) as { name: string; value: string }[];
-    const metric = customMetrics.find((m: { name: string; value: string }) => m.name === metricName);
+    const customMetrics =
+      typeof measurement.customMetrics === "string"
+        ? JSON.parse(measurement.customMetrics)
+        : ((measurement.customMetrics || []) as {
+            name: string;
+            value: string;
+          }[]);
+    const metric = customMetrics.find(
+      (m: { name: string; value: string }) => m.name === metricName,
+    );
     return {
       x: measurement.measurementDate,
       y: metric ? parseFloat(metric.value) : null,

@@ -1,8 +1,8 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -12,8 +12,10 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function transformImagePath(path: string | null | undefined): string {
   if (!path) {
-    return ''; // Return empty string for null, undefined, or empty paths.
+    return ""; // Return empty string for null, undefined, or empty paths.
   }
   // If it's already a full URL or a local public path, return it as is.
-  return path.startsWith('http') || path.startsWith('/') ? path : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}`;
+  return path.startsWith("http") || path.startsWith("/")
+    ? path
+    : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}`;
 }

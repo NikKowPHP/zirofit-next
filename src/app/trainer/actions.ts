@@ -1,8 +1,8 @@
 // src/app/trainer/actions.ts
 "use server";
 
-import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
 // Import a mail sending library/service SDK if you were to actually send emails.
 // For this migration, we'll simulate it. In a real app, you'd use Resend, SendGrid, etc.
 // import { Resend } from 'resend'; (Example)
@@ -10,7 +10,9 @@ import { prisma } from '@/lib/prisma';
 const contactFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   email: z.string().email({ message: "Invalid email address." }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
+  message: z
+    .string()
+    .min(10, { message: "Message must be at least 10 characters." }),
   trainerEmail: z.string().email(), // Hidden field with trainer's email
   trainerName: z.string(), // Hidden field with trainer's name
 });
@@ -22,13 +24,16 @@ interface ContactFormState {
   success?: boolean;
 }
 
-export async function submitContactForm(prevState: ContactFormState | undefined, formData: FormData): Promise<ContactFormState> {
+export async function submitContactForm(
+  prevState: ContactFormState | undefined,
+  formData: FormData,
+): Promise<ContactFormState> {
   const validatedFields = contactFormSchema.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    message: formData.get('message'),
-    trainerEmail: formData.get('trainerEmail'),
-    trainerName: formData.get('trainerName'),
+    name: formData.get("name"),
+    email: formData.get("email"),
+    message: formData.get("message"),
+    trainerEmail: formData.get("trainerEmail"),
+    trainerName: formData.get("trainerName"),
   });
 
   if (!validatedFields.success) {
@@ -39,7 +44,13 @@ export async function submitContactForm(prevState: ContactFormState | undefined,
     };
   }
 
-  const { name, email: senderEmail, message, trainerEmail, trainerName } = validatedFields.data;
+  const {
+    name,
+    email: senderEmail,
+    message,
+    trainerEmail,
+    trainerName,
+  } = validatedFields.data;
 
   console.log(`Simulating email send:
     To: ${trainerEmail} (Trainer: ${trainerName})
@@ -63,7 +74,10 @@ export async function submitContactForm(prevState: ContactFormState | undefined,
   //   console.error("Email sending error:", error);
   //   return { error: "Sorry, there was an issue sending your message. Please try again later.", success: false };
   // }
-  
+
   // Simulate success for now
-  return { success: true, message: "Your message has been sent successfully! (Simulated)" };
+  return {
+    success: true,
+    message: "Your message has been sent successfully! (Simulated)",
+  };
 }

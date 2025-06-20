@@ -1,11 +1,11 @@
-import ClientForm from '@/components/clients/ClientForm';
-import { getClientById, updateClient } from '@/app/clients/actions';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
+import ClientForm from "@/components/clients/ClientForm";
+import { getClientById, updateClient } from "@/app/clients/actions";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Edit Client',
+  title: "Edit Client",
 };
 
 interface PageProps {
@@ -14,9 +14,7 @@ interface PageProps {
   }>;
 }
 
-export default async function EditClientPage({
-  params
-}: PageProps) {
+export default async function EditClientPage({ params }: PageProps) {
   const { clientId } = await params;
   const client = await getClientById(clientId);
 

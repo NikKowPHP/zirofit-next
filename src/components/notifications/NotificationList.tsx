@@ -1,43 +1,43 @@
-"use client"
+"use client";
 
-import { Notification } from '@/types/notifications'
-import { formatDistanceToNow } from 'date-fns'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { Notification } from "@/types/notifications";
+import { formatDistanceToNow } from "date-fns";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 interface NotificationListProps {
-  notifications: Notification[]
-  onClose: () => void
-  onMarkRead: () => void
+  notifications: Notification[];
+  onClose: () => void;
+  onMarkRead: () => void;
 }
 
-export default function NotificationList({ 
-  notifications, 
+export default function NotificationList({
+  notifications,
   onClose,
-  onMarkRead
+  onMarkRead,
 }: NotificationListProps) {
   const handleMarkRead = async (notificationId: string) => {
     try {
-      const response = await fetch('/api/notifications/mark-read', {
-        method: 'POST',
+      const response = await fetch("/api/notifications/mark-read", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ notificationId }),
-      })
+      });
 
-      if (!response.ok) throw new Error('Failed to mark notification as read')
-      
-      onMarkRead()
+      if (!response.ok) throw new Error("Failed to mark notification as read");
+
+      onMarkRead();
     } catch (error) {
-      console.error('Error marking notification as read:', error)
+      console.error("Error marking notification as read:", error);
     }
-  }
+  };
 
   return (
     <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200">
       <div className="p-4 border-b border-gray-200 flex justify-between items-center">
         <h3 className="font-semibold">Notifications</h3>
-        <button 
+        <button
           onClick={onClose}
           className="p-1 hover:bg-gray-100 rounded-full"
         >
@@ -54,7 +54,7 @@ export default function NotificationList({
               key={notification.id}
               onClick={() => handleMarkRead(notification.id)}
               className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                !notification.readStatus ? 'bg-blue-50' : ''
+                !notification.readStatus ? "bg-blue-50" : ""
               }`}
             >
               <p className="text-sm">{notification.message}</p>
@@ -68,5 +68,5 @@ export default function NotificationList({
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,14 +1,14 @@
 // src/app/sitemap.ts
-import { MetadataRoute } from 'next'
-import { prisma } from '@/lib/prisma'
- 
+import { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   // 1. Get all trainers with a public profile
   const trainers = await prisma.user.findMany({
     where: {
-      role: 'trainer',
+      role: "trainer",
       username: {
         not: null,
       },
@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const trainerUrls = trainers.map((trainer) => ({
     url: `${baseUrl}/trainer/${trainer.username}`,
     lastModified: trainer.updatedAt,
-    changeFrequency: 'weekly' as const,
+    changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
 
@@ -31,25 +31,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 1,
     },
     {
       url: `${baseUrl}/trainers`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/auth/login`,
       lastModified: new Date(),
-      changeFrequency: 'yearly',
+      changeFrequency: "yearly",
       priority: 0.1,
     },
     {
       url: `${baseUrl}/auth/register`,
       lastModified: new Date(),
-      changeFrequency: 'yearly',
+      changeFrequency: "yearly",
       priority: 0.5,
     },
   ];

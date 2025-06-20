@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
-import TrainerDashboardLayout from '../../components/layouts/TrainerDashboardLayout';
-import { createClient } from '../../lib/supabase/server';
+import TrainerDashboardLayout from "../../components/layouts/TrainerDashboardLayout";
+import { createClient } from "../../lib/supabase/server";
 
 export default async function DashboardSectionLayout({
   children,
@@ -8,7 +8,9 @@ export default async function DashboardSectionLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <TrainerDashboardLayout userEmail={user?.email} headerTitle="Dashboard">

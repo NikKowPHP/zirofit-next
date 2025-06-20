@@ -1,14 +1,14 @@
-import { render, screen } from '@testing-library/react'
-import SkeletonProfileChecklist from './skeleton-profile-checklist'
+import { render, screen } from "@testing-library/react";
+import SkeletonProfileChecklist from "./skeleton-profile-checklist";
 
-describe('SkeletonProfileChecklist', () => {
+describe("SkeletonProfileChecklist", () => {
   beforeEach(() => {
-    render(<SkeletonProfileChecklist />)
-  })
+    render(<SkeletonProfileChecklist />);
+  });
 
-  it('should have a test ID on the root element', () => {
-    expect(screen.getByTestId('skeleton-profile-checklist')).toBeInTheDocument()
-  })
-
-  
-})
+  it("should have a test ID on the root element", () => {
+    expect(
+      screen.getByTestId("skeleton-profile-checklist"),
+    ).toBeInTheDocument();
+  });
+});

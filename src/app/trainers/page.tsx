@@ -3,18 +3,18 @@ import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react"
+import React from "react";
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Find a Personal Trainer',
-  description: 'Browse our directory of certified and experienced personal trainers. Find the right fitness coach near you or online to help you achieve your health and fitness goals.',
+  title: "Find a Personal Trainer",
+  description:
+    "Browse our directory of certified and experienced personal trainers. Find the right fitness coach near you or online to help you achieve your health and fitness goals.",
   alternates: {
-    canonical: '/trainers',
+    canonical: "/trainers",
   },
 };
-
 
 interface Trainer {
   id: string;
@@ -26,8 +26,7 @@ interface Trainer {
   } | null;
 }
 
-
-const DEFAULT_PROFILE_IMAGE = "/next.svg"; 
+const DEFAULT_PROFILE_IMAGE = "/next.svg";
 
 export default async function TrainersPage({
   searchParams,
@@ -37,7 +36,6 @@ export default async function TrainersPage({
   const resolvedSearchParams = await searchParams;
   const currentPage = Number(resolvedSearchParams?.page) || 1;
   const data = await getPublishedTrainers(currentPage);
-
 
   if (data.error) {
     return (
@@ -138,13 +136,13 @@ export default async function TrainersPage({
                         href={`/trainers?page=${page}`}
                         className={`px-4 py-2 border rounded-md text-sm font-medium ${
                           page === currentPage //
-                            ? 'bg-indigo-600 text-white border-indigo-600'
-                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                         }`}
                       >
                         {page}
                       </Link>
-                    )
+                    ),
                   )}
                   {currentPage < totalPages && (
                     <Link

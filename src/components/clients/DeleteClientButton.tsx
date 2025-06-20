@@ -1,12 +1,14 @@
 "use client";
 
-import { deleteClient } from '../../app/clients/actions';
+import { deleteClient } from "../../app/clients/actions";
 
 interface DeleteClientButtonProps {
   clientId: string;
 }
 
-export default function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
+export default function DeleteClientButton({
+  clientId,
+}: DeleteClientButtonProps) {
   return (
     <button
       className="text-red-600 hover:text-red-900"
