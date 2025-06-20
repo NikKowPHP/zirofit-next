@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import { useState, Suspense, lazy } from "react";
 import type {
   Client,
@@ -61,18 +63,18 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6">
       <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="-mb-px flex space-x-8 overflow-auto" aria-label="Tabs">
+        <nav className="-mb-px flex gap-6 overflow-auto" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`${
                 tab.id === activeTab
-                  ? "border-indigo-500 dark:border-indigo-400 text-indigo-600 dark:text-indigo-300"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                  ? "border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400 font-semibold"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500"
+              } whitespace-nowrap py-3 px-2 border-b-2 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
             >
               {tab.name}
             </button>
@@ -82,8 +84,8 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
       <div className="mt-6">
         <Suspense
           fallback={
-            <div className="text-gray-600 dark:text-gray-200 bg-white dark:bg-gray-800">
-              Loading...
+            <div className="flex items-center justify-center p-6 text-gray-600 dark:text-gray-300">
+              <span className="animate-pulse">Loading content...</span>
             </div>
           }
         >
