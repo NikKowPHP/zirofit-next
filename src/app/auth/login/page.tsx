@@ -4,6 +4,7 @@
 import { useFormState, useFormStatus } from 'react-dom';
 import { loginUser } from '../actions';
 import PublicLayout from '../../../components/layouts/PublicLayout'; // Import
+import { Metadata } from 'next';
 
 interface FormState {
   message: string | null;
@@ -20,6 +21,13 @@ const initialState: FormState = {
   error: null,
   errors: undefined,
   success: false,
+};
+export const metadata: Metadata = {
+  title: 'Trainer Login',
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 function SubmitButton() {

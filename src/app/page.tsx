@@ -1,4 +1,14 @@
-import PublicLayout from "../components/layouts/PublicLayout"; // Import the layout
+// src/app/page.tsx
+import PublicLayout from "../components/layouts/PublicLayout";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'The All-in-One Platform for Personal Trainers',
+  description: 'Attract clients with a stunning public profile, manage your sessions effortlessly, and track progress to build your fitness empire with ZIRO.FIT.',
+  alternates: {
+    canonical: '/',
+  },
+};
 
 export default function Home() {
   return (

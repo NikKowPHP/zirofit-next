@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation';
 import { BannerImage, ProfileImage, TransformationImage } from '@/components/ui/ImageComponents';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 import ContactForm from '@/components/trainer/ContactForm';
+import { Metadata } from 'next';
+import { transformImagePath } from '@/lib/utils';
 
 // Define interfaces for the data structure
 interface Benefit {
@@ -69,6 +71,60 @@ const DEFAULT_PROFILE_IMAGE = '/next.svg'; // Replace with actual default profil
 interface TrainerProfilePageProps {
   params: Promise<{ username: string }>;
 }
+
+
+export async function generateMetadata(
+  { params }: TrainerProfilePageProps): Promise<Metadata> {
+  const username = (await params).username;
+  const user = await getTrainerProfileByUsername(username);
+ 
+  if (!user || !user.profile) {
+    return {
+      title: 'Profile Not Found',
+    }
+  }
+
+  const { name, profile } = user;
+  const pageTitle = `${name} | Personal Trainer in ${profile.location || 'Your Area'}`;
+  const description = profile.philosophy?.substring(0, 155) || `Learn more about ${name}, a certified personal trainer specializing in helping clients achieve their fitness goals.`;
+  const profileImageUrl = transformImagePath(profile.profilePhotoPath);
+
+  return {
+    title: pageTitle,
+    description: description,
+    alternates: {
+      canonical: `/trainer/${username}`,
+    },
+    openGraph: {
+      title: pageTitle,
+      description: description,
+      url: `/trainer/${username}`,
+      images: profileImageUrl ? [profileImageUrl] : [], // Use trainer's profile pic
+    },
+    twitter: {
+      title: pageTitle,
+      description: description,
+      images: profileImageUrl ? [profileImageUrl] : [],
+    },
+    // DYNAMIC JSON-LD STRUCTURED DATA
+    other: {
+      'script[type="application/ld+json"]': JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": name,
+        "url": `${process.env.NEXT_PUBLIC_BASE_URL}/trainer/${username}`,
+        "image": profileImageUrl,
+        "jobTitle": "Personal Trainer",
+        "description": description,
+        "address": profile.location ? {
+          "@type": "PostalAddress",
+          "addressLocality": profile.location,
+        } : undefined,
+      }),
+    }
+  }
+}
+
 
 export default async function TrainerProfilePage({ params }: TrainerProfilePageProps) {
   const { username } = await params;

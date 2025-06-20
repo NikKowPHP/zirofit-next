@@ -5,6 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
 import { registerUser } from '../actions';
 import PublicLayout from '../../../components/layouts/PublicLayout';
+import { Metadata } from 'next';
 
 interface FormState {
   message: string | null;
@@ -16,6 +17,14 @@ interface FormState {
   };
   success: boolean;
 }
+
+export const metadata: Metadata = {
+  title: 'Trainer Registration',
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 const initialState: FormState = {
   message: null,

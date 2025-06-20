@@ -5,7 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react"
 
-// Define the type for a trainer based on the getPublishedTrainers function's return type
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Find a Personal Trainer',
+  description: 'Browse our directory of certified and experienced personal trainers. Find the right fitness coach near you or online to help you achieve your health and fitness goals.',
+  alternates: {
+    canonical: '/trainers',
+  },
+};
+
+
 interface Trainer {
   id: string;
   name: string;
@@ -16,8 +26,8 @@ interface Trainer {
   } | null;
 }
 
-// Placeholder for default profile image if none is set
-const DEFAULT_PROFILE_IMAGE = "/next.svg"; // Replace with an actual placeholder image later
+
+const DEFAULT_PROFILE_IMAGE = "/next.svg"; 
 
 export default async function TrainersPage({
   searchParams,
@@ -28,7 +38,7 @@ export default async function TrainersPage({
   const currentPage = Number(resolvedSearchParams?.page) || 1;
   const data = await getPublishedTrainers(currentPage);
 
-  // Handle error case from getPublishedTrainers
+
   if (data.error) {
     return (
       <PublicLayout>
