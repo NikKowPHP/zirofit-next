@@ -63,7 +63,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+        <nav className="-mb-px flex space-x-8 overflow-auto" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
               key={tab.id}

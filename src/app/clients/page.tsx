@@ -98,13 +98,13 @@ export default async function ClientListPage() {
                   href={`/clients/${client.id}`}
                   className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
                 >
-                  View
+                  Manage
                 </Link>
                 <Link
                   href={`/clients/${client.id}/edit`}
                   className="px-3 py-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
                 >
-                  Edit
+                  Edit Info
                 </Link>
                 <DeleteClientButton clientId={client.id} />
               </div>

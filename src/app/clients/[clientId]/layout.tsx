@@ -25,17 +25,18 @@ export default async function ClientDetailLayout({
           >
             &larr; Back to Client List
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
             Client Details: {client.name}
           </h1>
         </div>
-        <Link
+       
+      </div>
+       <Link
           href={`/clients/${client.id}/edit`}
           className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50"
         >
           Edit Client Info
         </Link>
-      </div>
       {children}
     </div>
   );
