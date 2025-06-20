@@ -96,7 +96,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       {isMobileMenuOpen && (
         <div className="md:hidden">
           {!loading && (
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 dark:bg-gray-700 flex flex-col justify-center items-center">
               <Link href="/trainers" className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Find Trainers</Link>
               {user ? (
                 <>

@@ -199,7 +199,7 @@ export default async function TrainerProfilePage({ params }: TrainerProfilePageP
 
       {/* About, Philosophy, Methodology Section */}
       {(profile.aboutMe || profile.philosophy || profile.methodology) && (
-        <section id="about-section" className="py-16 md:py-24 bg-white dark:bg-gray-900">
+        <section id="about-section" className="py-16 md:py-24 bg-white dark:bg-gray-900 dark:text-gray-200">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose lg:prose-xl dark:prose-invert">
             {profile.aboutMe && (
               <>
