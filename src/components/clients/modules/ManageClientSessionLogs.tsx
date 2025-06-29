@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
+// import { addSessionLog, updateSessionLog, deleteSessionLog, type ClientSessionLog } from "@/app/clients/actions/log-actions";
 import {
   addSessionLog,
   ClientSessionLog,
@@ -109,7 +110,7 @@ export default function ManageClientSessionLogs({
     ActionState,
     FormData
   >(updateSessionLogActionWrapper, initialActionState);
-  const [_deleteSessionLogState, deleteSessionLogAction] = useFormState<
+  const [, deleteSessionLogAction] = useFormState<
     ActionState,
     string
   >(deleteSessionLogActionWrapper, initialActionState);
@@ -127,78 +128,194 @@ export default function ManageClientSessionLogs({
   };
 
   return (
-    <div>
-      <h2>Manage Session Logs</h2>
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 sm:p-6">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
+        Manage Session Logs
+      </h2>
 
       {/* Add Session Log Form */}
-      <form action={handleAddSessionLog}>
-        <input type="hidden" name="clientId" value={clientId} />
-        <label>Session Date:</label>
-        <input type="date" name="sessionDate" required />
-        <label>Duration (minutes):</label>
-        <input type="number" name="durationMinutes" required />
-        <label>Activity Summary:</label>
-        <textarea name="activitySummary" required />
-        <label>Notes:</label>
-        <textarea name="notes" />
-        <button type="submit">Add Session Log</button>
-        {addSessionLogState.errors?.form && (
-          <p style={{ color: "red" }}>{addSessionLogState.errors.form}</p>
-        )}
-      </form>
-
-      {/* Session Log List */}
-      <h3>Session Logs</h3>
-      <ul>
-        {sessionLogs.map((sessionLog) => (
-          <li key={sessionLog.id}>
-            {sessionLog.sessionDate.toLocaleDateString()} -{" "}
-            {sessionLog.durationMinutes ?? "N/A"} minutes -{" "}
-            {sessionLog.activitySummary ?? "N/A"}
-            {/* Update Session Log Form */}
-            <form action={handleUpdateSessionLog}>
-              <input type="hidden" name="sessionLogId" value={sessionLog.id} />
-              <input type="hidden" name="clientId" value={clientId} />
-              <label>Session Date:</label>
+      <div className="mb-8">
+        <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
+          Add New Session Log
+        </h3>
+        <form action={handleAddSessionLog} className="space-y-4">
+          <input type="hidden" name="clientId" value={clientId} />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                Session Date
+              </label>
               <input
                 type="date"
                 name="sessionDate"
-                defaultValue={
-                  sessionLog.sessionDate.toISOString().split("T")[0]
-                }
                 required
+                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               />
-              <label>Duration (minutes):</label>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                Duration (minutes)
+              </label>
               <input
                 type="number"
                 name="durationMinutes"
-                defaultValue={sessionLog.durationMinutes ?? ""}
                 required
+                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               />
-              <label>Activity Summary:</label>
-              <textarea
-                name="activitySummary"
-                defaultValue={sessionLog.activitySummary ?? ""}
-                required
-              />
-              <label>Notes:</label>
-              <textarea
-                name="notes"
-                defaultValue={sessionLog.sessionNotes ?? ""}
-              />
-              <button type="submit">Update Session Log</button>
-              {updateSessionLogState.errors?.form && (
-                <p style={{ color: "red" }}>
-                  {updateSessionLogState.errors.form}
-                </p>
-              )}
-            </form>
-            <form action={() => handleDeleteSessionLog(sessionLog.id)}>
-              <button type="submit">Delete</button>
-            </form>
-          </li>
-        ))}
-      </ul>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              Activity Summary
+            </label>
+            <textarea
+              name="activitySummary"
+              required
+              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              Notes
+            </label>
+            <textarea
+              name="notes"
+              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full md:w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+          >
+            Add Session Log
+          </button>
+          
+          {addSessionLogState.errors?.form && (
+            <div className="mt-2 p-2 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-200 dark:text-red-800">
+              {addSessionLogState.errors.form}
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* Session Log List */}
+      <div>
+        <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
+          Session History
+        </h3>
+        <div className="space-y-4">
+          {sessionLogs.map((sessionLog) => (
+            <div
+              key={sessionLog.id}
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                    {sessionLog.sessionDate.toLocaleDateString()}
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Duration: {sessionLog.durationMinutes ?? "N/A"} minutes
+                  </p>
+                  {sessionLog.activitySummary && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {sessionLog.activitySummary}
+                    </p>
+                  )}
+                </div>
+                <div className="flex space-x-2">
+                  <form action={() => handleDeleteSessionLog(sessionLog.id)}>
+                    <button
+                      type="submit"
+                      className="px-3 py-1 text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <form action={handleUpdateSessionLog} className="space-y-4">
+                <input type="hidden" name="sessionLogId" value={sessionLog.id} />
+                <input type="hidden" name="clientId" value={clientId} />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Session Date
+                    </label>
+                    <input
+                      type="date"
+                      name="sessionDate"
+                      defaultValue={
+                        sessionLog.sessionDate.toISOString().split("T")[0]
+                      }
+                      required
+                      className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Duration (minutes)
+                    </label>
+                    <input
+                      type="number"
+                      name="durationMinutes"
+                      defaultValue={sessionLog.durationMinutes ?? ""}
+                      required
+                      className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Activity Summary
+                  </label>
+                  <textarea
+                    name="activitySummary"
+                    defaultValue={sessionLog.activitySummary ?? ""}
+                    required
+                    className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Notes
+                  </label>
+                  <textarea
+                    name="notes"
+                    defaultValue={sessionLog.sessionNotes ?? ""}
+                    className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                  >
+                    Update
+                  </button>
+                </div>
+                
+                {updateSessionLogState.errors?.form && (
+                  <div className="mt-2 p-2 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-200 dark:text-red-800">
+                    {updateSessionLogState.errors.form}
+                  </div>
+                )}
+              </form>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
