@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
-// import { addSessionLog, updateSessionLog, deleteSessionLog, type ClientSessionLog } from "@/app/clients/actions/log-actions";
-import { revalidatePath } from "next/cache";
 import {
   addSessionLog,
   ClientSessionLog,
@@ -43,6 +41,7 @@ export default function ManageClientSessionLogs({
   ): Promise<ActionState> => {
     const result = await addSessionLog(state, formData);
     if (result?.success && result.sessionLog) {
+      setSessionLogs((prevLogs) => [...prevLogs, result.sessionLog!]);
       return {
         ...state,
         success: true,
@@ -64,6 +63,11 @@ export default function ManageClientSessionLogs({
   ): Promise<ActionState> => {
     const result = await updateSessionLog(state, formData);
     if (result?.success && result.sessionLog) {
+      setSessionLogs((prevLogs) =>
+        prevLogs.map((log) =>
+          log.id === result.sessionLog!.id ? result.sessionLog! : log,
+        ),
+      );
       return {
         ...state,
         success: true,
@@ -85,6 +89,9 @@ export default function ManageClientSessionLogs({
   ): Promise<ActionState> => {
     const result = await deleteSessionLog(sessionLogId);
     if (result?.success) {
+      setSessionLogs((prevLogs) =>
+        prevLogs.filter((log) => log.id !== sessionLogId),
+      );
       return { ...state, success: true, message: result.message };
     } else {
       return {
@@ -102,7 +109,7 @@ export default function ManageClientSessionLogs({
     ActionState,
     FormData
   >(updateSessionLogActionWrapper, initialActionState);
-  const [deleteSessionLogState, deleteSessionLogAction] = useFormState<
+  const [_deleteSessionLogState, deleteSessionLogAction] = useFormState<
     ActionState,
     string
   >(deleteSessionLogActionWrapper, initialActionState);
@@ -186,7 +193,7 @@ export default function ManageClientSessionLogs({
                 </p>
               )}
             </form>
-            <form action={(id) => handleDeleteSessionLog(sessionLog.id)}>
+            <form action={() => handleDeleteSessionLog(sessionLog.id)}>
               <button type="submit">Delete</button>
             </form>
           </li>

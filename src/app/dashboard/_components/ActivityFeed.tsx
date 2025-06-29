@@ -25,8 +25,8 @@ export default function ActivityFeed({ activityFeed }: ActivityFeedProps) {
             className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow"
           >
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              {new Date(activity.date).toLocaleDateString()} -{" "}
-              {activity.message}
+              {activity.date ? new Date(activity.date).toLocaleDateString() : ''} -{" "}
+              {activity.message || ''}
             </p>
           </div>
         ))

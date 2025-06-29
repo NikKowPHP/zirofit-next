@@ -17,7 +17,6 @@ import "chartjs-adapter-date-fns";
 import {
   getWeightProgress,
   getBodyFatProgress,
-  getCustomMetricProgress,
 } from "@/lib/services/ClientStatisticsService";
 
 ChartJS.register(
@@ -39,7 +38,7 @@ export default function ClientStatistics({
   measurements,
 }: ClientStatisticsProps) {
   const weightData = {
-    labels: measurements.map((m) => m.measurementDate.toLocaleDateString()), // Corrected property name from sessionDate to measurementDate
+    labels: measurements.map((m) => m.measurementDate ? m.measurementDate.toLocaleDateString() : ''), // Corrected property name from sessionDate to measurementDate
     datasets: [
       {
         label: "Weight (kg)",
@@ -51,7 +50,7 @@ export default function ClientStatistics({
   };
 
   const bodyFatData = {
-    labels: measurements.map((m) => m.measurementDate.toLocaleDateString()), // Corrected property name
+    labels: measurements.map((m) => m.measurementDate ? m.measurementDate.toLocaleDateString() : ''), // Corrected property name
     datasets: [
       {
         label: "Body Fat (%)",

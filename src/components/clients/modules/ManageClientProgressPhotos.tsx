@@ -7,7 +7,6 @@ import {
   deleteProgressPhoto,
 } from "@/app/clients/actions/photo-actions";
 
-import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { ClientProgressPhoto } from "@/app/clients/actions";
 
@@ -43,7 +42,7 @@ export default function ManageClientProgressPhotos({
   ): Promise<ActionState> => {
     const result = await addProgressPhoto(state, formData);
     if (result?.success && result.progressPhoto) {
-      // The type now correctly matches the object returned by the server action
+      setProgressPhotos((prevPhotos) => [...prevPhotos, result.progressPhoto!]);
       return {
         ...state,
         success: true,
@@ -65,6 +64,9 @@ export default function ManageClientProgressPhotos({
   ): Promise<ActionState> => {
     const result = await deleteProgressPhoto(state, photoId);
     if (result?.success) {
+      setProgressPhotos((prevPhotos) =>
+        prevPhotos.filter((photo) => photo.id !== photoId),
+      );
       return { ...state, success: true, message: result.message };
     } else {
       return {
@@ -78,7 +80,7 @@ export default function ManageClientProgressPhotos({
     addPhotoActionWrapper,
     initialActionState,
   );
-  const [deletePhotoState, deletePhotoAction] = useFormState<
+  const [_deletePhotoState, deletePhotoAction] = useFormState<
     ActionState,
     string
   >(deletePhotoActionWrapper, initialActionState);
@@ -147,7 +149,7 @@ export default function ManageClientProgressPhotos({
               height={200}
               style={{ maxWidth: "200px", maxHeight: "200px" }}
             />
-            <p>{photo.photoDate.toLocaleDateString()}</p>
+            <p>{photo.photoDate && photo.photoDate.toLocaleDateString()}</p>
             <p>{photo.caption}</p>
             <form action={() => handleDeletePhoto(photo.id)}>
               <button type="submit">Delete</button>

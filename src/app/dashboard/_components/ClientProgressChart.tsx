@@ -97,7 +97,7 @@ export default function ClientProgressChart({
   };
 
   const chartData: ChartDataProps = {
-    labels: data.map((d) => d.date.toLocaleDateString()),
+    labels: data.map((d) => d.date ? d.date.toLocaleDateString() : ''),
     datasets: [
       {
         label: "Progress",
