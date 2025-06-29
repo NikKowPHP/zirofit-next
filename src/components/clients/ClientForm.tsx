@@ -1,12 +1,12 @@
 "use client";
 
-import { useFormState } from 'react-dom';
-import { useFormStatus } from 'react-dom';
-import { addClient, updateClient } from '@/app/clients/actions';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Label } from '../../components/ui/Label';
-import { Textarea } from '../../components/ui/Textarea';
+import { useFormState } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { addClient, updateClient } from "@/app/clients/actions";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { Label } from "../../components/ui/Label";
+import { Textarea } from "../../components/ui/Textarea";
 
 interface ClientFormProps {
   initialData: {
@@ -29,12 +29,11 @@ interface State {
   };
 }
 
-
 export default function ClientForm({ initialData, action }: ClientFormProps) {
-  const [state, dispatch] = useFormState<State, FormData>(
-    action,
-    { message: null, errors: {} }
-  );
+  const [state, dispatch] = useFormState<State, FormData>(action, {
+    message: null,
+    errors: {},
+  });
   const { pending } = useFormStatus();
 
   return (
@@ -44,7 +43,13 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
       )}
       <div>
         <Label htmlFor="name">Name</Label>
-        <Input type="text" id="name" name="name" defaultValue={initialData?.name || ""} required />
+        <Input
+          type="text"
+          id="name"
+          name="name"
+          defaultValue={initialData?.name || ""}
+          required
+        />
         {state?.errors?.name && (
           <p className="text-red-500 text-sm">{state?.errors?.name[0]}</p>
         )}
@@ -90,9 +95,17 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
         )}
       </div>
       <Button type="submit" disabled={pending}>
-        {pending ? (initialData ? 'Updating...' : 'Creating...') : (initialData ? 'Update Client' : 'Create Client')}
+        {pending
+          ? initialData
+            ? "Updating..."
+            : "Creating..."
+          : initialData
+            ? "Update Client"
+            : "Create Client"}
       </Button>
-      {state?.message && <p className="text-red-500 text-sm">{state?.message}</p>}
+      {state?.message && (
+        <p className="text-red-500 text-sm">{state?.message}</p>
+      )}
     </form>
   );
 }

@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/Skeleton'
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function SkeletonActivityFeed() {
   return (
@@ -7,5 +7,5 @@ export default function SkeletonActivityFeed() {
       <Skeleton className="h-20 w-full" />
       <Skeleton className="h-20 w-full" />
     </div>
-  )
+  );
 }

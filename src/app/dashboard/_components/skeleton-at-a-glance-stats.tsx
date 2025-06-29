@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/Skeleton'
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function SkeletonAtAGlanceStats() {
   return (
@@ -14,5 +14,5 @@ export default function SkeletonAtAGlanceStats() {
         <Skeleton className="h-4 w-1/4" />
       </div>
     </div>
-  )
+  );
 }

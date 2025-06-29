@@ -3,9 +3,19 @@ import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react"
+import React from "react";
 
-// Define the type for a trainer based on the getPublishedTrainers function's return type
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Find a Personal Trainer",
+  description:
+    "Browse our directory of certified and experienced personal trainers. Find the right fitness coach near you or online to help you achieve your health and fitness goals.",
+  alternates: {
+    canonical: "/trainers",
+  },
+};
+
 interface Trainer {
   id: string;
   name: string;
@@ -16,8 +26,7 @@ interface Trainer {
   } | null;
 }
 
-// Placeholder for default profile image if none is set
-const DEFAULT_PROFILE_IMAGE = "/next.svg"; // Replace with an actual placeholder image later
+const DEFAULT_PROFILE_IMAGE = "/next.svg";
 
 export default async function TrainersPage({
   searchParams,
@@ -28,7 +37,6 @@ export default async function TrainersPage({
   const currentPage = Number(resolvedSearchParams?.page) || 1;
   const data = await getPublishedTrainers(currentPage);
 
-  // Handle error case from getPublishedTrainers
   if (data.error) {
     return (
       <PublicLayout>
@@ -128,13 +136,13 @@ export default async function TrainersPage({
                         href={`/trainers?page=${page}`}
                         className={`px-4 py-2 border rounded-md text-sm font-medium ${
                           page === currentPage //
-                            ? 'bg-indigo-600 text-white border-indigo-600'
-                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                         }`}
                       >
                         {page}
                       </Link>
-                    )
+                    ),
                   )}
                   {currentPage < totalPages && (
                     <Link

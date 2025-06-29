@@ -1,8 +1,12 @@
-import { getClientDetails } from '../actions';
-import { notFound } from 'next/navigation';
-import ClientDetailView from '@/components/clients/ClientDetailView';
+import { getClientDetails } from "../actions";
+import { notFound } from "next/navigation";
+import ClientDetailView from "@/components/clients/ClientDetailView";
 
-export default async function ClientDetailPage({ params }: { params: Promise<{ clientId: string }> }) {
+export default async function ClientDetailPage({
+  params,
+}: {
+  params: Promise<{ clientId: string }>;
+}) {
   const { clientId } = await params;
   const client = await getClientDetails(clientId);
 

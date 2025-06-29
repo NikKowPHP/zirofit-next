@@ -1,11 +1,13 @@
-import { createClient } from './supabase/server'
-import { cookies } from 'next/headers'
+import { createClient } from "./supabase/server";
+import { cookies } from "next/headers";
 
 export async function getCurrentUser() {
-  const _cookieStore = cookies()
-  const supabase = await createClient()
+  const _cookieStore = cookies();
+  const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return user
+  return user;
 }

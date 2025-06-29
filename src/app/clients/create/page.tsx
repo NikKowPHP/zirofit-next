@@ -1,5 +1,5 @@
-import ClientForm from '../../../components/clients/ClientForm';
-import Link from 'next/link';
+import ClientForm from "../../../components/clients/ClientForm";
+import Link from "next/link";
 
 export default async function CreateClientPage() {
   return (
@@ -11,4 +11,4 @@ export default async function CreateClientPage() {
     </div>
   );
 }
-import { addClient } from '../actions';
+import { addClient } from "../actions";

@@ -1,13 +1,13 @@
 // src/lib/api/trainers.ts
-import { prisma } from '@/lib/prisma';
-import { transformImagePath } from '../utils';
+import { prisma } from "@/lib/prisma";
+import { transformImagePath } from "../utils";
 
 export async function getPublishedTrainers(page = 1, pageSize = 15) {
   const skip = (page - 1) * pageSize;
   try {
     const trainers = await prisma.user.findMany({
       where: {
-        role: 'trainer',
+        role: "trainer",
         profile: {
           isNot: null,
         },
@@ -25,23 +25,25 @@ export async function getPublishedTrainers(page = 1, pageSize = 15) {
         },
       },
       orderBy: {
-        name: 'asc',
+        name: "asc",
       },
       skip,
       take: pageSize,
     });
 
     // Transform the image paths to full URLs
-    const trainersWithUrls = trainers.map(trainer => {
+    const trainersWithUrls = trainers.map((trainer) => {
       if (trainer.profile) {
-        trainer.profile.profilePhotoPath = transformImagePath(trainer.profile.profilePhotoPath);
+        trainer.profile.profilePhotoPath = transformImagePath(
+          trainer.profile.profilePhotoPath,
+        );
       }
       return trainer;
     });
 
     const totalTrainers = await prisma.user.count({
       where: {
-        role: 'trainer',
+        role: "trainer",
         profile: {
           isNot: null,
         },
@@ -56,7 +58,13 @@ export async function getPublishedTrainers(page = 1, pageSize = 15) {
   } catch (error) {
     console.error("Failed to fetch published trainers:", error);
     // In a real app, you might throw a custom error or return a specific error structure
-    return { trainers: [], totalTrainers: 0, currentPage: 1, totalPages: 0, error: "Failed to load trainers." };
+    return {
+      trainers: [],
+      totalTrainers: 0,
+      currentPage: 1,
+      totalPages: 0,
+      error: "Failed to load trainers.",
+    };
   }
 }
 
@@ -67,11 +75,11 @@ export async function getTrainerProfileByUsername(username: string) {
       include: {
         profile: {
           include: {
-            services: { orderBy: { createdAt: 'asc' } },
-            testimonials: { orderBy: { createdAt: 'desc' } },
-            transformationPhotos: { orderBy: { createdAt: 'desc' } },
-            externalLinks: { orderBy: { createdAt: 'asc' } },
-            benefits: { orderBy: { orderColumn: 'asc' } },
+            services: { orderBy: { createdAt: "asc" } },
+            testimonials: { orderBy: { createdAt: "desc" } },
+            transformationPhotos: { orderBy: { createdAt: "desc" } },
+            externalLinks: { orderBy: { createdAt: "asc" } },
+            benefits: { orderBy: { orderColumn: "asc" } },
           },
         },
       },
@@ -85,7 +93,7 @@ export async function getTrainerProfileByUsername(username: string) {
     const profile = userWithProfile.profile;
     profile.bannerImagePath = transformImagePath(profile.bannerImagePath);
     profile.profilePhotoPath = transformImagePath(profile.profilePhotoPath);
-    profile.transformationPhotos.forEach(photo => {
+    profile.transformationPhotos.forEach((photo) => {
       // Note: Here we transform the path directly on the object.
       // The component will just use `photo.imagePath`.
       (photo as any).imagePath = transformImagePath(photo.imagePath);

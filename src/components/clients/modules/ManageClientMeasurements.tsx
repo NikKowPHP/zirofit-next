@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
-import { addMeasurement, updateMeasurement, deleteMeasurement, type MeasurementFormState } from "@/app/clients/actions/measurement-actions";
+import {
+  addMeasurement,
+  updateMeasurement,
+  deleteMeasurement,
+  type MeasurementFormState,
+} from "@/app/clients/actions/measurement-actions";
 import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
 import { ZodIssue } from "zod";
 
@@ -11,11 +16,18 @@ interface ManageClientMeasurementsProps {
   initialMeasurements: ClientMeasurement[];
 }
 
-export default function ManageClientMeasurements({ clientId, initialMeasurements }: ManageClientMeasurementsProps) {
-  const [measurements, setMeasurements] = useState<ClientMeasurement[]>(initialMeasurements);
+export default function ManageClientMeasurements({
+  clientId,
+  initialMeasurements,
+}: ManageClientMeasurementsProps) {
+  const [measurements, setMeasurements] =
+    useState<ClientMeasurement[]>(initialMeasurements);
   const initialActionState: MeasurementFormState = { message: "" };
 
-  const addMeasurementActionWrapper = async (state: MeasurementFormState, formData: FormData): Promise<MeasurementFormState> => {
+  const addMeasurementActionWrapper = async (
+    state: MeasurementFormState,
+    formData: FormData,
+  ): Promise<MeasurementFormState> => {
     const result = await addMeasurement(state, formData);
     if (result?.success && result.measurement) {
       // Update the local state with the new measurement
@@ -26,12 +38,17 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
     }
   };
 
-  const updateMeasurementActionWrapper = async (state: MeasurementFormState, formData: FormData): Promise<MeasurementFormState> => {
+  const updateMeasurementActionWrapper = async (
+    state: MeasurementFormState,
+    formData: FormData,
+  ): Promise<MeasurementFormState> => {
     const result = await updateMeasurement(state, formData);
     if (result?.success && result.measurement) {
       // Update the local state with the updated measurement
       setMeasurements((prev) =>
-        prev.map((m) => (m.id === result.measurement!.id ? result.measurement! : m))
+        prev.map((m) =>
+          m.id === result.measurement!.id ? result.measurement! : m,
+        ),
       );
       return { ...result }; // Return the full result from the action
     } else {
@@ -39,7 +56,10 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
     }
   };
 
-  const deleteMeasurementActionWrapper = async (state: { success: boolean; message?: string; error?: string }, measurementId: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+  const deleteMeasurementActionWrapper = async (
+    state: { success: boolean; message?: string; error?: string },
+    measurementId: string,
+  ): Promise<{ success: boolean; message?: string; error?: string }> => {
     const result = await deleteMeasurement(state, measurementId);
     if (result?.success) {
       // Remove the deleted measurement from local state
@@ -50,18 +70,18 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
     }
   };
 
-  const [addMeasurementState, addMeasurementAction] = useFormState<MeasurementFormState, FormData>(
-    addMeasurementActionWrapper,
-    initialActionState
-  );
-  const [updateMeasurementState, updateMeasurementAction] = useFormState<MeasurementFormState, FormData>(
-    updateMeasurementActionWrapper,
-    initialActionState
-  );
-  const [deleteMeasurementState, deleteMeasurementAction] = useFormState<{ success: boolean; message?: string; error?: string }, string>(
-    deleteMeasurementActionWrapper,
-    { success: false, message: "" }
-  );
+  const [addMeasurementState, addMeasurementAction] = useFormState<
+    MeasurementFormState,
+    FormData
+  >(addMeasurementActionWrapper, initialActionState);
+  const [updateMeasurementState, updateMeasurementAction] = useFormState<
+    MeasurementFormState,
+    FormData
+  >(updateMeasurementActionWrapper, initialActionState);
+  const [deleteMeasurementState, deleteMeasurementAction] = useFormState<
+    { success: boolean; message?: string; error?: string },
+    string
+  >(deleteMeasurementActionWrapper, { success: false, message: "" });
 
   const [customMetrics, setCustomMetrics] = useState([{ name: "", value: "" }]);
 
@@ -82,7 +102,11 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
     setCustomMetrics([...customMetrics, { name: "", value: "" }]);
   };
 
-  const handleCustomMetricChange = (index: number, field: "name" | "value", value: string) => {
+  const handleCustomMetricChange = (
+    index: number,
+    field: "name" | "value",
+    value: string,
+  ) => {
     const newCustomMetrics = [...customMetrics];
     newCustomMetrics[index][field] = value;
     setCustomMetrics(newCustomMetrics);
@@ -112,14 +136,18 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
             <input
               type="text"
               value={metric.name}
-              onChange={(e) => handleCustomMetricChange(index, "name", e.target.value)}
+              onChange={(e) =>
+                handleCustomMetricChange(index, "name", e.target.value)
+              }
               name={`customMetrics[${index}][name]`}
             />
             <label>Value:</label>
             <input
               type="text"
               value={metric.value}
-              onChange={(e) => handleCustomMetricChange(index, "value", e.target.value)}
+              onChange={(e) =>
+                handleCustomMetricChange(index, "value", e.target.value)
+              }
               name={`customMetrics[${index}][value]`}
             />
           </div>
@@ -128,7 +156,11 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
           Add Custom Metric
         </button>
 
-        <input type="hidden" name="customMetrics" value={JSON.stringify(customMetrics)} />
+        <input
+          type="hidden"
+          name="customMetrics"
+          value={JSON.stringify(customMetrics)}
+        />
 
         <button type="submit">Add Measurement</button>
         {addMeasurementState.error && (
@@ -144,27 +176,56 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
       <ul>
         {measurements.map((measurement) => (
           <li key={measurement.id}>
-            {new Date(measurement.measurementDate).toLocaleDateString()} - Weight: {measurement.weightKg}kg - Body Fat:{" "}
-            {measurement.bodyFatPercentage}%
-            {/* Update Measurement Form */}
+            {new Date(measurement.measurementDate).toLocaleDateString()} -
+            Weight: {measurement.weightKg}kg - Body Fat:{" "}
+            {measurement.bodyFatPercentage}%{/* Update Measurement Form */}
             <form action={handleUpdateMeasurement}>
-              <input type="hidden" name="measurementId" value={measurement.id} />
+              <input
+                type="hidden"
+                name="measurementId"
+                value={measurement.id}
+              />
               <input type="hidden" name="clientId" value={clientId} />
               <label>Measurement Date:</label>
-              <input type="date" name="measurementDate" defaultValue={new Date(measurement.measurementDate).toISOString().split('T')[0]} required />
+              <input
+                type="date"
+                name="measurementDate"
+                defaultValue={
+                  new Date(measurement.measurementDate)
+                    .toISOString()
+                    .split("T")[0]
+                }
+                required
+              />
               <label>Weight (kg):</label>
-              <input type="number" name="weightKg" step="0.01" defaultValue={measurement.weightKg ?? ''} />
+              <input
+                type="number"
+                name="weightKg"
+                step="0.01"
+                defaultValue={measurement.weightKg ?? ""}
+              />
               <label>Body Fat Percentage:</label>
-              <input type="number" name="bodyFatPercentage" step="0.01" defaultValue={measurement.bodyFatPercentage ?? ''} />
+              <input
+                type="number"
+                name="bodyFatPercentage"
+                step="0.01"
+                defaultValue={measurement.bodyFatPercentage ?? ""}
+              />
               <label>Notes:</label>
-              <textarea name="notes" defaultValue={measurement.notes ?? ''} />
-              <input type="hidden" name="customMetrics" value={JSON.stringify(customMetrics)} />
+              <textarea name="notes" defaultValue={measurement.notes ?? ""} />
+              <input
+                type="hidden"
+                name="customMetrics"
+                value={JSON.stringify(customMetrics)}
+              />
               <button type="submit">Update</button>
               {updateMeasurementState.error && (
                 <p style={{ color: "red" }}>{updateMeasurementState.error}</p>
               )}
               {updateMeasurementState.success && (
-                <p style={{ color: "green" }}>{updateMeasurementState.message}</p>
+                <p style={{ color: "green" }}>
+                  {updateMeasurementState.message}
+                </p>
               )}
             </form>
             <form action={() => handleDeleteMeasurement(measurement.id)}>
@@ -173,7 +234,9 @@ export default function ManageClientMeasurements({ clientId, initialMeasurements
                 <p style={{ color: "red" }}>{deleteMeasurementState.error}</p>
               )}
               {deleteMeasurementState?.success && (
-                <p style={{ color: "green" }}>{deleteMeasurementState.message}</p>
+                <p style={{ color: "green" }}>
+                  {deleteMeasurementState.message}
+                </p>
               )}
             </form>
           </li>

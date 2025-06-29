@@ -1,7 +1,7 @@
 "use client";
 
-import Image from 'next/image';
-import React from 'react';
+import Image from "next/image";
+import React from "react";
 
 interface ProfileImageProps {
   src: string;
@@ -12,9 +12,18 @@ interface ProfileImageProps {
   defaultSrc: string;
 }
 
-export function ProfileImage({ src, alt, width, height, className, defaultSrc }: ProfileImageProps) {
+export function ProfileImage({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  defaultSrc,
+}: ProfileImageProps) {
   // If the src is invalid or null, immediately use the default.
-  const [imageSrc, setImageSrc] = React.useState(src && (src.startsWith('http') || src.startsWith('/')) ? src : defaultSrc);
+  const [imageSrc, setImageSrc] = React.useState(
+    src && (src.startsWith("http") || src.startsWith("/")) ? src : defaultSrc,
+  );
 
   return (
     <Image
@@ -38,8 +47,16 @@ interface BannerImageProps {
   defaultSrc: string;
 }
 
-export function BannerImage({ src, alt, quality, className, defaultSrc }: BannerImageProps) {
-  const [imageSrc, setImageSrc] = React.useState(src && (src.startsWith('http') || src.startsWith('/')) ? src : defaultSrc);
+export function BannerImage({
+  src,
+  alt,
+  quality,
+  className,
+  defaultSrc,
+}: BannerImageProps) {
+  const [imageSrc, setImageSrc] = React.useState(
+    src && (src.startsWith("http") || src.startsWith("/")) ? src : defaultSrc,
+  );
 
   return (
     <Image
@@ -48,7 +65,7 @@ export function BannerImage({ src, alt, quality, className, defaultSrc }: Banner
       fill
       quality={quality}
       className={className}
-      style={{ objectFit: 'cover' }}
+      style={{ objectFit: "cover" }}
       onError={() => setImageSrc(defaultSrc)}
       priority
     />
@@ -63,7 +80,13 @@ interface TransformationImageProps {
   className: string;
 }
 
-export function TransformationImage({ src, alt, width, height, className }: TransformationImageProps) {
+export function TransformationImage({
+  src,
+  alt,
+  width,
+  height,
+  className,
+}: TransformationImageProps) {
   const [imageSrc] = React.useState(src);
   const [error, setError] = React.useState(false);
 
@@ -75,13 +98,16 @@ export function TransformationImage({ src, alt, width, height, className }: Tran
   }
 
   // Validate URL format
-  const isValidSrc = src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://');
+  const isValidSrc =
+    src.startsWith("/") ||
+    src.startsWith("http://") ||
+    src.startsWith("https://");
   if (!isValidSrc) {
     return null;
   }
   return (
     <Image
-      src={isValidSrc ? imageSrc! : '/default-image.jpg'}
+      src={isValidSrc ? imageSrc! : "/default-image.jpg"}
       alt={alt}
       width={width}
       height={height}
