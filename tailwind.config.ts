@@ -23,5 +23,6 @@ export default {
   plugins: [
     (await import('@tailwindcss/forms')).default,
     (await import('@tailwindcss/typography')).default,
+    (await import('tailwindcss-animate')).default,
   ],
 } satisfies Config;
