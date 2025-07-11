@@ -10,7 +10,7 @@ This document outlines the revised, high-level plan for enhancing the **ZIRO.FIT
 
 ## The Plan
 
-### `[ ]` Phase A: PWA & Observability Foundation
+### `[x]` Phase A: PWA & Observability Foundation
 
 **Goal:** Configure the application to function as an installable Progressive Web App (PWA) and integrate Sentry for production error monitoring. This phase establishes the foundational tooling for a more resilient application.
 

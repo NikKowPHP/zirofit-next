@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^8.0.2",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.9.0",
     "@sentry/nextjs": "^8.22.0",

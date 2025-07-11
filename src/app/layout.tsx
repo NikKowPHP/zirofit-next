@@ -13,36 +13,49 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const APP_NAME = "ZIRO.FIT";
+const APP_DEFAULT_TITLE = "ZIRO.FIT | All-In-One Platform for Personal Trainers";
+const APP_DESCRIPTION = "Attract more clients, showcase your results, and grow your fitness business with ZIRO.FIT.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
-  ),
+  // --- Start of PWA-specific additions ---
+  applicationName: APP_NAME,
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  // --- End of PWA-specific additions ---
+  
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
   title: {
-    default: "ZIRO.FIT | All-In-One Platform for Personal Trainers",
+    default: APP_DEFAULT_TITLE,
     template: "%s | ZIRO.FIT",
   },
-  description:
-    "Attract more clients, showcase your results, and grow your fitness business with ZIRO.FIT. The ultimate toolkit for the modern personal trainer.",
+  description: APP_DESCRIPTION,
   openGraph: {
-    title: "ZIRO.FIT | All-In-One Platform for Personal Trainers",
-    description: "The ultimate toolkit for the modern personal trainer.",
-    url: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
-    siteName: "ZIRO.FIT",
-    images: [
-      {
-        url: "/og-image.png", // Create this image and place it in the public folder
-        width: 1200,
-        height: 630,
-      },
-    ],
-    locale: "en_US",
     type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: "%s | ZIRO.FIT",
+    },
+    description: APP_DESCRIPTION,
+    url: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ZIRO.FIT | All-In-One Platform for Personal Trainers",
-    description: "The ultimate toolkit for the modern personal trainer.",
-    // Add your twitter handle if you have one: creator: '@YourTwitterHandle',
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: "%s | ZIRO.FIT",
+    },
+    description: APP_DESCRIPTION,
     images: ["/og-image.png"],
   },
   robots: {
@@ -56,42 +69,25 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // Adding JSON-LD structured data
   other: {
     'script[type="application/ld+json"]': JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "ZIRO.FIT",
       url: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
-      logo: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/logo.png`, // Create a logo file
-      sameAs: [
-        // Add URLs to your social media profiles here
-        // "https://twitter.com/zirofit",
-        // "https://www.instagram.com/zirofit/"
-      ],
+      logo: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/logo.png`,
     }),
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preconnect to fonts */}
         <link rel="preconnect" href="http://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
