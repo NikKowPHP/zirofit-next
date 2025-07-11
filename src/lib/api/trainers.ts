@@ -85,6 +85,17 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
   }
 }
 
+export interface Trainer {
+  id: string;
+  name: string;
+  username: string | null;
+  profile: {
+    profilePhotoPath: string;
+    location: string;
+    certifications: string;
+  };
+}
+
 export async function getTrainerProfileByUsername(username: string) {
   try {
     const userWithProfile = await prisma.user.findUnique({

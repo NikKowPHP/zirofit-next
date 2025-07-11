@@ -903,7 +903,7 @@ export async function createBooking(
       };
     }
     
-    const isWithinAvailableHours = availableSlots.some(slot => {
+    const isWithinAvailableHours = availableSlots.some((slot: { day: number; start: string; end: string }) => {
       const [startHour, startMin] = slot.start.split(':').map(Number);
       const [endHour, endMin] = slot.end.split(':').map(Number);
       

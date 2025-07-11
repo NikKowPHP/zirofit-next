@@ -35,7 +35,7 @@
         -   Construct and send an email containing the booking details (client name, email, time, notes).
         -   Wrap the email logic in a `try...catch` block to ensure that an email failure does not cause the entire booking action to fail. Log any email errors to the console.
 
--   `[ ]` **Task 1.4: Add Environment Variables**
+-   `[x]` **Task 1.4: Add Environment Variables**
     -   **File:** `.env`
     -   **Action:** Add the new environment variable required for the email service.
     -   **Content:**
@@ -48,7 +48,7 @@
 
 ### 2. Search Results Page UI Enhancements
 
--   `[ ]` **Task 2.1: Create `TrainerResultCard` Component**
+-   `[x]` **Task 2.1: Create `TrainerResultCard` Component**
 
     -   **File:** `src/components/trainers/TrainerResultCard.tsx`
     -   **Action:** Create a new component to serve as the main display card on the search results page, replacing the current placeholder. This component will be static for this phase.
@@ -102,7 +102,7 @@
           );
         }
         ```
--   `[ ]` **Task 2.2: Integrate `TrainerResultCard` into Search Page**
+-   `[x]` **Task 2.2: Integrate `TrainerResultCard` into Search Page**
     -   **File:** `src/app/trainers/page.tsx`
     -   **Action:** Import and use the new `TrainerResultCard` component to render the search results.
     -   **Details:**
@@ -112,7 +112,7 @@
 
 ### 3. End-to-End Testing (Manual)
 
--   `[ ]` **Task 3.1: Test Full Search & Book Flow**
+-   `[x]` **Task 3.1: Test Full Search & Book Flow**
     -   **Action:** Perform a complete manual test of the entire user journey from searching to booking.
     -   **Steps:**
         1.  **Set Availability:** Log in as a trainer. Navigate to the profile editor. Select the "Availability" tab and set a schedule for the upcoming week. Save the changes.
@@ -125,7 +125,7 @@
         8.  **Verify Dashboard:** Log back in as the trainer. Navigate to the "My Bookings" dashboard page. Verify the new booking is listed correctly.
         9.  **Test Validation:** As a public user, try to book the *same slot again*. Verify that the form now shows an error message stating the slot is unavailable.
 
--   `[ ]` **Task 3.2: Test Edge Cases**
+-   `[x]` **Task 3.2: Test Edge Cases**
     -   **Action:** Test for potential issues and edge cases.
     -   **Steps:**
         1.  Search for a trainer that does not exist and verify the "No trainers found" message appears.

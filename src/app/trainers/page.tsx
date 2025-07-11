@@ -2,7 +2,7 @@
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Link from "next/link";
-import { TrainerSearchResults } from "@/components/home/TrainerSearchResults";
+import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,11 +20,11 @@ interface Trainer {
   username: string | null;
   profile: {
     location: string | null;
+    certifications: string | null;
     profilePhotoPath: string | null;
   } | null;
 }
 
-const DEFAULT_PROFILE_IMAGE = "/next.svg";
 
 export default async function TrainersPage({
   searchParams,
@@ -63,12 +63,10 @@ export default async function TrainersPage({
           {trainers.length > 0 ? (
             <>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-4">
-                  <TrainerSearchResults
-                    trainers={trainers}
-                    loading={false}
-                    error={undefined}
-                  />
+                <div className="lg:col-span-2 space-y-6">
+                  {trainers.map((trainer: Trainer) => (
+                    <TrainerResultCard key={trainer.id} trainer={trainer} />
+                  ))}
                 </div>
                 <div className="lg:col-span-1">
                   <div className="sticky top-24 h-96 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -76,59 +74,7 @@ export default async function TrainersPage({
                   </div>
                 </div>
               </div>
-                {trainers.map((trainer: Trainer) => (
-                  <div
-                    key={trainer.id}
-                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col"
-                  >
-                    <div className="flex-shrink-0 mb-4 text-center">
-                      <Image
-                        src={
-                          trainer.profile?.profilePhotoPath ||
-                          DEFAULT_PROFILE_IMAGE
-                        }
-                        alt={`${trainer.name}'s profile photo`}
-                        width={128}
-                        height={128}
-                        className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-indigo-100"
-                      />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1 text-center">
-                      {trainer.name}
-                    </h3>
-                    {trainer.profile?.location && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="inline-block h-4 w-4 mr-1 text-gray-400"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001zm.612-1.426a.75.75 0 01-.001-1.061C10.294 16.126 10 15.837 10 15.5c0-.338.293-.626.31-.647a.75.75 0 111.04 1.083C11.293 16.063 11 16.427 11 16.75c0 .322.293.626.309.647a.75.75 0 01-1.04 1.083zM10 2a.75.75 0 01.75.75v.008c0 .005 0 .01 0 .016l.002.005a.75.75 0 01-1.502-.026l-.002-.005A.75.75 0 0110 2z"
-                            clipRule="evenodd"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            d="M10 1a9 9 0 100 18 9 9 0 000-18zM2.407 9.51a.75.75 0 010 1.058 7.5 7.5 0 0010.246 8.332.75.75 0 11.01-1.06 5.996 5.996 0 01-8.18-6.696.75.75 0 01-1.018-.028A7.46 7.46 0 002.5 10c0-.026.002-.052.005-.078a.75.75 0 01-.098-.412z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {trainer.profile.location}
-                      </p>
-                    )}
-                    <div className="mt-auto text-center">
-                      <Link
-                        href={`/trainer/${trainer.username}`}
-                        className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg text-sm font-semibold transition-colors shadow hover:shadow-md"
-                      >
-                        View Profile
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              
               {/* Basic Pagination (Example) */}
               {totalPages > 1 && (
                 <div className="mt-12 flex justify-center space-x-2">
