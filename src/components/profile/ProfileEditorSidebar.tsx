@@ -9,6 +9,7 @@ import {
   PhotoIcon,
   ChatBubbleLeftEllipsisIcon,
   LinkIcon,
+  CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
 
@@ -30,6 +31,7 @@ const sections = [
     icon: ChatBubbleLeftEllipsisIcon,
   },
   { id: "links", name: "External Links", icon: LinkIcon },
+  { id: "availability", name: "Availability", icon: CalendarDaysIcon },
 ];
 
 export default function ProfileEditorSidebar({

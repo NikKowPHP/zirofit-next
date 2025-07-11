@@ -264,7 +264,7 @@
         }
         ```
 
--   `[ ]` **Task 2.3: Integrate Availability Editor into Profile Dashboard**
+-   `[x]` **Task 2.3: Integrate Availability Editor into Profile Dashboard**
 
     -   **File:** `src/components/profile/ProfileEditorSidebar.tsx`
     -   **Action:** Add a new entry to the `sections` array for "Availability".

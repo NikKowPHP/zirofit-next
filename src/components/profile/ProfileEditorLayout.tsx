@@ -29,6 +29,7 @@ interface InitialProfileData {
     methodology: string | null;
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
+    availability: { [day: string]: string[] } | null; // e.g., { "mon": ["09:00-17:00"] }
     services: Array<{
       id: string;
       title: string;
@@ -104,6 +105,9 @@ const TestimonialsEditor = React.lazy(
 const LinksEditor = React.lazy(() => import("./sections/ExternalLinksEditor"));
 const SocialLinksEditor = React.lazy(
   () => import("./sections/SocialLinksEditor"),
+);
+const AvailabilityEditor = React.lazy(
+  () => import("./sections/AvailabilityEditor")
 );
 
 const SectionLoadingFallback = () => (
@@ -190,6 +194,11 @@ export default function ProfileEditorLayout({
         initialSocialLinks={
           (initialData.profile?.socialLinks as SocialLink[]) || []
         }
+      />
+    ),
+    "availability": () => (
+      <AvailabilityEditor
+        initialAvailability={initialData.profile?.availability || {}}
       />
     ),
   };
