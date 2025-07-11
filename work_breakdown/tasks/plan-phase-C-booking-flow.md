@@ -175,7 +175,7 @@
         }
         ```
 
--   `[ ]` **Task 2.2: Add Calendar to Trainer Profile Page**
+-   `[x]` **Task 2.2: Add Calendar to Trainer Profile Page**
     -   **File:** `src/app/trainer/[username]/page.tsx`
     -   **Action:** Import and render the `PublicCalendar` component, passing the trainer's ID to it.
     -   **Content:**

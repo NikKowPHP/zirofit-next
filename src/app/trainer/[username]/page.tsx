@@ -8,7 +8,7 @@ import {
   TransformationImage,
 } from "@/components/ui/ImageComponents";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import ContactForm from "@/components/trainer/ContactForm";
+import PublicCalendar from "@/components/trainer/PublicCalendar";
 import { Metadata } from "next";
 import { transformImagePath } from "@/lib/utils";
 
@@ -400,16 +400,13 @@ export default async function TrainerProfilePage({
         </section>
       )}
 
-      {/* Contact Form Section - MODIFIED */}
+      {/* Booking Calendar Section */}
       <section
         id="contact-section"
         className="py-16 md:py-24 bg-white dark:bg-gray-900"
       >
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
-            Get In Touch
-          </h2>
-          <ContactForm trainerEmail={trainerEmail} trainerName={trainerName} />
+          <PublicCalendar trainerId={userWithProfile.id} />
         </div>
       </section>
     </PublicLayout>
