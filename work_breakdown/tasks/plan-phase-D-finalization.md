@@ -7,7 +7,7 @@
 
 ### 1. Booking Logic Hardening & Notifications
 
--   `[ ]` **Task 1.1: Implement Robust Booking Validation**
+-   `[x]` **Task 1.1: Implement Robust Booking Validation**
 
     -   **File:** `src/app/profile/actions.ts`
     -   **Action:** Enhance the `createBooking` server action with comprehensive server-side validation to prevent double-bookings or scheduling outside of available hours.

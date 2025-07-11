@@ -886,13 +886,61 @@ export async function createBooking(
 
   const { trainerId, startTime, endTime, clientName, clientEmail, clientNotes } = validatedFields.data;
   
-  // TODO: Add server-side validation here to ensure the chosen slot is valid
-  // 1. Fetch trainer's availability and existing bookings.
-  // 2. Check if the requested slot falls within an available window.
-  // 3. Check if the requested slot overlaps with any existing bookings.
-  // 4. If not valid, return an error state.
-
   try {
+    // 1. Fetch trainer's availability and existing bookings
+    const { availability, bookings } = await getTrainerSchedule(trainerId);
+    const requestedStart = new Date(startTime);
+    const requestedEnd = new Date(endTime);
+    
+    // 2. Check if requested slot is within available hours
+    const dayOfWeek = requestedStart.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase();
+    const availableSlots = availability[dayOfWeek];
+    
+    if (!availableSlots || availableSlots.length === 0) {
+      return {
+        error: "Trainer is not available on this day.",
+        success: false
+      };
+    }
+    
+    const isWithinAvailableHours = availableSlots.some(slot => {
+      const [startHour, startMin] = slot.start.split(':').map(Number);
+      const [endHour, endMin] = slot.end.split(':').map(Number);
+      
+      const slotStart = new Date(requestedStart);
+      slotStart.setHours(startHour, startMin, 0, 0);
+      
+      const slotEnd = new Date(requestedStart);
+      slotEnd.setHours(endHour, endMin, 0, 0);
+      
+      return requestedStart >= slotStart && requestedEnd <= slotEnd;
+    });
+    
+    if (!isWithinAvailableHours) {
+      return {
+        error: "Requested time is outside trainer's available hours.",
+        success: false
+      };
+    }
+    
+    // 3. Check for overlapping bookings
+    const hasOverlap = bookings.some(booking => {
+      const bookingStart = new Date(booking.startTime);
+      const bookingEnd = new Date(booking.endTime);
+      return (
+        (requestedStart >= bookingStart && requestedStart < bookingEnd) ||
+        (requestedEnd > bookingStart && requestedEnd <= bookingEnd) ||
+        (requestedStart <= bookingStart && requestedEnd >= bookingEnd)
+      );
+    });
+    
+    if (hasOverlap) {
+      return {
+        error: "This time slot is already booked. Please choose another time.",
+        success: false
+      };
+    }
+
     await prisma.booking.create({
       data: {
         trainerId,
