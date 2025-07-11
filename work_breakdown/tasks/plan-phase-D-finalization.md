@@ -17,7 +17,7 @@
         3.  Implement a second helper function to check if the requested slot overlaps with any existing bookings for that trainer.
         4.  If either check fails, return a specific error message in the form state (e.g., `{ error: "This time slot is no longer available. Please select another.", success: false }`).
 
--   `[ ]` **Task 1.2: Install Email Service Dependency**
+-   `[x]` **Task 1.2: Install Email Service Dependency**
 
     -   **Action:** Run the following shell command to install the `resend` library.
     -   **Command:**
