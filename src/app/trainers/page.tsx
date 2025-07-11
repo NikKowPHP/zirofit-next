@@ -1,10 +1,8 @@
 // src/app/trainers/page.tsx
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-
+import { TrainerSearchResults } from "@/components/home/TrainerSearchResults";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -64,7 +62,20 @@ export default async function TrainersPage({
 
           {trainers.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-4">
+                  <TrainerSearchResults
+                    trainers={trainers}
+                    loading={false}
+                    error={undefined}
+                  />
+                </div>
+                <div className="lg:col-span-1">
+                  <div className="sticky top-24 h-96 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <p>Map View Placeholder</p>
+                  </div>
+                </div>
+              </div>
                 {trainers.map((trainer: Trainer) => (
                   <div
                     key={trainer.id}
