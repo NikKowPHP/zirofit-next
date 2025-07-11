@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
-import { updateBrandingImages } from "@/app/profile/actions";
+import { updateBrandingImages } from "@/app/profile/actions/branding-actions";
 import { Input, Label, Button } from "@/components/ui";
 import { BannerImage, ProfileImage } from "@/components/ui/ImageComponents";
 

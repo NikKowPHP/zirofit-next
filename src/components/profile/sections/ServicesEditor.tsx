@@ -2,14 +2,17 @@
 
 import React, { useEffect, useRef, useState, useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { addService } from "@/app/profile/actions";
+import {
+  addService,
+  deleteService,
+  updateService,
+} from "@/app/profile/actions/service-actions";
 import type { Service } from "@prisma/client";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import { z } from "zod";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
-import { deleteService, updateService } from "@/app/profile/actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 interface ServicesEditorProps {
@@ -223,7 +226,7 @@ export default function ServicesEditor({
         </h4>
         {services.length === 0 ? (
           <p className="text-gray-500">
-            You haven&#39;t added any services yet.
+            You haven't added any services yet.
           </p>
         ) : (
           <div className="space-y-4">

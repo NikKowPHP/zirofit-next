@@ -6,7 +6,7 @@ import {
   addExternalLink,
   updateExternalLink,
   deleteExternalLink,
-} from "@/app/profile/actions";
+} from "@/app/profile/actions/external-link-actions";
 import { Input, Label, Button } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { z } from "zod";

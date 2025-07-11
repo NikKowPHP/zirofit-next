@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { updateAvailability } from "@/app/profile/actions";
+import { updateAvailability } from "@/app/profile/actions/availability-actions";
 import { Button } from "@/components/ui/Button";
 
 interface AvailabilityEditorProps {

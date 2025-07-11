@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
-import { updateCoreInfo } from "@/app/profile/actions";
+import { updateCoreInfo } from "@/app/profile/actions/core-info-actions";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";

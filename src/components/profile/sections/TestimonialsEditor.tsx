@@ -6,7 +6,7 @@ import {
   addTestimonial,
   updateTestimonial,
   deleteTestimonial,
-} from "@/app/profile/actions";
+} from "@/app/profile/actions/testimonial-actions";
 import { revalidateProfilePath } from "@/app/profile/revalidate";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";

@@ -6,7 +6,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   addTransformationPhoto,
   deleteTransformationPhoto,
-} from "@/app/profile/actions"; // Adjust
+} from "@/app/profile/actions/photo-actions";
 import { Input, Label, Textarea, Button } from "@/components/ui";
 import Image from "next/image";
 import { z } from "zod";

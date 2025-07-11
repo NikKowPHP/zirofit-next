@@ -11,6 +11,7 @@ import { MapPinIcon } from "@heroicons/react/24/outline";
 import PublicCalendar from "@/components/trainer/PublicCalendar";
 import { Metadata } from "next";
 import { transformImagePath } from "@/lib/utils";
+import { getTrainerSchedule } from "@/app/profile/actions";
 
 // Define interfaces for the data structure
 interface Benefit {
@@ -143,6 +144,8 @@ export default async function TrainerProfilePage({
   if (!userWithProfile || !userWithProfile.profile) {
     notFound(); // Or return a custom "Profile not found" component
   }
+
+  const schedule = await getTrainerSchedule(userWithProfile.id);
 
   const { profile, name } = userWithProfile;
 
@@ -404,7 +407,10 @@ export default async function TrainerProfilePage({
         className="py-16 md:py-24 bg-white dark:bg-gray-900"
       >
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <PublicCalendar trainerId={userWithProfile.id} />
+          <PublicCalendar
+            trainerId={userWithProfile.id}
+            initialSchedule={schedule}
+          />
         </div>
       </section>
     </PublicLayout>

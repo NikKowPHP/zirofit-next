@@ -9,7 +9,7 @@ import {
   updateBenefit,
   deleteBenefit,
   updateBenefitOrder,
-} from "@/app/profile/actions";
+} from "@/app/profile/actions/benefit-actions";
 import { Input, Label, Button } from "../../ui";
 import type { Benefit } from "@prisma/client";
 import SortableJS from "sortablejs";
