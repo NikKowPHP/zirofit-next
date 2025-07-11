@@ -150,7 +150,7 @@
 
 ### 2. Search Backend Logic
 
--   `[ ]` **Task 2.1: Enhance `getPublishedTrainers` for Searching and Filtering**
+-   `[x]` **Task 2.1: Enhance `getPublishedTrainers` for Searching and Filtering**
 
     -   **File:** `src/lib/api/trainers.ts`
     -   **Action:** Modify the `getPublishedTrainers` function to accept search parameters and dynamically build the Prisma query.

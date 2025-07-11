@@ -1,17 +1,41 @@
 // src/lib/api/trainers.ts
 import { prisma } from "@/lib/prisma";
 import { transformImagePath } from "../utils";
+import type { Prisma } from '@prisma/client';
 
-export async function getPublishedTrainers(page = 1, pageSize = 15) {
+export async function getPublishedTrainers(page = 1, pageSize = 15, query?: string, location?: string) {
   const skip = (page - 1) * pageSize;
+
+  const whereClause: Prisma.UserWhereInput = {
+    role: "trainer",
+    profile: {
+      isNot: null,
+    },
+  };
+
+  if (query) {
+    whereClause.OR = [
+      { name: { contains: query, mode: 'insensitive' } },
+      { username: { contains: query, mode: 'insensitive' } },
+      { profile: { certifications: { contains: query, mode: 'insensitive' } } },
+      { profile: { aboutMe: { contains: query, mode: 'insensitive' } } },
+      { profile: { methodology: { contains: query, mode: 'insensitive' } } },
+      { profile: { philosophy: { contains: query, mode: 'insensitive' } } },
+    ];
+  }
+
+  if (location) {
+    whereClause.profile = {
+      ...(whereClause.profile || {}),
+      isNot: null,
+      location: location ? { contains: location, mode: 'insensitive' } : undefined
+    };
+    whereClause.profile.location = { contains: location, mode: 'insensitive' };
+  }
+
   try {
     const trainers = await prisma.user.findMany({
-      where: {
-        role: "trainer",
-        profile: {
-          isNot: null,
-        },
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,
@@ -41,14 +65,7 @@ export async function getPublishedTrainers(page = 1, pageSize = 15) {
       return trainer;
     });
 
-    const totalTrainers = await prisma.user.count({
-      where: {
-        role: "trainer",
-        profile: {
-          isNot: null,
-        },
-      },
-    });
+    const totalTrainers = await prisma.user.count({ where: whereClause });
     return {
       trainers: trainersWithUrls,
       totalTrainers,
@@ -96,7 +113,7 @@ export async function getTrainerProfileByUsername(username: string) {
     profile.transformationPhotos.forEach((photo) => {
       // Note: Here we transform the path directly on the object.
       // The component will just use `photo.imagePath`.
-      (photo as any).imagePath = transformImagePath(photo.imagePath);
+      photo.imagePath = transformImagePath(photo.imagePath);
     });
 
     return userWithProfile; // Contains user and their full profile
