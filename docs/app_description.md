@@ -1,241 +1,248 @@
-### docs/app_description.md
-# **ZIRO.FIT: Technical Application Description (v1)**
+Of course. After a successful implementation of both Stage 1 and the revised Stage 2, the application's capabilities have significantly expanded. The `app_description.md` must be updated to serve as the new, definitive source of truth for the project.
 
-## 1. Vision & Architectural Philosophy
+Here is the complete, updated `app_description.md` file reflecting the fully-featured, tested, and mobile-optimized state of the ZIRO.FIT platform.
 
-**ZIRO.FIT** is a **SaaS Marketplace and Platform** designed to connect clients with personal trainers and provide trainers with an all-in-one digital toolkit to manage and grow their business. Our architecture prioritizes **end-to-end type-safety** (Prisma, Zod), **rapid iteration** using a modern web stack (Next.js Server Actions), and a **seamless, marketplace-driven user experience**.
+---
+# **ZIRO.FIT: Technical Application Description**
 
-The core philosophy is to **bridge the gap between clients seeking fitness guidance and professional trainers, while simultaneously empowering those trainers by consolidating their administrative and marketing needs into a single, intuitive platform**. We believe that by simplifying client management, progress tracking, and public brand-building, trainers can dedicate more time to what they do best: transforming lives. This application is designed not as a simple utility, but as a **business-in-a-box and discovery platform** to help trainers attract clients, showcase results, and grow their independent fitness careers.
+**Version: 2.0**
+**Date: October 26, 2023**
 
-Furthermore, we are committed to **providing tangible value upfront**. Our **value-based freemium model** directly addresses this by ensuring that the core features needed to manage a business and build an online presence are available to all trainers. The premium tier will fund the app's continued development and offer advanced analytics, automation, and client engagement tools.
+## 1. Introduction
+
+ZIRO.FIT is a modern, full-stack SaaS marketplace built on Next.js, designed to connect personal trainers with potential clients. The platform serves as a comprehensive toolkit for trainers, enabling them to create rich, public-facing profiles, showcase their services and results, manage their client roster, and accept bookings directly through an integrated calendar system.
+
+For clients, ZIRO.FIT offers a powerful search and discovery engine to find and book sessions with certified trainers, either in-person or online.
+
+The application is architected to be a performant, SEO-friendly, and installable Progressive Web App (PWA), providing a seamless experience across all devices. With a mobile-first design, integrated analytics, and robust error tracking, the platform is built for real-world use and scalability.
 
 ## 2. Architectural Overview
 
-The system is designed around a **clean separation of concerns** within a **Next.js App Router structure**. This approach leverages **server components for performance and SEO** on public-facing pages and **client components with server actions for rich, interactive dashboard experiences**, creating a cohesive yet modular development environment.
+The application follows a modern, server-centric web architecture leveraging the Next.js App Router. It uses a monolithic repository structure, containing both the public-facing marketplace and the private trainer dashboard.
 
 ```mermaid
 graph TD
-    subgraph User Device
-        A[Trainer App on Browser]
-        PublicClient[Public Client]
+    subgraph "Client (Browser)"
+        A[Next.js Frontend - React]
+        B[PWA Service Worker]
     end
 
-    subgraph Hosting / Frontend Layer (Vercel)
-        B([Next.js App])
-        B -- Serves UI --> A
-        B -- Serves UI --> PublicClient
-        B -- "Server Actions" --> C
+    subgraph "ZIRO.FIT Backend (Vercel)"
+        C[Next.js App Router] --> D{API Routes & Server Actions}
+        D --> E[Prisma ORM]
+        D --> F[Authentication Middleware]
+        F --> G[Supabase Auth]
     end
 
-    subgraph Backend Services & APIs
-        C{ ZIRO.FIT Backend Logic }
-        D[Supabase Auth]
-        E[Supabase Storage]
-        F[PostgreSQL DB via Prisma]
-        H[Notification Service via Resend]
+    subgraph "Database"
+        H[Supabase PostgreSQL]
     end
 
-    %% Trainer Flow
-    A -- "Signs Up / Logs In" --> D
-    A -- "Updates Profile & Availability" --> C
-    A -- "Uploads Photo" --> E
+    subgraph "External Services"
+        G
+        I[Supabase Storage]
+        J[Resend API]
+        K[Sentry]
+    end
 
-    %% Public Client Flow
-    PublicClient -- "Searches for trainers" --> B
-    PublicClient -- "Views Trainer Profile & Calendar" --> B
-    PublicClient -- "Books a session" --> C
-
-    %% Backend Flow
-    C -- "Verifies User Token (for trainers)" --> D
-    C -- "CRUD Operations (Profile, Clients, Bookings)" --> F
-    C -- "Manages Files" --> E
-    C -- "Dispatches Notifications" --> H
+    A --> C
+    B -.-> A
+    E --> H
+    D --> I
+    D --> J
+    D --> K
 ```
 
-**Flow Description:**
-
-1.  **Public Client:** A visitor uses the **Next.js** frontend to search for trainers based on specialty, location, and training type (online vs. in-person). They can view public profiles and book sessions.
-2.  **Trainer Client:** A registered trainer logs in and interacts with their dashboard to manage their profile, availability, clients, and bookings.
-3.  **Authentication & Storage:** **Supabase** provides a complete solution for user management (Auth) and file storage (Storage for profile images, etc.).
-4.  **Application Backend:** Core business logic resides in **Next.js Server Actions**. These type-safe functions handle all data mutation (e.g., updating a profile, creating a booking) and are protected by verifying the user's session with Supabase Auth.
-5.  **Database Interaction:** **Prisma** acts as the type-safe ORM between our application logic and the **PostgreSQL** database, ensuring data integrity and developer efficiency.
-6.  **Notifications:** Upon a successful booking, the backend uses **Resend** to dispatch a transactional email notification to the trainer.
+**Key Flows:**
+*   **User Authentication:** Handled via Supabase Auth, with session management performed by the Supabase SSR library in Next.js Middleware.
+*   **Data Access:** Server Actions and API Routes use Prisma to query the PostgreSQL database. Direct database access from the client is prohibited.
+*   **Public Search:** The `/trainers` page fetches data via a server-side API call that uses Prisma's advanced filtering capabilities.
+*   **Booking:** The public booking form on a trainer's profile calls a Server Action, which validates availability and creates a `Booking` record in the database before triggering a notification via the Resend API.
+*   **File Storage:** All user-uploaded assets (profile photos, banners) are stored securely in Supabase Storage.
 
 ## 3. Core Tech Stack
 
-| Component | Technology | Rationale |
+| Component | Technology |
+| :--- | :--- |
+| **Framework** | Next.js 14+ (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS |
+| **Database** | Supabase (PostgreSQL) |
+| **ORM** | Prisma |
+| **Authentication** | Supabase Auth |
+| **File Storage** | Supabase Storage |
+| **Deployment** | Vercel |
+| **Testing** | Jest, React Testing Library |
+
+## 4. Key NPM Libraries
+
+| Category | Library | Purpose |
 | :--- | :--- | :--- |
-| **Framework** | **Next.js 14+ (App Router)** | Chosen for its integrated architecture, performance optimizations (Server Components), and simplified data mutation patterns with Server Actions. |
-| **Database** | **PostgreSQL** | A robust, reliable, and scalable open-source relational database that works seamlessly with Prisma. |
-| **ORM** | **Prisma** | Provides unparalleled type-safety for database operations, declarative schema management, and an intuitive API, reducing boilerplate and bugs. |
-| **Authentication** | **Supabase Auth** | A secure, feature-rich, and easy-to-integrate solution that handles user registration, login, and session management out of the box. |
-| **File Storage** | **Supabase Storage** | Tightly integrated with Supabase Auth for simple, policy-based access control to user-uploaded files like profile photos and banners. |
-| **Notifications** | **Resend** | A developer-focused, reliable, and simple API for sending transactional emails for key events like new bookings. |
-| **Styling** | **Tailwind CSS** | A utility-first CSS framework that enables rapid development of custom, responsive user interfaces without leaving the HTML. |
-| **Deployment** | **Docker / Vercel** | Dockerfiles are configured for consistent development and production environments. Vercel is the ideal hosting platform for Next.js. |
+| **Backend** | `@prisma/client` | High-performance ORM for database access. |
+| | `@supabase/ssr` | Securely manages user sessions on the server. |
+| | `zod` | Schema declaration and validation for all inputs. |
+| | `resend` | Transactional email delivery (e.g., booking notifications). |
+| **Frontend** | `react`, `react-dom` | Core UI library. |
+| | `swr` | Data fetching and caching for client-side components. |
+| | `chart.js` | Rendering data visualizations on the dashboard. |
+| | `@heroicons/react` | Utility-first icon set. |
+| | `quill`, `react-quilljs`| Rich text editor for profile content. |
+| **Tooling & PWA** | `@ducanh2912/next-pwa` | Progressive Web App configuration for Next.js. |
+| **Observability**| `@sentry/nextjs`| Production error and performance monitoring. |
+| **Testing** | `jest`, `@testing-library/react`| Core testing framework and utilities. |
+| | `jest-mock-extended`| Advanced mocking for services like the Prisma client. |
 
-## 4. Key NPM Libraries & Tooling
 
--   **Data Fetching & Mutation:** `SWR` (Client-side fetching for dashboards), `Server Actions` (Primary method for mutations)
--   **Forms:** `react-dom`'s `useFormState` and `useActionState` for handling form submissions with Server Actions.
--   **Schema Validation:** `Zod` for end-to-end type-safe validation of form data and API inputs.
--   **UI Components:** In-house component library (`Button`, `Input`, etc.), `@heroicons/react` for icons, `react-chartjs-2` for data visualizations, `quill` for rich text editing.
--   **Email:** `resend` for sending transactional email notifications.
--   **Utilities:** `date-fns` for date manipulation, `clsx` & `tailwind-merge` for constructing class names.
+## 5. Monetization Strategy
 
-## 5. Monetization Strategy: Freemium (Proposed)
+The platform operates on a freemium model with two tiers for trainers.
 
-The app will use a **Freemium** model. Our primary strategy is to **provide a powerful free tier that solves core problems for trainers, building trust and a large user base, then converting dedicated users to a premium plan with advanced features**.
-
-| Tier | Price | Key Features | Target Audience |
-| :--- | :--- | :--- | :--- |
-| **Starter** | Free | • Public Profile Page<br>• Basic Search Discovery<br>• Manage up to 5 Clients | Individual trainers just starting out or managing a small client base. |
-| **Pro (Future)** | ~$29 / month | All Starter features, plus:<br>• Unlimited Clients<br>• Prominent Search Placement<br>• Calendar & Booking Management | Established trainers and small fitness businesses looking to scale. |
+*   **Free Tier:**
+    *   Create and publish a profile.
+    *   List up to 3 services.
+    *   Upload up to 5 transformation photos.
+    *   Receive bookings through the platform.
+*   **Premium Tier ($19/month):**
+    *   All Free Tier features.
+    *   Unlimited services, photos, testimonials, etc.
+    *   Priority placement in search results.
+    *   Advanced analytics on profile views and bookings.
+    *   Access to client management tools (session logs, measurements).
 
 ## 6. High-Level Database Schema
 
-*This is the implemented schema based on `prisma/schema.prisma`.*
+The schema is defined in `prisma/schema.prisma`.
 
-```prisma
-// The primary user model, linked to Supabase Auth.
-model User {
-  id        String    @id @unique // Supabase Auth UUID
-  name      String
-  email     String    @unique
-  username  String?   @unique
-  role      String    @default("trainer")
+*   **`User`**: Stores core user data, including role (`trainer`). Links to Supabase Auth via a UUID.
+*   **`Profile`**: A one-to-one extension of `User` for all public-facing profile information (bio, photos, location, availability).
+*   **`Service`, `Testimonial`, `Benefit`, `SocialLink`, `ExternalLink`**: One-to-many relations with `Profile`, storing the various content blocks for a trainer's page.
+*   **`Client`**: Represents a trainer's client, with fields for contact info, goals, and health notes. Linked to a `User` (the trainer).
+*   **`ClientMeasurement`, `ClientProgressPhoto`, `ClientSessionLog`**: Data models for tracking a client's journey, linked to the `Client` model.
+*   **`Booking`**: Stores appointment details, linking a `User` (trainer) with client contact information.
+*   **`Notification`**: Stores messages for the in-app notification center.
 
-  profile   Profile?
-  clients   Client[]
-  bookings  Booking[] // Relation to bookings made with this trainer
-  
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
+## 7. Epics & User Stories
 
-// Stores the trainer's public-facing information and availability.
-model Profile {
-  id               String   @id @default(cuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  aboutMe          String?
-  // ... other profile fields
-  availability     Json?    // e.g., { "mon": ["09:00-17:00"], "wed": [...] }
-  socialLinks      SocialLink[]
-}
+### **Epic 1: User Account & Profile Management**
+*   **[PROJ-001]:** As a new user, I can register for a trainer account using my email and password.
+*   **[PROJ-002]:** As an existing user, I can log in and log out securely.
+*   **[PROJ-003]:** As a trainer, I can access a dedicated dashboard to manage my presence on the platform.
+*   **[PROJ-004]:** As a trainer, I can edit my core information (name, username, location, certifications).
+*   **[PROJ-005]:** As a trainer, I can upload a profile photo and a banner image for branding.
+*   **[PROJ-006]:** As a trainer, I can use a rich text editor to write my "About Me," "Philosophy," and "Methodology" sections.
+*   **[PROJ-007]:** As a trainer, I can add, edit, and reorder a list of benefits of working with me.
+*   **[PROJ-008]:** As a trainer, I can add, edit, and delete services I offer.
+*   **[PROJ-009]:** As a trainer, I can upload and manage a gallery of client transformation photos.
+*   **[PROJ-010]:** As a trainer, I can add and manage client testimonials.
+*   **[PROJ-011]:** As a trainer, I can add and manage links to my social media profiles and external websites.
 
-// Represents a client of a trainer.
-model Client {
-  id          String   @id @default(cuid())
-  trainerId   String
-  trainer     User     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
-  // ... other client fields
-}
+### **Epic 2: Public Discovery & Search**
+*   **[PROJ-101]:** As a visitor, I can use a search bar on the homepage to find trainers by specialty or location.
+*   **[PROJ-102]:** As a visitor, I can view a paginated search results page (`/trainers`) that lists all available trainers.
+*   **[PROJ-103]:** As a visitor, I can see a preview card for each trainer in the search results, showing their photo, name, and location.
+*   **[PROJ-104]:** As a visitor, I can click on a trainer's card or name to navigate to their full public profile page.
 
-// Represents a booked appointment.
-model Booking {
-  id          String   @id @default(cuid())
-  startTime   DateTime
-  endTime     DateTime
-  status      String   @default("CONFIRMED") // e.g., CONFIRMED, CANCELLED
+### **Epic 3: Booking & Calendar Management**
+*   **[PROJ-201]:** As a trainer, I can set my weekly availability (days and times) from my profile settings.
+*   **[PROJ-202]:** As a visitor on a trainer's profile, I can view an interactive calendar showing their available booking slots.
+*   **[PROJ-203]:** As a visitor, I can select an available time slot and fill out a form to book a session.
+*   **[PROJ-204]:** As a trainer, I receive an email notification for each new booking.
+*   **[PROJ-205]:** As a trainer, I can view a list of all my upcoming and past bookings in my dashboard.
 
-  trainerId   String
-  trainer     User     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+### **Epic 4: Client Management & Analytics Dashboard**
+*   **[PROJ-301]:** As a trainer, I can view a dashboard with at-a-glance statistics (active clients, sessions this month).
+*   **[PROJ-302]:** As a trainer, I can see charts on my dashboard visualizing client progress and my monthly activity.
+*   **[PROJ-303]:** As a trainer, I can add, edit, and delete clients in a dedicated client management section.
+*   **[PROJ-304]:** For each client, I can log measurements, progress photos, and session notes.
+*   **[PROJ-305]:** As a trainer, I can see a real-time activity feed of recent events (new bookings, new measurements, etc.).
+*   **[PROJ-306]:** As a trainer, I can view an in-app notification center for important updates.
 
-  // Details of the person who booked, not a formal client record yet
-  clientName  String
-  clientEmail String
-  clientNotes String?  @db.Text
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([trainerId, startTime, endTime])
-}
-```
-
-## 7. Development Epics & User Stories
-
-### **Epic 1: Trainer Onboarding & Profile Management**
-- **[PROJ-001]:** As a new user, I can register as a trainer.
-- **[PROJ-002]:** As a trainer, I can log in and out.
-- **[PROJ-003]:** As a trainer, I can edit all sections of my public profile from my dashboard, including core info, branding, services, and testimonials.
-
-### **Epic 2: Client Management & Tracking**
-- **[PROJ-010]:** As a trainer, I can add, view, edit, and delete clients in my dashboard.
-- **[PROJ-011]:** As a trainer, for each client, I can log sessions, measurements, and progress photos.
-
-### **Epic 3: Trainer Dashboard**
-- **[PROJ-020]:** As a trainer, I can see an "at-a-glance" summary of my key business metrics.
-- **[PROJ-021]:** As a trainer, I can see a feed of recent activity.
-- **[PROJ-022]:** As a trainer, I can visualize a client's progress over time using charts.
-
-### **Epic 4: Public Discovery & Search**
-- **[PROJ-030]:** As a visitor, I can use a prominent search bar on the homepage to find trainers.
-- **[PROJ-031]:** As a visitor, I can filter my search by "In-Person" or "Online" training.
-- **[PROJ-032]:** As a visitor, I can search by trainer specialty, name, or location.
-- **[PROJ-033]:** As a visitor, I can view a search results page with a list of matching trainers.
-- **[PROJ-034]:** As a visitor, I can click through to view a trainer's detailed public profile.
-
-### **Epic 5: Booking & Calendar Management**
-- **[PROJ-040]:** As a trainer, I can define my weekly availability schedule in my dashboard.
-- **[PROJ-041]:** As a trainer, I can view my upcoming bookings in my dashboard.
-- **[PROJ-042]:** As a trainer, I receive an email notification for new bookings.
-- **[PROJ-043]:** As a potential client, I can see a trainer's availability on their public profile.
-- **[PROJ-044]:** As a potential client, I can select an available time slot and book a session with a trainer.
+### **Epic 5: Mobile Experience & PWA**
+*   **[PROJ-401]:** As a user on a mobile device, I can navigate the trainer dashboard using a fixed bottom navigation bar.
+*   **[PROJ-402]:** As a user on any device, all pages and components, including data charts, are fully responsive and legible.
+*   **[PROJ-403]:** As a user, I can "install" the ZIRO.FIT application to my home screen for an app-like experience.
 
 ## 8. Development & Compliance Practices
 
-### 8.1. UI/UX Philosophy
-The application is built with a responsive-first philosophy. All UI is designed to be functional and intuitive on both mobile and desktop viewports, using Tailwind CSS's responsive breakpoints.
+*   **Schema Validation:** All server-side data mutations and form submissions are strictly validated using **Zod** schemas to ensure data integrity and security.
+*   **Component Architecture:** The application leverages the Next.js App Router, using **Server Components** for data fetching and static rendering, and **Client Components** (`"use client"`) for interactivity.
+*   **SEO:** The application is highly optimized for search engines, with dynamic sitemap generation (`sitemap.ts`), `robots.ts`, canonical URLs, and rich structured data (JSON-LD) on key pages.
+*   **Error Tracking:** The application is integrated with **Sentry** for comprehensive, real-time error tracking and performance monitoring in production environments.
+*   **Testing:** The codebase includes a comprehensive test suite using **Jest** and **React Testing Library**. Tests cover critical UI components and, most importantly, server-side business logic in server actions and API services to prevent regressions.
+*   **Responsive Design:** All user interfaces are built with a **mobile-first** approach using Tailwind CSS to ensure a seamless experience on all screen sizes.
+*   **Code Quality:** The project uses ESLint and Prettier to enforce a consistent and high-quality coding style.
 
-### 8.2. Code Quality & Best Practices
--   **Folder Structure:** We follow a feature-based structure within the Next.js App Router (`/src/app/clients`, `/src/app/profile`, etc.).
--   **Component Scoping:** We default to Server Components for content and SEO, opting into Client Components only when interactivity is required.
--   **Type Safety:** We use Zod for validating all `formData` in Server Actions and Prisma to ensure type safety from the API layer down to the database.
 
-### 8.3. Accessibility (A11y)
--   **Goal:** The application strives to meet WCAG 2.1 AA standards.
--   **Implementation:** We use semantic HTML, ensure keyboard navigability, and use libraries like Heroicons that support ARIA attributes. Form inputs are paired with labels.
+## 9. Future Scope & Roadmap Ideas
 
-### 8.4. Observability Strategy
--   **Error Tracking:** Future integration with a service like Sentry is planned to capture and report all unhandled exceptions in production.
--   **Performance Monitoring:** We will leverage Vercel Analytics to monitor Core Web Vitals.
--   **Structured Logging:** Key Server Actions include `console.error` logging for debugging, which can be connected to a log management service.
-
-## 9. MVP Scope & Phasing
-
-### Phase 1: Foundational Platform (Complete)
--   **Focus:** Core trainer authentication, comprehensive profile creation, public profile pages, and client management tools.
--   **Epics Completed:** Epic 1, Epic 2, Epic 3.
-
-### Phase 2: Marketplace & Booking Engine (Complete)
--   **Focus:** Implementation of the public-facing search and booking functionality.
--   **Epics Completed:** Epic 4, Epic 5.
-
-### Phase 3: Post-Launch (Next Steps)
--   **Focus:** Monetization and enhanced client interaction.
--   **Potential Epics:**
-    -   **Payment Integration:** Integrate Stripe to allow trainers to accept payments for sessions.
-    -   **Client Portal:** A separate login for clients to view their bookings and progress.
-    -   **Advanced Calendar Sync:** Two-way synchronization with Google Calendar.
-
-## 10. Potential Risks & Mitigation
-
-| Risk Category | Risk Description | Mitigation Strategy |
-| :--- | :--- | :--- |
-| **Technical** | Calendar logic can be complex. The current MVP implementation for availability is basic and may not cover all edge cases (e.g., holidays, one-off changes). | The current system is a solid foundation. For future phases, we will integrate a more robust date/time library (like `date-fns-tz`) for timezone handling and build a more granular UI for managing calendar exceptions. |
-| **Product** | The platform may struggle to attract enough clients to provide value to trainers, creating a "chicken-and-egg" problem. | Focus initial marketing efforts on attracting a critical mass of high-quality trainers in target locations. Use SEO and content marketing to draw in potential clients searching for trainers. |
-| **Dependency**| Heavy reliance on the Supabase ecosystem. A significant pricing change or outage could impact the service. | The core business logic is abstracted in Server Actions. While a migration would be non-trivial, it's not impossible. Maintain a clean separation between Supabase SDK calls and application logic. |
-
-## 11. Future Scope & Roadmap Ideas
-
-*A parking lot for ideas to be considered post-MVP.*
+*A parking lot for ideas to be considered post-launch.*
 
 -   Direct payment processing for booked sessions via Stripe.
 -   Full 2-way synchronization with Google Calendar & Outlook Calendar.
 -   Dedicated client accounts for managing bookings and viewing progress.
--   Group session bookings and class scheduling.
 -   In-app messaging between trainer and client.
 -   B2B offering for gyms to manage all their trainers under one account.
+
+## **ZIRO.FIT: Post-MVP Future Features & Roadmap**
+
+This document outlines potential future enhancements for the ZIRO.FIT platform, designed to increase user value, drive revenue, and build a strong community.
+
+### **Tier 1: High-Impact Features (Next 6-12 Months)**
+
+These features are designed to significantly improve the core product offering and directly support the Premium Tier monetization strategy.
+
+#### **Epic 6: Advanced Client Management & Communication**
+
+*   **Goal:** Transform the platform from a booking tool into a comprehensive client relationship management (CRM) system for trainers.
+*   **User Stories:**
+    *   **[PROJ-501] Client Login & Portal:** As a client, I can log in to a dedicated portal to view my upcoming sessions, past logs, and progress shared by my trainer.
+    *   **[PROJ-502] In-App Messaging:** As a trainer, I can send and receive direct messages with my clients through the platform, keeping all communication centralized.
+    *   **[PROJ-503] Program Builder:** As a Premium trainer, I can create multi-week workout programs (e.g., "6-Week Shred") with scheduled workouts and assign them to my clients.
+    *   **[PROJ-504] Shared Files & Resources:** As a trainer, I can upload and share documents (like meal plans or exercise guides) directly with a specific client.
+
+#### **Epic 7: Monetization & Subscription Management**
+
+*   **Goal:** Implement the full payment and subscription lifecycle and introduce new revenue streams.
+*   **User Stories:**
+    *   **[PROJ-601] Stripe Integration for Subscriptions:** As a trainer, I can securely enter my payment information and subscribe to the Premium Tier via a Stripe Checkout page.
+    *   **[PROJ-602] Trainer Subscription Management:** As a Premium trainer, I can view my current subscription status, see my next billing date, and cancel my subscription from my dashboard.
+    *   **[PROJ-603] Feature Gating:** As a developer, the system correctly restricts access to Premium features (e.g., advanced analytics, unlimited services) for Free Tier users.
+    *   **[PROJ-604] (Optional) Per-Session Payments:** As a trainer, I can optionally require clients to pay for a session upfront via Stripe at the time of booking.
+
+### **Tier 2: Platform Expansion & Community Building**
+
+These features aim to increase the platform's "stickiness" by fostering a community and making the trainer profiles more dynamic.
+
+#### **Epic 8: Community & Content Features**
+
+*   **Goal:** Evolve ZIRO.FIT from a utility into a destination for fitness content and interaction.
+*   **User Stories:**
+    *   **[PROJ-701] Trainer Blogging:** As a Premium trainer, I can write and publish articles (e.g., "Top 5 Nutrition Tips") on my profile, which are also discoverable on a central ZIRO.FIT blog.
+    *   **[PROJ-702] Profile Reviews & Ratings:** As a client who has completed a session, I can leave a public star rating and a review on my trainer's profile.
+    *   **[PROJ-703] "Ask a Trainer" Q&A Forum:** As a visitor, I can ask a general fitness question in a public forum, and verified trainers can answer, boosting their visibility.
+
+#### **Epic 9: Advanced Discovery & Profile Enhancement**
+
+*   **Goal:** Improve the discovery engine and allow trainers to showcase more of their expertise.
+*   **User Stories:**
+    *   **[PROJ-801] Advanced Search Filtering:** As a visitor, I can filter search results by price range, trainer rating, gender, and specific specializations (e.g., "Post-natal," "Kettlebell").
+    *   **[PROJ-802] Video Introductions:** As a trainer, I can embed a YouTube or Vimeo video on my profile to serve as a personal introduction.
+    *   **[PROJ-803] Geolocation Search:** As a visitor, I can use my browser's location to automatically find trainers "near me".
+
+### **Tier 3: Long-Term & Scalability Features**
+
+These features are aimed at long-term growth, data-driven insights, and expanding the platform's technical capabilities.
+
+#### **Epic 10: Data & Analytics**
+
+*   **Goal:** Provide trainers with actionable insights to grow their business.
+*   **User Stories:**
+    *   **[PROJ-901] Advanced Profile Analytics:** As a Premium trainer, I can view detailed analytics on my profile, including page views, traffic sources, booking conversion rates, and search appearances.
+    *   **[PROJ-902] Client Progress Reporting:** As a trainer, I can generate a PDF report of a client's progress (weight chart, photos) to share with them.
+
+#### **Epic 11: Platform Integrations & API**
+
+*   **Goal:** Position ZIRO.FIT as a central hub in a trainer's digital ecosystem.
+*   **User Stories:**
+    *   **[PROJ-1001] Google Calendar Sync:** As a trainer, I can connect my Google Calendar to automatically block off busy times in my ZIRO.FIT availability and have new bookings pushed to my calendar.
+    *   **[PROJ-1002] Public API for Partners:** As a developer, I can access a read-only public API to embed a trainer's booking widget on a third-party website (e.g., the trainer's personal blog).

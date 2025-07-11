@@ -164,17 +164,7 @@ model Booking {
 ### **Epic 5: Booking & Calendar Management** (Complete)
 - As a trainer, I can set my availability. As a client, I can view available slots and book a session.
 
-### **Epic 6: Mobile UI/UX Overhaul**
-- **[PROJ-050]:** As a trainer on a mobile device, I can access all dashboard features through a fixed bottom navigation bar for an app-like experience.
-- **[PROJ-051]:** As any user on a mobile device, I can navigate all pages and use all forms without layout issues or horizontal scrolling.
 
-### **Epic 7: PWA Conversion**
-- **[PROJ-060]:** As a user on a supported device, I am prompted to install the application to my home screen.
-- **[PROJ-061]:** As a user, when I launch the PWA, it displays with a custom icon and splash screen.
-
-### **Epic 8: Production Readiness & Testing**
-- **[PROJ-070]:** As a developer, critical server actions (booking, profile updates) are covered by automated tests to prevent regressions.
-- **[PROJ-071]:** As a developer, unhandled errors in the application are automatically captured and reported to Sentry for analysis.
 
 ## 8. Development & Compliance Practices
 
@@ -195,12 +185,3 @@ The application is built with a **mobile-first** philosophy. The user interface,
 -   **Performance Monitoring:** We leverage **Vercel Analytics** to monitor Core Web Vitals and general application performance.
 -   **Structured Logging:** Key backend processes use structured logging, drained to **Vercel Logs** for debugging and tracing.
 
-## 9. Future Scope & Roadmap Ideas
-
-*A parking lot for ideas to be considered post-launch.*
-
--   Direct payment processing for booked sessions via Stripe.
--   Full 2-way synchronization with Google Calendar & Outlook Calendar.
--   Dedicated client accounts for managing bookings and viewing progress.
--   In-app messaging between trainer and client.
--   B2B offering for gyms to manage all their trainers under one account.
