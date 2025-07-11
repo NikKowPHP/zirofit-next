@@ -54,14 +54,14 @@ export default function TrainerSearch() {
             <label htmlFor="search-query" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Specialty or Trainer Name
             </label>
-            <Input id="search-query" type="text" placeholder="e.g., 'Yoga', 'Strength Training'" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <Input id="search-query" type="text" placeholder="e.g., 'Yoga', 'Strength Training'" value={query} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)} />
           </div>
           {activeTab === "in-person" && (
             <div className="md:col-span-1">
               <label htmlFor="search-location" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Location
               </label>
-              <Input id="search-location" type="text" placeholder="City or ZIP code" value={location} onChange={(e) => setLocation(e.target.value)} />
+              <Input id="search-location" type="text" placeholder="City or ZIP code" value={location} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)} />
             </div>
           )}
           <div className="md:col-span-1">

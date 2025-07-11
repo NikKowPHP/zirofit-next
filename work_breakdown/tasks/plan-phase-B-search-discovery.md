@@ -7,7 +7,7 @@
 
 ### 1. Homepage Search Component
 
--   `[ ]` **Task 1.1: Create `TrainerSearch` Component**
+-   `[x]` **Task 1.1: Create `TrainerSearch` Component**
 
     -   **File:** `src/components/home/TrainerSearch.tsx`
     -   **Action:** Create a new client component. It will manage the state for search inputs and use the router to navigate to the results page.
