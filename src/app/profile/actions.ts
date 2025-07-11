@@ -831,3 +831,83 @@ export async function updateAvailability(
     };
   }
 }
+
+// Booking Types
+interface BookingFormState {
+  message?: string;
+  error?: string;
+  success?: boolean;
+}
+
+const BookingSchema = z.object({
+  trainerId: z.string(),
+  startTime: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid start time" }),
+  endTime: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid end time" }),
+  clientName: z.string().min(2, "Name is required."),
+  clientEmail: z.string().email("Invalid email address."),
+  clientNotes: z.string().optional(),
+});
+
+export async function getTrainerSchedule(trainerId: string) {
+  try {
+    const profile = await prisma.profile.findFirst({
+      where: { userId: trainerId },
+      select: { availability: true },
+    });
+  
+    const bookings = await prisma.booking.findMany({
+      where: {
+        trainerId: trainerId,
+        startTime: { gte: new Date() }, // Only fetch future bookings
+        status: "CONFIRMED",
+      },
+      select: { startTime: true, endTime: true },
+    });
+  
+    return {
+      availability: profile?.availability as any || {},
+      bookings,
+    };
+  } catch (error) {
+    console.error("Error fetching trainer schedule:", error);
+    return { availability: {}, bookings: [] };
+  }
+}
+
+export async function createBooking(
+  prevState: BookingFormState | undefined,
+  formData: FormData,
+): Promise<BookingFormState> {
+  const validatedFields = BookingSchema.safeParse(Object.fromEntries(formData.entries()));
+  
+  if (!validatedFields.success) {
+    return { error: "Invalid form data.", success: false };
+  }
+
+  const { trainerId, startTime, endTime, clientName, clientEmail, clientNotes } = validatedFields.data;
+  
+  // TODO: Add server-side validation here to ensure the chosen slot is valid
+  // 1. Fetch trainer's availability and existing bookings.
+  // 2. Check if the requested slot falls within an available window.
+  // 3. Check if the requested slot overlaps with any existing bookings.
+  // 4. If not valid, return an error state.
+
+  try {
+    await prisma.booking.create({
+      data: {
+        trainerId,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
+        clientName,
+        clientEmail,
+        clientNotes,
+      },
+    });
+
+    // TODO: Trigger email notification to trainer here
+
+    return { success: true, message: "Session booked successfully!" };
+  } catch (e: any) {
+    return { error: "Failed to create booking.", success: false };
+  }
+}
