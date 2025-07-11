@@ -1,17 +1,21 @@
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'jsdom',
- transform: {
-    // Use babel-jest to transpile tests with the custom babel config
-    // This single entry handles JS, JSX, TS, and TSX files.
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.config.jest.js' }],
-  },
-
-  transformIgnorePatterns: [
-    'node_modules/(?!(node-fetch|data-uri-to-buffer|fetch-blob)/)'
+export const preset = 'ts-jest';
+export const testEnvironment = 'node';
+export const transform = {
+  '^.+\\.tsx?$': [
+    'ts-jest',
+    {
+      tsconfig: 'tsconfig.json',
+      stringifyContentPathRegex: '\\.svg$',
+    },
   ],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-  },
 };
+export const moduleNameMapper = {
+  '^@/(.*)$': '<rootDir>/src/$1',
+};
+export const transformIgnorePatterns = ['<rootDir>/node_modules/'];
+export const moduleFileExtensions = ['ts', 'tsx', 'js', 'jsx', 'json', 'node'];
+export const testMatch = ['**/?(*.)+(spec|test).[tj]s?(x)'];
+export const modulePathIgnorePatterns = [];
+export const setupFilesAfterEnv = ['<rootDir>/jest.setup.ts'];
+export const testPathIgnorePatterns = ['<rootDir>/node_modules/', '<rootDir>/tests/'];
+export const testTimeout = 30000;
