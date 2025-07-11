@@ -197,7 +197,7 @@
 
 ### 3. Trainer-Facing Booking Management
 
--   `[ ]` **Task 3.1: Create Trainer Bookings Dashboard Page**
+-   `[x]` **Task 3.1: Create Trainer Bookings Dashboard Page**
 
     -   **File:** `src/app/dashboard/bookings/page.tsx`
     -   **Action:** Create a new page for trainers to view their bookings.
