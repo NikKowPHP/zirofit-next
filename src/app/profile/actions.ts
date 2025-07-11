@@ -952,17 +952,19 @@ export async function createBooking(
       },
     });
 
-    // Send email notification to trainer
+    // Send email notifications
     try {
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY!);
+      const { BookingConfirmation } = await import('@/emails/BookingConfirmation');
+      
+      // 1. Send notification to trainer
       const trainer = await prisma.user.findUnique({
         where: { id: trainerId },
         select: { email: true, name: true }
       });
 
       if (trainer?.email) {
-        const { Resend } = await import('resend');
-        const resend = new Resend(process.env.RESEND_API_KEY!);
-        
         await resend.emails.send({
           from: 'bookings@ziro.fit',
           to: trainer.email,
@@ -980,9 +982,23 @@ export async function createBooking(
           `
         });
       }
+
+      // 2. Send confirmation to client
+      await resend.emails.send({
+        from: 'bookings@ziro.fit',
+        to: clientEmail,
+        subject: `Your Training Session with ${trainer?.name || 'your trainer'} is Confirmed!`,
+        react: BookingConfirmation({
+          trainerName: trainer?.name || 'your trainer',
+          bookingDate: new Date(startTime).toLocaleDateString(),
+          bookingTime: `${new Date(startTime).toLocaleTimeString()} - ${new Date(endTime).toLocaleTimeString()}`,
+          bookingLocation: 'Your chosen location', // TODO: Replace with actual location if available
+          cancellationLink: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel-booking/${booking.id}`
+        })
+      });
     } catch (e) {
-      console.error('Failed to send booking notification email:', e);
-      // Don't fail the booking if email fails
+      console.error('Failed to send booking notification emails:', e);
+      // Don't fail the booking if emails fail
     }
 
     return { success: true, message: "Session booked successfully!" };
