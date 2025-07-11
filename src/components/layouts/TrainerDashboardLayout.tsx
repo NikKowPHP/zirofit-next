@@ -9,6 +9,7 @@ import {
   MoonIcon,
   Bars3Icon,
   XMarkIcon,
+  CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
 import LogoutButton from "../../components/auth/LogoutButton";
 import { usePathname } from "next/navigation";
@@ -48,6 +49,12 @@ export default function TrainerDashboardLayout({
       href: "/clients",
       icon: UserGroupIcon,
       current: pathname.startsWith("/clients"),
+    },
+    {
+      name: "My Bookings",
+      href: "/dashboard/bookings",
+      icon: CalendarDaysIcon,
+      current: pathname.startsWith("/dashboard/bookings"),
     },
   ];
 

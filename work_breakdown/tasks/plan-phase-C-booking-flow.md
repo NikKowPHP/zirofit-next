@@ -241,7 +241,7 @@
         }
         ```
 
--   `[ ]` **Task 3.2: Add Link to Bookings Dashboard**
+-   `[x]` **Task 3.2: Add Link to Bookings Dashboard**
     -   **File:** `src/components/layouts/TrainerDashboardLayout.tsx`
     -   **Action:** Add a new navigation item to the sidebar pointing to the new bookings page.
     -   **Content:**
