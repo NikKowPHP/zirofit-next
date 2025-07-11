@@ -12,11 +12,11 @@ This new plan is no longer a generic setup guide; it is a targeted testing strat
 
 ### 1. Test Environment Enhancement
 
--   `[ ]` **Task 1.1: Install Testing Utility**
+-   `[x]` **Task 1.1: Install Testing Utility**
     -   **Action:** Install `jest-mock-extended`, a library that simplifies creating deep mocks for complex objects like the Prisma client.
     -   **Command:** `npm install --save-dev jest-mock-extended`
 
--   `[ ]` **Task 1.2: Create Singleton Prisma Mock**
+-   `[x]` **Task 1.2: Create Singleton Prisma Mock**
     -   **Action:** Create a reusable, singleton instance of a mocked Prisma client. This ensures that all tests across the suite use the same mock instance, which can be configured on a per-test basis.
     -   **File:** `tests/singleton.ts`
     -   **Content:**
@@ -38,7 +38,7 @@ This new plan is no longer a generic setup guide; it is a targeted testing strat
         export const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>
         ```
 
--   `[ ]` **Task 1.3: Update Jest Setup for Singleton Mock**
+-   `[x]` **Task 1.3: Update Jest Setup for Singleton Mock**
     -   **File:** `jest.setup.js`
     -   **Action:** Import the new singleton mock setup file to ensure it runs before every test suite.
     -   **Content:**
@@ -64,7 +64,7 @@ This new plan is no longer a generic setup guide; it is a targeted testing strat
 
 ### 2. Core Business Logic Test Implementation
 
--   `[ ]` **Task 2.1: Create Test for Booking Validation Logic**
+-   `[x]` **Task 2.1: Create Test for Booking Validation Logic**
     -   **Action:** Create a new test file to verify the `createBooking` server action correctly handles scheduling conflicts and availability rules.
     -   **File:** `src/app/profile/actions/booking-actions.test.ts`
     -   **Content:**
@@ -138,7 +138,7 @@ This new plan is no longer a generic setup guide; it is a targeted testing strat
         });
         ```
 
--   `[ ]` **Task 2.2: Create Test for Advanced Search Logic**
+-   `[x]` **Task 2.2: Create Test for Advanced Search Logic**
     -   **Action:** Create a new test file to verify that the `getPublishedTrainers` function in the trainer API constructs the correct Prisma query based on input parameters.
     -   **File:** `src/lib/api/trainers.test.ts`
     -   **Content:**
@@ -176,7 +176,7 @@ This new plan is no longer a generic setup guide; it is a targeted testing strat
         });
         ```
 
--   `[ ]` **Task 2.3: Create Test for Dashboard Data Aggregation Service**
+-   `[x]` **Task 2.3: Create Test for Dashboard Data Aggregation Service**
     -   **Action:** Create a new test file to verify the data aggregation logic in `getDashboardData`, ensuring it correctly counts and processes data from various models.
     -   **File:** `src/lib/dashboard.test.ts`
     -   **Content:**
