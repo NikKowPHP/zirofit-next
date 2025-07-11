@@ -59,7 +59,7 @@
 
 ### 2. Trainer Availability Management
 
--   `[ ]` **Task 2.1: Add Server Action for Availability**
+-   `[x]` **Task 2.1: Add Server Action for Availability**
 
     -   **File:** `src/app/profile/actions.ts`
     -   **Action:** Add a new exported server action, `updateAvailability`, to handle updating the `availability` JSON field on a trainer's profile. Include Zod validation for the schedule structure.

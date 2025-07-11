@@ -23,6 +23,30 @@ export type TransformationPhotoWithPublicUrl = TransformationPhoto & {
   publicUrl: string;
 };
 
+// Availability Types
+interface AvailabilityFormState {
+  message?: string | null;
+  error?: string | null;
+  success?: boolean;
+}
+
+const AvailabilitySchema = z.object({
+  availability: z.string().transform((str, ctx) => {
+    try {
+      const parsed = JSON.parse(str);
+      // Basic validation for the availability structure
+      if (typeof parsed !== 'object' || parsed === null) {
+        ctx.addIssue({ code: "custom", message: "Invalid availability format" });
+        return z.NEVER;
+      }
+      return parsed;
+    } catch (e) {
+      ctx.addIssue({ code: "custom", message: "Invalid JSON format" });
+      return z.NEVER;
+    }
+  }),
+});
+
 // Helper function to get user and profile, creating profile if it doesn't exist.
 async function getUserAndProfile() {
   const supabase = await createClient();
@@ -766,5 +790,44 @@ export async function deleteTestimonial(
     return { success: true, message: "Testimonial deleted.", deletedId: id };
   } catch (e) {
     return { error: "Failed to delete testimonial." };
+  }
+}
+
+export async function updateAvailability(
+  prevState: AvailabilityFormState | undefined,
+  formData: FormData
+): Promise<AvailabilityFormState> {
+  const { profile } = await getUserAndProfile();
+  
+  const validatedFields = AvailabilitySchema.safeParse({
+    availability: formData.get("availability"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid availability data provided.",
+      success: false,
+    };
+  }
+
+  try {
+    await prisma.profile.update({
+      where: { id: profile.id },
+      data: {
+        availability: validatedFields.data.availability,
+      },
+    });
+
+    revalidatePath("/profile/edit");
+    return {
+      success: true,
+      message: "Your availability has been updated successfully!",
+    };
+  } catch (e: any) {
+    console.error("Failed to update availability:", e);
+    return {
+      error: "An unexpected error occurred while saving your availability.",
+      success: false,
+    };
   }
 }
