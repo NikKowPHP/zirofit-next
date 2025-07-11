@@ -128,7 +128,7 @@
         }
         ```
 
--   `[ ]` **Task 2.2: Create Availability Editor UI Component**
+-   `[x]` **Task 2.2: Create Availability Editor UI Component**
 
     -   **File:** `src/components/profile/sections/AvailabilityEditor.tsx`
     -   **Action:** Create a new file for the availability editor. This component will provide a form for trainers to manage their weekly schedule.
