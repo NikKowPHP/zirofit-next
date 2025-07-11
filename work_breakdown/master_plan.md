@@ -21,7 +21,7 @@ This document outlines the high-level, phased plan for building the **ZIRO.FIT**
 
 ---
 
-### `[ ]` Phase C: Public Booking Flow & Trainer Management
+### `[x]` Phase C: Public Booking Flow & Trainer Management
 
 **Goal:** Enable end-to-end booking functionality. This involves creating the public calendar UI on trainer profiles, implementing the booking creation logic, and providing a dashboard for trainers to view and manage their upcoming appointments.
 
