@@ -100,7 +100,7 @@
 
 ### 2. Public-Facing Booking UI
 
--   `[ ]` **Task 2.1: Create Public Calendar Component**
+-   `[x]` **Task 2.1: Create Public Calendar Component**
     -   **File:** `src/components/trainer/PublicCalendar.tsx`
     -   **Action:** Create a new client component to display a trainer's availability and handle the booking form.
     -   **Content:**
