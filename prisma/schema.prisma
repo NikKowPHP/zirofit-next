@@ -24,6 +24,7 @@ model User {
   profile            Profile?  // One-to-one relation to Profile
   clients            Client[]  // One-to-many relation: A trainer has many clients
   notifications      Notification[]
+  bookings           Booking[] // Relation to bookings made with this trainer
 
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -49,6 +50,7 @@ model Profile {
   externalLinks      ExternalLink[]
   benefits           Benefit[]
   socialLinks        SocialLink[]
+  availability       Json?     // e.g., { "mon": ["09:00-17:00"], "tue": ["..."] }
 
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -209,4 +211,24 @@ model Notification {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  startTime   DateTime
+  endTime     DateTime
+  status      String   @default("CONFIRMED") // e.g., CONFIRMED, CANCELLED
+
+  trainerId   String
+  trainer     User     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+
+  // Details of the person who booked, not a formal client record yet
+  clientName  String
+  clientEmail String
+  clientNotes String?  @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([trainerId, startTime, endTime])
 }
