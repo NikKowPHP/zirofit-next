@@ -9,15 +9,15 @@ This document outlines the high-level, phased plan for building the **ZIRO.FIT**
 
 **Goal:** Establish the core data structures and backend logic required to support scheduling and availability. This involves extending the database schema and creating the internal tools for trainers to manage their calendars.
 
-- *[Link to a detailed breakdown document: `./tasks/plan-phase-2-calendar-infrastructure.md`]*
+- *[Link to a detailed breakdown document: `./tasks/plan-phase-A-calendar-infrastructure.md`]*
 
 ---
 
-### `[ ]` Phase B: Public Search & Discovery Implementation
+### `[x]` Phase B: Public Search & Discovery Implementation
 
 **Goal:** Build the complete public-facing search experience. This includes the homepage search bar and a rich, filterable search results page with an integrated map view and trainer preview cards. This phase will deliver a fully functional discovery engine for potential clients.
 
-- *[Link to a detailed breakdown document: `./tasks/plan-phase-1-search-discovery.md`]*
+- *[Link to a detailed breakdown document: `./tasks/plan-phase-B-search-discovery.md`]*
 
 ---
 
@@ -25,7 +25,7 @@ This document outlines the high-level, phased plan for building the **ZIRO.FIT**
 
 **Goal:** Enable end-to-end booking functionality. This involves creating the public calendar UI on trainer profiles, implementing the booking creation logic, and providing a dashboard for trainers to view and manage their upcoming appointments.
 
-- *[Link to a detailed breakdown document: `./tasks/plan-phase-3-booking-flow.md`]*
+- *[Link to a detailed breakdown document: `./tasks/plan-phase-C-booking-flow.md`]*
 
 ---
 
@@ -33,7 +33,7 @@ This document outlines the high-level, phased plan for building the **ZIRO.FIT**
 
 **Goal:** Finalize the user experience by implementing an efficient notification system for new bookings and conducting end-to-end testing of all new marketplace features to ensure the application is stable and ready for users.
 
-- *This phase combines tasks from `./tasks/plan-phase-3-booking-flow.md` (notifications) and new testing tasks.*
+- *This phase combines tasks from `./tasks/plan-phase-D-booking-flow.md` (notifications) and new testing tasks.*
 
 ---
 
