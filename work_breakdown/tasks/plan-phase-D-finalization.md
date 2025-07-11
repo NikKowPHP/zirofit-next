@@ -25,7 +25,7 @@
         npm install resend
         ```
 
--   `[ ]` **Task 1.3: Implement Email Notification on New Booking**
+-   `[x]` **Task 1.3: Implement Email Notification on New Booking**
 
     -   **File:** `src/app/profile/actions.ts`
     -   **Action:** Update the `createBooking` action to send a transactional email to the trainer upon successful booking creation.

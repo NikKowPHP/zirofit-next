@@ -941,7 +941,7 @@ export async function createBooking(
       };
     }
 
-    await prisma.booking.create({
+    const booking = await prisma.booking.create({
       data: {
         trainerId,
         startTime: new Date(startTime),
@@ -952,7 +952,38 @@ export async function createBooking(
       },
     });
 
-    // TODO: Trigger email notification to trainer here
+    // Send email notification to trainer
+    try {
+      const trainer = await prisma.user.findUnique({
+        where: { id: trainerId },
+        select: { email: true, name: true }
+      });
+
+      if (trainer?.email) {
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY!);
+        
+        await resend.emails.send({
+          from: 'bookings@ziro.fit',
+          to: trainer.email,
+          subject: `New Booking: ${clientName}`,
+          html: `
+            <h1>New Booking Notification</h1>
+            <p>Hi ${trainer.name},</p>
+            <p>You have a new booking from ${clientName} (${clientEmail}).</p>
+            <p><strong>Details:</strong></p>
+            <ul>
+              <li>Date: ${new Date(startTime).toLocaleDateString()}</li>
+              <li>Time: ${new Date(startTime).toLocaleTimeString()} - ${new Date(endTime).toLocaleTimeString()}</li>
+              ${clientNotes ? `<li>Notes: ${clientNotes}</li>` : ''}
+            </ul>
+          `
+        });
+      }
+    } catch (e) {
+      console.error('Failed to send booking notification email:', e);
+      // Don't fail the booking if email fails
+    }
 
     return { success: true, message: "Session booked successfully!" };
   } catch (e: any) {
