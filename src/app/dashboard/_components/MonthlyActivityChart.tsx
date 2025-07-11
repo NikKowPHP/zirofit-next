@@ -38,22 +38,22 @@ export default function MonthlyActivityChart({
   const textColor =
     theme === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.8)";
   const gridColor =
-    theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)";
+    theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)";
 
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
-        labels: {
-          color: textColor,
-        },
+        display: false,
       },
       title: {
         display: !!title,
         text: title,
         color: textColor,
+        font: {
+          size: 16,
+        },
       },
     },
     scales: {
@@ -76,7 +76,7 @@ export default function MonthlyActivityChart({
           color: textColor,
         },
         grid: {
-          color: gridColor,
+          display: false,
         },
       },
     },
@@ -92,18 +92,19 @@ export default function MonthlyActivityChart({
           theme === "dark"
             ? "rgba(59, 130, 246, 0.7)"
             : "rgba(59, 130, 246, 0.5)",
+        borderRadius: 4,
       },
     ],
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 flex flex-col h-full">
       {title && (
-        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+        <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
           {title}
         </h3>
       )}
-      <div className="relative h-64">
+      <div className="relative flex-grow h-64">
         <Bar options={chartOptions} data={chartData} />
       </div>
     </div>

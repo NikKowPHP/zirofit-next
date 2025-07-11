@@ -111,7 +111,7 @@ const AvailabilityEditor = React.lazy(
 );
 
 const SectionLoadingFallback = () => (
-  <div className="p-6  dark:bg-gray-800 shadow-sm rounded-lg">
+  <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
     Loading section...
   </div>
 );

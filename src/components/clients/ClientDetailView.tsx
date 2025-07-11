@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState, Suspense, lazy } from "react";
 import type {
   Client,
@@ -63,25 +61,28 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6">
-      <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="-mb-px flex gap-6 overflow-auto" aria-label="Tabs">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
+      <div className="p-2">
+        <nav
+          className="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-1 flex justify-center space-x-1"
+          aria-label="Tabs"
+        >
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`${
                 tab.id === activeTab
-                  ? "border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400 font-semibold"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500"
-              } whitespace-nowrap py-3 px-2 border-b-2 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                  : "text-neutral-500 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-700/50"
+              } flex-1 whitespace-nowrap py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-100 dark:focus:ring-offset-neutral-800`}
             >
               {tab.name}
             </button>
           ))}
         </nav>
       </div>
-      <div className="mt-6">
+      <div className="p-6">
         <Suspense
           fallback={
             <div className="flex items-center justify-center p-6 text-gray-600 dark:text-gray-300">

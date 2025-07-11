@@ -40,12 +40,8 @@ export default function LoginPage() {
   const [state, formAction] = useFormState(loginUser, initialState);
   return (
     <PublicLayout>
-      {" "}
-      {/* Wrap with PublicLayout */}
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-12 sm:px-6 lg:px-8">
-        {" "}
-        {/* Adjusted padding */}
-        <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 dark:bg-black py-12 sm:px-6 lg:px-8">
+        <div className="p-8 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl w-full max-w-md">
           <h1 className="text-2xl font-bold text-center mb-6">Trainer Login</h1>
 
           {state?.error && !state.errors && (

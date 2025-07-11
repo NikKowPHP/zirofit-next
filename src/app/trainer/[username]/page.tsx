@@ -70,8 +70,8 @@ interface UserWithProfile {
 }
 
 // Placeholder for default images
-const DEFAULT_BANNER_IMAGE = "/next.svg"; // Replace with actual default banner
-const DEFAULT_PROFILE_IMAGE = "/next.svg"; // Replace with actual default profile image
+const DEFAULT_BANNER_IMAGE = "/default-banner.jpg"; // Replace with actual default banner
+const DEFAULT_PROFILE_IMAGE = "/default-profile.jpg"; // Replace with actual default profile image
 
 interface TrainerProfilePageProps {
   params: Promise<{ username: string }>;
@@ -160,24 +160,24 @@ export default async function TrainerProfilePage({
   return (
     <PublicLayout>
       {/* Hero Section */}
-      <section id="hero-section" className="relative bg-gray-800 text-white">
+      <section id="hero-section" className="relative bg-neutral-900 text-white">
         <BannerImage
           src={profile.bannerImagePath || DEFAULT_BANNER_IMAGE}
           alt={`${name}'s banner`}
           layout="fill"
           objectFit="cover"
           quality={85}
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0 opacity-30"
           defaultSrc={DEFAULT_BANNER_IMAGE}
         />
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-40 text-center">
           <div className="mb-8">
             <ProfileImage
               src={profile.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
               alt={`${name}'s profile photo`}
-              width={160}
-              height={160}
-              className="w-40 h-40 rounded-full object-cover mx-auto border-4 border-white shadow-lg"
+              width={180}
+              height={180}
+              className="w-44 h-44 rounded-full object-cover mx-auto border-4 border-white/10 shadow-lg"
               defaultSrc={DEFAULT_PROFILE_IMAGE}
             />
           </div>
@@ -185,7 +185,7 @@ export default async function TrainerProfilePage({
             {name}
           </h1>
           {profile.certifications && (
-            <p className="text-lg sm:text-xl text-gray-300 mb-6 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-200 mb-6 max-w-2xl mx-auto">
               {profile.certifications}
             </p>
           )}
@@ -208,211 +208,217 @@ export default async function TrainerProfilePage({
         </div>
       </section>
 
-      {/* About, Philosophy, Methodology Section */}
-      {(profile.aboutMe || profile.philosophy || profile.methodology) && (
-        <section
-          id="about-section"
-          className="py-16 md:py-24 bg-white dark:bg-gray-900 dark:text-gray-200"
-        >
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose lg:prose-xl dark:prose-invert">
-            {profile.aboutMe && (
-              <>
-                <h2 className="text-3xl font-semibold mt-8 mb-3">About Me</h2>
-                {renderHTML(profile.aboutMe)}
-              </>
+      <div className="bg-neutral-50 dark:bg-black">
+        {/* Main Content Grid */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Left Column (Main content) */}
+          <div className="lg:col-span-2 space-y-12">
+            {/* About, Philosophy, Methodology Section */}
+            {(profile.aboutMe || profile.philosophy || profile.methodology) && (
+              <section
+                id="about-section"
+                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
+              >
+                <div className="prose lg:prose-xl dark:prose-invert max-w-none">
+                  {profile.aboutMe && (
+                    <>
+                      <h2 className="text-3xl font-semibold mt-8 mb-3">
+                        About Me
+                      </h2>
+                      {renderHTML(profile.aboutMe)}
+                    </>
+                  )}
+                  {profile.philosophy && (
+                    <>
+                      <h2 className="text-3xl font-semibold mt-8 mb-3">
+                        My Philosophy
+                      </h2>
+                      <div className="prose lg:prose-xl dark:prose-invert">
+                        {renderHTML(profile.philosophy)}
+                      </div>
+                    </>
+                  )}
+                  {profile.methodology && (
+                    <>
+                      <h2 className="text-3xl font-semibold mt-8 mb-3">
+                        My Methodology
+                      </h2>
+                      <div className="prose lg:prose-xl dark:prose-invert">
+                        {renderHTML(profile.methodology)}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </section>
             )}
-            {profile.philosophy && (
-              <>
-                <h2 className="text-3xl font-semibold mt-8 mb-3">
-                  My Philosophy
+
+            {/* Benefits Section */}
+            {profile.benefits && profile.benefits.length > 0 && (
+              <section
+                id="benefits-section"
+                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
+              >
+                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
+                  Why Train With Me?
                 </h2>
-                <div className="prose lg:prose-xl dark:prose-invert">
-                  {renderHTML(profile.philosophy)}
-                </div>
-              </>
-            )}
-            {profile.methodology && (
-              <>
-                <h2 className="text-3xl font-semibold mt-8 mb-3">
-                  My Methodology
-                </h2>
-                <div className="prose lg:prose-xl dark:prose-invert">
-                  {renderHTML(profile.methodology)}
-                </div>
-              </>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* Benefits Section */}
-      {profile.benefits && profile.benefits.length > 0 && (
-        <section
-          id="benefits-section"
-          className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800"
-        >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-              Why Train With Me?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {profile.benefits.map((benefit: Benefit) => (
-                <div
-                  key={benefit.id}
-                  className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md text-center"
-                >
-                  {/* Add icon rendering here if you have an icon component */}
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    {benefit.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Services Section */}
-      {profile.services && profile.services.length > 0 && (
-        <section
-          id="services-section"
-          className="py-16 md:py-24 bg-white dark:bg-gray-900"
-        >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-              Services Offered
-            </h2>
-            <div className="space-y-8">
-              {profile.services.map((service: Service) => (
-                <div
-                  key={service.id}
-                  className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow"
-                >
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
-                    {service.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Transformation Photos Section */}
-      {profile.transformationPhotos &&
-        profile.transformationPhotos.length > 0 && (
-          <section
-            id="transformations-section"
-            className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800"
-          >
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-                Client Transformations
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {profile.transformationPhotos.map(
-                  (photo: TransformationPhoto) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {profile.benefits.map((benefit: Benefit) => (
                     <div
-                      key={photo.id}
-                      className="rounded-lg overflow-hidden shadow-lg"
+                      key={benefit.id}
+                      className="bg-neutral-100 dark:bg-neutral-800/50 p-6 rounded-lg text-center"
                     >
-                      {photo.imagePath && ( //
-                        <TransformationImage
-                          src={photo.imagePath}
-                          alt={photo.caption || "Transformation photo"}
-                          width={400}
-                          height={300}
-                          className="w-full h-auto object-cover"
-                        />
-                      )}
-
-                      {photo.caption && (
-                        <p className="p-3 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 text-center">
-                          {photo.caption}
-                        </p>
-                      )}
+                      {/* Add icon rendering here if you have an icon component */}
+                      <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        {benefit.description}
+                      </p>
                     </div>
-                  ),
-                )}
-              </div>
-            </div>
-          </section>
-        )}
+                  ))}
+                </div>
+              </section>
+            )}
 
-      {/* Testimonials Section */}
-      {profile.testimonials && profile.testimonials.length > 0 && (
-        <section
-          id="testimonials-section"
-          className="py-16 md:py-24 bg-white dark:bg-gray-900"
-        >
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-              What Clients Say
-            </h2>
-            <div className="space-y-8">
-              {profile.testimonials.map((testimonial: Testimonial) => (
-                <blockquote
-                  key={testimonial.id}
-                  className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow"
+            {/* Services Section */}
+            {profile.services && profile.services.length > 0 && (
+              <section
+                id="services-section"
+                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
+              >
+                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
+                  Services Offered
+                </h2>
+                <div className="space-y-8">
+                  {profile.services.map((service: Service) => (
+                    <div
+                      key={service.id}
+                      className="bg-neutral-100 dark:bg-neutral-800/50 p-6 rounded-lg"
+                    >
+                      <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                        {service.title}
+                      </h3>
+                      <div
+                        className="text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap prose dark:prose-invert max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: service.description || "",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Transformation Photos Section */}
+            {profile.transformationPhotos &&
+              profile.transformationPhotos.length > 0 && (
+                <section
+                  id="transformations-section"
+                  className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
                 >
-                  <p className="text-gray-600 dark:text-gray-200 italic mb-4">
-                    “{testimonial.testimonialText}”
-                  </p>
-                  <footer className="text-right font-semibold text-gray-700 dark:text-gray-100">
-                    - {testimonial.clientName}
-                  </footer>
-                </blockquote>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+                  <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
+                    Client Transformations
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {profile.transformationPhotos.map(
+                      (photo: TransformationPhoto) => (
+                        <div
+                          key={photo.id}
+                          className="group relative rounded-lg overflow-hidden shadow-lg"
+                        >
+                          {photo.imagePath && ( //
+                            <TransformationImage
+                              src={photo.imagePath}
+                              alt={photo.caption || "Transformation photo"}
+                              width={400}
+                              height={300}
+                              className="w-full h-auto object-cover"
+                            />
+                          )}
 
-      {/* External Links Section */}
-      {profile.externalLinks && profile.externalLinks.length > 0 && (
-        <section
-          id="links-section"
-          className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800"
-        >
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">
-              Find Me Online
-            </h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {profile.externalLinks.map((link: ExternalLink) => (
-                <a
-                  key={link.id}
-                  href={link.linkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                          {photo.caption && (
+                            <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/50 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                              {photo.caption}
+                            </div>
+                          )}
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </section>
+              )}
+
+            {/* Testimonials Section */}
+            {profile.testimonials && profile.testimonials.length > 0 && (
+              <section
+                id="testimonials-section"
+                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
+              >
+                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
+                  What Clients Say
+                </h2>
+                <div className="space-y-8">
+                  {profile.testimonials.map((testimonial: Testimonial) => (
+                    <blockquote
+                      key={testimonial.id}
+                      className="p-6 bg-neutral-100 dark:bg-neutral-800/50 rounded-lg"
+                    >
+                      <p className="text-gray-600 dark:text-gray-200 italic mb-4">
+                        “{testimonial.testimonialText}”
+                      </p>
+                      <footer className="text-right font-semibold text-gray-700 dark:text-gray-100">
+                        - {testimonial.clientName}
+                      </footer>
+                    </blockquote>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Right Column (Booking) */}
+          <aside className="lg:col-span-1">
+            <div className="sticky top-24">
+              {/* Booking Calendar Section */}
+              <section
+                id="contact-section"
+                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
+              >
+                <PublicCalendar
+                  trainerId={userWithProfile.id}
+                  initialSchedule={schedule}
+                />
+              </section>
+
+              {/* External Links Section */}
+              {profile.externalLinks && profile.externalLinks.length > 0 && (
+                <section
+                  id="links-section"
+                  className="mt-8 p-6 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
                 >
-                  {link.label}
-                </a>
-              ))}
+                  <h3 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">
+                    Find Me Online
+                  </h3>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    {profile.externalLinks.map((link: ExternalLink) => (
+                      <a
+                        key={link.id}
+                        href={link.linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Booking Calendar Section */}
-      <section
-        id="contact-section"
-        className="py-16 md:py-24 bg-white dark:bg-gray-900"
-      >
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <PublicCalendar
-            trainerId={userWithProfile.id}
-            initialSchedule={schedule}
-          />
+          </aside>
         </div>
-      </section>
+      </div>
     </PublicLayout>
   );
 }

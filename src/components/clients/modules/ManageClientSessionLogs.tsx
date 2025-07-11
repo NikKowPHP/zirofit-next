@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useFormState } from "react-dom";
-// import { addSessionLog, updateSessionLog, deleteSessionLog, type ClientSessionLog } from "@/app/clients/actions/log-actions";
 import {
   addSessionLog,
   ClientSessionLog,
   deleteSessionLog,
   updateSessionLog,
 } from "@/app/clients/actions";
+import { Button, Input, Textarea } from "@/components/ui";
 
 interface ManageClientSessionLogsProps {
   clientId: string;
@@ -42,19 +42,10 @@ export default function ManageClientSessionLogs({
   ): Promise<ActionState> => {
     const result = await addSessionLog(state, formData);
     if (result?.success && result.sessionLog) {
-      setSessionLogs((prevLogs) => [...prevLogs, result.sessionLog!]);
-      return {
-        ...state,
-        success: true,
-        sessionLog: result.sessionLog,
-        message: "",
-      };
+      setSessionLogs((prevLogs) => [...prevLogs, result.sessionLog!].sort((a,b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime()));
+      return { ...result, message: "" };
     } else {
-      return {
-        ...state,
-        errors: result?.errors,
-        message: result?.message || "Failed to add session log",
-      };
+      return { ...result };
     }
   };
 
@@ -69,18 +60,9 @@ export default function ManageClientSessionLogs({
           log.id === result.sessionLog!.id ? result.sessionLog! : log,
         ),
       );
-      return {
-        ...state,
-        success: true,
-        sessionLog: result.sessionLog,
-        message: "",
-      };
+      return { ...result };
     } else {
-      return {
-        ...state,
-        errors: result?.errors,
-        message: result?.message || "Failed to update session log",
-      };
+      return { ...result };
     }
   };
 
@@ -106,30 +88,21 @@ export default function ManageClientSessionLogs({
     ActionState,
     FormData
   >(addSessionLogActionWrapper, initialActionState);
-  const [updateSessionLogState, updateSessionLogAction] = useFormState<
-    ActionState,
-    FormData
-  >(updateSessionLogActionWrapper, initialActionState);
+  
   const [, deleteSessionLogAction] = useFormState<
     ActionState,
     string
   >(deleteSessionLogActionWrapper, initialActionState);
 
-  const handleAddSessionLog = async (formData: FormData) => {
-    await addSessionLogAction(formData);
-  };
-
-  const handleUpdateSessionLog = async (formData: FormData) => {
-    await updateSessionLogAction(formData);
-  };
-
   const handleDeleteSessionLog = async (sessionLogId: string) => {
-    await deleteSessionLogAction(sessionLogId);
+    if(window.confirm('Are you sure you want to delete this log?')) {
+        await deleteSessionLogAction(sessionLogId);
+    }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 sm:p-6">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
+    <div className="space-y-8">
+      <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
         Manage Session Logs
       </h2>
 
@@ -138,62 +111,18 @@ export default function ManageClientSessionLogs({
         <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
           Add New Session Log
         </h3>
-        <form action={handleAddSessionLog} className="space-y-4">
+        <form action={addSessionLogAction} className="space-y-4">
           <input type="hidden" name="clientId" value={clientId} />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                Session Date
-              </label>
-              <input
-                type="date"
-                name="sessionDate"
-                required
-                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                Duration (minutes)
-              </label>
-              <input
-                type="number"
-                name="durationMinutes"
-                required
-                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-              />
-            </div>
+            <Input type="date" name="sessionDate" required />
+            <Input type="number" name="durationMinutes" placeholder="Duration (minutes)" required />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-              Activity Summary
-            </label>
-            <textarea
-              name="activitySummary"
-              required
-              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-            />
-          </div>
+          <Textarea name="activitySummary" placeholder="Activity Summary" required />
+          <Textarea name="notes" placeholder="Private Session Notes" />
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-              Notes
-            </label>
-            <textarea
-              name="notes"
-              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full md:w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-          >
-            Add Session Log
-          </button>
+          <Button type="submit">Add Session Log</Button>
           
           {addSessionLogState.errors?.form && (
             <div className="mt-2 p-2 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-200 dark:text-red-800">
@@ -210,109 +139,35 @@ export default function ManageClientSessionLogs({
         </h3>
         <div className="space-y-4">
           {sessionLogs.map((sessionLog) => (
-            <div
+            <form
               key={sessionLog.id}
-              className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm"
+              action={updateSessionLogActionWrapper}
+              className="bg-neutral-100 dark:bg-neutral-800/50 rounded-lg p-4 space-y-4"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
+              <input type="hidden" name="sessionLogId" value={sessionLog.id} />
+              <input type="hidden" name="clientId" value={clientId} />
+              
+              <div className="flex justify-between items-start">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 pt-2">
                     {sessionLog.sessionDate.toLocaleDateString()}
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Duration: {sessionLog.durationMinutes ?? "N/A"} minutes
-                  </p>
-                  {sessionLog.activitySummary && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {sessionLog.activitySummary}
-                    </p>
-                  )}
-                </div>
-                <div className="flex space-x-2">
-                  <form action={() => handleDeleteSessionLog(sessionLog.id)}>
-                    <button
-                      type="submit"
-                      className="px-3 py-1 text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                    >
+                  <Button type="button" variant="danger" size="sm" onClick={() => handleDeleteSessionLog(sessionLog.id)}>
                       Delete
-                    </button>
-                  </form>
-                </div>
+                  </Button>
               </div>
 
-              <form action={handleUpdateSessionLog} className="space-y-4">
-                <input type="hidden" name="sessionLogId" value={sessionLog.id} />
-                <input type="hidden" name="clientId" value={clientId} />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Session Date
-                    </label>
-                    <input
-                      type="date"
-                      name="sessionDate"
-                      defaultValue={
-                        sessionLog.sessionDate.toISOString().split("T")[0]
-                      }
-                      required
-                      className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Duration (minutes)
-                    </label>
-                    <input
-                      type="number"
-                      name="durationMinutes"
-                      defaultValue={sessionLog.durationMinutes ?? ""}
-                      required
-                      className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                    />
-                  </div>
-                </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input type="date" name="sessionDate" defaultValue={sessionLog.sessionDate.toISOString().split("T")[0]} required />
+                  <Input type="number" name="durationMinutes" defaultValue={sessionLog.durationMinutes ?? ""} required placeholder="Duration (minutes)"/>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Activity Summary
-                  </label>
-                  <textarea
-                    name="activitySummary"
-                    defaultValue={sessionLog.activitySummary ?? ""}
-                    required
-                    className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                  />
-                </div>
+              <Textarea name="activitySummary" defaultValue={sessionLog.activitySummary ?? ""} required placeholder="Activity Summary" />
+              <Textarea name="notes" defaultValue={sessionLog.sessionNotes ?? ""} placeholder="Private Session Notes" />
 
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Notes
-                  </label>
-                  <textarea
-                    name="notes"
-                    defaultValue={sessionLog.sessionNotes ?? ""}
-                    className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-                  />
-                </div>
-
-                <div className="flex justify-end space-x-2">
-                  <button
-                    type="submit"
-                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                  >
-                    Update
-                  </button>
-                </div>
-                
-                {updateSessionLogState.errors?.form && (
-                  <div className="mt-2 p-2 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-200 dark:text-red-800">
-                    {updateSessionLogState.errors.form}
-                  </div>
-                )}
-              </form>
-            </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="submit" size="sm">Update</Button>
+              </div>
+            </form>
           ))}
         </div>
       </div>

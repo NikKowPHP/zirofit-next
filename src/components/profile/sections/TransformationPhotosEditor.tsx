@@ -118,9 +118,9 @@ export default function TransformationPhotosEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           Manage Transformation Photos
         </h3>
         {state.success && state.message && (
@@ -136,7 +136,7 @@ export default function TransformationPhotosEditor({
         <form
           action={formAction}
           ref={formRef}
-          className="space-y-4 border-b pb-6 mb-6"
+          className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
           encType="multipart/form-data"
         >
           <div>
@@ -221,7 +221,7 @@ export default function TransformationPhotosEditor({
                     size="sm"
                     onClick={() => handleDeletePhoto(photo.id)}
                     disabled={deletingId === photo.id}
-                    title="Delete photo"
+                    aria-label={`Delete photo: ${photo.caption || 'Transformation photo'}`}
                   >
                     {deletingId === photo.id ? (
                       <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>

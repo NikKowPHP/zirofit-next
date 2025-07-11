@@ -135,9 +135,9 @@ export default function ExternalLinksEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           {isEditing
             ? `Edit Link: ${currentEditingLink?.label}`
             : "Add New External Link"}
@@ -258,7 +258,7 @@ export default function ExternalLinksEditor({
             {links.map((link) => (
               <div
                 key={link.id}
-                className="p-3 border dark:border-gray-700 rounded-md flex justify-between items-center"
+                className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-center"
               >
                 <div>
                   <span className="font-medium text-gray-700 dark:text-gray-200">

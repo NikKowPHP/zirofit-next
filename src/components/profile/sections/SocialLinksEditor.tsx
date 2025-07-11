@@ -136,9 +136,9 @@ export default function SocialLinksEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           {isEditing
             ? `Edit Social Link: ${currentEditingLink?.platform}`
             : "Add New Social Link"}
@@ -172,7 +172,7 @@ export default function SocialLinksEditor({
           action={isEditing ? updateFormAction : addFormAction}
           key={editingLinkId || "add-link"}
           ref={formRef}
-          className="space-y-4 border-b pb-6 mb-6"
+          className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
             <input type="hidden" name="linkId" value={editingLinkId} />
@@ -273,7 +273,7 @@ export default function SocialLinksEditor({
             {links.map((link) => (
               <div
                 key={link.id}
-                className="p-3 border rounded-md flex justify-between items-center"
+                className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-center"
               >
                 <div>
                   <span className="font-medium text-gray-700">

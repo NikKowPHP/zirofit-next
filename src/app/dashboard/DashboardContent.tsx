@@ -30,10 +30,12 @@ export default function DashboardContent() {
     return (
       // Added !data check for extra safety
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <SkeletonAtAGlanceStats data-testid="skeleton-at-a-glance" />
-        <SkeletonProfileChecklist data-testid="skeleton-profile-checklist" />
-        <SkeletonQuickActions data-testid="skeleton-quick-actions" />
-        <SkeletonActivityFeed data-testid="skeleton-activity-feed" />
+        <SkeletonAtAGlanceStats />
+        <SkeletonProfileChecklist />
+        <SkeletonQuickActions />
+        <div className="lg:col-span-3">
+          <SkeletonActivityFeed />
+        </div>
       </div>
     );
 
@@ -42,7 +44,6 @@ export default function DashboardContent() {
     sessionsThisMonth,
     pendingClients,
     profile,
-    // FIX: Provide a default empty array for activityFeed to prevent runtime errors.
     activityFeed = [],
     clientProgressData = [],
     monthlyActivityData = [],
@@ -50,28 +51,33 @@ export default function DashboardContent() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <AtAGlanceStats
-        activeClients={activeClients}
-        sessionsThisMonth={sessionsThisMonth}
-        pendingClients={pendingClients}
-      />
-      {profile ? (
-        <ProfileChecklist profile={profile} />
-      ) : (
-        <SkeletonProfileChecklist />
-      )}
-      <QuickActions />
-      <ActivityFeed activityFeed={activityFeed} />
+      <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <AtAGlanceStats
+          activeClients={activeClients}
+          sessionsThisMonth={sessionsThisMonth}
+          pendingClients={pendingClients}
+        />
+        {profile ? (
+          <ProfileChecklist profile={profile} />
+        ) : (
+          <SkeletonProfileChecklist />
+        )}
+        <QuickActions />
+      </div>
+
+      <div className="lg:col-span-3">
+        <ActivityFeed activityFeed={activityFeed} />
+      </div>
 
       {/* Chart Section */}
-      <div className="lg:col-span-2 space-y-6">
+      <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
         {clientProgressData.length > 0 ? (
           <ClientProgressChart
             data={clientProgressData}
-            title="Client Progress"
+            title="Client Progress (Weight)"
           />
         ) : (
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center text-gray-500">
+          <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 text-center text-gray-500">
             No client progress data to display. Add some measurements to a
             client to see the chart.
           </div>
@@ -82,7 +88,7 @@ export default function DashboardContent() {
             title="Monthly Activity"
           />
         ) : (
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center text-gray-500">
+          <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 text-center text-gray-500">
             No monthly activity data available.
           </div>
         )}

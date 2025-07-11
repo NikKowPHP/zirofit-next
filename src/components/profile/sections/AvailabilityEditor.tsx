@@ -67,8 +67,8 @@ export default function AvailabilityEditor({ initialAvailability }: Availability
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg">
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
         Set Your Weekly Availability
       </h3>
       

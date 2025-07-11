@@ -27,16 +27,6 @@ export default function NotificationIndicator() {
     getUserIdAndInitialNotifications();
   }, [supabase.auth]);
 
-  // WebSocket logic is now disabled to simplify the development environment.
-  // The system will fall back to fetching notifications on-demand.
-  /*
-  useEffect(() => {
-    if (userId) {
-      fetchNotifications()
-    }
-  }, [userId])
-  */
-
   const fetchNotifications = async (isInitialFetch = false) => {
     try {
       const response = await fetch("/api/notifications");
@@ -65,18 +55,21 @@ export default function NotificationIndicator() {
             fetchNotifications();
           }
         }}
-        className="p-2 rounded-full hover:bg-gray-100 relative"
+        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-700/50 relative transition-colors"
+        aria-label={`Toggle notifications. ${unreadCount} unread.`}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
-        <BellIcon className="h-6 w-6 text-gray-600" />
+        <BellIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
         {unreadCount > 0 && (
           <span
             data-testid="notification-count"
             className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center"
+            aria-live="polite"
           >
             {unreadCount}
           </span>
         )}
-        <span className="sr-only">{unreadCount} unread notifications</span>
       </button>
 
       {isOpen && (

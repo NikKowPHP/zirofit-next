@@ -26,18 +26,18 @@ export default function Home() {
         </div>
       </div>
         
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      <section className="py-24 bg-white dark:bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">For Trainers</h2>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">For Trainers</h2>
+          <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Attract more clients, showcase your results, and grow your fitness business with our all-in-one toolkit.
           </p>
-          <div className="mt-8">
+          <div className="mt-10">
             <a
               href="/auth/register"
-              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-8 rounded-lg text-lg font-semibold transition-colors shadow-md"
+              className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-8 rounded-md text-base font-semibold transition-colors shadow-lg"
             >
-              Create Your Profile
+              Create Your Free Profile
             </a>
           </div>
         </div>

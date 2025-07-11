@@ -1,6 +1,7 @@
 import { getClientById } from "../actions";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export default async function ClientDetailLayout({
   children,
@@ -23,20 +24,18 @@ export default async function ClientDetailLayout({
             href="/clients"
             className="text-sm text-indigo-600 hover:underline mb-2 block"
           >
-            &larr; Back to Client List
+            ← Back to Client List
           </Link>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-            Client Details: {client.name}
+            {client.name}
           </h1>
         </div>
-       
+        <Button asChild variant="secondary">
+          <Link href={`/clients/${client.id}/edit`}>
+            Edit Client Info
+          </Link>
+        </Button>
       </div>
-       <Link
-          href={`/clients/${client.id}/edit`}
-          className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50"
-        >
-          Edit Client Info
-        </Link>
       {children}
     </div>
   );

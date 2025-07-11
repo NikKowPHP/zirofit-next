@@ -11,6 +11,7 @@ import { revalidateProfilePath } from "@/app/profile/revalidate";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 
 interface Testimonial {
   id: string;
@@ -148,12 +149,15 @@ export default function TestimonialsEditor({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
       <form
         ref={formRef}
         action={isEditing ? updateFormAction : addFormAction}
         className="space-y-4"
       >
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          {isEditing ? "Edit Testimonial" : "Add Testimonial"}
+        </h3>
         <div className="grid gap-4">
           <Input
             name="clientName"
@@ -176,8 +180,8 @@ export default function TestimonialsEditor({
             name="testimonialText"
             initialValue={
               isEditing
-                ? (testimonials.find((t) => t.id === editingTestimonialId)
-                    ?.testimonialText ?? "")
+                ? testimonials.find((t) => t.id === editingTestimonialId)
+                    ?.testimonialText ?? ""
                 : ""
             }
             className={
@@ -210,22 +214,30 @@ export default function TestimonialsEditor({
 
       <div className="space-y-2">
         {testimonials.map((testimonial) => (
-          <div key={testimonial.id} className="p-4 border rounded-lg">
+          <div
+            key={testimonial.id}
+            className="p-4 bg-neutral-100 dark:bg-neutral-800/50 rounded-md"
+          >
             <div className="flex justify-between items-start">
               <div>
-                <h4 className="font-medium">{testimonial.clientName}</h4>
-                <p className="text-sm text-gray-600">
-                  {testimonial.testimonialText}
-                </p>
+                <h4 className="font-medium text-gray-800 dark:text-gray-200">
+                  {testimonial.clientName}
+                </h4>
+                <div
+                  className="text-sm text-gray-600 dark:text-gray-300 prose dark:prose-invert"
+                  dangerouslySetInnerHTML={{
+                    __html: testimonial.testimonialText,
+                  }}
+                />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0">
                 <Button
                   type="button"
                   variant="secondary"
                   size="sm"
                   onClick={() => handleStartEdit(testimonial)}
                 >
-                  Edit
+                  <PencilIcon className="h-4 w-4" />
                 </Button>
                 <Button
                   type="button"
@@ -234,7 +246,7 @@ export default function TestimonialsEditor({
                   onClick={() => handleDeleteTestimonial(testimonial.id)}
                   disabled={deletingId === testimonial.id}
                 >
-                  {deletingId === testimonial.id ? "Deleting..." : "Delete"}
+                  {deletingId === testimonial.id ? "..." : <TrashIcon className="h-4 w-4" />}
                 </Button>
               </div>
             </div>

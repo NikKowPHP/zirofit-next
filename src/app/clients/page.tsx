@@ -16,9 +16,9 @@ export default async function ClientListPage() {
   const clients = await getTrainerClients();
 
   return (
-    <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm rounded-lg p-6">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
           Client Management
         </h2>
         <Link href="/clients/create">
@@ -29,38 +29,13 @@ export default async function ClientListPage() {
         </Link>
       </div>
 
-      {/* Bulk Actions Toolbar */}
-      <div
-        className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-sm hidden"
-        id="bulkActionsToolbar"
-      >
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600  bg-gray-50 dark:bg-gray-800 dark:text-gray-200">
-            <span id="selectedCount">0</span> clients selected
-          </div>
-          <div className="space-x-2">
-            <button
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed"
-              id="bulkDeleteButton"
-              disabled
-            >
-              Delete Selected
-            </button>
-            <button
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed"
-              id="bulkExportButton"
-              disabled
-            >
-              Export Selected
-            </button>
-          </div>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {clients.length > 0 ? (
           clients.map((client: Client) => (
-            <div key={client.id} className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600">
+            <div
+              key={client.id}
+              className="bg-neutral-100 dark:bg-neutral-800/50 p-4 rounded-lg border border-neutral-200 dark:border-neutral-700"
+            >
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
                   {client.name}
@@ -77,7 +52,7 @@ export default async function ClientListPage() {
                   {client.status}
                 </span>
               </div>
-              
+
               <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 {client.email && (
                   <div className="flex items-center">
@@ -93,18 +68,18 @@ export default async function ClientListPage() {
                 )}
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-600 flex justify-end space-x-2">
+              <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end space-x-2">
                 <Link
                   href={`/clients/${client.id}`}
-                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  className="px-3 py-1.5 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-md"
                 >
                   Manage
                 </Link>
                 <Link
                   href={`/clients/${client.id}/edit`}
-                  className="px-3 py-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
+                  className="px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-md"
                 >
-                  Edit Info
+                  Edit
                 </Link>
                 <DeleteClientButton clientId={client.id} />
               </div>

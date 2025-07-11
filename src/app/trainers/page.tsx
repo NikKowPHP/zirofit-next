@@ -54,8 +54,8 @@ export default async function TrainersPage({
 
   return (
     <PublicLayout>
-      <div className="py-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-12 bg-neutral-50 dark:bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
             Meet Our Trainers
           </h1>
@@ -69,19 +69,19 @@ export default async function TrainersPage({
                   ))}
                 </div>
                 <div className="lg:col-span-1">
-                  <div className="sticky top-24 h-96 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <p>Map View Placeholder</p>
+                  <div className="sticky top-24 h-96 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
+                    <p className="text-neutral-500">Map View Coming Soon</p>
                   </div>
                 </div>
               </div>
-              
+
               {/* Basic Pagination (Example) */}
               {totalPages > 1 && (
                 <div className="mt-12 flex justify-center space-x-2">
                   {currentPage > 1 && (
                     <Link
-                      href={`/trainers?page=${currentPage - 1}`} //
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      href={`/trainers?page=${currentPage - 1}`}
+                      className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
                     >
                       Previous
                     </Link>
@@ -92,9 +92,9 @@ export default async function TrainersPage({
                         key={page}
                         href={`/trainers?page=${page}`}
                         className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                          page === currentPage //
-                            ? "bg-indigo-600 text-white border-indigo-600"
-                            : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                          page === currentPage
+                            ? "bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black border-neutral-800 dark:border-neutral-200"
+                            : "bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
                         }`}
                       >
                         {page}
@@ -104,7 +104,7 @@ export default async function TrainersPage({
                   {currentPage < totalPages && (
                     <Link
                       href={`/trainers?page=${currentPage + 1}`}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
                     >
                       Next
                     </Link>

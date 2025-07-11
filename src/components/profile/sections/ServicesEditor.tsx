@@ -94,6 +94,7 @@ export default function ServicesEditor({
     addState.success,
     updateState.success,
     editingServiceId,
+    services,
   ]);
 
   const handleEditClick = (service: Service) => {
@@ -130,9 +131,9 @@ export default function ServicesEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg space-y-6">
+    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           {isEditing ? `Edit Service` : "Add New Service"}
         </h3>
         {currentFormState.success && currentFormState.message && (
@@ -233,37 +234,36 @@ export default function ServicesEditor({
             {services.map((service) => (
               <div
                 key={service.id}
-                className="p-4 border dark:border-gray-700 rounded-md flex justify-between items-start"
+                className="p-4 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-start"
               >
                 <div>
                   <h5 className="font-semibold text-gray-800 dark:text-gray-100">
                     {service.title}
                   </h5>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 whitespace-pre-wrap">
-                    {service.description}
-                  </p>
-                  <div className="flex space-x-2 justify-end flex-shrink-0 mt-10">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleEditClick(service)}
-                      disabled={
-                        deletingId === service.id ||
-                        (isEditing && editingServiceId === service.id)
-                      }
-                    >
-                      <PencilIcon className="h-4 w-4 mr-1.5" /> Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteService(service.id)}
-                      disabled={deletingId === service.id}
-                    >
-                      <TrashIcon className="h-4 w-4 mr-1.5" />{" "}
-                      {deletingId === service.id ? "Deleting..." : "Delete"}
-                    </Button>
-                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mt-1 prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: service.description }} />
+                </div>
+                <div className="flex space-x-2 flex-shrink-0">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleEditClick(service)}
+                    aria-label={`Edit ${service.title}`}
+                    disabled={
+                      deletingId === service.id ||
+                      (isEditing && editingServiceId === service.id)
+                    }
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDeleteService(service.id)}
+                    aria-label={`Delete ${service.title}`}
+                    disabled={deletingId === service.id}
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             ))}

@@ -18,6 +18,7 @@ import {
   getWeightProgress,
   getBodyFatProgress,
 } from "@/lib/services/ClientStatisticsService";
+import { useTheme } from "@/context/ThemeContext";
 
 ChartJS.register(
   CategoryScale,
@@ -37,35 +38,78 @@ interface ClientStatisticsProps {
 export default function ClientStatistics({
   measurements,
 }: ClientStatisticsProps) {
+  const { theme } = useTheme();
+
+  const textColor =
+    theme === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.8)";
+  const gridColor =
+    theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)";
+
+  const chartOptions = (yAxisLabel: string) => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: { color: textColor },
+      },
+      title: { display: false },
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        title: { display: true, text: yAxisLabel, color: textColor },
+        ticks: { color: textColor },
+        grid: { color: gridColor },
+      },
+      x: {
+        type: "time" as const,
+        time: { unit: "day" as const },
+        ticks: { color: textColor },
+        grid: { color: gridColor },
+      },
+    },
+  });
+
   const weightData = {
-    labels: measurements.map((m) => m.measurementDate ? m.measurementDate.toLocaleDateString() : ''), // Corrected property name from sessionDate to measurementDate
     datasets: [
       {
         label: "Weight (kg)",
         data: getWeightProgress(measurements),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(239, 68, 68)",
+        backgroundColor: "rgba(239, 68, 68, 0.5)",
       },
     ],
   };
 
   const bodyFatData = {
-    labels: measurements.map((m) => m.measurementDate ? m.measurementDate.toLocaleDateString() : ''), // Corrected property name
     datasets: [
       {
         label: "Body Fat (%)",
         data: getBodyFatProgress(measurements),
-        borderColor: "rgb(54, 162, 235)",
-        backgroundColor: "rgba(54, 162, 235, 0.5)",
+        borderColor: "rgb(59, 130, 246)",
+        backgroundColor: "rgba(59, 130, 246, 0.5)",
       },
     ],
   };
 
   return (
-    <div>
-      <h2>Client Statistics</h2>
-      <Line data={weightData} />
-      <Line data={bodyFatData} />
+    <div className="space-y-8">
+      <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+        Client Statistics
+      </h2>
+      <div className="h-80">
+        <h3 className="font-semibold mb-2 dark:text-gray-200">
+          Weight Progress
+        </h3>
+        <Line options={chartOptions("Weight (kg)")} data={weightData} />
+      </div>
+      <div className="h-80">
+        <h3 className="font-semibold mb-2 dark:text-gray-200">
+          Body Fat Progress
+        </h3>
+        <Line options={chartOptions("Body Fat %")} data={bodyFatData} />
+      </div>
     </div>
   );
 }
