@@ -144,9 +144,7 @@ export default async function TrainerProfilePage({
     notFound(); // Or return a custom "Profile not found" component
   }
 
-  const { profile, name, email: trainerActualEmail } = userWithProfile;
-  const trainerName = name || ""; // Ensure name is a string
-  const trainerEmail = trainerActualEmail || ""; // Ensure email is a string
+  const { profile, name } = userWithProfile;
 
   // Helper to render HTML content safely
   const renderHTML = (htmlString: string | null | undefined) => {
@@ -361,7 +359,7 @@ export default async function TrainerProfilePage({
                   className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow"
                 >
                   <p className="text-gray-600 dark:text-gray-200 italic mb-4">
-                    &ldquo;{testimonial.testimonialText}&rdquo;
+                    “{testimonial.testimonialText}”
                   </p>
                   <footer className="text-right font-semibold text-gray-700 dark:text-gray-100">
                     - {testimonial.clientName}

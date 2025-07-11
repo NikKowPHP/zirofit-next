@@ -7,7 +7,7 @@ import { Button, Input, Textarea } from "@/components/ui";
 
 export default function PublicCalendar({ trainerId }: { trainerId: string }) {
   const [schedule, setSchedule] = useState<{
-    availability: Record<string, boolean>;
+    availability: Record<string, string[]>;
     bookings: Array<{ startTime: Date; endTime: Date }>
   }>({ availability: {}, bookings: [] });
   const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);

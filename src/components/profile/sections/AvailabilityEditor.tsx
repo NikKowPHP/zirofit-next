@@ -6,7 +6,7 @@ import { updateAvailability } from "@/app/profile/actions";
 import { Button } from "@/components/ui/Button";
 
 interface AvailabilityEditorProps {
-  initialAvailability: any; // Stored as JSON
+  initialAvailability: Record<string, string[]>; // Stored as JSON
 }
 
 const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];

@@ -5,9 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import  { Prisma } from "@prisma/client";
 import { transformImagePath } from "@/lib/utils";
-import type { AuthUser } from "@supabase/supabase-js";
 
 // Export types for client components to consume, avoiding direct imports that can fail in some build contexts.
 export type User = Prisma.UserGetPayload<{}>;
@@ -173,9 +172,13 @@ export async function updateCoreInfo(
 ): Promise<CoreInfoFormState> {
   const { user } = await getUserAndProfile();
 
-  const validatedFields = CoreInfoSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validatedFields = CoreInfoSchema.safeParse({
+    name: formData.get("name"),
+    username: formData.get("username"),
+    certifications: formData.get("certifications"),
+    location: formData.get("location"),
+    phone: formData.get("phone"),
+  });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.issues,
@@ -219,8 +222,12 @@ export async function updateCoreInfo(
         ...updatedProfile,
       },
     };
-  } catch (e: any) {
-    if (e.code === "P2002" && e.meta?.target.includes("username")) {
+  } catch (e: unknown) {
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === "P2002" &&
+      (e.meta?.target as string[])?.includes("username")
+    ) {
       return {
         error: "Username is already taken.",
         errors: [
@@ -232,7 +239,7 @@ export async function updateCoreInfo(
         ],
       };
     }
-    return { error: "Failed to update core info: " + e.message };
+    return { error: `Failed to update core info: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
@@ -263,8 +270,8 @@ async function updateProfileTextField(
       message: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} updated successfully!`,
       updatedContent: content,
     };
-  } catch (e: any) {
-    return { error: `Failed to update ${fieldName}: ` + e.message };
+  } catch (e: unknown) {
+    return { error: `Failed to update ${fieldName}: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 export async function updateAboutMe(
@@ -296,7 +303,7 @@ export async function updateBrandingImages(
   prevState: BrandingFormState | undefined,
   formData: FormData,
 ): Promise<BrandingFormState> {
-  const { user, profile, authUser } = await getUserAndProfile(); // authUser is the Supabase authenticated user
+  const { profile, authUser } = await getUserAndProfile(); // authUser is the Supabase authenticated user
   const bannerImage = formData.get("bannerImage") as File;
   const profilePhoto = formData.get("profilePhoto") as File;
 
@@ -334,8 +341,8 @@ export async function updateBrandingImages(
 
     revalidatePath("/profile/edit");
     return { success: true, message: "Branding updated successfully!" };
-  } catch (e: any) {
-    return { error: "Failed to update branding: " + e.message };
+  } catch (e: unknown) {
+    return { error: `Failed to update branding: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
@@ -356,9 +363,12 @@ export async function addBenefit(
   formData: FormData,
 ): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = BenefitSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = BenefitSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    iconName: formData.get("iconName"),
+    iconStyle: formData.get("iconStyle"),
+  });
   if (!validated.success) return { error: "Validation failed." };
   try {
     const maxOrder = await prisma.benefit.aggregate({
@@ -374,7 +384,7 @@ export async function addBenefit(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Benefit added." };
-  } catch (e: any) {
+  } catch (e: unknown) {
     return { error: "Failed to add benefit." };
   }
 }
@@ -384,9 +394,12 @@ export async function updateBenefit(
   formData: FormData,
 ): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = BenefitSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = BenefitSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    iconName: formData.get("iconName"),
+    iconStyle: formData.get("iconStyle"),
+  });
   if (!validated.success) return { error: "Validation failed." };
   try {
     await prisma.benefit.update({
@@ -395,7 +408,7 @@ export async function updateBenefit(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Benefit updated." };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to update benefit." };
   }
 }
@@ -405,7 +418,7 @@ export async function deleteBenefit(id: string): Promise<BenefitFormState> {
     await prisma.benefit.delete({ where: { id, profileId: profile.id } });
     revalidatePath("/profile/edit");
     return { success: true, message: "Benefit deleted." };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to delete benefit." };
   }
 }
@@ -423,7 +436,7 @@ export async function updateBenefitOrder(
     await prisma.$transaction(updates);
     revalidatePath("/profile/edit");
     return { success: true, message: "Order updated." };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to update order." };
   }
 }
@@ -447,9 +460,10 @@ export async function addService(
   formData: FormData,
 ): Promise<ServiceFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = ServiceSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = ServiceSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
@@ -458,7 +472,7 @@ export async function addService(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Service added.", newService };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to add service." };
   }
 }
@@ -468,9 +482,10 @@ export async function updateService(
 ): Promise<ServiceFormState> {
   const { profile } = await getUserAndProfile();
   const serviceId = formData.get("serviceId") as string;
-  const validated = ServiceSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = ServiceSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
@@ -480,7 +495,7 @@ export async function updateService(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Service updated.", updatedService };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to update service." };
   }
 }
@@ -494,7 +509,7 @@ export async function deleteService(
     });
     revalidatePath("/profile/edit");
     return { success: true, deletedId: serviceId };
-  } catch (e) {
+  } catch (e: unknown) {
     return { success: false, error: "Failed to delete service." };
   }
 }
@@ -521,9 +536,11 @@ export async function addSocialLink(
   formData: FormData,
 ): Promise<SocialLinkFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = SocialLinkSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = SocialLinkSchema.safeParse({
+    platform: formData.get("platform"),
+    username: formData.get("username"),
+    profileUrl: formData.get("profileUrl"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
@@ -532,7 +549,7 @@ export async function addSocialLink(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Social link added.", newLink };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to add social link." };
   }
 }
@@ -543,9 +560,11 @@ export async function updateSocialLink(
 ): Promise<SocialLinkFormState> {
   const { profile } = await getUserAndProfile();
   const linkId = formData.get("linkId") as string;
-  const validated = SocialLinkSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = SocialLinkSchema.safeParse({
+    platform: formData.get("platform"),
+    username: formData.get("username"),
+    profileUrl: formData.get("profileUrl"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
@@ -555,7 +574,7 @@ export async function updateSocialLink(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Social link updated.", updatedLink };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to update social link." };
   }
 }
@@ -570,7 +589,7 @@ export async function deleteSocialLink(
     });
     revalidatePath("/profile/edit");
     return { success: true, deletedId: linkId };
-  } catch (e) {
+  } catch (e: unknown) {
     return { success: false, error: "Failed to delete social link." };
   }
 }
@@ -594,9 +613,10 @@ export async function addExternalLink(
   formData: FormData,
 ): Promise<ExternalLinkFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = ExternalLinkSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = ExternalLinkSchema.safeParse({
+    label: formData.get("label"),
+    linkUrl: formData.get("linkUrl"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
@@ -605,7 +625,7 @@ export async function addExternalLink(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Link added.", newLink };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to add link." };
   }
 }
@@ -615,9 +635,10 @@ export async function updateExternalLink(
 ): Promise<ExternalLinkFormState> {
   const { profile } = await getUserAndProfile();
   const linkId = formData.get("linkId") as string;
-  const validated = ExternalLinkSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = ExternalLinkSchema.safeParse({
+    label: formData.get("label"),
+    linkUrl: formData.get("linkUrl"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
@@ -627,7 +648,7 @@ export async function updateExternalLink(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Link updated.", updatedLink };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to update link." };
   }
 }
@@ -641,7 +662,7 @@ export async function deleteExternalLink(
     });
     revalidatePath("/profile/edit");
     return { success: true, deletedId: linkId };
-  } catch (e) {
+  } catch (e: unknown) {
     return { success: false, error: "Failed to delete link." };
   }
 }
@@ -666,7 +687,7 @@ export async function addTransformationPhoto(
   prevState: TransformationPhotoFormState | undefined,
   formData: FormData,
 ): Promise<TransformationPhotoFormState> {
-  const { user, profile, authUser } = await getUserAndProfile(); // Use authUser for path consistency if RLS is based on auth.uid()
+  const { profile, authUser } = await getUserAndProfile(); // Use authUser for path consistency if RLS is based on auth.uid()
   const validated = TransformationPhotoSchema.safeParse({
     caption: formData.get("caption"),
     photoFile: formData.get("photoFile"),
@@ -696,9 +717,9 @@ export async function addTransformationPhoto(
       message: "Photo uploaded.",
       newPhoto: { ...newPhoto, publicUrl },
     };
-  } catch (e: any) {
+  } catch (e: unknown) {
     await supabaseStorage.storage.from("zirofit").remove([filePath]);
-    return { error: "Failed to save photo details." };
+    return { error: `Failed to save photo details: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 export async function deleteTransformationPhoto(
@@ -714,8 +735,8 @@ export async function deleteTransformationPhoto(
     await prisma.transformationPhoto.delete({ where: { id: photoId } });
     revalidatePath("/profile/edit");
     return { success: true, deletedId: photoId };
-  } catch (e: any) {
-    return { success: false, error: "Failed to delete photo." };
+  } catch (e: unknown) {
+    return { success: false, error: `Failed to delete photo: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
@@ -738,9 +759,10 @@ export async function addTestimonial(
   formData: FormData,
 ): Promise<TestimonialFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = TestimonialSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = TestimonialSchema.safeParse({
+    clientName: formData.get("clientName"),
+    testimonialText: formData.get("testimonialText"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed" };
   try {
@@ -749,7 +771,7 @@ export async function addTestimonial(
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Testimonial added.", newTestimonial };
-  } catch (e) {
+  } catch (e: unknown) {
     return { error: "Failed to add testimonial." };
   }
 }
@@ -759,9 +781,10 @@ export async function updateTestimonial(
   formData: FormData,
 ): Promise<TestimonialFormState> {
   const { profile } = await getUserAndProfile();
-  const validated = TestimonialSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validated = TestimonialSchema.safeParse({
+    clientName: formData.get("clientName"),
+    testimonialText: formData.get("testimonialText"),
+  });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed" };
   try {
@@ -775,27 +798,27 @@ export async function updateTestimonial(
       message: "Testimonial updated.",
       updatedTestimonial,
     };
-  } catch (e) {
-    return { error: "Failed to update testimonial." };
+  } catch (e: unknown) {
+    return { error: `Failed to update testimonial: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 export async function deleteTestimonial(
   id: string,
-  prevState?: TestimonialFormState | undefined,
+  _prevState?: TestimonialFormState | undefined,
 ): Promise<TestimonialFormState> {
   const { profile } = await getUserAndProfile();
   try {
     await prisma.testimonial.delete({ where: { id, profileId: profile.id } });
     revalidatePath("/profile/edit");
     return { success: true, message: "Testimonial deleted.", deletedId: id };
-  } catch (e) {
-    return { error: "Failed to delete testimonial." };
+  } catch (e: unknown) {
+    return { error: `Failed to delete testimonial: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
 export async function updateAvailability(
   prevState: AvailabilityFormState | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<AvailabilityFormState> {
   const { profile } = await getUserAndProfile();
   
@@ -823,10 +846,10 @@ export async function updateAvailability(
       success: true,
       message: "Your availability has been updated successfully!",
     };
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Failed to update availability:", e);
     return {
-      error: "An unexpected error occurred while saving your availability.",
+      error: `An unexpected error occurred while saving your availability: ${e instanceof Error ? e.message : String(e)}`,
       success: false,
     };
   }
@@ -865,7 +888,7 @@ export async function getTrainerSchedule(trainerId: string) {
     });
   
     return {
-      availability: profile?.availability as any || {},
+      availability: (profile?.availability as Record<string, string[]>) || {},
       bookings,
     };
   } catch (error) {
@@ -878,7 +901,14 @@ export async function createBooking(
   prevState: BookingFormState | undefined,
   formData: FormData,
 ): Promise<BookingFormState> {
-  const validatedFields = BookingSchema.safeParse(Object.fromEntries(formData.entries()));
+  const validatedFields = BookingSchema.safeParse({
+    trainerId: formData.get("trainerId"),
+    startTime: formData.get("startTime"),
+    endTime: formData.get("endTime"),
+    clientName: formData.get("clientName"),
+    clientEmail: formData.get("clientEmail"),
+    clientNotes: formData.get("clientNotes"),
+  });
   
   if (!validatedFields.success) {
     return { error: "Invalid form data.", success: false };
@@ -894,7 +924,7 @@ export async function createBooking(
     
     // 2. Check if requested slot is within available hours
     const dayOfWeek = requestedStart.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase();
-    const availableSlots = availability[dayOfWeek];
+    const availableSlots: string[] | undefined = availability[dayOfWeek];
     
     if (!availableSlots || availableSlots.length === 0) {
       return {
@@ -903,9 +933,10 @@ export async function createBooking(
       };
     }
     
-    const isWithinAvailableHours = availableSlots.some((slot: { day: number; start: string; end: string }) => {
-      const [startHour, startMin] = slot.start.split(':').map(Number);
-      const [endHour, endMin] = slot.end.split(':').map(Number);
+    const isWithinAvailableHours = availableSlots.some((slot: string) => {
+      const [start, end] = slot.split('-');
+      const [startHour, startMin] = start.split(':').map(Number);
+      const [endHour, endMin] = end.split(':').map(Number);
       
       const slotStart = new Date(requestedStart);
       slotStart.setHours(startHour, startMin, 0, 0);
@@ -996,13 +1027,13 @@ export async function createBooking(
           cancellationLink: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel-booking/${booking.id}`
         })
       });
-    } catch (e) {
-      console.error('Failed to send booking notification emails:', e);
+    } catch (e: unknown) {
+      console.error(`Failed to send booking notification emails: ${e instanceof Error ? e.message : String(e)}`);
       // Don't fail the booking if emails fail
     }
 
     return { success: true, message: "Session booked successfully!" };
-  } catch (e: any) {
-    return { error: "Failed to create booking.", success: false };
+  } catch (e: unknown) {
+    return { error: `Failed to create booking: ${e instanceof Error ? e.message : String(e)}`, success: false };
   }
 }

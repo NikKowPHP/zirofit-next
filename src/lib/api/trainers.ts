@@ -25,12 +25,13 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
   }
 
   if (location) {
-    whereClause.profile = {
-      ...(whereClause.profile || {}),
-      isNot: null,
-      location: location ? { contains: location, mode: 'insensitive' } : undefined
-    };
-    whereClause.profile.location = { contains: location, mode: 'insensitive' };
+    whereClause.AND = [
+        {
+            profile: {
+                location: { contains: location, mode: 'insensitive' }
+            }
+        }
+    ]
   }
 
   try {

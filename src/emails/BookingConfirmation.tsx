@@ -37,7 +37,7 @@ export function BookingConfirmation({
         </div>
         
         <p style={{ fontSize: "16px", lineHeight: "1.5" }}>
-          We're looking forward to helping you achieve your fitness goals!
+          We’re looking forward to helping you achieve your fitness goals!
         </p>
         
         <div style={{ margin: "30px 0", textAlign: "center" }}>
