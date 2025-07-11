@@ -1,0 +1,85 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { getUserAndProfile } from "./_utils";
+import type { Testimonial } from "./_utils";
+
+const TestimonialSchema = z.object({
+  clientName: z.string().min(2, "Client Name is required."),
+  testimonialText: z.string().min(10, "Testimonial text is required."),
+});
+
+export interface TestimonialFormState {
+  message?: string | null;
+  error?: string | null;
+  errors?: z.ZodIssue[];
+  success?: boolean;
+  newTestimonial?: Testimonial;
+  updatedTestimonial?: Testimonial;
+  deletedId?: string;
+}
+
+export async function addTestimonial(
+  prevState: TestimonialFormState | undefined,
+  formData: FormData,
+): Promise<TestimonialFormState> {
+  const { profile } = await getUserAndProfile();
+  const validated = TestimonialSchema.safeParse({
+    clientName: formData.get("clientName"),
+    testimonialText: formData.get("testimonialText"),
+  });
+  if (!validated.success)
+    return { errors: validated.error.issues, error: "Validation failed" };
+  try {
+    const newTestimonial = await prisma.testimonial.create({
+      data: { ...validated.data, profileId: profile.id },
+    });
+    revalidatePath("/profile/edit");
+    return { success: true, message: "Testimonial added.", newTestimonial };
+  } catch (e: unknown) {
+    return { error: "Failed to add testimonial." };
+  }
+}
+
+export async function updateTestimonial(
+  id: string,
+  prevState: TestimonialFormState | undefined,
+  formData: FormData,
+): Promise<TestimonialFormState> {
+  const { profile } = await getUserAndProfile();
+  const validated = TestimonialSchema.safeParse({
+    clientName: formData.get("clientName"),
+    testimonialText: formData.get("testimonialText"),
+  });
+  if (!validated.success)
+    return { errors: validated.error.issues, error: "Validation failed" };
+  try {
+    const updatedTestimonial = await prisma.testimonial.update({
+      where: { id, profileId: profile.id },
+      data: validated.data,
+    });
+    revalidatePath("/profile/edit");
+    return {
+      success: true,
+      message: "Testimonial updated.",
+      updatedTestimonial,
+    };
+  } catch (e: unknown) {
+    return { error: `Failed to update testimonial: ${e instanceof Error ? e.message : String(e)}` };
+  }
+}
+
+export async function deleteTestimonial(
+  id: string,
+  _prevState?: TestimonialFormState | undefined,
+): Promise<TestimonialFormState> {
+  const { profile } = await getUserAndProfile();
+  try {
+    await prisma.testimonial.delete({ where: { id, profileId: profile.id } });
+    revalidatePath("/profile/edit");
+    return { success: true, message: "Testimonial deleted.", deletedId: id };
+  } catch (e: unknown) {
+    return { error: `Failed to delete testimonial: ${e instanceof Error ? e.message : String(e)}` };
+  }
+}
