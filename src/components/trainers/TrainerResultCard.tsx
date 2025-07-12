@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Card } from '@/components/ui';
 
 interface TrainerCardProps {
   trainer: {
@@ -18,7 +19,7 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
   if (!trainer.profile) return null;
 
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col md:flex-row items-center gap-6">
+    <Card className="p-6 transition-all duration-200 hover:shadow-2xl hover:-translate-y-1 flex flex-col md:flex-row items-center gap-6">
       <div className="flex-shrink-0">
         <Image
           src={trainer.profile.profilePhotoPath || '/default-profile.jpg'}
@@ -40,6 +41,6 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
             View Profile
          </Link>
       </div>
-    </div>
+    </Card>
   );
 }

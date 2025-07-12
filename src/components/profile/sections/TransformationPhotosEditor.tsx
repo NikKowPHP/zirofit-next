@@ -7,7 +7,7 @@ import {
   addTransformationPhoto,
   deleteTransformationPhoto,
 } from "@/app/profile/actions/photo-actions";
-import { Input, Label, Textarea, Button } from "@/components/ui";
+import { Input, Label, Textarea, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import Image from "next/image";
 import { z } from "zod";
 import { TransformationImage } from "@/components/ui/ImageComponents";
@@ -118,11 +118,11 @@ export default function TransformationPhotosEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
-      <div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Manage Transformation Photos
-        </h3>
+    <Card>
+      <CardHeader>
+        <CardTitle>Manage Transformation Photos</CardTitle>
+      </CardHeader>
+      <CardContent>
         {state.success && state.message && (
           <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
             {state.message}
@@ -182,59 +182,59 @@ export default function TransformationPhotosEditor({
             <SubmitPhotoButton />
           </div>
         </form>
-      </div>
 
-      {deleteError && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
-          {deleteError}
-        </div>
-      )}
-
-      <div>
-        <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
-          Your Uploaded Photos
-        </h4>
-        {photos.length === 0 ? (
-          <p className="text-gray-500">No photos uploaded yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {photos.map((photo) => (
-              <div
-                key={photo.id}
-                className="relative border rounded-lg overflow-hidden shadow group"
-              >
-                <TransformationImage
-                  src={photo.imagePath}
-                  alt={photo.caption || "Transformation photo"}
-                  width={300}
-                  height={200}
-                  className="w-full h-48 object-cover"
-                />
-                {photo.caption && (
-                  <p className="p-3 text-sm text-gray-600 bg-white/80 backdrop-blur-sm absolute bottom-0 left-0 right-0">
-                    {photo.caption}
-                  </p>
-                )}
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDeletePhoto(photo.id)}
-                    disabled={deletingId === photo.id}
-                    aria-label={`Delete photo: ${photo.caption || 'Transformation photo'}`}
-                  >
-                    {deletingId === photo.id ? (
-                      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-                    ) : (
-                      <TrashIcon className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            ))}
+        {deleteError && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+            {deleteError}
           </div>
         )}
-      </div>
-    </div>
+
+        <div>
+          <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
+            Your Uploaded Photos
+          </h4>
+          {photos.length === 0 ? (
+            <p className="text-gray-500">No photos uploaded yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {photos.map((photo) => (
+                <div
+                  key={photo.id}
+                  className="relative border rounded-lg overflow-hidden shadow group transition-all duration-200"
+                >
+                  <TransformationImage
+                    src={photo.imagePath}
+                    alt={photo.caption || "Transformation photo"}
+                    width={300}
+                    height={200}
+                    className="w-full h-48 object-cover"
+                  />
+                  {photo.caption && (
+                    <p className="p-3 text-sm text-gray-600 bg-white/80 backdrop-blur-sm absolute bottom-0 left-0 right-0">
+                      {photo.caption}
+                    </p>
+                  )}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDeletePhoto(photo.id)}
+                      disabled={deletingId === photo.id}
+                      aria-label={`Delete photo: ${photo.caption || 'Transformation photo'}`}
+                    >
+                      {deletingId === photo.id ? (
+                        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                      ) : (
+                        <TrashIcon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

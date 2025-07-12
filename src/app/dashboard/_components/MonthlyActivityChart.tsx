@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 
 ChartJS.register(
   CategoryScale,
@@ -98,15 +99,13 @@ export default function MonthlyActivityChart({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 flex flex-col h-full">
-      {title && (
-        <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-          {title}
-        </h3>
-      )}
-      <div className="relative flex-grow h-64">
+    <Card className="flex flex-col h-full">
+      <CardHeader>
+        {title && <CardTitle>{title}</CardTitle>}
+      </CardHeader>
+      <CardContent className="relative flex-grow h-64">
         <Bar options={chartOptions} data={chartData} />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

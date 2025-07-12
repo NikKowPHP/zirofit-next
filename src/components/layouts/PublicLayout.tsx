@@ -156,12 +156,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         </div>
       )}
 
-      <main className="flex-grow bg-white dark:bg-gray-900">{children}</main>
+      <main className="flex-grow bg-white dark:bg-gray-900 animate-subtle-fade-in-up">{children}</main>
 
       <footer className="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} ZIRO.FIT. All rights reserved.
+            © {new Date().getFullYear()} ZIRO.FIT. All rights reserved.
           </p>
           {/* Add more footer content similar to Laravel welcome page later */}
         </div>

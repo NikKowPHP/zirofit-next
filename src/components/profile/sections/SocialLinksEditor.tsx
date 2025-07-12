@@ -7,7 +7,7 @@ import {
   updateSocialLink,
   deleteSocialLink,
 } from "@/app/profile/actions/social-link-actions";
-import { Input, Label, Button } from "@/components/ui";
+import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { z } from "zod";
 
@@ -136,35 +136,27 @@ export default function SocialLinksEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
-      <div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+    <Card>
+      <CardHeader>
+        <CardTitle>
           {isEditing
             ? `Edit Social Link: ${currentEditingLink?.platform}`
             : "Add New Social Link"}
-        </h3>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         {currentFormState.success && currentFormState.message && (
-          <div className="rounded-md bg-green-50 dark:bg-green-900/50 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">{/* Success icon */}</div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800 dark:text-green-300">
-                  {currentFormState.message}
-                </h3>
-              </div>
-            </div>
+          <div className="rounded-md bg-green-50 dark:bg-green-900/50 p-4 mb-4">
+            <h3 className="text-sm font-medium text-green-800 dark:text-green-300">
+              {currentFormState.message}
+            </h3>
           </div>
         )}
         {currentFormState.error && (
-          <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">{/* Error icon */}</div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
-                  {currentFormState.error}
-                </h3>
-              </div>
-            </div>
+          <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4 mb-4">
+            <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
+              {currentFormState.error}
+            </h3>
           </div>
         )}
 
@@ -247,74 +239,69 @@ export default function SocialLinksEditor({
             </Button>
           </div>
         </form>
-      </div>
 
-      {deleteError && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">{/* Error icon */}</div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                {deleteError}
-              </h3>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div>
-        <h4 className="text-md font-medium text-gray-800 mb-3">
-          Your Social Links
-        </h4>
-        {links.length === 0 ? (
-          <p className="text-gray-500">No social links added yet.</p>
-        ) : (
-          <div className="space-y-3">
-            {links.map((link) => (
-              <div
-                key={link.id}
-                className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-center"
-              >
-                <div>
-                  <span className="font-medium text-gray-700">
-                    {link.platform}
-                  </span>
-                  : <span className="text-gray-600">@{link.username}</span>
-                  <a
-                    href={link.profileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-indigo-600 hover:underline text-sm block truncate"
-                  >
-                    {link.profileUrl}
-                  </a>
-                </div>
-                <div className="flex space-x-2 flex-shrink-0">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleEditClick(link)}
-                    disabled={
-                      deletingId === link.id ||
-                      (isEditing && editingLinkId === link.id)
-                    }
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDeleteLink(link.id)}
-                    disabled={deletingId === link.id}
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+        {deleteError && (
+          <div className="rounded-md bg-red-50 p-4 mb-4">
+            <h3 className="text-sm font-medium text-red-800">
+              {deleteError}
+            </h3>
           </div>
         )}
-      </div>
-    </div>
+
+        <div>
+          <h4 className="text-md font-medium text-gray-800 mb-3">
+            Your Social Links
+          </h4>
+          {links.length === 0 ? (
+            <p className="text-gray-500">No social links added yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {links.map((link) => (
+                <div
+                  key={link.id}
+                  className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-center transition-all duration-200"
+                >
+                  <div>
+                    <span className="font-medium text-gray-700">
+                      {link.platform}
+                    </span>
+                    : <span className="text-gray-600">@{link.username}</span>
+                    <a
+                      href={link.profileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-600 hover:underline text-sm block truncate"
+                    >
+                      {link.profileUrl}
+                    </a>
+                  </div>
+                  <div className="flex space-x-2 flex-shrink-0">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleEditClick(link)}
+                      disabled={
+                        deletingId === link.id ||
+                        (isEditing && editingLinkId === link.id)
+                      }
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDeleteLink(link.id)}
+                      disabled={deletingId === link.id}
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

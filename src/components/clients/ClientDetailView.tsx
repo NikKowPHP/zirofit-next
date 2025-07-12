@@ -64,7 +64,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
       <div className="p-2">
         <nav
-          className="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-1 flex justify-center space-x-1"
+          className="bg-neutral-200 dark:bg-neutral-800 rounded-lg p-1 flex justify-center"
           aria-label="Tabs"
         >
           {tabs.map((tab) => (
@@ -75,7 +75,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
                 tab.id === activeTab
                   ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
                   : "text-neutral-500 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-700/50"
-              } flex-1 whitespace-nowrap py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-100 dark:focus:ring-offset-neutral-800`}
+              } flex-1 whitespace-nowrap py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-200 dark:focus:ring-offset-neutral-800`}
             >
               {tab.name}
             </button>

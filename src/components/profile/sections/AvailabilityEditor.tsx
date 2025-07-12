@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { updateAvailability } from "@/app/profile/actions/availability-actions";
-import { Button } from "@/components/ui/Button";
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 
 interface AvailabilityEditorProps {
   initialAvailability: Record<string, string[]>; // Stored as JSON
@@ -67,65 +67,66 @@ export default function AvailabilityEditor({ initialAvailability }: Availability
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-        Set Your Weekly Availability
-      </h3>
-      
-      {state.success && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-          {state.message}
-        </div>
-      )}
-      {state.error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-          {state.error}
-        </div>
-      )}
+    <Card>
+      <CardHeader>
+        <CardTitle>Set Your Weekly Availability</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {state.success && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
+            {state.message}
+          </div>
+        )}
+        {state.error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
+            {state.error}
+          </div>
+        )}
 
-      <form action={formAction}>
-        <input type="hidden" name="availability" value={JSON.stringify(schedule)} />
+        <form action={formAction}>
+          <input type="hidden" name="availability" value={JSON.stringify(schedule)} />
 
-        <div className="space-y-4">
-          {daysOfWeek.map((day) => (
-            <div key={day} className="flex items-center justify-between p-3 border rounded-md dark:border-gray-700">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`check-${day}`}
-                  checked={!!schedule[day]}
-                  onChange={() => toggleDay(day)}
-                  className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                />
-                <label htmlFor={`check-${day}`} className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {dayLabels[day]}
-                </label>
-              </div>
-              {schedule[day] && (
-                <div className="flex items-center space-x-2">
-                   <input
-                    type="time"
-                    value={schedule[day][0].split('-')[0]}
-                    onChange={(e) => handleTimeChange(day, 0, e.target.value)}
-                    className="w-28 p-1 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <span>-</span>
+          <div className="space-y-4">
+            {daysOfWeek.map((day) => (
+              <div key={day} className="flex items-center justify-between p-3 border rounded-md dark:border-gray-700">
+                <div className="flex items-center">
                   <input
-                    type="time"
-                    value={schedule[day][0].split('-')[1]}
-                    onChange={(e) => handleTimeChange(day, 1, e.target.value)}
-                    className="w-28 p-1 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                    type="checkbox"
+                    id={`check-${day}`}
+                    checked={!!schedule[day]}
+                    onChange={() => toggleDay(day)}
+                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
+                  <label htmlFor={`check-${day}`} className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {dayLabels[day]}
+                  </label>
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+                {schedule[day] && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="time"
+                      value={schedule[day][0].split('-')[0]}
+                      onChange={(e) => handleTimeChange(day, 0, e.target.value)}
+                      className="w-28 p-1 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <span>-</span>
+                    <input
+                      type="time"
+                      value={schedule[day][0].split('-')[1]}
+                      onChange={(e) => handleTimeChange(day, 1, e.target.value)}
+                      className="w-28 p-1 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
 
-        <div className="flex justify-end mt-6">
-          <SubmitButton />
-        </div>
-      </form>
-    </div>
+          <div className="flex justify-end mt-6">
+            <SubmitButton />
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

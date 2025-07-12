@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { updateBrandingImages } from "@/app/profile/actions/branding-actions";
-import { Input, Label, Button } from "@/components/ui";
+import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { BannerImage, ProfileImage } from "@/components/ui/ImageComponents";
 
 interface BrandingEditorProps {
@@ -61,75 +61,77 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
   const currentProfilePhotoUrl = photoPreview || initialData.profilePhotoPath;
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-        Manage Profile Branding
-      </h3>
-      {state?.success && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-          {state.message}
-        </div>
-      )}
-      {state?.error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-          {state.error}
-        </div>
-      )}
+    <Card>
+      <CardHeader>
+        <CardTitle>Manage Profile Branding</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {state?.success && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
+            {state.message}
+          </div>
+        )}
+        {state?.error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
+            {state.error}
+          </div>
+        )}
 
-      <form action={formAction} className="space-y-6">
-        {/* Banner Image Section */}
-        <div className="relative">
-          <Label htmlFor="bannerImage">
-            Banner Image (Recommended: 1200x400)
-          </Label>
-          <div className="w-full h-48 mt-2 mb-2 bg-gray-100 dark:bg-gray-700 rounded-md relative overflow-hidden">
-            <BannerImage
-              src={currentBannerUrl || ""}
-              alt="Banner"
-              defaultSrc={DEFAULT_BANNER}
-              layout="fill"
-              objectFit="cover"
-              quality={85}
-              className="object-cover"
+        <form action={formAction} className="space-y-6">
+          {/* Banner Image Section */}
+          <div className="relative">
+            <Label htmlFor="bannerImage">
+              Banner Image (Recommended: 1200x400)
+            </Label>
+            <div className="w-full h-48 mt-2 mb-2 bg-gray-100 dark:bg-gray-700 rounded-md relative overflow-hidden">
+              <BannerImage
+                src={currentBannerUrl || ""}
+                alt="Banner"
+                defaultSrc={DEFAULT_BANNER}
+                layout="fill"
+                objectFit="cover"
+                quality={85}
+                className="object-cover"
+              />
+            </div>
+            <Input
+              id="bannerImage"
+              name="bannerImage"
+              type="file"
+              accept="image/*"
+              className="text-sm"
+              onChange={handleBannerChange}
             />
           </div>
-          <Input
-            id="bannerImage"
-            name="bannerImage"
-            type="file"
-            accept="image/*"
-            className="text-sm"
-            onChange={handleBannerChange}
-          />
-        </div>
 
-        {/* Profile Photo Section */}
-        <div>
-          <Label htmlFor="profilePhoto">
-            Profile Photo (Recommended: 400x400)
-          </Label>
-          <ProfileImage
-            src={currentProfilePhotoUrl || ""}
-            alt="Profile Photo"
-            width={400}
-            height={400}
-            className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100 dark:bg-gray-700"
-            defaultSrc={DEFAULT_PHOTO}
-          />
-          <Input
-            id="profilePhoto"
-            name="profilePhoto"
-            type="file"
-            accept="image/*"
-            className="text-sm"
-            onChange={handlePhotoChange}
-          />
-        </div>
+          {/* Profile Photo Section */}
+          <div>
+            <Label htmlFor="profilePhoto">
+              Profile Photo (Recommended: 400x400)
+            </Label>
+            <ProfileImage
+              src={currentProfilePhotoUrl || ""}
+              alt="Profile Photo"
+              width={400}
+              height={400}
+              className="w-32 h-32 object-cover rounded-full mt-2 mb-2 bg-gray-100 dark:bg-gray-700"
+              defaultSrc={DEFAULT_PHOTO}
+            />
+            <Input
+              id="profilePhoto"
+              name="profilePhoto"
+              type="file"
+              accept="image/*"
+              className="text-sm"
+              onChange={handlePhotoChange}
+            />
+          </div>
 
-        <div className="flex justify-end pt-2">
-          <SubmitButton />
-        </div>
-      </form>
-    </div>
+          <div className="flex justify-end pt-2">
+            <SubmitButton />
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

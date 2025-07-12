@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/context/ThemeContext";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -111,15 +112,13 @@ export default function ClientProgressChart({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 flex flex-col h-full">
-      {title && (
-        <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-          {title}
-        </h3>
-      )}
-      <div className="relative flex-grow h-64" data-testid="chart-canvas">
+    <Card className="flex flex-col h-full">
+      <CardHeader>
+        {title && <CardTitle>{title}</CardTitle>}
+      </CardHeader>
+      <CardContent className="relative flex-grow h-64" data-testid="chart-canvas">
         <Line options={chartOptions} data={chartData} />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -5,6 +5,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { updateMethodology } from "@/app/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 
 interface TextContentFormState {
   message?: string | null;
@@ -49,30 +50,32 @@ export default function MethodologyEditor({
   }, [state.success, state.updatedContent]);
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-        Methodology
-      </h3>
-      {state.success && state.message && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-          {state.message}
-        </div>
-      )}
-      {state.error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-          {state.error}
-        </div>
-      )}
-      <form action={formAction}>
-        <RichTextEditor
-          label="Edit Content"
-          name="methodologyContent"
-          initialValue={content}
-        />
-        <div className="flex justify-end mt-4">
-          <SubmitButton />
-        </div>
-      </form>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Methodology</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {state.success && state.message && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
+            {state.message}
+          </div>
+        )}
+        {state.error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
+            {state.error}
+          </div>
+        )}
+        <form action={formAction}>
+          <RichTextEditor
+            label="Edit Content"
+            name="methodologyContent"
+            initialValue={content}
+          />
+          <div className="flex justify-end mt-4">
+            <SubmitButton />
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

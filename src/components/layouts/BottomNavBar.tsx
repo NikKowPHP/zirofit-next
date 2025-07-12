@@ -27,7 +27,7 @@ export default function BottomNavBar() {
 
   return (
     // Redesigned to mimic iOS Tab Bar with frosted glass effect
-    <div className="md:hidden fixed bottom-0 left-0 z-50 w-full border-t border-neutral-200/50 dark:border-neutral-800/50 bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur-lg">
+    <div className="md:hidden fixed bottom-0 left-0 z-50 w-full border-t border-black/10 dark:border-white/10 bg-neutral-100/75 dark:bg-neutral-900/75 backdrop-blur-xl">
       <div className="grid h-full max-w-lg grid-cols-4 mx-auto">
         {navigation.map((item) => {
           const isActive =
@@ -45,13 +45,13 @@ export default function BottomNavBar() {
               <Icon
                 className={`w-6 h-6 mb-1 transition-colors ${
                   isActive
-                    ? "text-indigo-600 dark:text-indigo-400"
+                    ? "text-indigo-500 dark:text-indigo-400"
                     : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                 }`}
               />
               <span className={`text-xs transition-colors ${
                   isActive
-                    ? "text-indigo-600 dark:text-indigo-400 font-medium"
+                    ? "text-indigo-500 dark:text-indigo-400 font-semibold"
                     : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                 }`}>
                 {item.name}

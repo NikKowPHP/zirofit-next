@@ -4,6 +4,8 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/solid";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
+
 
 type ProfileChecklistProps = {
   profile: {
@@ -69,41 +71,43 @@ const ProfileChecklist: React.FC<ProfileChecklistProps> = ({ profile }) => {
   );
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
-      <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-        Profile Completion
-      </h2>
-      <div className="mb-4">
-        <div className="flex justify-between mb-1">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {completionPercentage}% complete
-          </span>
+    <Card>
+      <CardHeader>
+        <CardTitle>Profile Completion</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-4">
+          <div className="flex justify-between mb-1">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {completionPercentage}% complete
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+            <div
+              className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${completionPercentage}%` }}
+            ></div>
+          </div>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-          <div
-            className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${completionPercentage}%` }}
-          ></div>
-        </div>
-      </div>
-      <ul className="space-y-2">
-        {checklistItems.slice(0, 4).map((item, index) => (
-          <li key={index}>
-            <Link
-              href={item.link}
-              className="flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
-            >
-              {item.completed ? (
-                <CheckCircleIcon className="w-5 h-5 mr-2 text-green-500" />
-              ) : (
-                <XCircleIcon className="w-5 h-5 mr-2 text-red-500" />
-              )}
-              {item.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <ul className="space-y-2">
+          {checklistItems.slice(0, 4).map((item, index) => (
+            <li key={index}>
+              <Link
+                href={item.link}
+                className="flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200"
+              >
+                {item.completed ? (
+                  <CheckCircleIcon className="w-5 h-5 mr-2 text-green-500" />
+                ) : (
+                  <XCircleIcon className="w-5 h-5 mr-2 text-red-500" />
+                )}
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
   );
 };
 

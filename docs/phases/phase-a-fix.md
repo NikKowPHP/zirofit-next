@@ -10,7 +10,7 @@ This phase addresses critical bug fixes and initiates a comprehensive UI overhau
 
 ## Part 1: Fix Duplicated Sidebar in Bookings
 
-- [ ] **1.1. Analyze and fix the nested layout issue on the bookings page.**
+- [x] **1.1. Analyze and fix the nested layout issue on the bookings page.**
     - [ ] **Action:** Modify `src/app/dashboard/bookings/page.tsx`.
     - [ ] **Details:** This page currently wraps its content in `TrainerDashboardLayout`, but it's also a child of `src/app/dashboard/layout.tsx`, which already provides the same layout. This causes a duplicated sidebar and header.
     - [ ] **Implementation:** Remove the `<TrainerDashboardLayout>` wrapper from `src/app/dashboard/bookings/page.tsx`. The page should return only its direct content (the `div` and its children). The parent layout will correctly provide the sidebar and header. Note: The header title will default to "Dashboard" from the parent layout, which is an acceptable temporary state.

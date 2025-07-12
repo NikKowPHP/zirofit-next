@@ -8,9 +8,7 @@ import {
   updateService,
 } from "@/app/profile/actions/service-actions";
 import type { Service } from "@prisma/client";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/Button";
+import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { z } from "zod";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
@@ -131,11 +129,11 @@ export default function ServicesEditor({
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-6">
-      <div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          {isEditing ? `Edit Service` : "Add New Service"}
-        </h3>
+    <Card>
+      <CardHeader>
+        <CardTitle>{isEditing ? `Edit Service` : "Add New Service"}</CardTitle>
+      </CardHeader>
+      <CardContent>
         {currentFormState.success && currentFormState.message && (
           <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
             {currentFormState.message}
@@ -213,7 +211,6 @@ export default function ServicesEditor({
             </Button>
           </div>
         </form>
-      </div>
 
       {deleteError && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
@@ -234,7 +231,7 @@ export default function ServicesEditor({
             {services.map((service) => (
               <div
                 key={service.id}
-                className="p-4 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-start"
+                className="p-4 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-start transition-all duration-200"
               >
                 <div>
                   <h5 className="font-semibold text-gray-800 dark:text-gray-100">
@@ -270,6 +267,7 @@ export default function ServicesEditor({
           </div>
         )}
       </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

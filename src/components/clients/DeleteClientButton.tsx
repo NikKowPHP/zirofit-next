@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteClient } from "../../app/clients/actions";
+import { Button } from "@/components/ui";
 
 interface DeleteClientButtonProps {
   clientId: string;
@@ -10,8 +11,10 @@ export default function DeleteClientButton({
   clientId,
 }: DeleteClientButtonProps) {
   return (
-    <button
-      className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-100 dark:text-red-500 dark:hover:bg-red-900/50 rounded-md"
+    <Button
+      variant="tertiary"
+      size="sm"
+      className="text-red-600 hover:bg-red-100 dark:text-red-500 dark:hover:bg-red-900/50"
       onClick={() => {
         if (window.confirm("Are you sure you want to delete this client?")) {
           deleteClient(clientId);
@@ -19,6 +22,6 @@ export default function DeleteClientButton({
       }}
     >
       Delete
-    </button>
+    </Button>
   );
 }

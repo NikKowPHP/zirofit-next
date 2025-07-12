@@ -79,15 +79,15 @@ export default function TrainerDashboardLayout({
                 href={item.href}
                 className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-md mb-1 transition-colors duration-200 ${
                   item.current
-                    ? "bg-indigo-100 dark:bg-neutral-800 text-indigo-700 dark:text-indigo-300"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-neutral-800/50"
+                    ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100"
+                    : "text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10"
                 }`}
               >
                 <item.icon
                   className={`mr-3 h-5 w-5 flex-shrink-0 ${
                     item.current
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : "text-gray-400 dark:text-gray-500"
+                      ? "text-neutral-700 dark:text-neutral-200"
+                      : "text-neutral-500 dark:text-neutral-400"
                   }`}
                   aria-hidden="true"
                 />
@@ -129,7 +129,7 @@ export default function TrainerDashboardLayout({
           </div>
         </header>
         {/* Add bottom padding for mobile to avoid overlap with nav bar */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 animate-fade-in-up">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 animate-subtle-fade-in-up">
           {children}
         </main>
       </div>

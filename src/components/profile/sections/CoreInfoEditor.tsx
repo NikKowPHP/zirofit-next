@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { updateCoreInfo } from "@/app/profile/actions/core-info-actions";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/Button";
+import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { z } from "zod";
 
 interface CoreInfoData {
@@ -74,114 +72,115 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-        Core Information
-      </h3>
+    <Card>
+      <CardHeader>
+        <CardTitle>Core Information</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {state.success && state.message && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 border border-green-200 dark:border-green-800 rounded-md text-sm">
+            {state.message}
+          </div>
+        )}
+        {state.error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-md text-sm">
+            {state.error}
+          </div>
+        )}
 
-      {state.success && state.message && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 border border-green-200 dark:border-green-800 rounded-md text-sm">
-          {state.message}
-        </div>
-      )}
-      {state.error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-md text-sm">
-          {state.error}
-        </div>
-      )}
-
-      <form action={formAction} className="space-y-4">
-        <div>
-          <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            name="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={handleInputChange}
-            className="mt-1"
-          />
-          {getFieldError("name") && (
-            <p className="text-red-500 text-xs mt-1">{getFieldError("name")}</p>
-          )}
-        </div>
-        <div>
-          <Label htmlFor="username">Username</Label>
-          <Input
-            id="username"
-            name="username"
-            type="text"
-            required
-            value={formData.username}
-            onChange={handleInputChange}
-            className="mt-1"
-          />
-          {getFieldError("username") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("username")}
+        <form action={formAction} className="space-y-4">
+          <div>
+            <Label htmlFor="name">Full Name</Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={handleInputChange}
+              className="mt-1"
+            />
+            {getFieldError("name") && (
+              <p className="text-red-500 text-xs mt-1">{getFieldError("name")}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              required
+              value={formData.username}
+              onChange={handleInputChange}
+              className="mt-1"
+            />
+            {getFieldError("username") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("username")}
+              </p>
+            )}
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Used for your public profile URL. Lowercase letters, numbers, and
+              hyphens only.
             </p>
-          )}
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Used for your public profile URL. Lowercase letters, numbers, and
-            hyphens only.
-          </p>
-        </div>
-        <div>
-          <Label htmlFor="certifications">Certifications</Label>
-          <Input
-            id="certifications"
-            name="certifications"
-            type="text"
-            value={formData.certifications || ""}
-            onChange={handleInputChange}
-            className="mt-1"
-            placeholder="e.g., NASM CPT, CPR/AED"
-          />
-          {getFieldError("certifications") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("certifications")}
-            </p>
-          )}
-        </div>
-        <div>
-          <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            name="location"
-            type="text"
-            value={formData.location || ""}
-            onChange={handleInputChange}
-            className="mt-1"
-            placeholder="e.g., New York, NY or Remote"
-          />
-          {getFieldError("location") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("location")}
-            </p>
-          )}
-        </div>
-        <div>
-          <Label htmlFor="phone">Phone (Optional)</Label>
-          <Input
-            id="phone"
-            name="phone"
-            type="tel"
-            value={formData.phone || ""}
-            onChange={handleInputChange}
-            className="mt-1"
-            placeholder="e.g., (555) 123-4567"
-          />
-          {getFieldError("phone") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("phone")}
-            </p>
-          )}
-        </div>
-        <div className="flex justify-end pt-2">
-          <SubmitButton />
-        </div>
-      </form>
-    </div>
+          </div>
+          <div>
+            <Label htmlFor="certifications">Certifications</Label>
+            <Input
+              id="certifications"
+              name="certifications"
+              type="text"
+              value={formData.certifications || ""}
+              onChange={handleInputChange}
+              className="mt-1"
+              placeholder="e.g., NASM CPT, CPR/AED"
+            />
+            {getFieldError("certifications") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("certifications")}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              name="location"
+              type="text"
+              value={formData.location || ""}
+              onChange={handleInputChange}
+              className="mt-1"
+              placeholder="e.g., New York, NY or Remote"
+            />
+            {getFieldError("location") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("location")}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="phone">Phone (Optional)</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone || ""}
+              onChange={handleInputChange}
+              className="mt-1"
+              placeholder="e.g., (555) 123-4567"
+            />
+            {getFieldError("phone") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("phone")}
+              </p>
+            )}
+          </div>
+          <div className="flex justify-end pt-2">
+            <SubmitButton />
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
