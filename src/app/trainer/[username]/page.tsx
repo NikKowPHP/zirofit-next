@@ -206,7 +206,7 @@ export default async function TrainerProfilePage({
 
       <div className="bg-neutral-50 dark:bg-black">
         {/* Main Content Grid */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-0 py-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column (Main content) */}
           <div className="lg:col-span-2 space-y-8">
             {/* About, Philosophy, Methodology Section */}
