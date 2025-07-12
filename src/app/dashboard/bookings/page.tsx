@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import TrainerDashboardLayout from "@/components/layouts/TrainerDashboardLayout";
 import { getTrainerBookings } from "@/app/profile/actions";
 
 export default async function BookingsPage() {
@@ -11,49 +10,47 @@ export default async function BookingsPage() {
     const bookings = await getTrainerBookings(user.id);
     
     return (
-        <TrainerDashboardLayout headerTitle="My Bookings">
-            <div className="space-y-4">
-                {bookings.length === 0 && (
-                    <p className="text-center py-8 text-gray-500">
-                        You have no upcoming bookings.
-                    </p>
-                )}
-                {bookings.map((booking) => (
-                    <div 
-                        key={booking.id} 
-                        className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
-                    >
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h3 className="font-semibold text-lg">
-                                    {booking.clientName}
-                                </h3>
-                                <p className="text-gray-600 dark:text-gray-400">
-                                    {booking.clientEmail}
-                                </p>
-                            </div>
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                                booking.status === 'CONFIRMED' 
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                            }`}>
-                                {booking.status}
-                            </span>
-                        </div>
-                        
-                        <div className="mt-4">
-                            <p className="text-sm">
-                                <strong>Time:</strong> {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleTimeString()}
+        <div className="space-y-4">
+            {bookings.length === 0 && (
+                <p className="text-center py-8 text-gray-500">
+                    You have no upcoming bookings.
+                </p>
+            )}
+            {bookings.map((booking) => (
+                <div 
+                    key={booking.id} 
+                    className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                >
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="font-semibold text-lg">
+                                {booking.clientName}
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                {booking.clientEmail}
                             </p>
-                            {booking.clientNotes && (
-                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                    <strong>Notes:</strong> {booking.clientNotes}
-                                </p>
-                            )}
                         </div>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                            booking.status === 'CONFIRMED' 
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                        }`}>
+                            {booking.status}
+                        </span>
                     </div>
-                ))}
-            </div>
-        </TrainerDashboardLayout>
+                    
+                    <div className="mt-4">
+                        <p className="text-sm">
+                            <strong>Time:</strong> {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleTimeString()}
+                        </p>
+                        {booking.clientNotes && (
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                <strong>Notes:</strong> {booking.clientNotes}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
     )
 }
