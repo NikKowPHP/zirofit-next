@@ -44,6 +44,22 @@ export async function getTrainerSchedule(trainerId: string) {
     }
 }
 
+export async function getTrainerBookings(trainerId: string) {
+    return await prisma.booking.findMany({
+        where: { trainerId },
+        orderBy: { startTime: 'asc' },
+        select: {
+            id: true,
+            startTime: true,
+            endTime: true,
+            clientName: true,
+            clientEmail: true,
+            clientNotes: true,
+            status: true
+        }
+    });
+}
+
 export async function createBooking(
     prevState: BookingFormState | undefined,
     formData: FormData,

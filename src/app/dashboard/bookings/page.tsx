@@ -1,23 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
 import TrainerDashboardLayout from "@/components/layouts/TrainerDashboardLayout";
-        
-async function getTrainerBookings(trainerId: string) {
-    return await prisma.booking.findMany({
-        where: { trainerId },
-        orderBy: { startTime: 'asc' },
-        select: {
-            id: true,
-            startTime: true,
-            endTime: true,
-            clientName: true,
-            clientEmail: true,
-            clientNotes: true,
-            status: true
-        }
-    });
-}
-        
+import { getTrainerBookings } from "@/app/profile/actions";
+
 export default async function BookingsPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
