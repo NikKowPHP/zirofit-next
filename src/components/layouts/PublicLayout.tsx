@@ -16,7 +16,7 @@ interface PublicLayoutProps {
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,65 +60,68 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${theme === "dark" ? "dark" : ""}`}
+      className={`min-h-screen flex flex-col bg-white dark:bg-gray-900`}
     >
-      <header className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl sticky top-0 z-50 border-b border-black/10 dark:border-white/10">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex-shrink-0 flex items-center">
-                <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                  ZIRO.FIT
-                </span>
-              </Link>
-            </div>
-            <div className="hidden md:block">
-              <div className="ml-4 flex items-center md:ml-6 space-x-4">
-                {!loading && (
-                  <>
-                    <Link
-                      href="/trainers"
-                      className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                    >
-                      Find Trainers
-                    </Link>
-                    {user ? (
-                      <>
-                        <Link
-                          href="/dashboard"
-                          className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                        >
-                          Dashboard
-                        </Link>
-                        <LogoutButton />
-                      </>
-                    ) : (
-                      <>
-                        <Button asChild variant="secondary" size="md">
-                          <Link href="/auth/login">Trainer Login</Link>
-                        </Button>
-                        <Button asChild variant="primary" size="md">
-                          <Link href="/auth/register">Trainer Sign Up</Link>
-                        </Button>
-                      </>
-                    )}
-                  </>
-                )}
+      <div className="sticky top-0 z-50 px-4 pt-4">
+        <header className="max-w-7xl mx-auto bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-full ">
+          <nav className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center">
+                <Link href="/" className="flex-shrink-0 flex items-center">
+                  <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                    ZIRO.FIT
+                  </span>
+                </Link>
+              </div>
+              <div className="hidden md:block">
+                <div className="ml-4 flex items-center md:ml-6 space-x-4">
+                  {!loading && (
+                    <>
+                      <Link
+                        href="/trainers"
+                        className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                      >
+                        Find Trainers
+                      </Link>
+                      {user ? (
+                        <>
+                          <Link
+                            href="/dashboard"
+                            className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                          >
+                            Dashboard
+                          </Link>
+                          <LogoutButton />
+                        </>
+                      ) : (
+                        <>
+                          <Button asChild variant="secondary" size="md">
+                            <Link href="/auth/login">Trainer Login</Link>
+                          </Button>
+                          <Button asChild variant="primary" size="md">
+                            <Link href="/auth/register">Trainer Sign Up</Link>
+                          </Button>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+              {/* Mobile Menu Button */}
+              <div className="-mr-2 flex md:hidden">
+                <button
+                  onClick={toggleMobileMenu}
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                >
+                  <span className="sr-only">Open main menu</span>
+                  <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                </button>
               </div>
             </div>
-            {/* Mobile Menu Button */}
-            <div className="-mr-2 flex md:hidden">
-              <button
-                onClick={toggleMobileMenu}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-              >
-                <span className="sr-only">Open main menu</span>
-                <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-        </nav>
-      </header>
+          </nav>
+        </header>
+      </div>
+
 
       {/* NEW Mobile Menu Overlay */}
       {isMobileMenuOpen && (
@@ -172,12 +175,18 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
       <main className="flex-grow bg-white dark:bg-gray-900 animate-subtle-fade-in-up">{children}</main>
 
-      <footer className="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <footer className="bg-neutral-50 dark:bg-black border-t border-neutral-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
             © {new Date().getFullYear()} ZIRO.FIT. All rights reserved.
           </p>
-          {/* Add more footer content similar to Laravel welcome page later */}
+          <nav className="mt-4">
+            <div className="flex justify-center space-x-4">
+              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Contact</Link>
+            </div>
+          </nav>
         </div>
       </footer>
     </div>

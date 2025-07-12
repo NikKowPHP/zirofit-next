@@ -183,7 +183,7 @@ export default async function TrainerProfilePage({
               defaultSrc={DEFAULT_PROFILE_IMAGE}
             />
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 text-white">
             {name}
           </h1>
           {profile.certifications && (
