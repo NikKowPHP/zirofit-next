@@ -4,6 +4,7 @@ import { getPublishedTrainers } from "@/lib/api/trainers";
 import Link from "next/link";
 import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
+import { Button } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Find a Personal Trainer",
@@ -25,15 +26,17 @@ interface Trainer {
   } | null;
 }
 
-
 export default async function TrainersPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ page?: string }>;
+  searchParams?: Promise<{ page?: string; q?: string; location?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
   const currentPage = Number(resolvedSearchParams?.page) || 1;
-  const data = await getPublishedTrainers(currentPage);
+  const query = resolvedSearchParams?.q;
+  const location = resolvedSearchParams?.location;
+
+  const data = await getPublishedTrainers(currentPage, 15, query, location);
 
   if (data.error) {
     return (
@@ -52,11 +55,19 @@ export default async function TrainersPage({
 
   const { trainers, totalPages } = data;
 
+  const getPageUrl = (page: number) => {
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (location) params.set("location", location);
+    if (page > 1) params.set("page", page.toString());
+    return `/trainers?${params.toString()}`;
+  };
+
   return (
     <PublicLayout>
-      <div className="py-12 bg-neutral-50 dark:bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
+      <div className="bg-neutral-50 dark:bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">
             Meet Our Trainers
           </h1>
 
@@ -75,39 +86,29 @@ export default async function TrainersPage({
                 </div>
               </div>
 
-              {/* Basic Pagination (Example) */}
               {totalPages > 1 && (
-                <div className="mt-12 flex justify-center space-x-2">
+                <div className="mt-12 flex justify-center items-center space-x-2">
                   {currentPage > 1 && (
-                    <Link
-                      href={`/trainers?page=${currentPage - 1}`}
-                      className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
-                    >
-                      Previous
-                    </Link>
+                    <Button asChild variant="secondary" size="sm">
+                      <Link href={getPageUrl(currentPage - 1)}>Previous</Link>
+                    </Button>
                   )}
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (page) => (
-                      <Link
+                      <Button
                         key={page}
-                        href={`/trainers?page=${page}`}
-                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                          page === currentPage
-                            ? "bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black border-neutral-800 dark:border-neutral-200"
-                            : "bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
-                        }`}
+                        asChild
+                        variant={page === currentPage ? "primary" : "secondary"}
+                        size="sm"
                       >
-                        {page}
-                      </Link>
+                        <Link href={getPageUrl(page)}>{page}</Link>
+                      </Button>
                     ),
                   )}
                   {currentPage < totalPages && (
-                    <Link
-                      href={`/trainers?page=${currentPage + 1}`}
-                      className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
-                    >
-                      Next
-                    </Link>
+                    <Button asChild variant="secondary" size="sm">
+                      <Link href={getPageUrl(currentPage + 1)}>Next</Link>
+                    </Button>
                   )}
                 </div>
               )}

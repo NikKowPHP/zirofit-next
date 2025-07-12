@@ -2,7 +2,7 @@
 
 import { useState, useActionState, useMemo } from "react";
 import { createBooking } from "@/app/profile/actions/booking-actions";
-import { Button, Input, Textarea } from "@/components/ui";
+import { Button, Input, Textarea, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { 
     format, 
     startOfMonth, 
@@ -57,7 +57,6 @@ export default function PublicCalendar({
 
   const goToNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const goToPrevMonth = () => {
-    // Prevent going to past months
     if (!isSameMonth(currentDate, new Date())) {
       setCurrentDate(subMonths(currentDate, 1));
     }
@@ -87,8 +86,6 @@ export default function PublicCalendar({
         const isBooked = schedule.bookings.some(booking => {
             const bookingStart = booking.startTime;
             const bookingEnd = booking.endTime;
-            // A slot is booked if it overlaps with an existing booking.
-            // Overlap exists if (StartA < EndB) and (StartB < EndA).
             return isBefore(slotStart, bookingEnd) && isBefore(bookingStart, slotEnd);
         });
 
@@ -121,9 +118,11 @@ export default function PublicCalendar({
 
   if (formState.success) {
     return (
-      <div className="p-4 bg-green-100 text-green-700 rounded-md">
-        {formState.message}
-      </div>
+      <CardContent>
+        <div className="p-4 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
+          {formState.message}
+        </div>
+      </CardContent>
     );
   }
 
@@ -131,113 +130,116 @@ export default function PublicCalendar({
   today.setHours(0, 0, 0, 0);
 
   return (
-    <div>
-      <h3 className="text-xl font-bold mb-4">Book a Session</h3>
-      
-      {/* Calendar */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-4">
-            <button 
-              onClick={goToPrevMonth} 
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-              disabled={isSameMonth(currentDate, new Date())}
-            >
-                <ChevronLeftIcon className="h-5 w-5" />
-            </button>
-            <h4 className="font-semibold text-lg">{format(currentDate, "MMMM yyyy")}</h4>
-            <button onClick={goToNextMonth} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                <ChevronRightIcon className="h-5 w-5" />
-            </button>
-        </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 dark:text-gray-400">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => <div key={day}>{day}</div>)}
-        </div>
-        <div className="grid grid-cols-7 gap-1 mt-2">
-            {daysInMonth.map(day => {
-                const dayOfWeek = format(day, "EEE").toLowerCase();
-                const isPast = isBefore(day, today);
-                const hasAvailability = !!schedule.availability[dayOfWeek];
-                const isAvailable = hasAvailability && !isPast;
-                const isCurrentMonth = isSameMonth(day, currentDate);
+    <>
+      <CardHeader>
+        <CardTitle>Book a Session</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Calendar */}
+        <div className="p-0">
+          <div className="flex justify-between items-center mb-4">
+              <Button 
+                onClick={goToPrevMonth}
+                variant="secondary" 
+                size="sm"
+                disabled={isSameMonth(currentDate, new Date())}
+                aria-label="Previous month"
+              >
+                  <ChevronLeftIcon className="h-5 w-5" />
+              </Button>
+              <h4 className="font-semibold text-lg">{format(currentDate, "MMMM yyyy")}</h4>
+              <Button onClick={goToNextMonth} variant="secondary" size="sm" aria-label="Next month">
+                  <ChevronRightIcon className="h-5 w-5" />
+              </Button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 dark:text-gray-400">
+              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => <div key={day}>{day}</div>)}
+          </div>
+          <div className="grid grid-cols-7 gap-1 mt-2">
+              {daysInMonth.map(day => {
+                  const dayOfWeek = format(day, "EEE").toLowerCase();
+                  const isPast = isBefore(day, today);
+                  const hasAvailability = !!schedule.availability[dayOfWeek];
+                  const isAvailable = hasAvailability && !isPast;
+                  const isCurrentMonth = isSameMonth(day, currentDate);
 
-                return (
-                    <button 
-                        key={day.toString()}
-                        onClick={() => isAvailable && handleDateClick(day)}
-                        disabled={!isAvailable}
-                        className={`
-                            w-11 h-11 rounded-full text-sm flex items-center justify-center transition-colors
-                            ${isCurrentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}
-                            ${isToday(day) && 'bg-indigo-100 dark:bg-indigo-900'}
-                            ${selectedDate?.getTime() === day.getTime() ? 'bg-indigo-600 text-white' : ''}
-                            ${isAvailable && isCurrentMonth ? 'hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer' : 'cursor-not-allowed opacity-50'}
-                            ${!isCurrentMonth && 'opacity-50'}
-                        `}
-                    >
-                        {format(day, 'd')}
-                    </button>
-                )
-            })}
-        </div>
-      </div>
-
-      {/* Time Slots */}
-      {selectedDate && (
-          <div className="mt-4">
-              <h4 className="font-semibold">Available slots for {format(selectedDate, "MMMM d, yyyy")}</h4>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
-                  {availableTimeSlots.length > 0 ? availableTimeSlots.map(time => (
+                  return (
                       <button 
-                          key={time}
-                          onClick={() => setSelectedTime(time)}
+                          key={day.toString()}
+                          onClick={() => isAvailable && handleDateClick(day)}
+                          disabled={!isAvailable}
                           className={`
-                              py-3 px-2 border rounded-full text-sm transition-colors
-                              ${selectedTime === time ? 'bg-indigo-600 text-white border-indigo-600' : 'border-neutral-300 dark:border-neutral-600 hover:bg-gray-100 dark:hover:bg-gray-700'}
+                              w-10 h-10 rounded-full text-sm flex items-center justify-center transition-colors
+                              ${!isCurrentMonth ? 'text-gray-400 dark:text-gray-500' : ''}
+                              ${isToday(day) && !isPast && 'font-bold'}
+                              ${selectedDate?.getTime() === day.getTime() ? 'bg-[var(--primary-blue)] text-white hover:bg-[var(--primary-blue)]' : ''}
+                              ${isAvailable && isCurrentMonth ? 'hover:bg-neutral-200 dark:hover:bg-neutral-800 cursor-pointer' : 'cursor-not-allowed opacity-40'}
                           `}
                       >
-                          {time}
+                          {format(day, 'd')}
                       </button>
-                  )) : (
-                      <p className="text-gray-500 col-span-full">No available slots for this day.</p>
-                  )}
-              </div>
+                  )
+              })}
           </div>
-      )}
+        </div>
 
-      {/* Booking Form */}
-      {selectedDate && selectedTime && (
-        <form action={formAction} className="mt-6 space-y-4 border-t pt-6">
-          <h4 className="font-semibold">
-            Confirm Booking for {format(selectedDate, 'MMMM d, yyyy')} at {selectedTime}
-          </h4>
-          <input type="hidden" name="trainerId" value={trainerId} />
-          <input
-            type="hidden"
-            name="startTime"
-            value={getStartTime()?.toISOString() || ''}
-          />
-          <input
-            type="hidden"
-            name="endTime"
-            value={getEndTime()?.toISOString() || ''}
-          />
+        {/* Time Slots */}
+        {selectedDate && (
+            <div className="mt-4">
+                <h4 className="font-semibold text-sm mb-2">Available slots for {format(selectedDate, "MMMM d, yyyy")}</h4>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {availableTimeSlots.length > 0 ? availableTimeSlots.map(time => (
+                        <Button
+                            key={time}
+                            onClick={() => setSelectedTime(time)}
+                            variant={selectedTime === time ? "primary" : "secondary"}
+                            size="sm"
+                        >
+                            {time}
+                        </Button>
+                    )) : (
+                        <p className="text-gray-500 col-span-full text-sm">No available slots.</p>
+                    )}
+                </div>
+            </div>
+        )}
 
-          <div>
-            <Input name="clientName" placeholder="Your Name" required />
-          </div>
-          <div>
-            <Input name="clientEmail" type="email" placeholder="Your Email" required />
-          </div>
-          <div>
-            <Textarea
-              name="clientNotes"
-              placeholder="Any notes for the trainer? (optional)"
+        {/* Booking Form */}
+        {selectedDate && selectedTime && (
+          <form action={formAction} className="mt-6 space-y-4 border-t dark:border-neutral-800 pt-6">
+            <h4 className="font-semibold text-sm">
+              Confirm for {format(selectedDate, 'MMMM d, yyyy')} at {selectedTime}
+            </h4>
+            <input type="hidden" name="trainerId" value={trainerId} />
+            <input
+              type="hidden"
+              name="startTime"
+              value={getStartTime()?.toISOString() || ''}
             />
-          </div>
-          <Button type="submit">Confirm Booking</Button>
-          {formState.error && <p className="text-red-500">{formState.error}</p>}
-        </form>
-      )}
-    </div>
+            <input
+              type="hidden"
+              name="endTime"
+              value={getEndTime()?.toISOString() || ''}
+            />
+
+            <div>
+              <Input name="clientName" placeholder="Your Name" required />
+            </div>
+            <div>
+              <Input name="clientEmail" type="email" placeholder="Your Email" required />
+            </div>
+            <div>
+              <Textarea
+                name="clientNotes"
+                placeholder="Any notes for the trainer? (optional)"
+                rows={3}
+              />
+            </div>
+            <Button type="submit" className="w-full">Confirm Booking</Button>
+            {formState.error && <p className="text-red-500 text-sm mt-2">{formState.error}</p>}
+          </form>
+        )}
+      </CardContent>
+    </>
   );
 }

@@ -20,6 +20,5 @@ describe("DashboardContent", () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId("skeleton-quick-actions")).toBeInTheDocument();
     expect(screen.getByTestId("skeleton-activity-feed")).toBeInTheDocument();
-    expect(screen.getByTestId("skeleton-client-spotlight")).toBeInTheDocument();
   });
 });

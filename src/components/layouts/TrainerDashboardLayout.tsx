@@ -2,8 +2,6 @@
 import React from "react";
 import Link from "next/link";
 import {
-  SunIcon,
-  MoonIcon,
   UserCircleIcon,
   HomeIcon,
   UserGroupIcon,
@@ -27,7 +25,7 @@ export default function TrainerDashboardLayout({
   userEmail,
 }: TrainerDashboardLayoutProps) {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const navigation = [
     {
@@ -113,17 +111,7 @@ export default function TrainerDashboardLayout({
               {headerTitle || "Dashboard"}
             </h1>
             <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full text-neutral-500 hover:bg-gray-200/50 dark:hover:bg-neutral-700/50"
-                aria-label="Toggle theme"
-              >
-                {theme === "light" ? (
-                  <MoonIcon className="h-5 w-5" />
-                ) : (
-                  <SunIcon className="h-5 w-5" />
-                )}
-              </button>
+             
               <NotificationIndicator />
             </div>
           </div>

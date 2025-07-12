@@ -11,6 +11,7 @@ import SkeletonAtAGlanceStats from "./_components/skeleton-at-a-glance-stats";
 import SkeletonProfileChecklist from "./_components/skeleton-profile-checklist";
 import SkeletonQuickActions from "./_components/skeleton-quick-actions";
 import SkeletonActivityFeed from "./_components/skeleton-activity-feed";
+import { Card, CardContent, CardHeader, Skeleton } from "@/components/ui";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -28,13 +29,32 @@ export default function DashboardContent() {
     );
   if (isLoading || !data)
     return (
-      // Added !data check for extra safety
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <SkeletonAtAGlanceStats />
-        <SkeletonProfileChecklist />
-        <SkeletonQuickActions />
+        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <SkeletonAtAGlanceStats />
+          <SkeletonProfileChecklist />
+          <SkeletonQuickActions />
+        </div>
         <div className="lg:col-span-3">
           <SkeletonActivityFeed />
+        </div>
+        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-64 w-full" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-64 w-full" />
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

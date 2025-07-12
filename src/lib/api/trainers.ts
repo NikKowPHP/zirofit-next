@@ -25,13 +25,14 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
   }
 
   if (location) {
-    whereClause.AND = [
-        {
-            profile: {
-                location: { contains: location, mode: 'insensitive' }
-            }
-        }
-    ]
+    if (!whereClause.AND) {
+      whereClause.AND = [];
+    }
+    (whereClause.AND as Prisma.UserWhereInput[]).push({
+      profile: {
+        location: { contains: location, mode: 'insensitive' }
+      }
+    });
   }
 
   try {

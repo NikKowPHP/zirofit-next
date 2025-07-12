@@ -9,6 +9,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import LogoutButton from "@/components/auth/LogoutButton";
 import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { Button } from "../ui/Button";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -40,11 +41,28 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    // Cleanup function to reset on component unmount
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <div
       className={`min-h-screen flex flex-col ${theme === "dark" ? "dark" : ""}`}
     >
-      <header className="bg-white/80 dark:bg-gray-800/80 shadow-sm sticky top-0 z-50 backdrop-blur-md">
+      <header className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl sticky top-0 z-50 border-b border-black/10 dark:border-white/10">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -60,7 +78,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                   <>
                     <Link
                       href="/trainers"
-                      className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                      className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     >
                       Find Trainers
                     </Link>
@@ -68,7 +86,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       <>
                         <Link
                           href="/dashboard"
-                          className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                          className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                         >
                           Dashboard
                         </Link>
@@ -76,18 +94,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       </>
                     ) : (
                       <>
-                        <Link
-                          href="/auth/login"
-                          className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                        >
-                          Trainer Login
-                        </Link>
-                        <Link
-                          href="/auth/register"
-                          className="text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium"
-                        >
-                          Trainer Sign Up
-                        </Link>
+                        <Button asChild variant="secondary" size="md">
+                          <Link href="/auth/login">Trainer Login</Link>
+                        </Button>
+                        <Button asChild variant="primary" size="md">
+                          <Link href="/auth/register">Trainer Sign Up</Link>
+                        </Button>
                       </>
                     )}
                   </>
@@ -97,62 +109,64 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             {/* Mobile Menu Button */}
             <div className="-mr-2 flex md:hidden">
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={toggleMobileMenu}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
               >
                 <span className="sr-only">Open main menu</span>
-                {isMobileMenuOpen ? (
-                  <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-                )}
+                <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
               </button>
             </div>
           </div>
         </nav>
       </header>
 
-      {/* Mobile Menu Panel */}
+      {/* NEW Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden">
-          {!loading && (
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 dark:bg-gray-700 flex flex-col justify-center items-center">
-              <Link
-                href="/trainers"
-                className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium"
-              >
-                Find Trainers
-              </Link>
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium"
-                  >
-                    Dashboard
-                  </Link>
-                  <div className="px-3 py-2">
+        <div className="fixed inset-0 z-[100] bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl animate-subtle-fade-in-up">
+          <button
+            onClick={toggleMobileMenu}
+            className="absolute top-4 right-4 p-2 text-gray-600 dark:text-gray-300"
+            aria-label="Close menu"
+          >
+            <XMarkIcon className="h-8 w-8" />
+          </button>
+          
+          <div className="flex flex-col items-center justify-center h-full space-y-8">
+            {!loading && (
+              <>
+                <Link
+                  href="/trainers"
+                  className="text-2xl font-bold text-gray-800 dark:text-gray-200"
+                  onClick={toggleMobileMenu}
+                >
+                  Find Trainers
+                </Link>
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="text-2xl font-bold text-gray-800 dark:text-gray-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      Dashboard
+                    </Link>
                     <LogoutButton />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/auth/login"
-                    className="block text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium"
-                  >
-                    Trainer Login
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="block text-white bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 px-3 py-2 rounded-md text-base font-medium"
-                  >
-                    Trainer Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          )}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col items-center space-y-4 pt-8">
+                      <Button asChild variant="secondary" size="lg" onClick={toggleMobileMenu}>
+                          <Link href="/auth/login">Trainer Login</Link>
+                      </Button>
+                      <Button asChild size="lg" onClick={toggleMobileMenu}>
+                          <Link href="/auth/register">Trainer Sign Up</Link>
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </div>
       )}
 

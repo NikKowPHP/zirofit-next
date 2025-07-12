@@ -1,17 +1,19 @@
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui";
 
 export default function SkeletonQuickActions() {
   return (
-    <div
-      className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800"
-      data-testid="skeleton-quick-actions"
-    >
-      <Skeleton className="h-6 w-1/3 mb-4" />
-      <div className="space-y-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-      </div>
-    </div>
+    <Card data-testid="skeleton-quick-actions">
+      <CardHeader>
+        <Skeleton className="h-6 w-1/3" />
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

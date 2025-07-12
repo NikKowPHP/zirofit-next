@@ -12,6 +12,9 @@ import PublicCalendar from "@/components/trainer/PublicCalendar";
 import { Metadata } from "next";
 import { transformImagePath } from "@/lib/utils";
 import { getTrainerSchedule } from "@/app/profile/actions";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import Link from "next/link";
+import { Button } from "@/components/ui";
 
 // Define interfaces for the data structure
 interface Benefit {
@@ -33,7 +36,7 @@ interface TransformationPhoto {
 }
 
 interface Testimonial {
-  id: string;
+  id:string;
   testimonialText: string | null;
   clientName: string;
 }
@@ -152,8 +155,6 @@ export default async function TrainerProfilePage({
   // Helper to render HTML content safely
   const renderHTML = (htmlString: string | null | undefined) => {
     if (!htmlString) return null;
-    // In a real app, ensure this HTML is sanitized if it comes from user input.
-    // For Prisma data that was purified on input, this is okay.
     return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
   };
 
@@ -167,11 +168,12 @@ export default async function TrainerProfilePage({
           layout="fill"
           objectFit="cover"
           quality={85}
-          className="absolute inset-0 opacity-30"
+          className="absolute inset-0"
           defaultSrc={DEFAULT_BANNER_IMAGE}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-40 text-center">
-          <div className="mb-8">
+          <div className="mb-6">
             <ProfileImage
               src={profile.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
               alt={`${name}'s profile photo`}
@@ -189,18 +191,12 @@ export default async function TrainerProfilePage({
               {profile.certifications}
             </p>
           )}
-          {/* Contact Button - placeholder for now */}
-          {/* <Button size="lg" onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}>
-            Get In Touch
-          </Button> */}
-          <a
-            href="#contact-section"
-            className="inline-block bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-8 rounded-lg text-lg font-semibold transition-colors shadow-md"
-          >
-            Book a Session
-          </a>
+          <Button asChild size="lg">
+            <a href="#booking-section">Book a Session</a>
+          </Button>
+          
           {profile.location && (
-            <p className="text-gray-400 mt-6 text-sm flex items-center justify-center">
+            <p className="text-gray-300 mt-6 text-sm flex items-center justify-center">
               <MapPinIcon className="w-4 h-4 mr-1.5" />
               {profile.location}
             </p>
@@ -210,116 +206,96 @@ export default async function TrainerProfilePage({
 
       <div className="bg-neutral-50 dark:bg-black">
         {/* Main Content Grid */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column (Main content) */}
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-8">
             {/* About, Philosophy, Methodology Section */}
             {(profile.aboutMe || profile.philosophy || profile.methodology) && (
-              <section
-                id="about-section"
-                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-              >
-                <div className="prose lg:prose-xl dark:prose-invert max-w-none">
-                  {profile.aboutMe && (
-                    <>
-                      <h2 className="text-3xl font-semibold mt-8 mb-3">
-                        About Me
-                      </h2>
-                      {renderHTML(profile.aboutMe)}
-                    </>
-                  )}
-                  {profile.philosophy && (
-                    <>
-                      <h2 className="text-3xl font-semibold mt-8 mb-3">
-                        My Philosophy
-                      </h2>
-                      <div className="prose lg:prose-xl dark:prose-invert">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="prose lg:prose-xl dark:prose-invert max-w-none">
+                    {profile.aboutMe && (
+                      <>
+                        <h2 className="text-2xl font-semibold mb-3">
+                          About Me
+                        </h2>
+                        {renderHTML(profile.aboutMe)}
+                      </>
+                    )}
+                    {profile.philosophy && (
+                      <>
+                        <h2 className="text-2xl font-semibold mt-8 mb-3">
+                          My Philosophy
+                        </h2>
                         {renderHTML(profile.philosophy)}
-                      </div>
-                    </>
-                  )}
-                  {profile.methodology && (
-                    <>
-                      <h2 className="text-3xl font-semibold mt-8 mb-3">
-                        My Methodology
-                      </h2>
-                      <div className="prose lg:prose-xl dark:prose-invert">
+                      </>
+                    )}
+                    {profile.methodology && (
+                      <>
+                        <h2 className="text-2xl font-semibold mt-8 mb-3">
+                          My Methodology
+                        </h2>
                         {renderHTML(profile.methodology)}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </section>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
             {/* Benefits Section */}
             {profile.benefits && profile.benefits.length > 0 && (
-              <section
-                id="benefits-section"
-                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-              >
-                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-                  Why Train With Me?
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {profile.benefits.map((benefit: Benefit) => (
-                    <div
-                      key={benefit.id}
-                      className="bg-neutral-100 dark:bg-neutral-800/50 p-6 rounded-lg text-center"
-                    >
-                      {/* Add icon rendering here if you have an icon component */}
-                      <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                        {benefit.title}
-                      </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        {benefit.description}
-                      </p>
+              <Card>
+                 <CardHeader><CardTitle>Why Train With Me?</CardTitle></CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {profile.benefits.map((benefit: Benefit) => (
+                        <div
+                          key={benefit.id}
+                          className="bg-neutral-100 dark:bg-neutral-900 p-6 rounded-lg text-center"
+                        >
+                          <h3 className="text-xl font-semibold mb-2">
+                            {benefit.title}
+                          </h3>
+                          <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                            {benefit.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </section>
+                </CardContent>
+              </Card>
             )}
 
             {/* Services Section */}
             {profile.services && profile.services.length > 0 && (
-              <section
-                id="services-section"
-                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-              >
-                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-                  Services Offered
-                </h2>
-                <div className="space-y-8">
-                  {profile.services.map((service: Service) => (
-                    <div
-                      key={service.id}
-                      className="bg-neutral-100 dark:bg-neutral-800/50 p-6 rounded-lg"
-                    >
-                      <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                        {service.title}
-                      </h3>
-                      <div
-                        className="text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap prose dark:prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{
-                          __html: service.description || "",
-                        }}
-                      />
+              <Card>
+                <CardHeader><CardTitle>Services Offered</CardTitle></CardHeader>
+                <CardContent>
+                    <div className="space-y-6">
+                      {profile.services.map((service: Service) => (
+                        <div key={service.id} className="bg-neutral-100 dark:bg-neutral-900 p-6 rounded-lg">
+                          <h3 className="text-xl font-semibold mb-2">
+                            {service.title}
+                          </h3>
+                          <div
+                            className="text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap prose dark:prose-invert max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: service.description || "",
+                            }}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </section>
+                </CardContent>
+              </Card>
             )}
 
             {/* Transformation Photos Section */}
-            {profile.transformationPhotos &&
-              profile.transformationPhotos.length > 0 && (
-                <section
-                  id="transformations-section"
-                  className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-                >
-                  <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-                    Client Transformations
-                  </h2>
+            {profile.transformationPhotos && profile.transformationPhotos.length > 0 && (
+              <Card>
+                <CardHeader><CardTitle>Client Transformations</CardTitle></CardHeader>
+                <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {profile.transformationPhotos.map(
                       (photo: TransformationPhoto) => (
@@ -327,7 +303,7 @@ export default async function TrainerProfilePage({
                           key={photo.id}
                           className="group relative rounded-lg overflow-hidden shadow-lg"
                         >
-                          {photo.imagePath && ( //
+                          {photo.imagePath && (
                             <TransformationImage
                               src={photo.imagePath}
                               alt={photo.caption || "Transformation photo"}
@@ -336,7 +312,6 @@ export default async function TrainerProfilePage({
                               className="w-full h-auto object-cover"
                             />
                           )}
-
                           {photo.caption && (
                             <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/50 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                               {photo.caption}
@@ -346,74 +321,64 @@ export default async function TrainerProfilePage({
                       ),
                     )}
                   </div>
-                </section>
-              )}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Testimonials Section */}
             {profile.testimonials && profile.testimonials.length > 0 && (
-              <section
-                id="testimonials-section"
-                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-              >
-                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-                  What Clients Say
-                </h2>
-                <div className="space-y-8">
-                  {profile.testimonials.map((testimonial: Testimonial) => (
-                    <blockquote
-                      key={testimonial.id}
-                      className="p-6 bg-neutral-100 dark:bg-neutral-800/50 rounded-lg"
-                    >
-                      <p className="text-gray-600 dark:text-gray-200 italic mb-4">
-                        “{testimonial.testimonialText}”
-                      </p>
-                      <footer className="text-right font-semibold text-gray-700 dark:text-gray-100">
-                        - {testimonial.clientName}
-                      </footer>
-                    </blockquote>
-                  ))}
-                </div>
-              </section>
+              <Card>
+                <CardHeader><CardTitle>What Clients Say</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                      {profile.testimonials.map((testimonial: Testimonial) => (
+                        <blockquote
+                          key={testimonial.id}
+                          className="p-6 bg-neutral-100 dark:bg-neutral-900 rounded-lg"
+                        >
+                          <p className="text-gray-600 dark:text-gray-200 italic mb-4">
+                            “{testimonial.testimonialText}”
+                          </p>
+                          <footer className="text-right font-semibold text-gray-700 dark:text-gray-100">
+                            - {testimonial.clientName}
+                          </footer>
+                        </blockquote>
+                      ))}
+                    </div>
+                </CardContent>
+              </Card>
             )}
           </div>
 
           {/* Right Column (Booking) */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-24">
-              {/* Booking Calendar Section */}
-              <section
-                id="contact-section"
-                className="p-8 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-              >
+            <div className="sticky top-24 space-y-8">
+              <Card id="booking-section">
                 <PublicCalendar
                   trainerId={userWithProfile.id}
                   initialSchedule={schedule}
                 />
-              </section>
-
-              {/* External Links Section */}
+              </Card>
+              
               {profile.externalLinks && profile.externalLinks.length > 0 && (
-                <section
-                  id="links-section"
-                  className="mt-8 p-6 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800"
-                >
-                  <h3 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">
-                    Find Me Online
-                  </h3>
-                  <div className="flex flex-wrap justify-center gap-3">
-                    {profile.externalLinks.map((link: ExternalLink) => (
-                      <a
-                        key={link.id}
-                        href={link.linkUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </div>
-                </section>
+                <Card>
+                  <CardHeader><CardTitle className="text-center">Find Me Online</CardTitle></CardHeader>
+                  <CardContent>
+                      <div className="flex flex-wrap justify-center gap-3">
+                        {profile.externalLinks.map((link: ExternalLink) => (
+                          <Button asChild key={link.id} variant="secondary">
+                            <a
+                              href={link.linkUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {link.label}
+                            </a>
+                          </Button>
+                        ))}
+                      </div>
+                  </CardContent>
+                </Card>
               )}
             </div>
           </aside>
