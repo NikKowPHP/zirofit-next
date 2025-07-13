@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { TransformationPhoto } from "./sections/TransformationPhotosEditor";
 import type { SocialLink } from "./sections/SocialLinksEditor";
@@ -120,9 +120,10 @@ export default function ProfileEditorLayout({
   initialData,
 }: ProfileEditorLayoutProps) {
   const searchParams = useSearchParams();
-  const selectedSection = searchParams.get("section") || "core-info";
+  const [selectedSection, setSelectedSection] = useState(searchParams.get("section") || "core-info");
 
   const handleSelectSection = (section: string) => {
+    setSelectedSection(section);
     const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.set("section", section);
     window.history.pushState(null, "", `?${newSearchParams.toString()}`);

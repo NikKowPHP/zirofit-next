@@ -3,6 +3,10 @@ import { renderHook, act } from '@testing-library/react';
 import { useMeasurementManager } from './useMeasurementManager';
 import * as actions from '@/app/clients/actions/measurement-actions';
 
+jest.mock('react-dom', () => ({
+  ...jest.requireActual('react-dom'),
+  useFormState: jest.fn((action, initialState) => [initialState, jest.fn()]),
+}));
 jest.mock('@/app/clients/actions/measurement-actions', () => ({
   addMeasurement: jest.fn(),
   updateMeasurement: jest.fn(),
