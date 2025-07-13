@@ -43,9 +43,14 @@ export async function addMeasurement(
   } = await supabase.auth.getUser();
   if (!authUser) return { error: "User not authenticated.", success: false };
 
-  const validatedFields = measurementSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validatedFields = measurementSchema.safeParse({
+    clientId: formData.get("clientId"),
+    measurementDate: formData.get("measurementDate"),
+    weightKg: formData.get("weightKg"),
+    bodyFatPercentage: formData.get("bodyFatPercentage"),
+    notes: formData.get("notes"),
+    customMetrics: formData.get("customMetrics"),
+  });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.issues,
@@ -98,9 +103,15 @@ export async function updateMeasurement(
   } = await supabase.auth.getUser();
   if (!authUser) return { error: "User not authenticated.", success: false };
 
-  const validatedFields = updateMeasurementSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validatedFields = updateMeasurementSchema.safeParse({
+    measurementId: formData.get("measurementId"),
+    clientId: formData.get("clientId"),
+    measurementDate: formData.get("measurementDate"),
+    weightKg: formData.get("weightKg"),
+    bodyFatPercentage: formData.get("bodyFatPercentage"),
+    notes: formData.get("notes"),
+    customMetrics: formData.get("customMetrics"),
+  });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.issues,

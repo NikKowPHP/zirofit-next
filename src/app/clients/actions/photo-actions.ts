@@ -14,9 +14,12 @@ const ProgressPhotoSchema = z.object({
 });
 
 export async function addProgressPhoto(prevState: any, formData: FormData) {
-  const validatedFields = ProgressPhotoSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validatedFields = ProgressPhotoSchema.safeParse({
+    clientId: formData.get("clientId"),
+    photoDate: formData.get("photoDate"),
+    caption: formData.get("caption"),
+    photo: formData.get("photo"),
+  });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,

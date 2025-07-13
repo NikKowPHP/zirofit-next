@@ -15,7 +15,13 @@ export default async function EditProfilePage() {
   const safeData = {
     ...initialProfileData,
     username: initialProfileData.username || "",
-    profile: initialProfileData.profile,
+    profile: {
+      ...initialProfileData.profile,
+      // We are sure `availability` is of this shape or null. We cast it to satisfy TypeScript.
+      availability: initialProfileData.profile.availability as
+        | { [key: string]: string[] }
+        | null,
+    },
   };
 
   return <ProfileEditorLayout initialData={safeData} />;

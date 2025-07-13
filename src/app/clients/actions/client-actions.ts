@@ -124,9 +124,12 @@ export async function addClient(prevState: any, formData: FormData) {
     }
   }
 
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validatedFields = FormSchema.safeParse({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    status: formData.get("status"),
+  });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -177,9 +180,13 @@ export async function updateClient(prevState: any, formData: FormData) {
   } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 
-  const validatedFields = UpdateFormSchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
+  const validatedFields = UpdateFormSchema.safeParse({
+    id: formData.get("id"),
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    status: formData.get("status"),
+  });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
