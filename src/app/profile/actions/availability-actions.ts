@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface AvailabilityFormState {
@@ -44,12 +44,7 @@ export async function updateAvailability(
     }
 
     try {
-        await prisma.profile.update({
-            where: { id: profile.id },
-            data: {
-                availability: validatedFields.data.availability,
-            },
-        });
+        await profileService.updateAvailability(profile.id, validatedFields.data.availability);
 
         revalidatePath("/profile/edit");
         return {

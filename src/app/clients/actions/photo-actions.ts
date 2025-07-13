@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import * as clientService from "@/lib/services/clientService";
 import { authorizeClientAccess } from "./_utils";
 
 const ProgressPhotoSchema = z.object({
@@ -52,13 +52,11 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
   }
 
   try {
-    const progressPhoto = await prisma.clientProgressPhoto.create({
-      data: {
-        clientId,
-        photoDate: new Date(photoDate),
-        caption,
-        imagePath: filePath,
-      },
+    const progressPhoto = await clientService.createProgressPhoto({
+      clientId,
+      photoDate: new Date(photoDate),
+      caption,
+      imagePath: filePath,
     });
     revalidatePath(`/clients/${clientId}`);
     return { success: true, progressPhoto };
@@ -75,15 +73,13 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
   if (!authUser) return { message: "User not authenticated." };
 
   try {
-    const photo = await prisma.clientProgressPhoto.findUnique({
-      where: { id: photoId },
-    });
+    const photo = await clientService.findProgressPhotoById(photoId);
     if (!photo || !(await authorizeClientAccess(photo.clientId, authUser.id))) {
       return { message: "Unauthorized to delete photo." };
     }
 
     await supabase.storage.from("zirofit").remove([photo.imagePath]);
-    await prisma.clientProgressPhoto.delete({ where: { id: photoId } });
+    await clientService.deleteProgressPhotoById(photoId);
 
     revalidatePath(`/clients/${photo.clientId}`);
     return { success: true, message: "Progress photo deleted." };
@@ -91,11 +87,3 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
     return { message: "Failed to delete progress photo." };
   }
 }
-
-// export type ClientProgressPhoto = {
-//   id: string;
-//   clientId: string;
-//   photoDate: Date;
-//   caption: string | null;
-//   imagePath: string;
-// };

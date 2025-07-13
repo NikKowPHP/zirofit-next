@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React from "react";
+import { useFormStatus } from "react-dom";
+import { useEditableList } from "@/hooks/useEditableListManager";
 import {
   addSocialLink,
   updateSocialLink,
@@ -9,7 +10,6 @@ import {
 } from "@/app/profile/actions/social-link-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { z } from "zod";
 
 export interface SocialLink {
   id: string;
@@ -25,113 +25,36 @@ interface SocialLinksEditorProps {
   initialSocialLinks: SocialLink[];
 }
 
-interface SocialLinkFormState {
-  message?: string | null;
-  error?: string | null;
-  errors?: z.ZodIssue[];
-  success?: boolean;
-  newLink?: SocialLink;
-  updatedLink?: SocialLink;
-}
-
-const initialFormState: SocialLinkFormState = {};
-
 export default function SocialLinksEditor({
   initialSocialLinks,
 }: SocialLinksEditorProps) {
-  const [addState, addFormAction] = useFormState(
-    addSocialLink,
-    initialFormState,
-  );
-  const [updateState, updateFormAction] = useFormState(
-    updateSocialLink,
-    initialFormState,
-  );
-  const formRef = useRef<HTMLFormElement>(null);
-  const [links, setLinks] = useState<SocialLink[]>(initialSocialLinks);
-
-  const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const isEditing = !!editingLinkId;
-  const currentEditingLink = isEditing
-    ? links.find((link) => link.id === editingLinkId)
-    : null;
-  const formStatus = useFormStatus();
-
-  // Effect for add link
-  useEffect(() => {
-    if (addState.success && addState.newLink) {
-      setLinks((current) =>
-        [addState.newLink!, ...current].sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        ),
-      );
-      formRef.current?.reset();
-    }
-  }, [addState.success, addState.newLink]);
-
-  // Effect for update link
-  useEffect(() => {
-    if (updateState.success && updateState.updatedLink) {
-      setLinks((current) =>
-        current
-          .map((link) =>
-            link.id === updateState.updatedLink!.id
-              ? updateState.updatedLink!
-              : link,
-          )
-          .sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-          ),
-      );
-      handleCancelEdit();
-    }
-  }, [updateState.success, updateState.updatedLink]);
-
-  // Sync with initial props
-  useEffect(() => {
-    if (
-      initialSocialLinks !== links &&
-      !addState.success &&
-      !updateState.success &&
-      !deletingId &&
-      !isEditing
-    ) {
-      setLinks(initialSocialLinks);
-    }
-  }, [
-    initialSocialLinks,
-    addState.success,
-    updateState.success,
+  const {
+    items: links,
+    editingItemId,
     deletingId,
+    deleteError,
+    formRef,
+    addState,
+    addFormAction,
+    updateState,
+    updateFormAction,
     isEditing,
-    links,
-  ]);
+    currentEditingItem: currentEditingLink,
+    handleEdit,
+    handleCancelEdit,
+    handleDelete,
+  } = useEditableList<SocialLink>({
+    initialItems: initialSocialLinks,
+    addAction: addSocialLink,
+    updateAction: updateSocialLink,
+    deleteAction: deleteSocialLink,
+  });
 
-  const handleEditClick = (link: SocialLink) => setEditingLinkId(link.id);
-  const handleCancelEdit = () => setEditingLinkId(null);
-
-  const handleDeleteLink = async (linkId: string) => {
-    if (!window.confirm("Are you sure?")) return;
-    setDeletingId(linkId);
-    setDeleteError(null);
-    const result = await deleteSocialLink(linkId);
-    if (result.success && result.deletedId) {
-      setLinks((current) => current.filter((l) => l.id !== result.deletedId));
-    } else if (result.error) {
-      setDeleteError(result.error);
-    }
-    setDeletingId(null);
-  };
-
+  const formStatus = useFormStatus();
   const currentFormState = isEditing ? updateState : addState;
   const getFieldError = (fieldName: "platform" | "username" | "profileUrl") => {
     return currentFormState.errors?.find(
-      (err) => err.path && err.path.includes(fieldName),
+      (err: any) => err.path && err.path.includes(fieldName),
     )?.message;
   };
 
@@ -162,12 +85,12 @@ export default function SocialLinksEditor({
 
         <form
           action={isEditing ? updateFormAction : addFormAction}
-          key={editingLinkId || "add-link"}
+          key={editingItemId || "add-link"}
           ref={formRef}
           className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
-            <input type="hidden" name="linkId" value={editingLinkId} />
+            <input type="hidden" name="linkId" value={editingItemId} />
           )}
           <div>
             <Label htmlFor="platform">Platform</Label>
@@ -177,7 +100,7 @@ export default function SocialLinksEditor({
               type="text"
               required
               className="mt-1"
-              defaultValue={isEditing ? currentEditingLink?.platform : ""}
+              defaultValue={isEditing && currentEditingLink ? currentEditingLink.platform : ""}
             />
             {getFieldError("platform") && (
               <p className="text-red-500 text-xs mt-1">
@@ -193,7 +116,7 @@ export default function SocialLinksEditor({
               type="text"
               required
               className="mt-1"
-              defaultValue={isEditing ? currentEditingLink?.username : ""}
+              defaultValue={isEditing && currentEditingLink ? currentEditingLink.username : ""}
             />
             {getFieldError("username") && (
               <p className="text-red-500 text-xs mt-1">
@@ -210,7 +133,7 @@ export default function SocialLinksEditor({
               required
               className="mt-1"
               placeholder="https://example.com/username"
-              defaultValue={isEditing ? currentEditingLink?.profileUrl : ""}
+              defaultValue={isEditing && currentEditingLink ? currentEditingLink.profileUrl : ""}
             />
             {getFieldError("profileUrl") && (
               <p className="text-red-500 text-xs mt-1">
@@ -279,10 +202,10 @@ export default function SocialLinksEditor({
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={() => handleEditClick(link)}
+                      onClick={() => handleEdit(link)}
                       disabled={
                         deletingId === link.id ||
-                        (isEditing && editingLinkId === link.id)
+                        (isEditing && editingItemId === link.id)
                       }
                     >
                       <PencilIcon className="h-4 w-4" />
@@ -290,7 +213,7 @@ export default function SocialLinksEditor({
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDeleteLink(link.id)}
+                      onClick={() => handleDelete(link.id)}
                       disabled={deletingId === link.id}
                     >
                       <TrashIcon className="h-4 w-4" />

@@ -1,11 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useActionState } from "react";
-import {
-  addSessionLog,
-  deleteSessionLog,
-  updateSessionLog,
-} from "@/app/clients/actions";
+import { useSessionLogManager } from "@/hooks/useSessionLogManager";
 import type { ClientSessionLog } from "@/app/clients/actions";
 import { Button, Input, Textarea } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -15,91 +10,28 @@ interface ManageClientSessionLogsProps {
   initialSessionLogs: ClientSessionLog[];
 }
 
-interface ActionState {
-  errors?: {
-    sessionDate?: string[];
-    durationMinutes?: string[];
-    activitySummary?: string[];
-    sessionNotes?: string[];
-    clientId?: string[];
-    sessionLogId?: string[];
-  };
-  message?: string;
-  success: boolean;
-  sessionLog?: ClientSessionLog;
-}
-
-const initialActionState: ActionState = { success: false };
-
 export default function ManageClientSessionLogs({
   clientId,
   initialSessionLogs,
 }: ManageClientSessionLogsProps) {
-  const [sessionLogs, setSessionLogs] =
-    useState<ClientSessionLog[]>(initialSessionLogs);
-  const [editingSessionLogId, setEditingSessionLogId] = useState<string | null>(
-    null,
-  );
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const [addState, addAction] = useActionState(addSessionLog, initialActionState);
-  const [updateState, updateAction] = useActionState(
-    updateSessionLog,
-    initialActionState,
-  );
-
-  const isEditing = !!editingSessionLogId;
-
-  useEffect(() => {
-    if (addState.success && addState.sessionLog) {
-      setSessionLogs((prev) =>
-        [addState.sessionLog!, ...prev].sort(
-          (a, b) =>
-            new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime(),
-        ),
-      );
-      formRef.current?.reset();
-    }
-  }, [addState]);
-
-  useEffect(() => {
-    if (updateState.success && updateState.sessionLog) {
-      setSessionLogs((prev) =>
-        prev.map((log) =>
-          log.id === updateState.sessionLog!.id ? updateState.sessionLog! : log,
-        ),
-      );
-      setEditingSessionLogId(null);
-    }
-  }, [updateState]);
-
-  const handleDeleteSessionLog = async (sessionLogId: string) => {
-    if (!window.confirm("Are you sure you want to delete this log?")) return;
-    setDeletingId(sessionLogId);
-    setDeleteError(null);
-    const result = await deleteSessionLog(sessionLogId);
-    if (result?.success) {
-      setSessionLogs((prev) => prev.filter((log) => log.id !== sessionLogId));
-    } else {
-      setDeleteError(result?.message || "Failed to delete log.");
-    }
-    setDeletingId(null);
-  };
-
-  const handleEditClick = (log: ClientSessionLog) => {
-    setEditingSessionLogId(log.id);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingSessionLogId(null);
-  };
+  const {
+    sessionLogs,
+    editingSessionLogId,
+    deletingId,
+    deleteError,
+    formRef,
+    addState,
+    addAction,
+    updateState,
+    updateAction,
+    isEditing,
+    currentEditingLog,
+    handleDelete,
+    handleEdit,
+    handleCancelEdit,
+  } = useSessionLogManager({ initialSessionLogs, clientId });
 
   const currentFormState = isEditing ? updateState : addState;
-  const currentEditingLog = isEditing
-    ? sessionLogs.find((l) => l.id === editingSessionLogId)
-    : null;
 
   return (
     <div className="space-y-8">
@@ -110,8 +42,8 @@ export default function ManageClientSessionLogs({
       {/* Add/Edit Session Log Form */}
       <div className="mb-8">
         <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-          {isEditing
-            ? `Editing Log from ${new Date(currentEditingLog!.sessionDate).toLocaleDateString()}`
+          {isEditing && currentEditingLog
+            ? `Editing Log from ${new Date(currentEditingLog.sessionDate).toLocaleDateString()}`
             : "Add New Session Log"}
         </h3>
         <form
@@ -131,8 +63,8 @@ export default function ManageClientSessionLogs({
               name="sessionDate"
               required
               defaultValue={
-                isEditing
-                  ? new Date(currentEditingLog!.sessionDate)
+                isEditing && currentEditingLog
+                  ? new Date(currentEditingLog.sessionDate)
                       .toISOString()
                       .split("T")[0]
                   : ""
@@ -144,7 +76,9 @@ export default function ManageClientSessionLogs({
               placeholder="Duration (minutes)"
               required
               defaultValue={
-                isEditing ? String(currentEditingLog!.durationMinutes ?? "") : ""
+                isEditing && currentEditingLog
+                  ? String(currentEditingLog.durationMinutes || "")
+                  : ""
               }
             />
           </div>
@@ -153,12 +87,20 @@ export default function ManageClientSessionLogs({
             name="activitySummary"
             placeholder="Activity Summary"
             required
-            defaultValue={isEditing ? currentEditingLog!.activitySummary ?? "" : ""}
+            defaultValue={
+              isEditing && currentEditingLog
+                ? currentEditingLog.activitySummary ?? ""
+                : ""
+            }
           />
           <Textarea
             name="sessionNotes"
             placeholder="Private Session Notes"
-            defaultValue={isEditing ? currentEditingLog!.sessionNotes ?? "" : ""}
+            defaultValue={
+              isEditing && currentEditingLog
+                ? currentEditingLog.sessionNotes || ""
+                : ""
+            }
           />
 
           <div className="flex gap-2">
@@ -204,7 +146,7 @@ export default function ManageClientSessionLogs({
                     type="button"
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleEditClick(sessionLog)}
+                    onClick={() => handleEdit(sessionLog)}
                   >
                     <PencilIcon className="h-4 w-4" />
                   </Button>
@@ -212,7 +154,7 @@ export default function ManageClientSessionLogs({
                     type="button"
                     variant="danger"
                     size="sm"
-                    onClick={() => handleDeleteSessionLog(sessionLog.id)}
+                    onClick={() => handleDelete(sessionLog.id)}
                     disabled={deletingId === sessionLog.id}
                   >
                     {deletingId === sessionLog.id ? (

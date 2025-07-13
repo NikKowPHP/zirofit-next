@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import * as clientService from "@/lib/services/clientService";
 import type { Prisma } from "@prisma/client";
 import { authorizeClientAccess } from "./_utils";
 
@@ -72,19 +72,17 @@ export async function addMeasurement(
   }
 
   try {
-    const measurement = await prisma.clientMeasurement.create({
-      data: {
-        clientId,
-        measurementDate: new Date(measurementDate),
-        weightKg: weightKg ? parseFloat(weightKg) : null,
-        bodyFatPercentage: bodyFatPercentage
-          ? parseFloat(bodyFatPercentage)
-          : null,
-        notes,
-        customMetrics: customMetricsJson
-          ? JSON.parse(customMetricsJson)
-          : undefined,
-      },
+    const measurement = await clientService.createMeasurement({
+      clientId,
+      measurementDate: new Date(measurementDate),
+      weightKg: weightKg ? parseFloat(weightKg) : null,
+      bodyFatPercentage: bodyFatPercentage
+        ? parseFloat(bodyFatPercentage)
+        : null,
+      notes,
+      customMetrics: customMetricsJson
+        ? JSON.parse(customMetricsJson)
+        : undefined,
     });
     revalidatePath(`/clients/${clientId}`);
     return { success: true, message: "Measurement added.", measurement };
@@ -126,9 +124,9 @@ export async function updateMeasurement(
   }
 
   try {
-    const measurement = await prisma.clientMeasurement.update({
-      where: { id: measurementId },
-      data: {
+    const measurement = await clientService.updateMeasurementById(
+      measurementId,
+      {
         measurementDate: new Date(dataToUpdate.measurementDate),
         weightKg: dataToUpdate.weightKg
           ? parseFloat(dataToUpdate.weightKg)
@@ -141,7 +139,7 @@ export async function updateMeasurement(
           ? JSON.parse(dataToUpdate.customMetrics)
           : undefined,
       },
-    });
+    );
     revalidatePath(`/clients/${clientId}`);
     return { success: true, message: "Measurement updated.", measurement };
   } catch (e: any) {
@@ -163,10 +161,7 @@ export async function deleteMeasurement(
   if (!authUser) return { error: "User not authenticated.", success: false };
 
   try {
-    const measurement = await prisma.clientMeasurement.findUnique({
-      where: { id: measurementId },
-      select: { clientId: true },
-    });
+    const measurement = await clientService.findMeasurementById(measurementId);
     if (
       !measurement ||
       !(await authorizeClientAccess(measurement.clientId, authUser.id))
@@ -177,7 +172,7 @@ export async function deleteMeasurement(
       };
     }
 
-    await prisma.clientMeasurement.delete({ where: { id: measurementId } });
+    await clientService.deleteMeasurementById(measurementId);
     revalidatePath(`/clients/${measurement.clientId}`);
     return { success: true, message: "Measurement deleted." };
   } catch (e: any) {

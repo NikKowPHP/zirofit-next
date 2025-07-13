@@ -1,6 +1,6 @@
-// src/lib/dashboard.test.ts
-import { getDashboardData } from './dashboard';
-import { prismaMock } from '../../tests/singleton';
+// src/lib/services/dashboardService.test.ts
+import { getDashboardData } from './dashboardService';
+import { prismaMock } from '../../../tests/singleton';
 
 describe('Dashboard Data Service', () => {
   it('should correctly aggregate client counts and session data', async () => {

@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { Testimonial } from "./_utils";
 
@@ -32,8 +32,9 @@ export async function addTestimonial(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed" };
   try {
-    const newTestimonial = await prisma.testimonial.create({
-      data: { ...validated.data, profileId: profile.id },
+    const newTestimonial = await profileService.createTestimonial({
+      ...validated.data,
+      profileId: profile.id,
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Testimonial added.", newTestimonial };
@@ -55,10 +56,11 @@ export async function updateTestimonial(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed" };
   try {
-    const updatedTestimonial = await prisma.testimonial.update({
-      where: { id, profileId: profile.id },
-      data: validated.data,
-    });
+    const updatedTestimonial = await profileService.updateTestimonial(
+      id,
+      profile.id,
+      validated.data,
+    );
     revalidatePath("/profile/edit");
     return {
       success: true,
@@ -76,7 +78,7 @@ export async function deleteTestimonial(
 ): Promise<TestimonialFormState> {
   const { profile } = await getUserAndProfile();
   try {
-    await prisma.testimonial.delete({ where: { id, profileId: profile.id } });
+    await profileService.deleteTestimonial(id, profile.id);
     revalidatePath("/profile/edit");
     return { success: true, message: "Testimonial deleted.", deletedId: id };
   } catch (e: unknown) {

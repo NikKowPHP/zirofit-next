@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface TextContentFormState {
@@ -19,10 +19,7 @@ async function updateProfileTextField(
   const content = formData.get(`${fieldName}Content`) as string;
 
   try {
-    await prisma.profile.update({
-      where: { id: profile.id },
-      data: { [fieldName]: content },
-    });
+    await profileService.updateProfileTextField(profile.id, fieldName, content);
     revalidatePath("/profile/edit");
     return {
       success: true,

@@ -2,7 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface BrandingFormState {
@@ -42,7 +42,7 @@ export async function updateBrandingImages(
     }
 
     if (Object.keys(updates).length > 0) {
-      await prisma.profile.update({ where: { id: profile.id }, data: updates });
+      await profileService.updateBrandingPaths(profile.id, updates);
     }
 
     revalidatePath("/profile/edit");

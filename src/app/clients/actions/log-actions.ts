@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import * as clientService from "@/lib/services/clientService";
 import { authorizeClientAccess } from "./_utils";
 import type { Prisma } from "@prisma/client";
 import { createMilestoneNotification } from "@/lib/services/notificationService";
@@ -65,14 +65,12 @@ export async function addSessionLog(
   }
 
   try {
-    const sessionLog = await prisma.clientSessionLog.create({
-      data: {
-        clientId,
-        sessionDate: new Date(data.sessionDate),
-        durationMinutes: parseInt(data.durationMinutes),
-        activitySummary: data.activitySummary,
-        sessionNotes: data.sessionNotes,
-      },
+    const sessionLog = await clientService.createSessionLog({
+      clientId,
+      sessionDate: new Date(data.sessionDate),
+      durationMinutes: parseInt(data.durationMinutes),
+      activitySummary: data.activitySummary,
+      sessionNotes: data.sessionNotes,
     });
 
     // Check for milestone
@@ -115,14 +113,11 @@ export async function updateSessionLog(
   }
 
   try {
-    const sessionLog = await prisma.clientSessionLog.update({
-      where: { id: sessionLogId },
-      data: {
-        sessionDate: new Date(data.sessionDate),
-        durationMinutes: parseInt(data.durationMinutes),
-        activitySummary: data.activitySummary,
-        sessionNotes: data.sessionNotes,
-      },
+    const sessionLog = await clientService.updateSessionLogById(sessionLogId, {
+      sessionDate: new Date(data.sessionDate),
+      durationMinutes: parseInt(data.durationMinutes),
+      activitySummary: data.activitySummary,
+      sessionNotes: data.sessionNotes,
     });
     revalidatePath(`/clients/${clientId}`);
     return { success: true, sessionLog, message: "Session log updated." };
@@ -143,14 +138,12 @@ export async function deleteSessionLog(sessionLogId: string): Promise<{
     return { message: "User not authenticated.", success: false };
 
   try {
-    const log = await prisma.clientSessionLog.findUnique({
-      where: { id: sessionLogId },
-    });
+    const log = await clientService.findSessionLogById(sessionLogId);
     if (!log || !(await authorizeClientAccess(log.clientId, authUser.id))) {
       return { message: "Unauthorized.", success: false };
     }
 
-    await prisma.clientSessionLog.delete({ where: { id: sessionLogId } });
+    await clientService.deleteSessionLogById(sessionLogId);
     revalidatePath(`/clients/${log.clientId}`);
     return { success: true, message: "Session log deleted." };
   } catch (error: any) {

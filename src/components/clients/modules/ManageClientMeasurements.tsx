@@ -1,13 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-dom";
-import {
-  addMeasurement,
-  updateMeasurement,
-  deleteMeasurement,
-  type MeasurementFormState,
-} from "@/app/clients/actions/measurement-actions";
+import { useMeasurementManager } from "@/hooks/useMeasurementManager";
 import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
 import { Button, Input, Textarea } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -21,74 +14,22 @@ export default function ManageClientMeasurements({
   clientId,
   initialMeasurements,
 }: ManageClientMeasurementsProps) {
-  const [measurements, setMeasurements] =
-    useState<ClientMeasurement[]>(initialMeasurements);
-  const [editingMeasurementId, setEditingMeasurementId] = useState<
-    string | null
-  >(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const initialActionState: MeasurementFormState = { message: "" };
-
-  const [addState, addAction] = useFormState(
-    addMeasurement,
-    initialActionState,
-  );
-  const [updateState, updateAction] = useFormState(
-    updateMeasurement,
-    initialActionState,
-  );
-
-  const isEditing = !!editingMeasurementId;
-
-  useEffect(() => {
-    if (addState.success && addState.measurement) {
-      setMeasurements((prev) =>
-        [...prev, addState.measurement!].sort(
-          (a, b) =>
-            new Date(b.measurementDate).getTime() -
-            new Date(a.measurementDate).getTime(),
-        ),
-      );
-      formRef.current?.reset();
-    }
-  }, [addState]);
-
-  useEffect(() => {
-    if (updateState.success && updateState.measurement) {
-      setMeasurements((prev) =>
-        prev.map((m) =>
-          m.id === updateState.measurement!.id ? updateState.measurement! : m,
-        ),
-      );
-      setEditingMeasurementId(null);
-    }
-  }, [updateState]);
-
-  const handleDeleteMeasurement = async (measurementId: string) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      const result = await deleteMeasurement({}, measurementId);
-      if (result?.success) {
-        setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
-      } else {
-        alert(result?.error || "Failed to delete measurement.");
-      }
-    }
-  };
-
-  const handleEditClick = (measurement: ClientMeasurement) => {
-    setEditingMeasurementId(measurement.id);
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const handleCancelEdit = () => {
-    setEditingMeasurementId(null);
-  };
+  const {
+    measurements,
+    editingMeasurementId,
+    formRef,
+    addState,
+    addAction,
+    updateState,
+    updateAction,
+    isEditing,
+    currentEditingMeasurement,
+    handleDelete,
+    handleEdit,
+    handleCancelEdit,
+  } = useMeasurementManager({ initialMeasurements });
 
   const currentFormState = isEditing ? updateState : addState;
-  const currentEditingMeasurement = isEditing
-    ? measurements.find((m) => m.id === editingMeasurementId)
-    : null;
 
   return (
     <div className="space-y-8">
@@ -137,7 +78,9 @@ export default function ManageClientMeasurements({
               step="0.01"
               placeholder="Weight (kg)"
               defaultValue={
-                isEditing ? String(currentEditingMeasurement?.weightKg ?? "") : ""
+                isEditing && currentEditingMeasurement
+                  ? String(currentEditingMeasurement.weightKg || "")
+                  : ""
               }
             />
             <Input
@@ -146,8 +89,8 @@ export default function ManageClientMeasurements({
               step="0.01"
               placeholder="Body Fat %"
               defaultValue={
-                isEditing
-                  ? String(currentEditingMeasurement?.bodyFatPercentage ?? "")
+                isEditing && currentEditingMeasurement
+                  ? String(currentEditingMeasurement.bodyFatPercentage || "")
                   : ""
               }
             />
@@ -155,7 +98,11 @@ export default function ManageClientMeasurements({
           <Textarea
             name="notes"
             placeholder="Notes..."
-            defaultValue={isEditing ? currentEditingMeasurement?.notes ?? "" : ""}
+            defaultValue={
+              isEditing && currentEditingMeasurement
+                ? currentEditingMeasurement.notes || ""
+                : ""
+            }
           />
 
           <div className="flex gap-2">
@@ -215,7 +162,7 @@ export default function ManageClientMeasurements({
                     type="button"
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleEditClick(measurement)}
+                    onClick={() => handleEdit(measurement)}
                   >
                     <PencilIcon className="h-4 w-4" />
                   </Button>
@@ -223,7 +170,7 @@ export default function ManageClientMeasurements({
                     type="button"
                     variant="danger"
                     size="sm"
-                    onClick={() => handleDeleteMeasurement(measurement.id)}
+                    onClick={() => handleDelete(measurement.id)}
                   >
                     <TrashIcon className="h-4 w-4" />
                   </Button>

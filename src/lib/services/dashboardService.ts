@@ -13,6 +13,11 @@ interface ActivityItem {
   message: string;
 }
 
+/**
+ * Aggregates and retrieves all necessary data for the trainer dashboard.
+ * @param {string} trainerId - The ID of the logged-in trainer.
+ * @returns {Promise<object>} A promise that resolves to an object containing all dashboard data.
+ */
 export async function getDashboardData(trainerId: string) {
   const activeClients = await prisma.client.count({
     where: { trainerId, status: "active" },
@@ -86,7 +91,6 @@ export async function getDashboardData(trainerId: string) {
         message: `Session with ${session.client.name} at ${session.sessionDate.toLocaleTimeString()}`,
       }),
     ),
-    // FIX 1: Removed incorrect type annotation and simplified the message.
     ...recentMeasurements.map((measurement) => ({
       type: "NEW_MEASUREMENT" as const,
       date: measurement.createdAt,
@@ -132,12 +136,16 @@ export async function getDashboardData(trainerId: string) {
     pendingClients,
     profile,
     activityFeed,
-    // Add the required chart data keys to the response
     clientProgressData,
     monthlyActivityData,
   };
 }
 
+/**
+ * Finds a client who is making progress to feature on the dashboard.
+ * @param {string} trainerId - The ID of the trainer.
+ * @returns {Promise<object | null>} A promise that resolves to a spotlight client object or null.
+ */
 async function getSpotlightClient(trainerId: string) {
   // Find clients with at least 2 measurements in last 45 days
   const eligibleClients = await prisma.client.findMany({
@@ -184,7 +192,6 @@ async function getSpotlightClient(trainerId: string) {
 
   return {
     name: client.name,
-    // FIX 2: Correctly map the ClientMeasurement to the shape the chart expects.
     measurements: measurements
       .filter((m) => m.weightKg != null) // Ensure we only plot measurements with a weight
       .map((m) => ({

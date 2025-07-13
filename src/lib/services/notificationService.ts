@@ -3,6 +3,12 @@ import { Resend } from "resend";
 import { BookingConfirmation } from "@/emails/BookingConfirmation";
 import type { Booking } from "@prisma/client";
 
+/**
+ * Sends booking confirmation emails to both the trainer and the client.
+ * @param {Booking} booking - The booking object.
+ * @param {{ name: string | null; email: string }} trainer - The trainer's details.
+ * @returns {Promise<void>}
+ */
 export const sendBookingConfirmationEmail = async (
   booking: Booking,
   trainer: { name: string | null; email: string },
@@ -41,6 +47,12 @@ export const sendBookingConfirmationEmail = async (
   });
 };
 
+/**
+ * Creates a notification for a trainer when a client reaches a session milestone.
+ * @param {string} userId - The ID of the trainer (user).
+ * @param {string} clientId - The ID of the client.
+ * @returns {Promise<void>}
+ */
 export const createMilestoneNotification = async (
   userId: string,
   clientId: string,

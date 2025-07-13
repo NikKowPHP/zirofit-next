@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { SocialLink } from "./_utils";
 
@@ -34,8 +34,9 @@ export async function addSocialLink(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const newLink = await prisma.socialLink.create({
-      data: { ...validated.data, profileId: profile.id },
+    const newLink = await profileService.createSocialLink({
+      ...validated.data,
+      profileId: profile.id,
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Social link added.", newLink };
@@ -58,10 +59,11 @@ export async function updateSocialLink(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const updatedLink = await prisma.socialLink.update({
-      where: { id: linkId, profileId: profile.id },
-      data: validated.data,
-    });
+    const updatedLink = await profileService.updateSocialLink(
+      linkId,
+      profile.id,
+      validated.data,
+    );
     revalidatePath("/profile/edit");
     return { success: true, message: "Social link updated.", updatedLink };
   } catch (e: unknown) {
@@ -74,9 +76,7 @@ export async function deleteSocialLink(
 ): Promise<{ success: boolean; error?: string; deletedId?: string }> {
   const { profile } = await getUserAndProfile();
   try {
-    await prisma.socialLink.delete({
-      where: { id: linkId, profileId: profile.id },
-    });
+    await profileService.deleteSocialLink(linkId, profile.id);
     revalidatePath("/profile/edit");
     return { success: true, deletedId: linkId };
   } catch (e: unknown) {

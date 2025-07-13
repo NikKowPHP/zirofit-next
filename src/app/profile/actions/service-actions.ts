@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { Service } from "./_utils";
 
@@ -32,8 +32,9 @@ export async function addService(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const newService = await prisma.service.create({
-      data: { ...validated.data, profileId: profile.id },
+    const newService = await profileService.createService({
+      ...validated.data,
+      profileId: profile.id,
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Service added.", newService };
@@ -55,10 +56,11 @@ export async function updateService(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const updatedService = await prisma.service.update({
-      where: { id: serviceId, profileId: profile.id },
-      data: validated.data,
-    });
+    const updatedService = await profileService.updateService(
+      serviceId,
+      profile.id,
+      validated.data,
+    );
     revalidatePath("/profile/edit");
     return { success: true, message: "Service updated.", updatedService };
   } catch (e: unknown) {
@@ -71,9 +73,7 @@ export async function deleteService(
 ): Promise<{ success: boolean; error?: string; deletedId?: string }> {
   const { profile } = await getUserAndProfile();
   try {
-    await prisma.service.delete({
-      where: { id: serviceId, profileId: profile.id },
-    });
+    await profileService.deleteService(serviceId, profile.id);
     revalidatePath("/profile/edit");
     return { success: true, deletedId: serviceId };
   } catch (e: unknown) {

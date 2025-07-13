@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { ExternalLink } from "./_utils";
 
@@ -32,8 +32,9 @@ export async function addExternalLink(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const newLink = await prisma.externalLink.create({
-      data: { ...validated.data, profileId: profile.id },
+    const newLink = await profileService.createExternalLink({
+      ...validated.data,
+      profileId: profile.id,
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Link added.", newLink };
@@ -55,10 +56,11 @@ export async function updateExternalLink(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const updatedLink = await prisma.externalLink.update({
-      where: { id: linkId, profileId: profile.id },
-      data: validated.data,
-    });
+    const updatedLink = await profileService.updateExternalLink(
+      linkId,
+      profile.id,
+      validated.data,
+    );
     revalidatePath("/profile/edit");
     return { success: true, message: "Link updated.", updatedLink };
   } catch (e: unknown) {
@@ -71,9 +73,7 @@ export async function deleteExternalLink(
 ): Promise<{ success: boolean; error?: string; deletedId?: string }> {
   const { profile } = await getUserAndProfile();
   try {
-    await prisma.externalLink.delete({
-      where: { id: linkId, profileId: profile.id },
-    });
+    await profileService.deleteExternalLink(linkId, profile.id);
     revalidatePath("/profile/edit");
     return { success: true, deletedId: linkId };
   } catch (e: unknown) {

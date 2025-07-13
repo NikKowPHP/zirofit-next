@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useActionState } from "react";
+import React from "react";
 import { useFormStatus } from "react-dom";
+import { useEditableList } from "@/hooks/useEditableListManager";
 import {
   addService,
   deleteService,
@@ -9,7 +10,6 @@ import {
 } from "@/app/profile/actions/service-actions";
 import type { Service } from "@prisma/client";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
-import { z } from "zod";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
@@ -17,115 +17,37 @@ interface ServicesEditorProps {
   initialServices: Service[];
 }
 
-interface ServiceFormState {
-  message?: string | null;
-  error?: string | null;
-  errors?: z.ZodIssue[];
-  success?: boolean;
-  newService?: Service;
-}
-
-interface UpdateServiceFormState extends ServiceFormState {
-  updatedService?: Service;
-}
-
-const initialAddState: ServiceFormState = {};
-const initialUpdateState: UpdateServiceFormState = {};
-
 export default function ServicesEditor({
   initialServices,
 }: ServicesEditorProps) {
-  const [addState, addFormAction] = useActionState(
-    (state: ServiceFormState, formData: FormData) =>
-      addService(state, formData),
-    initialAddState,
-  );
-  const [updateState, updateFormAction] = useActionState(
-    (state: UpdateServiceFormState, formData: FormData) =>
-      updateService(state, formData),
-    initialUpdateState,
-  );
-  const formRef = useRef<HTMLFormElement>(null);
-  const [services, setServices] = useState<Service[]>(initialServices);
+  const {
+    items: services,
+    editingItemId,
+    deletingId,
+    deleteError,
+    formRef,
+    addState,
+    addFormAction,
+    updateState,
+    updateFormAction,
+    isEditing,
+    currentEditingItem: currentEditingService,
+    handleEdit,
+    handleCancelEdit,
+    handleDelete,
+  } = useEditableList<Service>({
+    initialItems: initialServices,
+    addAction: addService,
+    updateAction: updateService,
+    deleteAction: deleteService,
+  });
 
-  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const formStatus = useFormStatus();
-
-  useEffect(() => {
-    if (addState.success && addState.newService) {
-      setServices((currentServices) =>
-        [addState.newService!, ...currentServices].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        ),
-      );
-      formRef.current?.reset();
-    }
-  }, [addState.success, addState.newService]);
-
-  useEffect(() => {
-    if (updateState.success && updateState.updatedService) {
-      setServices((currentServices) =>
-        currentServices.map((s) =>
-          s.id === updateState.updatedService!.id
-            ? updateState.updatedService!
-            : s,
-        ),
-      );
-      handleCancelEdit();
-    }
-  }, [updateState.success, updateState.updatedService]);
-
-  useEffect(() => {
-    if (
-      initialServices !== services &&
-      !addState.success &&
-      !updateState.success &&
-      !editingServiceId
-    ) {
-      setServices(initialServices);
-    }
-  }, [
-    initialServices,
-    addState.success,
-    updateState.success,
-    editingServiceId,
-    services,
-  ]);
-
-  const handleEditClick = (service: Service) => {
-    setEditingServiceId(service.id);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingServiceId(null);
-  };
-
-  const isEditing = !!editingServiceId;
-
   const currentFormState = isEditing ? updateState : addState;
   const getFieldError = (fieldName: "title" | "description") => {
     return currentFormState.errors?.find(
-      (err) => err.path && err.path.includes(fieldName),
+      (err: any) => err.path && err.path.includes(fieldName),
     )?.message;
-  };
-
-  const handleDeleteService = async (serviceId: string) => {
-    if (!window.confirm("Are you sure you want to delete this service?"))
-      return;
-    setDeletingId(serviceId);
-    setDeleteError(null);
-    const result = await deleteService(serviceId);
-    if (result.success && result.deletedId) {
-      setServices((currentServices) =>
-        currentServices.filter((s) => s.id !== result.deletedId),
-      );
-    } else if (result.error) {
-      setDeleteError(result.error);
-    }
-    setDeletingId(null);
   };
 
   return (
@@ -147,11 +69,12 @@ export default function ServicesEditor({
 
         <form
           action={isEditing ? updateFormAction : addFormAction}
-          key={editingServiceId || "add"}
+          key={editingItemId || "add"}
+          ref={formRef}
           className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
-            <input type="hidden" name="serviceId" value={editingServiceId} />
+            <input type="hidden" name="serviceId" value={editingItemId} />
           )}
           <div>
             <Label htmlFor="title">Service Title</Label>
@@ -161,9 +84,7 @@ export default function ServicesEditor({
               type="text"
               required
               defaultValue={
-                isEditing
-                  ? services.find((s) => s.id === editingServiceId)?.title
-                  : ""
+                isEditing && currentEditingService ? currentEditingService.title : ""
               }
               className="mt-1"
             />
@@ -178,9 +99,8 @@ export default function ServicesEditor({
               label="Service Description"
               name="description"
               initialValue={
-                isEditing
-                  ? (services.find((s) => s.id === editingServiceId)
-                      ?.description ?? "")
+                isEditing && currentEditingService
+                  ? currentEditingService.description ?? ""
                   : ""
               }
             />
@@ -243,11 +163,11 @@ export default function ServicesEditor({
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleEditClick(service)}
+                    onClick={() => handleEdit(service)}
                     aria-label={`Edit ${service.title}`}
                     disabled={
                       deletingId === service.id ||
-                      (isEditing && editingServiceId === service.id)
+                      (isEditing && editingItemId === service.id)
                     }
                   >
                     <PencilIcon className="h-4 w-4" />
@@ -255,7 +175,7 @@ export default function ServicesEditor({
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={() => handleDeleteService(service.id)}
+                    onClick={() => handleDelete(service.id)}
                     aria-label={`Delete ${service.title}`}
                     disabled={deletingId === service.id}
                   >

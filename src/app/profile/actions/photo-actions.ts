@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { TransformationPhotoWithPublicUrl } from "./_utils";
 
@@ -48,9 +48,7 @@ export async function addTransformationPhoto(
         const {
             data: { publicUrl },
         } = supabaseStorage.storage.from("zirofit").getPublicUrl(filePath);
-        const newPhoto = await prisma.transformationPhoto.create({
-            data: { profileId: profile.id, imagePath: filePath, caption },
-        });
+        const newPhoto = await profileService.createTransformationPhoto({ profileId: profile.id, imagePath: filePath, caption });
         revalidatePath("/profile/edit");
         return {
             success: true,
@@ -68,12 +66,10 @@ export async function deleteTransformationPhoto(
 ): Promise<{ success: boolean; error?: string; deletedId?: string }> {
     const { profile } = await getUserAndProfile();
     try {
-        const photo = await prisma.transformationPhoto.findFirstOrThrow({
-            where: { id: photoId, profileId: profile.id },
-        });
+        const photo = await profileService.findTransformationPhoto(photoId, profile.id);
         const supabase = await createClient();
         await supabase.storage.from("zirofit").remove([photo.imagePath]);
-        await prisma.transformationPhoto.delete({ where: { id: photoId } });
+        await profileService.deleteTransformationPhoto(photoId);
         revalidatePath("/profile/edit");
         return { success: true, deletedId: photoId };
     } catch (e: unknown) {

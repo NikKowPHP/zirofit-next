@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React from "react";
+import { useFormStatus } from "react-dom";
+import { useEditableList } from "@/hooks/useEditableListManager";
 import {
   addExternalLink,
   updateExternalLink,
@@ -9,7 +10,6 @@ import {
 } from "@/app/profile/actions/external-link-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { z } from "zod";
 
 interface ExternalLink {
   id: string;
@@ -24,113 +24,36 @@ interface ExternalLinksEditorProps {
   initialExternalLinks: ExternalLink[];
 }
 
-interface ExternalLinkFormState {
-  message?: string | null;
-  error?: string | null;
-  errors?: z.ZodIssue[];
-  success?: boolean;
-  newLink?: ExternalLink;
-  updatedLink?: ExternalLink;
-}
-
-const initialFormState: ExternalLinkFormState = {};
-
 export default function ExternalLinksEditor({
   initialExternalLinks,
 }: ExternalLinksEditorProps) {
-  const [addState, addFormAction] = useFormState(
-    addExternalLink,
-    initialFormState,
-  );
-  const [updateState, updateFormAction] = useFormState(
-    updateExternalLink,
-    initialFormState,
-  );
-  const formRef = useRef<HTMLFormElement>(null);
-  const [links, setLinks] = useState<ExternalLink[]>(initialExternalLinks);
-
-  const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const isEditing = !!editingLinkId;
-  const currentEditingLink = isEditing
-    ? links.find((link) => link.id === editingLinkId)
-    : null;
-  const formStatus = useFormStatus();
-
-  // Effect for add link
-  useEffect(() => {
-    if (addState.success && addState.newLink) {
-      setLinks((current) =>
-        [addState.newLink!, ...current].sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        ),
-      );
-      formRef.current?.reset();
-    }
-  }, [addState.success, addState.newLink]);
-
-  // Effect for update link
-  useEffect(() => {
-    if (updateState.success && updateState.updatedLink) {
-      setLinks((current) =>
-        current
-          .map((link) =>
-            link.id === updateState.updatedLink!.id
-              ? updateState.updatedLink!
-              : link,
-          )
-          .sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-          ),
-      );
-      handleCancelEdit();
-    }
-  }, [updateState.success, updateState.updatedLink]);
-
-  // Sync with initial props
-  useEffect(() => {
-    if (
-      initialExternalLinks !== links &&
-      !addState.success &&
-      !updateState.success &&
-      !deletingId &&
-      !isEditing
-    ) {
-      setLinks(initialExternalLinks);
-    }
-  }, [
-    initialExternalLinks,
-    addState.success,
-    updateState.success,
+  const {
+    items: links,
+    editingItemId,
     deletingId,
+    deleteError,
+    formRef,
+    addState,
+    addFormAction,
+    updateState,
+    updateFormAction,
     isEditing,
-    links,
-  ]);
+    currentEditingItem: currentEditingLink,
+    handleEdit,
+    handleCancelEdit,
+    handleDelete,
+  } = useEditableList<ExternalLink>({
+    initialItems: initialExternalLinks,
+    addAction: addExternalLink,
+    updateAction: updateExternalLink,
+    deleteAction: deleteExternalLink,
+  });
 
-  const handleEditClick = (link: ExternalLink) => setEditingLinkId(link.id);
-  const handleCancelEdit = () => setEditingLinkId(null);
-
-  const handleDeleteLink = async (linkId: string) => {
-    if (!window.confirm("Are you sure?")) return;
-    setDeletingId(linkId);
-    setDeleteError(null);
-    const result = await deleteExternalLink(linkId);
-    if (result.success && result.deletedId) {
-      setLinks((current) => current.filter((l) => l.id !== result.deletedId));
-    } else if (result.error) {
-      setDeleteError(result.error);
-    }
-    setDeletingId(null);
-  };
-
+  const formStatus = useFormStatus();
   const currentFormState = isEditing ? updateState : addState;
   const getFieldError = (fieldName: "label" | "linkUrl") => {
     return currentFormState.errors?.find(
-      (err) => err.path && err.path.includes(fieldName),
+      (err: any) => err.path && err.path.includes(fieldName),
     )?.message;
   };
 
@@ -161,12 +84,12 @@ export default function ExternalLinksEditor({
         
         <form
           action={isEditing ? updateFormAction : addFormAction}
-          key={editingLinkId || "add-link"}
+          key={editingItemId || "add-link"}
           ref={formRef}
           className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
-            <input type="hidden" name="linkId" value={editingLinkId} />
+            <input type="hidden" name="linkId" value={editingItemId} />
           )}
           <div>
             <Label htmlFor="label">Label</Label>
@@ -176,7 +99,7 @@ export default function ExternalLinksEditor({
               type="text"
               required
               className="mt-1"
-              defaultValue={isEditing ? currentEditingLink?.label : ""}
+              defaultValue={isEditing && currentEditingLink ? currentEditingLink.label : ""}
             />
             {getFieldError("label") && (
               <p className="text-red-500 text-xs mt-1">
@@ -193,7 +116,7 @@ export default function ExternalLinksEditor({
               required
               className="mt-1"
               placeholder="https://example.com"
-              defaultValue={isEditing ? currentEditingLink?.linkUrl : ""}
+              defaultValue={isEditing && currentEditingLink ? currentEditingLink.linkUrl : ""}
             />
             {getFieldError("linkUrl") && (
               <p className="text-red-500 text-xs mt-1">
@@ -264,10 +187,10 @@ export default function ExternalLinksEditor({
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={() => handleEditClick(link)}
+                      onClick={() => handleEdit(link)}
                       disabled={
                         deletingId === link.id ||
-                        (isEditing && editingLinkId === link.id)
+                        (isEditing && editingItemId === link.id)
                       }
                     >
                       <PencilIcon className="h-4 w-4" />
@@ -275,7 +198,7 @@ export default function ExternalLinksEditor({
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDeleteLink(link.id)}
+                      onClick={() => handleDelete(link.id)}
                       disabled={deletingId === link.id}
                     >
                       <TrashIcon className="h-4 w-4" />

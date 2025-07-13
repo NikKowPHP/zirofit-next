@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface BenefitFormState {
@@ -30,16 +30,11 @@ export async function addBenefit(
   });
   if (!validated.success) return { error: "Validation failed." };
   try {
-    const maxOrder = await prisma.benefit.aggregate({
-      _max: { orderColumn: true },
-      where: { profileId: profile.id },
-    });
-    await prisma.benefit.create({
-      data: {
-        ...validated.data,
-        profileId: profile.id,
-        orderColumn: (maxOrder._max.orderColumn ?? 0) + 1,
-      },
+    const maxOrder = await profileService.getMaxBenefitOrder(profile.id);
+    await profileService.createBenefit({
+      ...validated.data,
+      profileId: profile.id,
+      orderColumn: (maxOrder._max.orderColumn ?? 0) + 1,
     });
     revalidatePath("/profile/edit");
     return { success: true, message: "Benefit added." };
@@ -62,10 +57,7 @@ export async function updateBenefit(
   });
   if (!validated.success) return { error: "Validation failed." };
   try {
-    await prisma.benefit.update({
-      where: { id, profileId: profile.id },
-      data: validated.data,
-    });
+    await profileService.updateBenefit(id, profile.id, validated.data);
     revalidatePath("/profile/edit");
     return { success: true, message: "Benefit updated." };
   } catch (e: unknown) {
@@ -76,7 +68,7 @@ export async function updateBenefit(
 export async function deleteBenefit(id: string): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
   try {
-    await prisma.benefit.delete({ where: { id, profileId: profile.id } });
+    await profileService.deleteBenefit(id, profile.id);
     revalidatePath("/profile/edit");
     return { success: true, message: "Benefit deleted." };
   } catch (e: unknown) {
@@ -89,13 +81,7 @@ export async function updateBenefitOrder(
 ): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
   try {
-    const updates = ids.map((id, index) =>
-      prisma.benefit.update({
-        where: { id, profileId: profile.id },
-        data: { orderColumn: index + 1 },
-      }),
-    );
-    await prisma.$transaction(updates);
+    await profileService.updateBenefitOrder(profile.id, ids);
     revalidatePath("/profile/edit");
     return { success: true, message: "Order updated." };
   } catch (e: unknown) {

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { User, Profile } from "./_utils";
 import { Prisma } from "@prisma/client";
@@ -53,9 +53,7 @@ export async function updateCoreInfo(
 
   try {
     if (username !== user.username) {
-      const existingUser = await prisma.user.findUnique({
-        where: { username },
-      });
+      const existingUser = await profileService.findUserByUsername(username);
       if (existingUser) {
         return {
           error: "Username is already taken.",
@@ -70,10 +68,12 @@ export async function updateCoreInfo(
       }
     }
 
-    const [updatedUser, updatedProfile] = await prisma.$transaction([
-      prisma.user.update({ where: { id: user.id }, data: { name, username } }),
-      prisma.profile.update({ where: { userId: user.id }, data: profileData }),
-    ]);
+    const [updatedUser, updatedProfile] =
+      await profileService.updateUserAndProfile(
+        user.id,
+        { name, username },
+        profileData,
+      );
 
     revalidatePath("/profile/edit");
     return {

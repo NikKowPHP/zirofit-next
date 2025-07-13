@@ -1,8 +1,4 @@
-Of course. After a successful implementation of both Stage 1 and the revised Stage 2, the application's capabilities have significantly expanded. The `app_description.md` must be updated to serve as the new, definitive source of truth for the project.
 
-Here is the complete, updated `app_description.md` file reflecting the fully-featured, tested, and mobile-optimized state of the ZIRO.FIT platform.
-
----
 # **ZIRO.FIT: Technical Application Description**
 
 **Version: 2.0**
@@ -182,6 +178,14 @@ The schema is defined in `prisma/schema.prisma`.
 -   Dedicated client accounts for managing bookings and viewing progress.
 -   In-app messaging between trainer and client.
 -   B2B offering for gyms to manage all their trainers under one account.
+
+## post mwp 
+ - /trainers page has filter and sorting, trainers reviews and stars.
+ - clients can sign in as clients to measure themselves
+ - sharable measurements between individual client and showing the result to trainer.
+ - integration with google calendar 
+ - notification with new booking 
+ - changable language 
 
 ## **ZIRO.FIT: Post-MVP Future Features & Roadmap**
 
