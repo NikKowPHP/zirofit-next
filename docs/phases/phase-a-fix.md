@@ -1,58 +1,115 @@
 
+```markdown
+# Refactoring Plan: ZIRO.FIT Application
 
-### Phase 1: Correct Foundational Color Definitions
+This plan outlines a comprehensive refactoring of the codebase to improve modularity, separation of concerns, and overall code quality, following Clean Code, DRY, and SOLID principles.
 
-The root of the problem is likely in the global CSS variables. By fixing the core text color here, we can correct the majority of the text across the site in a single step.
+---
 
--   [ ] **Task 1.1: Adjust Core Text Colors in `globals.css`**
-    -   **File:** `src/app/globals.css`
-    -   **Action:** Locate the `:root` (light theme) CSS variables.
-    -   **Change:** The `--foreground` variable is currently set to a very light gray, causing the issue. Update it to a high-contrast dark color. A near-black like `#1d1d1f` (Apple's standard text color) is ideal.
-    -   **Verification:** Ensure the `--neutral-900` variable is also set to this dark color for consistency in headings.
+### Phase 1: Establish a Service Layer for Business Logic
 
-    **Example (before):**
-    ```css
-    :root {
-      --foreground: #f5f5f7; /* <-- PROBLEM: This is very light */
-      /* ... */
-    }
-    ```
-    **Example (after):**
-    ```css
-    :root {
-      --foreground: #1d1d1f; /* <-- FIX: High-contrast dark text */
-      --neutral-900: #1d1d1f; /* <-- FIX: Ensure heading color is also dark */
-      /* ... */
-    }
-    ```
+The goal of this phase is to decouple business logic (database queries, data transformation) from the presentation layer (Server Actions, API Routes). We will centralize this logic in a new `src/lib/services` directory.
 
-### Phase 2: Ensure Input and Textarea Readability
+*   [ ] **1.1: Create the Client Service**
+    *   [ ] Create a new file: `src/lib/services/clientService.ts`.
+    *   [ ] Move the data-fetching logic from `getTrainerClients`, `getClientById`, and `getClientDetails` in `src/app/clients/actions/client-actions.ts` into `clientService.ts`.
+    *   [ ] Move the core database operations for creating, updating, and deleting clients from the actions file into `clientService.ts`. The service functions should handle only the `prisma` calls.
+    *   [ ] Keep authorization checks and `revalidatePath`/`redirect` calls in the original action file for now.
 
-Even with the global fix, form elements can have their own specific styles. This phase ensures they are also corrected for high contrast.
+*   [ ] **1.2: Create the Profile & Booking Services**
+    *   [ ] Create `src/lib/services/profileService.ts`.
+    *   [ ] Move the logic from `getCurrentUserProfileData` in `src/app/profile/actions/_utils.ts` into `profileService.ts`.
+    *   [ ] Create `src/lib/services/bookingService.ts`.
+    *   [ ] Move the complex availability and overlap-checking logic from `createBooking` in `src/app/profile/actions/booking-actions.ts` into `bookingService.ts`.
+    *   [ ] Move `getTrainerSchedule` and `getTrainerBookings` into `bookingService.ts`.
 
--   [ ] **Task 2.1: Force High-Contrast Text in `Input.tsx`**
-    -   **File:** `src/components/ui/Input.tsx`
-    -   **Action:** In the `className` string for the component, explicitly add `text-neutral-900` (or `text-black`). This ensures that text typed into the input field has a dark color in light mode, overriding any incorrect inherited styles.
-    -   **Change:** The class string should be updated to include this explicit text color for light mode.
+*   [ ] **1.3: Create the Dashboard Service**
+    *   [ ] Rename `src/lib/dashboard.ts` to `src/lib/services/dashboardService.ts` for consistency.
+    *   [ ] Update the import path in `src/app/api/dashboard/route.ts` to reflect the new file location.
+    *   [ ] Review `dashboardService.ts` to ensure all functions are pure and focused on data aggregation.
 
--   [ ] **Task 2.2: Force High-Contrast Text in `Textarea.tsx`**
-    -   **File:** `src/components/ui/Textarea.tsx`
-    -   **Action:** Apply the exact same fix as in Task 2.1. Add `text-neutral-900` to the component's `className` string to guarantee readability for multi-line text fields.
+*   [ ] **1.4: Create a Notification Service**
+    *   [ ] Create `src/lib/services/notificationService.ts`.
+    *   [ ] Extract the Resend email-sending logic from `createBooking` in `src/app/profile/actions/booking-actions.ts` into a `sendBookingConfirmationEmail` function in `notificationService.ts`.
+    *   [ ] Extract the milestone notification logic from `addSessionLog` in `src/app/clients/actions/log-actions.ts` into a `createMilestoneNotification` function in `notificationService.ts`.
 
-### Phase 3: Comprehensive Verification
+---
 
-After applying these fixes, it is essential to verify that the problem is solved everywhere and that no new issues were introduced.
+### Phase 2: Refactor Server Actions to be Thin Controllers
 
--   [ ] **Task 3.1: Test All Public Pages in Light Theme**
-    -   **Action:** Systematically navigate to the following pages and confirm all text is now dark and easy to read:
-        -   Homepage (`/`)
-        -   Trainers search results (`/trainers`)
-        -   A public trainer profile (`/trainer/[username]`)
-        -   Login and Register pages (`/auth/login`, `/auth/register`)
-    -   **Focus:** Pay special attention to typing inside all search bars, login forms, and contact forms.
+Now that the business logic is in services, we'll refactor the Server Actions to be simple controllers that orchestrate calls to these services.
 
--   [ ] **Task 3.2: Verify Dark Theme Integrity**
-    -   **Action:** Switch to dark mode and repeat the navigation from Task 3.1.
-    -   **Focus:** Confirm that all text has remained light (white or light-gray) against the dark backgrounds. The changes for the light theme should *not* have affected the dark theme's appearance.
+*   [ ] **2.1: Refactor Client Server Actions**
+    *   [ ] In `src/app/clients/actions/client-actions.ts`, replace direct `prisma` calls with calls to the new `clientService`.
+    *   [ ] The `addClient` action should now: 1. Validate input, 2. Get user, 3. Call `clientService.createClient`, 4. Revalidate/Redirect.
+    *   [ ] Apply the same pattern to `updateClient` and `deleteClient`.
 
-This focused plan will resolve the readability issues effectively and safely.
+*   [ ] **2.2: Refactor Profile Server Actions**
+    *   [ ] In `src/app/profile/actions/core-info-actions.ts`, `service-actions.ts`, etc., refactor each action to call its corresponding service function. The actions should not contain any direct `prisma` calls.
+    *   [ ] In `src/app/profile/actions/booking-actions.ts`, the `createBooking` action should now call `bookingService.createBooking` and then `notificationService.sendBookingConfirmationEmail`.
+
+*   [ ] **2.3: Refactor Client-Module Server Actions**
+    *   [ ] In `src/app/clients/actions/log-actions.ts`, refactor `addSessionLog` to use `notificationService.createMilestoneNotification`.
+    *   [ ] In `src/app/clients/actions/measurement-actions.ts` and `photo-actions.ts`, ensure any complex logic is moved to a service, and the actions remain thin.
+
+---
+
+### Phase 3: Enhance Component Modularity with Custom Hooks
+
+To clean up client components and promote logic reuse, we will extract complex state management and side effects into custom hooks.
+
+*   [ ] **3.1: Create `useSessionLogManager` Hook**
+    *   [ ] Create a new file: `src/hooks/useSessionLogManager.ts`.
+    *   [ ] Move the state management (`useState`, `useEffect`) and form/delete handling logic from `src/components/clients/modules/ManageClientSessionLogs.tsx` into this new hook.
+    *   [ ] The hook should accept `initialSessionLogs` and `clientId` as props.
+    *   [ ] The hook should return `{ sessionLogs, handleDelete, isEditing, handleEdit, ... }`.
+    *   [ ] Refactor `ManageClientSessionLogs.tsx` to use the `useSessionLogManager` hook, making the component purely presentational.
+
+*   [ ] **3.2: Create Hooks for Other Management Components**
+    *   [ ] Apply the same pattern to `ManageClientMeasurements.tsx` by creating a `useMeasurementManager` hook.
+    *   [ ] Apply the same pattern to `ManageClientProgressPhotos.tsx` by creating a `useProgressPhotoManager` hook.
+
+*   [ ] **3.3: Refactor Profile Editor Sections**
+    *   [ ] Analyze the various editor components in `src/components/profile/sections/` (e.g., `ServicesEditor`, `ExternalLinksEditor`, `SocialLinksEditor`). They share a similar pattern of "add form + list of items".
+    *   [ ] Create a generic hook, e.g., `useEditableListManager`, that handles the common logic for adding, editing, updating, and deleting items optimistically.
+    *   [ ] Refactor `ServicesEditor.tsx`, `ExternalLinksEditor.tsx`, and `SocialLinksEditor.tsx` to use this new generic hook, drastically reducing duplicated code.
+
+---
+
+### Phase 4: Strengthen and Reorganize Tests
+
+To ensure the refactoring is safe and maintainable, we will improve the testing structure.
+
+*   [ ] **4.1: Test the New Service Layer**
+    *   [ ] Create test files for each new service (e.g., `src/lib/services/clientService.test.ts`).
+    *   [ ] Move and adapt the existing test logic from `src/app/profile/actions/booking-actions.test.ts` to `src/lib/services/bookingService.test.ts`.
+    *   [ ] Write new unit tests for `clientService.ts`, covering all major functions (create, read, update, delete). Use the existing `prismaMock` for this.
+    *   [ ] Write unit tests for `dashboardService.ts` to verify data aggregation logic.
+
+*   [ ] **4.2: Test Custom Hooks**
+    *   [ ] Create test files for the new custom hooks (e.g., `src/hooks/useSessionLogManager.test.ts`).
+    *   [ ] Use `@testing-library/react`'s `renderHook` to test the behavior of the hooks in isolation.
+
+*   [ ] **4.3: Verify Component Tests**
+    *   [ ] Run the entire test suite (`npm test`) to ensure no existing component tests have been broken by the refactoring.
+    *   [ ] Review components like `ClientDetailView.tsx` and `ProfileEditorLayout.tsx` and add integration tests to confirm that tabbing/navigation still works correctly after their child components were refactored.
+
+---
+
+### Phase 5: Final Cleanup and Documentation
+
+The final phase is to polish the codebase, ensuring consistency and clarity.
+
+*   [ ] **5.1: Add JSDoc Documentation**
+    *   [ ] Add JSDoc comments to all functions in the `src/lib/services` directory, explaining their purpose, parameters, and return values.
+    *   [ ] Add JSDoc comments to all new custom hooks.
+
+*   [ ] **5.2: Code Style and Linting**
+    *   [ ] Run `npx prettier --write .` to format the entire project.
+    *   [ ] Run `npm run lint -- --fix` to automatically fix any linting errors.
+
+*   [ ] **5.3: Final Review**
+    *   [ ] Manually review all changed files to ensure consistency in naming conventions and patterns.
+    *   [ ] Delete any old files or commented-out code blocks that are no longer necessary.
+    *   [ ] Confirm the application builds and runs correctly in a development environment.
+```
