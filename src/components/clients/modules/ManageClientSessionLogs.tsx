@@ -54,7 +54,7 @@ export default function ManageClientSessionLogs({
         >
           <input type="hidden" name="clientId" value={clientId} />
           {isEditing && (
-            <input type="hidden" name="sessionLogId" value={editingSessionLogId} />
+            <input type="hidden" name="sessionLogId" value={editingSessionLogId ?? ""} />
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,7 +77,7 @@ export default function ManageClientSessionLogs({
               required
               defaultValue={
                 isEditing && currentEditingLog
-                  ? String(currentEditingLog.durationMinutes || "")
+                  ? String(currentEditingLog.durationMinutes ?? "")
                   : ""
               }
             />
@@ -98,7 +98,7 @@ export default function ManageClientSessionLogs({
             placeholder="Private Session Notes"
             defaultValue={
               isEditing && currentEditingLog
-                ? currentEditingLog.sessionNotes || ""
+                ? currentEditingLog.sessionNotes ?? ""
                 : ""
             }
           />

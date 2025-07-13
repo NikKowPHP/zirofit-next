@@ -89,7 +89,7 @@ export default function ExternalLinksEditor({
           className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
-            <input type="hidden" name="linkId" value={editingItemId} />
+            <input type="hidden" name="linkId" value={editingItemId ?? ""} />
           )}
           <div>
             <Label htmlFor="label">Label</Label>
@@ -99,7 +99,7 @@ export default function ExternalLinksEditor({
               type="text"
               required
               className="mt-1"
-              defaultValue={isEditing && currentEditingLink ? currentEditingLink.label : ""}
+              defaultValue={currentEditingLink?.label ?? ""}
             />
             {getFieldError("label") && (
               <p className="text-red-500 text-xs mt-1">
@@ -116,7 +116,7 @@ export default function ExternalLinksEditor({
               required
               className="mt-1"
               placeholder="https://example.com"
-              defaultValue={isEditing && currentEditingLink ? currentEditingLink.linkUrl : ""}
+              defaultValue={currentEditingLink?.linkUrl ?? ""}
             />
             {getFieldError("linkUrl") && (
               <p className="text-red-500 text-xs mt-1">

@@ -74,7 +74,7 @@ export default function ServicesEditor({
           className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
-            <input type="hidden" name="serviceId" value={editingItemId} />
+            <input type="hidden" name="serviceId" value={editingItemId ?? ""} />
           )}
           <div>
             <Label htmlFor="title">Service Title</Label>
@@ -83,9 +83,7 @@ export default function ServicesEditor({
               name="title"
               type="text"
               required
-              defaultValue={
-                isEditing && currentEditingService ? currentEditingService.title : ""
-              }
+              defaultValue={currentEditingService?.title ?? ""}
               className="mt-1"
             />
             {getFieldError("title") && (
@@ -98,11 +96,7 @@ export default function ServicesEditor({
             <RichTextEditor
               label="Service Description"
               name="description"
-              initialValue={
-                isEditing && currentEditingService
-                  ? currentEditingService.description ?? ""
-                  : ""
-              }
+              initialValue={currentEditingService?.description ?? ""}
             />
             {getFieldError("description") && (
               <p className="text-red-500 text-xs mt-1">

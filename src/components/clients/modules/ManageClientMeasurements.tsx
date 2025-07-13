@@ -55,7 +55,7 @@ export default function ManageClientMeasurements({
             <input
               type="hidden"
               name="measurementId"
-              value={editingMeasurementId}
+              value={editingMeasurementId ?? ""}
             />
           )}
 
@@ -79,7 +79,7 @@ export default function ManageClientMeasurements({
               placeholder="Weight (kg)"
               defaultValue={
                 isEditing && currentEditingMeasurement
-                  ? String(currentEditingMeasurement.weightKg || "")
+                  ? String(currentEditingMeasurement.weightKg ?? "")
                   : ""
               }
             />
@@ -90,7 +90,7 @@ export default function ManageClientMeasurements({
               placeholder="Body Fat %"
               defaultValue={
                 isEditing && currentEditingMeasurement
-                  ? String(currentEditingMeasurement.bodyFatPercentage || "")
+                  ? String(currentEditingMeasurement.bodyFatPercentage ?? "")
                   : ""
               }
             />
@@ -100,7 +100,7 @@ export default function ManageClientMeasurements({
             placeholder="Notes..."
             defaultValue={
               isEditing && currentEditingMeasurement
-                ? currentEditingMeasurement.notes || ""
+                ? currentEditingMeasurement.notes ?? ""
                 : ""
             }
           />

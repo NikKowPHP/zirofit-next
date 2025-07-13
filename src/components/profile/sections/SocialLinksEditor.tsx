@@ -90,7 +90,7 @@ export default function SocialLinksEditor({
           className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
         >
           {isEditing && (
-            <input type="hidden" name="linkId" value={editingItemId} />
+            <input type="hidden" name="linkId" value={editingItemId ?? ""} />
           )}
           <div>
             <Label htmlFor="platform">Platform</Label>
@@ -100,7 +100,7 @@ export default function SocialLinksEditor({
               type="text"
               required
               className="mt-1"
-              defaultValue={isEditing && currentEditingLink ? currentEditingLink.platform : ""}
+              defaultValue={currentEditingLink?.platform ?? ""}
             />
             {getFieldError("platform") && (
               <p className="text-red-500 text-xs mt-1">
@@ -116,7 +116,7 @@ export default function SocialLinksEditor({
               type="text"
               required
               className="mt-1"
-              defaultValue={isEditing && currentEditingLink ? currentEditingLink.username : ""}
+              defaultValue={currentEditingLink?.username ?? ""}
             />
             {getFieldError("username") && (
               <p className="text-red-500 text-xs mt-1">
@@ -133,7 +133,7 @@ export default function SocialLinksEditor({
               required
               className="mt-1"
               placeholder="https://example.com/username"
-              defaultValue={isEditing && currentEditingLink ? currentEditingLink.profileUrl : ""}
+              defaultValue={currentEditingLink?.profileUrl ?? ""}
             />
             {getFieldError("profileUrl") && (
               <p className="text-red-500 text-xs mt-1">
