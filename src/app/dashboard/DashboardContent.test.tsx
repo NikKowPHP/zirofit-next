@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import DashboardContent from "./DashboardContent";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 jest.mock("swr", () => ({
   __esModule: true,
@@ -12,7 +13,11 @@ jest.mock("swr", () => ({
 
 describe("DashboardContent", () => {
   it("should render all skeleton components when loading", () => {
-    render(<DashboardContent />);
+    render(
+      <ThemeProvider>
+        <DashboardContent />
+      </ThemeProvider>
+    );
 
     expect(screen.getByTestId("skeleton-at-a-glance")).toBeInTheDocument();
     expect(

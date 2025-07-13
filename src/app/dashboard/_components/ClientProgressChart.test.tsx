@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ClientProgressChart from "./ClientProgressChart";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 describe("ClientProgressChart", () => {
   const testData = [
@@ -9,18 +10,22 @@ describe("ClientProgressChart", () => {
     { x: "2025-01-15", y: 64 },
   ];
 
+  const renderWithProvider = (ui: React.ReactElement) => {
+    return render(<ThemeProvider>{ui}</ThemeProvider>);
+  };
+
   it("renders a canvas element for the chart", () => {
-    render(<ClientProgressChart data={testData} />);
+    renderWithProvider(<ClientProgressChart data={testData} />);
     expect(screen.getByTestId("chart-canvas")).toBeInTheDocument();
   });
 
   it("displays the chart title when provided", () => {
-    render(<ClientProgressChart data={testData} title="Client Progress" />);
+    renderWithProvider(<ClientProgressChart data={testData} title="Client Progress" />);
     expect(screen.getByText("Client Progress")).toBeInTheDocument();
   });
 
   it("does not display title when not provided", () => {
-    render(<ClientProgressChart data={testData} />);
+    renderWithProvider(<ClientProgressChart data={testData} />);
     expect(screen.queryByText("Client Progress")).not.toBeInTheDocument();
   });
 });

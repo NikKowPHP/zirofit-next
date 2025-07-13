@@ -32,13 +32,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      document.documentElement.classList.remove("light", "dark");
-      document.documentElement.classList.add(theme);
-    }
-  }, []);
-
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
