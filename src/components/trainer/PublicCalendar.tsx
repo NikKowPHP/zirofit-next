@@ -169,7 +169,7 @@ export default function PublicCalendar({
                           onClick={() => isAvailable && handleDateClick(day)}
                           disabled={!isAvailable}
                           className={`
-                              w-10 h-10 rounded-full text-sm flex items-center justify-center transition-colors
+                              w-10 h-10 rounded-full text-sm flex items-center justify-center transition-colors text-neutral-800 dark:text-neutral-200
                               ${!isCurrentMonth ? 'text-gray-400 dark:text-gray-500' : ''}
                               ${isToday(day) && !isPast && 'font-bold'}
                               ${selectedDate?.getTime() === day.getTime() ? 'bg-[var(--primary-blue)] text-white hover:bg-[var(--primary-blue)]' : ''}

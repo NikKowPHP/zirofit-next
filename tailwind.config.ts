@@ -23,6 +23,20 @@ export default {
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
         'subtle-fade-in-up': 'subtle-fade-in-up 0.4s ease-out forwards',
       },
+      typography: ({ theme }: any) => ({
+        DEFAULT: {
+          css: {
+            '--tw-prose-body': theme('colors.neutral[900]'),
+            '--tw-prose-headings': theme('colors.neutral[900]'),
+            // Add other prose elements if needed (links, blockquotes, etc.)
+            '--tw-prose-links': theme('colors.blue[600]'),
+            // --- Dark Mode Inverted Colors ---
+            '--tw-prose-invert-body': theme('colors.neutral[300]'),
+            '--tw-prose-invert-headings': theme('colors.white'),
+            '--tw-prose-invert-links': theme('colors.blue[400]'),
+          },
+        },
+      }),
     },
   },
   plugins: [

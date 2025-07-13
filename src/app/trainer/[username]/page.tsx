@@ -155,13 +155,13 @@ export default async function TrainerProfilePage({
   // Helper to render HTML content safely
   const renderHTML = (htmlString: string | null | undefined) => {
     if (!htmlString) return null;
-    return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
+    return <p dangerouslySetInnerHTML={{ __html: htmlString }} />;
   };
 
   return (
     <PublicLayout>
       {/* Hero Section */}
-      <section id="hero-section" className="relative bg-neutral-900 text-white">
+      <section id="hero-section" className="relative bg-neutral-900 text-white -mt-[82px]">
         <BannerImage
           src={profile.bannerImagePath || DEFAULT_BANNER_IMAGE}
           alt={`${name}'s banner`}
@@ -213,7 +213,7 @@ export default async function TrainerProfilePage({
             {(profile.aboutMe || profile.philosophy || profile.methodology) && (
               <Card>
                 <CardContent className="pt-6">
-                  <div className="prose lg:prose-xl dark:prose-invert max-w-none">
+                 <div className="prose lg:prose-xl dark:prose-invert max-w-none text-neutral-700 dark:text-neutral-300">
                     {profile.aboutMe && (
                       <>
                         <h2 className="text-2xl font-semibold mb-3">

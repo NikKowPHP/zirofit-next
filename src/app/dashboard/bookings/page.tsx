@@ -40,7 +40,7 @@ export default async function BookingsPage() {
                     </div>
                     
                     <div className="mt-4">
-                        <p className="text-sm">
+                        <p className="text-sm text-neutral-700 dark:text-neutral-300">
                             <strong>Time:</strong> {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleTimeString()}
                         </p>
                         {booking.clientNotes && (

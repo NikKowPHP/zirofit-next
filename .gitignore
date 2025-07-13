@@ -47,3 +47,6 @@ repomix-output.xml
 src/code_context_tool.egg-info
 # AI-generated directories
 logs/
+public/sw.js
+public/sw.js.map
+public/workbox-*
