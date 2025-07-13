@@ -5,35 +5,32 @@
 This plan outlines a comprehensive refactoring of the codebase to improve modularity, separation of concerns, and overall code quality, following Clean Code, DRY, and SOLID principles.
 
 ---
-
 ### Phase 1: Establish a Service Layer for Business Logic
 
 The goal of this phase is to decouple business logic (database queries, data transformation) from the presentation layer (Server Actions, API Routes). We will centralize this logic in a new `src/lib/services` directory.
 
-*   [ ] **1.1: Create the Client Service**
-    *   [ ] Create a new file: `src/lib/services/clientService.ts`.
-    *   [ ] Move the data-fetching logic from `getTrainerClients`, `getClientById`, and `getClientDetails` in `src/app/clients/actions/client-actions.ts` into `clientService.ts`.
-    *   [ ] Move the core database operations for creating, updating, and deleting clients from the actions file into `clientService.ts`. The service functions should handle only the `prisma` calls.
-    *   [ ] Keep authorization checks and `revalidatePath`/`redirect` calls in the original action file for now.
+*   [x] **1.1: Create the Client Service**
+    *   [x] Create a new file: `src/lib/services/clientService.ts`.
+    *   [x] Move the data-fetching logic from `getTrainerClients`, `getClientById`, and `getClientDetails` in `src/app/clients/actions/client-actions.ts` into `clientService.ts`.
+    *   [x] Move the core database operations for creating, updating, and deleting clients from the actions file into `clientService.ts`. The service functions should handle only the `prisma` calls.
+    *   [x] Keep authorization checks and `revalidatePath`/`redirect` calls in the original action file for now.
 
-*   [ ] **1.2: Create the Profile & Booking Services**
-    *   [ ] Create `src/lib/services/profileService.ts`.
-    *   [ ] Move the logic from `getCurrentUserProfileData` in `src/app/profile/actions/_utils.ts` into `profileService.ts`.
-    *   [ ] Create `src/lib/services/bookingService.ts`.
-    *   [ ] Move the complex availability and overlap-checking logic from `createBooking` in `src/app/profile/actions/booking-actions.ts` into `bookingService.ts`.
-    *   [ ] Move `getTrainerSchedule` and `getTrainerBookings` into `bookingService.ts`.
+*   [x] **1.2: Create the Profile & Booking Services**
+    *   [x] Create `src/lib/services/profileService.ts`.
+    *   [x] Move the logic from `getCurrentUserProfileData` in `src/app/profile/actions/_utils.ts` into `profileService.ts`.
+    *   [x] Create `src/lib/services/bookingService.ts`.
+    *   [x] Move the complex availability and overlap-checking logic from `createBooking` in `src/app/profile/actions/booking-actions.ts` into `bookingService.ts`.
+    *   [x] Move `getTrainerSchedule` and `getTrainerBookings` into `bookingService.ts`.
 
-*   [ ] **1.3: Create the Dashboard Service**
-    *   [ ] Rename `src/lib/dashboard.ts` to `src/lib/services/dashboardService.ts` for consistency.
-    *   [ ] Update the import path in `src/app/api/dashboard/route.ts` to reflect the new file location.
-    *   [ ] Review `dashboardService.ts` to ensure all functions are pure and focused on data aggregation.
+*   [x] **1.3: Create the Dashboard Service**
+    *   [x] Rename `src/lib/dashboard.ts` to `src/lib/services/dashboardService.ts` for consistency.
+    *   [x] Update the import path in `src/app/api/dashboard/route.ts` to reflect the new file location.
+    *   [x] Review `dashboardService.ts` to ensure all functions are pure and focused on data aggregation.
 
-*   [ ] **1.4: Create a Notification Service**
-    *   [ ] Create `src/lib/services/notificationService.ts`.
-    *   [ ] Extract the Resend email-sending logic from `createBooking` in `src/app/profile/actions/booking-actions.ts` into a `sendBookingConfirmationEmail` function in `notificationService.ts`.
-    *   [ ] Extract the milestone notification logic from `addSessionLog` in `src/app/clients/actions/log-actions.ts` into a `createMilestoneNotification` function in `notificationService.ts`.
-
----
+*   [x] **1.4: Create a Notification Service**
+    *   [x] Create `src/lib/services/notificationService.ts`.
+    *   [x] Extract the Resend email-sending logic from `createBooking` in `src/app/profile/actions/booking-actions.ts` into a `sendBookingConfirmationEmail` function in `notificationService.ts`.
+    *   [x] Extract the milestone notification logic from `addSessionLog` in `src/app/clients/actions/log-actions.ts` into a `createMilestoneNotification` function in `notificationService.ts`.
 
 ### Phase 2: Refactor Server Actions to be Thin Controllers
 

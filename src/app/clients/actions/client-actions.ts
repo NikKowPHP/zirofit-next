@@ -3,8 +3,9 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import * as clientService from "@/lib/services/clientService";
 import type { Prisma } from "@prisma/client";
 
 const FormSchema = z.object({
@@ -19,17 +20,14 @@ const UpdateFormSchema = FormSchema.extend({
 });
 
 export async function getTrainerClients() {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) throw new Error("User not authenticated.");
 
   try {
-    return await prisma.client.findMany({
-      where: { trainerId: authUser.id },
-      orderBy: { name: "asc" },
-    });
+    return await clientService.getClientsByTrainerId(authUser.id);
   } catch (error) {
     console.error("Failed to fetch clients:", error);
     return [];
@@ -37,7 +35,7 @@ export async function getTrainerClients() {
 }
 
 export async function addClient(prevState: any, formData: FormData) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
@@ -140,8 +138,12 @@ export async function addClient(prevState: any, formData: FormData) {
   const { name, email, phone, status } = validatedFields.data;
 
   try {
-    await prisma.client.create({
-      data: { trainerId: authUser.id, name, email, phone, status },
+    await clientService.createClient({
+      trainerId: authUser.id,
+      name,
+      email,
+      phone,
+      status,
     });
   } catch (e: any) {
     return {
@@ -157,16 +159,14 @@ export async function addClient(prevState: any, formData: FormData) {
 }
 
 export async function getClientById(clientId: string) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) throw new Error("User not authenticated.");
 
   try {
-    return await prisma.client.findFirst({
-      where: { id: clientId, trainerId: authUser.id },
-    });
+    return await clientService.getClientForTrainer(clientId, authUser.id);
   } catch (error) {
     console.error("Failed to fetch client:", error);
     return null;
@@ -174,7 +174,7 @@ export async function getClientById(clientId: string) {
 }
 
 export async function updateClient(prevState: any, formData: FormData) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
@@ -196,13 +196,13 @@ export async function updateClient(prevState: any, formData: FormData) {
 
   const { id, ...dataToUpdate } = validatedFields.data;
 
-  const client = await getClientById(id);
+  const client = await clientService.getClientForTrainer(id, authUser.id);
   if (!client || client.trainerId !== authUser.id) {
     return { message: "Unauthorized." };
   }
 
   try {
-    await prisma.client.update({ where: { id }, data: dataToUpdate });
+    await clientService.updateClientById(id, dataToUpdate);
   } catch (e: any) {
     return {
       message:
@@ -217,19 +217,19 @@ export async function updateClient(prevState: any, formData: FormData) {
 }
 
 export async function deleteClient(clientId: string) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 
-  const client = await getClientById(clientId);
+  const client = await clientService.getClientForTrainer(clientId, authUser.id);
   if (!client || client.trainerId !== authUser.id) {
     return { message: "Unauthorized." };
   }
 
   try {
-    await prisma.client.delete({ where: { id: clientId } });
+    await clientService.deleteClientById(clientId);
     revalidatePath("/clients");
     return { message: "Client deleted." };
   } catch (error: any) {
@@ -238,19 +238,14 @@ export async function deleteClient(clientId: string) {
 }
 
 export async function bulkDeleteClients(clientIds: string[]) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) return { message: "User not authenticated." };
 
   try {
-    const { count } = await prisma.client.deleteMany({
-      where: {
-        id: { in: clientIds },
-        trainerId: authUser.id,
-      },
-    });
+    const count = await clientService.deleteClientsByIds(clientIds, authUser.id);
 
     revalidatePath("/clients");
     return {
@@ -266,24 +261,17 @@ export async function bulkDeleteClients(clientIds: string[]) {
 }
 
 export async function bulkExportClients(clientIds: string[]) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) return { error: "User not authenticated." };
 
   try {
-    const clients = await prisma.client.findMany({
-      where: {
-        id: { in: clientIds },
-        trainerId: authUser.id,
-      },
-      include: {
-        measurements: { orderBy: { measurementDate: "desc" } },
-        progressPhotos: { orderBy: { photoDate: "desc" } },
-        sessionLogs: { orderBy: { sessionDate: "desc" } },
-      },
-    });
+    const clients = await clientService.getClientsForExport(
+      clientIds,
+      authUser.id,
+    );
 
     if (clients.length === 0) {
       return { error: "No clients found for export." };
@@ -347,21 +335,17 @@ export async function bulkExportClients(clientIds: string[]) {
 }
 
 export async function getClientDetails(clientId: string) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) throw new Error("User not authenticated.");
 
   try {
-    return await prisma.client.findFirst({
-      where: { id: clientId, trainerId: authUser.id },
-      include: {
-        measurements: { orderBy: { measurementDate: "desc" } },
-        progressPhotos: { orderBy: { photoDate: "desc" } },
-        sessionLogs: { orderBy: { sessionDate: "desc" } },
-      },
-    });
+    return await clientService.getClientDetailsForTrainer(
+      clientId,
+      authUser.id,
+    );
   } catch (error) {
     console.error("Failed to fetch client details:", error);
     return null;

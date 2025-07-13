@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { transformImagePath } from "@/lib/utils";
+import * as profileService from "@/lib/services/profileService";
 
 // Export types for client components to consume, avoiding direct imports that can fail in some build contexts.
 export type User = Prisma.UserGetPayload<{}>;
@@ -57,40 +58,12 @@ export async function getCurrentUserProfileData() {
     } = await supabase.auth.getUser();
     if (!authUser) return null;
 
-    let userWithProfile = await prisma.user.findUnique({
-      where: { id: authUser.id },
-      include: {
-        profile: {
-          include: {
-            services: { orderBy: { createdAt: "asc" } },
-            testimonials: { orderBy: { createdAt: "desc" } },
-            transformationPhotos: { orderBy: { createdAt: "desc" } },
-            externalLinks: { orderBy: { createdAt: "asc" } },
-            benefits: { orderBy: { orderColumn: "asc" } },
-            socialLinks: { orderBy: { createdAt: "asc" } }, // Added socialLinks
-          },
-        },
-      },
-    });
+    let userWithProfile = await profileService.getFullUserProfile(authUser.id);
 
     if (userWithProfile && !userWithProfile.profile) {
       await prisma.profile.create({ data: { userId: userWithProfile.id } });
       // Re-fetch to get the new profile and its relations (which will be empty)
-      userWithProfile = await prisma.user.findUnique({
-        where: { id: authUser.id },
-        include: {
-          profile: {
-            include: {
-              services: { orderBy: { createdAt: "asc" } },
-              testimonials: { orderBy: { createdAt: "desc" } },
-              transformationPhotos: { orderBy: { createdAt: "desc" } },
-              externalLinks: { orderBy: { createdAt: "asc" } },
-              benefits: { orderBy: { orderColumn: "asc" } },
-              socialLinks: { orderBy: { createdAt: "asc" } }, // Added socialLinks
-            },
-          },
-        },
-      });
+      userWithProfile = await profileService.getFullUserProfile(authUser.id);
     }
 
     if (!userWithProfile) return null;

@@ -11,7 +11,7 @@ import { MapPinIcon } from "@heroicons/react/24/outline";
 import PublicCalendar from "@/components/trainer/PublicCalendar";
 import { Metadata } from "next";
 import { transformImagePath } from "@/lib/utils";
-import { getTrainerSchedule } from "@/app/profile/actions";
+import { getTrainerSchedule } from "@/app/profile/actions/booking-actions";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { Button } from "@/components/ui";

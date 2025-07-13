@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDashboardData } from "@/lib/dashboard";
+import { getDashboardData } from "@/lib/services/dashboardService";
 
 export async function GET() {
   try {

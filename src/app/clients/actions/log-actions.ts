@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { authorizeClientAccess } from "./_utils";
 import type { Prisma } from "@prisma/client";
+import { createMilestoneNotification } from "@/lib/services/notificationService";
 
 type ClientSessionLog = Prisma.ClientSessionLogGetPayload<{}>;
 
@@ -75,20 +76,7 @@ export async function addSessionLog(
     });
 
     // Check for milestone
-    const sessionCount = await prisma.clientSessionLog.count({
-      where: { clientId },
-    });
-
-    const milestones = [5, 10, 20, 50, 100];
-    if (milestones.includes(sessionCount)) {
-      await prisma.notification.create({
-        data: {
-          userId: authUser.id,
-          message: `🎉 Milestone reached! Client has completed ${sessionCount} sessions.`,
-          type: "milestone",
-        },
-      });
-    }
+    await createMilestoneNotification(authUser.id, clientId);
 
     revalidatePath(`/clients/${clientId}`);
     return { success: true, sessionLog, message: "Session log added." };

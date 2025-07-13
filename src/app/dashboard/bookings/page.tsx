@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getTrainerBookings } from "@/app/profile/actions";
+import { getTrainerBookings } from "@/app/profile/actions/booking-actions";
 
 export default async function BookingsPage() {
     const supabase = await createClient();
