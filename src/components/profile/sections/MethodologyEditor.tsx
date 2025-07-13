@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react";
 import { updateMethodology } from "@/app/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
@@ -37,7 +37,7 @@ function SubmitButton() {
 export default function MethodologyEditor({
   initialMethodology,
 }: MethodologyEditorProps) {
-  const [state, formAction] = useFormState(updateMethodology, initialState);
+  const [state, formAction] = useActionState(updateMethodology, initialState);
   const [content, setContent] = useState(initialMethodology || "");
 
   // Update content state if server action returns updatedContent

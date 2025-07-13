@@ -43,7 +43,7 @@ const mockInitialData = {
 } as any;
 
 describe("ProfileEditorLayout", () => {
-  it("renders the sidebar and the default section", () => {
+  it("renders the sidebar and the default section", async () => {
     render(<ProfileEditorLayout initialData={mockInitialData} />);
 
     // Check if sidebar is rendered
@@ -52,14 +52,14 @@ describe("ProfileEditorLayout", () => {
     expect(screen.getByText("Branding")).toBeInTheDocument();
 
     // Check if the default section (Core Info) is rendered
-    expect(screen.getByText("Core Info Editor")).toBeInTheDocument();
+    expect(await screen.findByText("Core Info Editor")).toBeInTheDocument();
   });
 
   it("changes the displayed section when a sidebar item is clicked", async () => {
     render(<ProfileEditorLayout initialData={mockInitialData} />);
 
     // Initially, Core Info is shown
-    expect(screen.getByText("Core Info Editor")).toBeInTheDocument();
+    expect(await screen.findByText("Core Info Editor")).toBeInTheDocument();
     expect(screen.queryByText("Branding Editor")).not.toBeInTheDocument();
 
     // Click on the "Branding" button in the sidebar

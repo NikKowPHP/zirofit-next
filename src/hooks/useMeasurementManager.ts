@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import {
   addMeasurement,
   updateMeasurement,
@@ -29,11 +29,11 @@ export const useMeasurementManager = ({
 
   const initialActionState: MeasurementFormState = { message: "" };
 
-  const [addState, addAction] = useFormState(
+  const [addState, addAction] = useActionState(
     addMeasurement,
     initialActionState,
   );
-  const [updateState, updateAction] = useFormState(
+  const [updateState, updateAction] = useActionState(
     updateMeasurement,
     initialActionState,
   );

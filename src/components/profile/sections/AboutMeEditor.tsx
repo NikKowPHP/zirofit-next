@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react";
 import { updateAboutMe } from "@/app/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
@@ -35,7 +35,7 @@ function SubmitButton() {
 }
 
 export default function AboutMeEditor({ initialAboutMe }: AboutMeEditorProps) {
-  const [state, formAction] = useFormState(updateAboutMe, initialState);
+  const [state, formAction] = useActionState(updateAboutMe, initialState);
   const [content, setContent] = useState(initialAboutMe || "");
 
   // Update content state if server action returns updatedContent
