@@ -1,21 +1,16 @@
-export const preset = 'ts-jest';
-export const testEnvironment = 'node';
-export const transform = {
-  '^.+\\.tsx?$': [
-    'ts-jest',
-    {
-      tsconfig: 'tsconfig.json',
-      stringifyContentPathRegex: '\\.svg$',
-    },
-  ],
+module.exports = {
+  testEnvironment: 'jsdom', // Changed from 'node'
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.config.jest.js' }], // Changed from ts-jest
+  },
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  transformIgnorePatterns: ['<rootDir>/node_modules/'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
+  modulePathIgnorePatterns: [],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/tests/'],
+  testTimeout: 30000,
 };
-export const moduleNameMapper = {
-  '^@/(.*)$': '<rootDir>/src/$1',
-};
-export const transformIgnorePatterns = ['<rootDir>/node_modules/'];
-export const moduleFileExtensions = ['ts', 'tsx', 'js', 'jsx', 'json', 'node'];
-export const testMatch = ['**/?(*.)+(spec|test).[tj]s?(x)'];
-export const modulePathIgnorePatterns = [];
-export const setupFilesAfterEnv = ['<rootDir>/jest.setup.ts'];
-export const testPathIgnorePatterns = ['<rootDir>/node_modules/', '<rootDir>/tests/'];
-export const testTimeout = 30000;

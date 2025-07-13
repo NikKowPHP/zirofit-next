@@ -1,4 +1,4 @@
-// babel.config.jest.js
+// babel.config.js
 module.exports = {
   presets: [
     // Configure preset-env for the Node.js version running the tests

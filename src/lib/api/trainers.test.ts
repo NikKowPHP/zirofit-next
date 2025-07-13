@@ -6,6 +6,10 @@ describe('Trainer API Logic', () => {
   it('should build the correct where-clause for a combined query and location search', async () => {
     const query = 'yoga';
     const location = 'New York';
+
+    // Mock Prisma calls to prevent real DB access
+    prismaMock.user.findMany.mockResolvedValue([]);
+    prismaMock.user.count.mockResolvedValue(0);
     
     await getPublishedTrainers(1, 10, query, location);
 

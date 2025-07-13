@@ -1,4 +1,4 @@
-import { prisma } from "../prisma";
+import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { ChartDataService } from "./ChartDataService";
 
