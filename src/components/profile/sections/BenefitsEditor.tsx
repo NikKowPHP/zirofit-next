@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { useActionState } from "react";
+import { useFormState } from "react-dom";
 import {
   addBenefit,
   updateBenefit,
@@ -45,7 +45,7 @@ export default function BenefitsEditor({
 }: BenefitsEditorProps) {
   const [benefits, setBenefits] = useState<Benefit[]>(initialBenefits);
   const [editingBenefitId, setEditingBenefitId] = useState<string | null>(null);
-  const [formState, formAction] = useActionState(addBenefit, initialFormState);
+  const [formState, formAction] = useFormState(addBenefit, initialFormState);
 
   useEffect(() => {
     const sortable = new SortableJS(

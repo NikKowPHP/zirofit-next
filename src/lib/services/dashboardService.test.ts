@@ -22,7 +22,7 @@ describe('Dashboard Data Service', () => {
     expect(data.activeClients).toBe(5);
     expect(data.pendingClients).toBe(2);
     expect(data.sessionsThisMonth).toBe(12);
-    expect(prismaMock.client.count).toHaveBeenCalledWith({ where: { trainerId, status: 'active' } });
-    expect(prismaMock.client.count).toHaveBeenCalledWith({ where: { trainerId, status: 'pending' } });
+    expect(prismaMock.client.count).toHaveBeenNthCalledWith(1, { where: { trainerId, status: 'active' } });
+    expect(prismaMock.client.count).toHaveBeenNthCalledWith(2, { where: { trainerId, status: 'pending' } });
   });
 });

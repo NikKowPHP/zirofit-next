@@ -5,7 +5,7 @@ import * as actions from '@/app/clients/actions';
 
 jest.mock('react-dom', () => ({
   ...jest.requireActual('react-dom'),
-  useActionState: jest.fn((action, initialState) => [initialState, jest.fn()]),
+  useFormState: jest.fn((action, initialState) => [initialState, jest.fn()]),
 }));
 jest.mock('@/app/clients/actions', () => ({
   addSessionLog: jest.fn(),
@@ -21,7 +21,7 @@ const mockInitialLogs = [
 describe('useSessionLogManager', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (jest.requireMock('react-dom').useActionState as jest.Mock).mockImplementation((action, initialState) => [initialState, jest.fn()]);
+    (jest.requireMock('react-dom').useFormState as jest.Mock).mockImplementation((action, initialState) => [initialState, jest.fn()]);
   });
 
   it('should initialize with initial logs', () => {

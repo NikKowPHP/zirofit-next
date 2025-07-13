@@ -14,7 +14,7 @@ describe('Trainer API Logic', () => {
     await getPublishedTrainers(1, 10, query, location);
 
     // Verify that the Prisma client was called with a correctly structured 'where' argument
-    expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+    expect(prismaMock.user.findMany).toHaveBeenCalledWith({
       where: {
         role: 'trainer',
         profile: { isNot: null },
@@ -29,7 +29,24 @@ describe('Trainer API Logic', () => {
         AND: [
           { profile: { location: { contains: location, mode: 'insensitive' } } }
         ]
-      }
-    }));
+      },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        profile: {
+          select: {
+            profilePhotoPath: true,
+            location: true,
+            certifications: true,
+          },
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+      skip: 0,
+      take: 10,
+    });
   });
 });

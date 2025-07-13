@@ -1,7 +1,8 @@
 // src/app/auth/login/page.client.tsx
 "use client";
 
-import { useActionState, useFormStatus } from "react";
+import { useFormStatus } from "react";
+import { useFormState } from "react-dom";
 import { loginUser } from "../actions";
 import PublicLayout from "../../../components/layouts/PublicLayout";
 import { Input, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
@@ -34,7 +35,7 @@ function SubmitButton() {
 }
 
 export default function LoginPage() {
-  const [state, formAction] = useActionState(loginUser, initialState);
+  const [state, formAction] = useFormState(loginUser, initialState);
   return (
     <PublicLayout>
       <div className="flex flex-col items-center justify-center bg-neutral-50 dark:bg-black py-12 sm:px-6 lg:px-8">

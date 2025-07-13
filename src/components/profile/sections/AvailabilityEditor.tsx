@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useActionState, useFormStatus } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { updateAvailability } from "@/app/profile/actions/availability-actions";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 
@@ -32,7 +32,7 @@ function SubmitButton() {
 export default function AvailabilityEditor({ initialAvailability }: AvailabilityEditorProps) {
   const [schedule, setSchedule] = useState(initialAvailability || {});
 
-  const [state, formAction] = useActionState(updateAvailability, {
+  const [state, formAction] = useFormState(updateAvailability, {
     message: null,
     error: null,
     success: false,

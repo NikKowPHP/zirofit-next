@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useFormStatus } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { addClient, updateClient } from "@/app/clients/actions";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -29,7 +29,7 @@ interface State {
 }
 
 export default function ClientForm({ initialData, action }: ClientFormProps) {
-  const [state, dispatch] = useActionState<State, FormData>(action, {
+  const [state, dispatch] = useFormState<State, FormData>(action, {
     message: null,
     errors: {},
   });
