@@ -2,8 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useFormStatus } from "react-dom";
-import { useFormState } from "react-dom";
+import { useFormStatus, useFormState } from "react-dom";
 import {
   addBenefit,
   updateBenefit,

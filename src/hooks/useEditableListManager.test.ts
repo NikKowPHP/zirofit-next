@@ -2,6 +2,11 @@
 import { renderHook, act } from '@testing-library/react';
 import { useEditableList } from './useEditableListManager';
 
+jest.mock('react-dom', () => ({
+  ...jest.requireActual('react-dom'),
+  useFormState: (action, initialState) => [initialState, action],
+}));
+
 const mockAddAction = jest.fn(async (prevState, formData) => ({ success: true, newItem: { id: '3', label: formData.get('label'), createdAt: new Date() } }));
 const mockUpdateAction = jest.fn(async (prevState, formData) => ({ success: true, updatedItem: { id: formData.get('itemId'), label: formData.get('label'), createdAt: new Date() } }));
 const mockDeleteAction = jest.fn(async (id) => ({ success: true, deletedId: id }));

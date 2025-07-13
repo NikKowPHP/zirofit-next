@@ -35,7 +35,11 @@ export function useEditableList<T extends Item>({
   updateAction,
   deleteAction,
 }: UseEditableListProps<T>) {
-  const [items, setItems] = useState<T[]>(initialItems);
+  const [items, setItems] = useState<T[]>(() =>
+    [...initialItems].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    ),
+  );
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);

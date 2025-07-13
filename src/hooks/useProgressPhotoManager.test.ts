@@ -5,7 +5,7 @@ import * as actions from '@/app/clients/actions/photo-actions';
 
 jest.mock('react-dom', () => ({
   ...jest.requireActual('react-dom'),
-  useFormState: jest.fn((action, initialState) => [initialState, jest.fn()]),
+  useFormState: (action, initialState) => [initialState, action],
 }));
 jest.mock('@/app/clients/actions/photo-actions', () => ({
   addProgressPhoto: jest.fn(),
@@ -37,8 +37,6 @@ describe('useProgressPhotoManager', () => {
       await result.current.handleDelete('1');
     });
     
-    // The hook calls useFormState, so we check if the action was triggered with the correct parameters
-    // In a real scenario, we would verify the state update after the action resolves
     expect(actions.deleteProgressPhoto).toHaveBeenCalled();
   });
 });

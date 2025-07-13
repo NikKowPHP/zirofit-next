@@ -5,7 +5,7 @@ import * as actions from '@/app/clients/actions/measurement-actions';
 
 jest.mock('react-dom', () => ({
   ...jest.requireActual('react-dom'),
-  useFormState: jest.fn((action, initialState) => [initialState, jest.fn()]),
+  useFormState: (action, initialState) => [initialState, action],
 }));
 jest.mock('@/app/clients/actions/measurement-actions', () => ({
   addMeasurement: jest.fn(),

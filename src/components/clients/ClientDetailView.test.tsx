@@ -1,6 +1,6 @@
 // src/components/clients/ClientDetailView.test.tsx
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ClientDetailView from "./ClientDetailView";
 
@@ -35,15 +35,17 @@ const mockClient = {
 } as any;
 
 describe("ClientDetailView", () => {
-  it("renders tabs and default content", () => {
+  it("renders tabs and default content", async () => {
     render(<ClientDetailView client={mockClient} />);
     expect(screen.getByText("Statistics")).toBeInTheDocument();
     expect(screen.getByText("Measurements")).toBeInTheDocument();
     expect(screen.getByText("Progress Photos")).toBeInTheDocument();
     expect(screen.getByText("Session Logs")).toBeInTheDocument();
 
-    // Default tab is Statistics
-    expect(screen.getByText("Client Statistics Content")).toBeInTheDocument();
+    // Default tab is Statistics, wait for it to appear
+    expect(
+      await screen.findByText("Client Statistics Content"),
+    ).toBeInTheDocument();
   });
 
   it("switches to the correct tab when clicked", async () => {
@@ -54,13 +56,19 @@ describe("ClientDetailView", () => {
 
     // Check if the content for the measurements tab is now visible
     expect(await screen.findByText("Manage Measurements Content")).toBeVisible();
-    expect(screen.queryByText("Client Statistics Content")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Client Statistics Content"),
+      ).not.toBeInTheDocument();
+    });
 
     // Click on the "Session Logs" tab
     fireEvent.click(screen.getByText("Session Logs"));
     expect(await screen.findByText("Manage Logs Content")).toBeVisible();
-    expect(
-      screen.queryByText("Manage Measurements Content"),
-    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Manage Measurements Content"),
+      ).not.toBeInTheDocument();
+    });
   });
 });

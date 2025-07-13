@@ -25,14 +25,20 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
   }
 
   if (location) {
-    if (!whereClause.AND) {
-      whereClause.AND = [];
-    }
-    (whereClause.AND as Prisma.UserWhereInput[]).push({
+    const locationFilter: Prisma.UserWhereInput = {
       profile: {
-        location: { contains: location, mode: 'insensitive' }
+        location: { contains: location, mode: 'insensitive' },
+      },
+    };
+    if (whereClause.AND) {
+      if (Array.isArray(whereClause.AND)) {
+        whereClause.AND.push(locationFilter);
+      } else {
+        whereClause.AND = [whereClause.AND, locationFilter];
       }
-    });
+    } else {
+      whereClause.AND = [locationFilter];
+    }
   }
 
   try {
@@ -110,6 +116,7 @@ export async function getTrainerProfileByUsername(username: string) {
             transformationPhotos: { orderBy: { createdAt: "desc" } },
             externalLinks: { orderBy: { createdAt: "asc" } },
             benefits: { orderBy: { orderColumn: "asc" } },
+            socialLinks: { orderBy: { createdAt: "asc" } },
           },
         },
       },

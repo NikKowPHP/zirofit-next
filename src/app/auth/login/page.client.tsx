@@ -1,8 +1,7 @@
 // src/app/auth/login/page.client.tsx
 "use client";
 
-import { useFormStatus } from "react";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { loginUser } from "../actions";
 import PublicLayout from "../../../components/layouts/PublicLayout";
 import { Input, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
