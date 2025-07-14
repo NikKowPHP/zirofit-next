@@ -50,3 +50,6 @@ logs/
 public/sw.js
 public/sw.js.map
 public/workbox-*
+
+playwright-report/
+test-results/

@@ -6,6 +6,7 @@ import { loginUser } from "../actions";
 import PublicLayout from "../../../components/layouts/PublicLayout";
 import { Input, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 interface FormState {
   message: string | null;
@@ -35,6 +36,9 @@ function SubmitButton() {
 
 export default function LoginPage() {
   const [state, formAction] = useFormState(loginUser, initialState);
+  const searchParams = useSearchParams();
+  const successMessage = searchParams.get("message");
+
   return (
     <PublicLayout>
       <div className="flex flex-col items-center justify-center bg-neutral-50 dark:bg-black py-12 sm:px-6 lg:px-8">
@@ -48,7 +52,12 @@ export default function LoginPage() {
                 {state.error}
               </p>
             )}
-            {state?.message && !state.error && (
+            {successMessage && !state.error && (
+              <p className="text-green-600 text-sm mb-4 bg-green-100 dark:bg-green-900/20 p-3 rounded-md">
+                {successMessage}
+              </p>
+            )}
+            {state?.message && !state.error && !successMessage && (
               <p className="text-green-600 text-sm mb-4 bg-green-100 dark:bg-green-900/20 p-3 rounded-md">
                 {state.message}
               </p>
