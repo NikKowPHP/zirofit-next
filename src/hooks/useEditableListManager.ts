@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
+import { useState, useEffect, useRef, useActionState } from "react";
 
 type Item = { id: string; createdAt: Date; [key: string]: any };
 
@@ -21,6 +20,8 @@ interface UseEditableListProps<T extends Item> {
   updateAction: UpdateAction<T>;
   deleteAction: DeleteAction;
 }
+
+const initialActionState = { success: false };
 
 /**
  * Manages the state and actions for a list of editable items.
@@ -44,8 +45,8 @@ export function useEditableList<T extends Item>({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [addState, addFormAction] = useFormState(addAction, {});
-  const [updateState, updateFormAction] = useFormState(updateAction, {});
+  const [addState, addFormAction] = useActionState(addAction, initialActionState);
+  const [updateState, updateFormAction] = useActionState(updateAction, initialActionState);
 
   const isEditing = !!editingItemId;
   const currentEditingItem = isEditing
@@ -53,7 +54,7 @@ export function useEditableList<T extends Item>({
     : null;
 
   useEffect(() => {
-    if (addState.success) {
+    if (addState?.success) {
       const newItemKey = Object.keys(addState).find((k) => k.startsWith("new"));
       if (newItemKey && addState[newItemKey]) {
         const newItem = addState[newItemKey] as T;
@@ -69,7 +70,7 @@ export function useEditableList<T extends Item>({
   }, [addState]);
 
   useEffect(() => {
-    if (updateState.success) {
+    if (updateState?.success) {
       const updatedItemKey = Object.keys(updateState).find((k) =>
         k.startsWith("updated"),
       );

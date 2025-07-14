@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useFormState } from "react-dom";
+import { useState, useActionState } from "react";
 import {
   addProgressPhoto,
   deleteProgressPhoto,
@@ -35,7 +34,7 @@ export const useProgressPhotoManager = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const initialActionState: ActionState = { message: "" };
+  const initialActionState: ActionState = { message: "", success: false };
 
   const addPhotoActionWrapper = async (
     state: ActionState,
@@ -59,13 +58,14 @@ export const useProgressPhotoManager = ({
     } else {
       return {
         ...state,
+        success: false,
         errors: result?.errors,
         error: result?.message || "Failed to add progress photo",
       } as any;
     }
   };
 
-  const [addPhotoState, addPhotoAction] = useFormState<ActionState, FormData>(
+  const [addPhotoState, addPhotoAction] = useActionState<ActionState, FormData>(
     addPhotoActionWrapper,
     initialActionState,
   );

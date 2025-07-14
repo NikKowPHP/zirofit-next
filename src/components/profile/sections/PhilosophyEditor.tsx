@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React, { useEffect, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { updatePhilosophy } from "@/app/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
@@ -38,7 +38,7 @@ function SubmitButton() {
 export default function PhilosophyEditor({
   initialPhilosophy,
 }: PhilosophyEditorProps) {
-  const [state, formAction] = useFormState(updatePhilosophy, initialState);
+  const [state, formAction] = useActionState(updatePhilosophy, initialState);
   const [content, setContent] = useState(initialPhilosophy || "");
 
   useServerActionToast({ formState: state });

@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-dom";
+import { useState, useRef, useEffect, useActionState } from "react";
 import {
   addSessionLog,
   deleteSessionLog,
@@ -45,11 +44,11 @@ export const useSessionLogManager = ({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [addState, addAction] = useFormState(
+  const [addState, addAction] = useActionState(
     addSessionLog,
     initialActionState,
   );
-  const [updateState, updateAction] = useFormState(
+  const [updateState, updateAction] = useActionState(
     updateSessionLog,
     initialActionState,
   );

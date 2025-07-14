@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React, { useEffect, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { updateMethodology } from "@/app/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
@@ -38,7 +38,7 @@ function SubmitButton() {
 export default function MethodologyEditor({
   initialMethodology,
 }: MethodologyEditorProps) {
-  const [state, formAction] = useFormState(updateMethodology, initialState);
+  const [state, formAction] = useActionState(updateMethodology, initialState);
   const [content, setContent] = useState(initialMethodology || "");
 
   useServerActionToast({ formState: state });

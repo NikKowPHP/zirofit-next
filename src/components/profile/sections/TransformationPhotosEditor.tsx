@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React, { useEffect, useRef, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   addTransformationPhoto,
@@ -53,7 +53,7 @@ interface TransformationPhotosEditorProps {
 export default function TransformationPhotosEditor({
   initialTransformationPhotos,
 }: TransformationPhotosEditorProps) {
-  const [state, formAction] = useFormState(
+  const [state, formAction] = useActionState(
     addTransformationPhoto,
     initialState,
   );

@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useFormStatus, useFormState } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
 import { updateCoreInfo } from "@/app/profile/actions/core-info-actions";
 import {
   Input,
@@ -45,7 +46,7 @@ function SubmitButton() {
   );
 }
 export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
-  const [state, formAction] = useFormState(updateCoreInfo, initialState);
+  const [state, formAction] = useActionState(updateCoreInfo, initialState);
   const [formData, setFormData] = useState<CoreInfoData>(initialData);
 
   useServerActionToast({ formState: state });

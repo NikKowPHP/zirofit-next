@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useFormStatus, useFormState } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
 import { updateBrandingImages } from "@/app/profile/actions/branding-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { BannerImage, ProfileImage } from "@/components/ui/ImageComponents";
@@ -40,7 +41,7 @@ function SubmitButton() {
 }
 
 export default function BrandingEditor({ initialData }: BrandingEditorProps) {
-  const [state, formAction] = useFormState(
+  const [state, formAction] = useActionState(
     updateBrandingImages,
     initialFormState,
   );

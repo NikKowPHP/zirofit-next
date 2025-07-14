@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-dom";
+import { useState, useRef, useEffect, useActionState } from "react";
 import {
   addMeasurement,
   updateMeasurement,
@@ -28,13 +27,13 @@ export const useMeasurementManager = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const initialActionState: MeasurementFormState = { message: "" };
+  const initialActionState: MeasurementFormState = { message: "", success: false };
 
-  const [addState, addAction] = useFormState(
+  const [addState, addAction] = useActionState(
     addMeasurement,
     initialActionState,
   );
-  const [updateState, updateAction] = useFormState(
+  const [updateState, updateAction] = useActionState(
     updateMeasurement,
     initialActionState,
   );
@@ -42,7 +41,7 @@ export const useMeasurementManager = ({
   const isEditing = !!editingMeasurementId;
 
   useEffect(() => {
-    if (addState.success && addState.measurement) {
+    if (addState?.success && addState.measurement) {
       setMeasurements((prev) =>
         [...prev, addState.measurement!].sort(
           (a, b) =>
@@ -54,7 +53,7 @@ export const useMeasurementManager = ({
   }, [addState]);
 
   useEffect(() => {
-    if (updateState.success && updateState.measurement) {
+    if (updateState?.success && updateState.measurement) {
       setMeasurements((prev) =>
         prev.map((m) =>
           m.id === updateState.measurement!.id ? updateState.measurement! : m,

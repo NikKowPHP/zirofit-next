@@ -1,7 +1,8 @@
 // src/app/auth/login/page.client.tsx
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { loginUser } from "../actions";
 import PublicLayout from "../../../components/layouts/PublicLayout";
 import { Input, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
@@ -35,7 +36,7 @@ function SubmitButton() {
 }
 
 export default function LoginPage() {
-  const [state, formAction] = useFormState(loginUser, initialState);
+  const [state, formAction] = useActionState(loginUser, initialState);
   const searchParams = useSearchParams();
   const successMessage = searchParams.get("message");
 

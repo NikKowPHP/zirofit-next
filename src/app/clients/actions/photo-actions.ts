@@ -24,6 +24,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Failed to add progress photo.",
+      success: false,
     };
   }
 
@@ -32,10 +33,10 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  if (!authUser) return { message: "User not authenticated." };
+  if (!authUser) return { message: "User not authenticated.", success: false };
 
   if (!(await authorizeClientAccess(clientId, authUser.id))) {
-    return { message: "Client not found or unauthorized." };
+    return { message: "Client not found or unauthorized.", success: false };
   }
 
   const file = photo as File;
@@ -48,7 +49,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
     .upload(filePath, file);
   if (error) {
     console.error("Supabase upload error:", error);
-    return { message: "Failed to upload photo." };
+    return { message: "Failed to upload photo.", success: false };
   }
 
   try {
@@ -61,7 +62,7 @@ export async function addProgressPhoto(prevState: any, formData: FormData) {
     revalidatePath(`/clients/${clientId}`);
     return { success: true, progressPhoto };
   } catch (error: any) {
-    return { message: "Failed to create progress photo." };
+    return { message: "Failed to create progress photo.", success: false };
   }
 }
 
@@ -70,12 +71,12 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  if (!authUser) return { message: "User not authenticated." };
+  if (!authUser) return { message: "User not authenticated.", success: false };
 
   try {
     const photo = await clientService.findProgressPhotoById(photoId);
     if (!photo || !(await authorizeClientAccess(photo.clientId, authUser.id))) {
-      return { message: "Unauthorized to delete photo." };
+      return { message: "Unauthorized to delete photo.", success: false };
     }
 
     await supabase.storage.from("zirofit").remove([photo.imagePath]);
@@ -84,6 +85,6 @@ export async function deleteProgressPhoto(prevState: any, photoId: string) {
     revalidatePath(`/clients/${photo.clientId}`);
     return { success: true, message: "Progress photo deleted." };
   } catch (error: any) {
-    return { message: "Failed to delete progress photo." };
+    return { message: "Failed to delete progress photo.", success: false };
   }
 }

@@ -2,7 +2,8 @@
 "use client";
 
 import { z } from "zod";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { submitContactForm } from "@/app/trainer/actions"; // Adjust path if actions.ts is elsewhere
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -42,7 +43,7 @@ export default function ContactForm({
   trainerEmail,
   trainerName,
 }: ContactFormProps) {
-  const [state, formAction] = useFormState(submitContactForm, initialState);
+  const [state, formAction] = useActionState(submitContactForm, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
