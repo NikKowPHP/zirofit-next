@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { updateAvailability } from "@/app/profile/actions/availability-actions";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
+import { useServerActionToast } from "@/hooks/useServerActionToast";
 
 interface AvailabilityEditorProps {
   initialAvailability: Record<string, string[]>; // Stored as JSON
@@ -38,13 +39,7 @@ export default function AvailabilityEditor({ initialAvailability }: Availability
     success: false,
   });
 
-  useEffect(() => {
-    if (state.success) {
-      // Handle success state if needed
-    } else if (state.error) {
-      // Handle error state if needed
-    }
-  }, [state]);
+  useServerActionToast({ formState: state });
 
   const handleTimeChange = (day: string, index: number, value: string) => {
     const newSchedule = { ...schedule };
@@ -72,17 +67,6 @@ export default function AvailabilityEditor({ initialAvailability }: Availability
         <CardTitle>Set Your Weekly Availability</CardTitle>
       </CardHeader>
       <CardContent>
-        {state.success && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-            {state.message}
-          </div>
-        )}
-        {state.error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-            {state.error}
-          </div>
-        )}
-
         <form action={formAction}>
           <input type="hidden" name="availability" value={JSON.stringify(schedule)} />
 

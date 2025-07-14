@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
+import { toast } from "sonner";
 
 type Item = { id: string; createdAt: Date; [key: string]: any };
 
@@ -42,7 +43,6 @@ export function useEditableList<T extends Item>({
   );
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const [addState, addFormAction] = useFormState(addAction, {});
@@ -94,14 +94,13 @@ export function useEditableList<T extends Item>({
   const handleCancelEdit = () => setEditingItemId(null);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure?")) return;
     setDeletingId(id);
-    setDeleteError(null);
     const result = await deleteAction(id);
     if (result.success && result.deletedId) {
+      toast.success("Item deleted successfully.");
       setItems((current) => current.filter((i) => i.id !== result.deletedId));
     } else if (result.error) {
-      setDeleteError(result.error);
+      toast.error(result.error);
     }
     setDeletingId(null);
   };
@@ -110,7 +109,6 @@ export function useEditableList<T extends Item>({
     items,
     editingItemId,
     deletingId,
-    deleteError,
     formRef,
     addState,
     addFormAction,

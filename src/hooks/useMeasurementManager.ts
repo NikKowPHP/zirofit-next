@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
+import { toast } from "sonner";
 import {
   addMeasurement,
   updateMeasurement,
@@ -25,6 +26,7 @@ export const useMeasurementManager = ({
   const [editingMeasurementId, setEditingMeasurementId] = useState<
     string | null
   >(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const initialActionState: MeasurementFormState = { message: "" };
@@ -49,7 +51,6 @@ export const useMeasurementManager = ({
             new Date(a.measurementDate).getTime(),
         ),
       );
-      formRef.current?.reset();
     }
   }, [addState]);
 
@@ -60,19 +61,19 @@ export const useMeasurementManager = ({
           m.id === updateState.measurement!.id ? updateState.measurement! : m,
         ),
       );
-      setEditingMeasurementId(null);
     }
   }, [updateState]);
 
   const handleDelete = async (measurementId: string) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      const result = await deleteMeasurement({}, measurementId);
-      if (result?.success) {
-        setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
-      } else {
-        alert(result?.error || "Failed to delete measurement.");
-      }
+    setIsDeleting(true);
+    const result = await deleteMeasurement({}, measurementId);
+    if (result?.success) {
+      toast.success(result.message || "Measurement deleted.");
+      setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
+    } else {
+      toast.error(result?.error || "Failed to delete measurement.");
     }
+    setIsDeleting(false);
   };
 
   const handleEdit = (measurement: ClientMeasurement) => {
@@ -101,5 +102,6 @@ export const useMeasurementManager = ({
     handleDelete,
     handleEdit,
     handleCancelEdit,
+    isDeleting,
   };
 };

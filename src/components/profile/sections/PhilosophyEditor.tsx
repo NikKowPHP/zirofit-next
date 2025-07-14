@@ -6,6 +6,7 @@ import { updatePhilosophy } from "@/app/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
+import { useServerActionToast } from "@/hooks/useServerActionToast";
 
 interface TextContentFormState {
   message?: string | null;
@@ -40,6 +41,8 @@ export default function PhilosophyEditor({
   const [state, formAction] = useFormState(updatePhilosophy, initialState);
   const [content, setContent] = useState(initialPhilosophy || "");
 
+  useServerActionToast({ formState: state });
+
   // Update content state if server action returns updatedContent
   useEffect(() => {
     if (state.success && typeof state.updatedContent === "string") {
@@ -55,16 +58,6 @@ export default function PhilosophyEditor({
         <CardTitle>Philosophy</CardTitle>
       </CardHeader>
       <CardContent>
-        {state.success && state.message && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-            {state.message}
-          </div>
-        )}
-        {state.error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-            {state.error}
-          </div>
-        )}
         <form action={formAction}>
           <RichTextEditor
             label="Edit Content"

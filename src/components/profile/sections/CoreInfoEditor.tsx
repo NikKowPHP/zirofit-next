@@ -12,6 +12,7 @@ import {
   CardContent,
 } from "@/components/ui";
 import { z } from "zod";
+import { useServerActionToast } from "@/hooks/useServerActionToast";
 interface CoreInfoData {
   name: string;
   username: string;
@@ -45,21 +46,21 @@ function SubmitButton() {
 }
 export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
   const [state, formAction] = useFormState(updateCoreInfo, initialState);
-  // Initialize formData from prop
   const [formData, setFormData] = useState<CoreInfoData>(initialData);
-  // Update local form data if server action returns updated fields
+
+  useServerActionToast({ formState: state });
+
   useEffect(() => {
     if (state.success && state.updatedFields) {
-      // Merge only the fields that were successfully updated by the server
       setFormData((prev) => ({
         ...prev,
-        ...(state.updatedFields as Partial<CoreInfoData>), // Type assertion for safety
+        ...(state.updatedFields as Partial<CoreInfoData>),
       }));
     }
   }, [state.success, state.updatedFields]);
-  // Removed the simulated isLoading and fetchInitialData useEffect
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -74,16 +75,6 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
         <CardTitle>Core Information</CardTitle>
       </CardHeader>
       <CardContent>
-        {state.success && state.message && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 border border-green-200 dark:border-green-800 rounded-md text-sm">
-            {state.message}
-          </div>
-        )}
-        {state.error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-md text-sm">
-            {state.error}
-          </div>
-        )}
         <form action={formAction} className="space-y-4">
           <div>
             <Label htmlFor="name">Full Name</Label>

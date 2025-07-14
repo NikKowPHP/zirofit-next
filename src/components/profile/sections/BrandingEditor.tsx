@@ -6,6 +6,7 @@ import { useFormStatus, useFormState } from "react-dom";
 import { updateBrandingImages } from "@/app/profile/actions/branding-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { BannerImage, ProfileImage } from "@/components/ui/ImageComponents";
+import { useServerActionToast } from "@/hooks/useServerActionToast";
 
 interface BrandingEditorProps {
   initialData: {
@@ -46,6 +47,8 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
+  useServerActionToast({ formState: state });
+
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setBannerPreview(file ? URL.createObjectURL(file) : null);
@@ -65,17 +68,6 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
         <CardTitle>Manage Profile Branding</CardTitle>
       </CardHeader>
       <CardContent>
-        {state?.success && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-            {state.message}
-          </div>
-        )}
-        {state?.error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-            {state.error}
-          </div>
-        )}
-
         <form action={formAction} className="space-y-6">
           {/* Banner Image Section */}
           <div className="relative">

@@ -5,6 +5,7 @@ import {
   deleteProgressPhoto,
 } from "@/app/clients/actions/photo-actions";
 import { ClientProgressPhoto } from "@/app/clients/actions";
+import { toast } from "sonner";
 
 interface ActionState {
   errors?: {
@@ -33,6 +34,7 @@ export const useProgressPhotoManager = ({
   const [progressPhotos, setProgressPhotos] =
     useState<ClientProgressPhoto[]>(initialProgressPhotos);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const initialActionState: ActionState = { message: "" };
 
@@ -53,41 +55,19 @@ export const useProgressPhotoManager = ({
         ...state,
         success: true,
         progressPhoto: result.progressPhoto,
-        message: "",
+        message: "Photo added successfully.",
       };
     } else {
       return {
         ...state,
         errors: result?.errors,
-        message: result?.message || "Failed to add progress photo",
-      };
-    }
-  };
-
-  const deletePhotoActionWrapper = async (
-    state: ActionState,
-    photoId: string,
-  ): Promise<ActionState> => {
-    const result = await deleteProgressPhoto(state, photoId);
-    if (result?.success) {
-      setProgressPhotos((prevPhotos) =>
-        prevPhotos.filter((photo) => photo.id !== photoId),
-      );
-      return { ...state, success: true, message: result.message };
-    } else {
-      return {
-        ...state,
-        message: result?.message || "Failed to delete progress photo",
-      };
+        error: result?.message || "Failed to add progress photo",
+      } as any;
     }
   };
 
   const [addPhotoState, addPhotoAction] = useFormState<ActionState, FormData>(
     addPhotoActionWrapper,
-    initialActionState,
-  );
-  const [deleteState, deletePhotoAction] = useFormState<ActionState, string>(
-    deletePhotoActionWrapper,
     initialActionState,
   );
 
@@ -105,9 +85,17 @@ export const useProgressPhotoManager = ({
   };
 
   const handleDelete = async (photoId: string) => {
-    if (window.confirm("Are you sure you want to delete this photo?")) {
-      await deletePhotoAction(photoId);
+    setIsDeleting(true);
+    const result = await deleteProgressPhoto({}, photoId);
+    if (result?.success) {
+      toast.success(result.message || "Photo deleted.");
+      setProgressPhotos((prevPhotos) =>
+        prevPhotos.filter((photo) => photo.id !== photoId),
+      );
+    } else {
+      toast.error(result?.message || "Failed to delete photo.");
     }
+    setIsDeleting(false);
   };
 
   return {
@@ -115,8 +103,8 @@ export const useProgressPhotoManager = ({
     selectedImage,
     addPhotoState,
     addPhotoAction,
-    deleteState,
     handleImageChange,
     handleDelete,
+    isDeleting,
   };
 };

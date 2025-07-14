@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
+import { toast } from "sonner";
 import {
   addSessionLog,
   deleteSessionLog,
@@ -62,10 +63,10 @@ export const useSessionLogManager = ({
       setSessionLogs((prev) =>
         [addState.sessionLog!, ...prev].sort(
           (a, b) =>
-            new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime(),
+            new Date(b.sessionDate).getTime() -
+            new Date(a.sessionDate).getTime(),
         ),
       );
-      formRef.current?.reset();
     }
   }, [addState]);
 
@@ -76,18 +77,18 @@ export const useSessionLogManager = ({
           log.id === updateState.sessionLog!.id ? updateState.sessionLog! : log,
         ),
       );
-      setEditingSessionLogId(null);
     }
   }, [updateState]);
 
   const handleDelete = async (sessionLogId: string) => {
-    if (!window.confirm("Are you sure you want to delete this log?")) return;
     setDeletingId(sessionLogId);
     setDeleteError(null);
     const result = await deleteSessionLog(sessionLogId);
     if (result?.success) {
+      toast.success(result.message || "Log deleted.");
       setSessionLogs((prev) => prev.filter((log) => log.id !== sessionLogId));
     } else {
+      toast.error(result?.message || "Failed to delete log.");
       setDeleteError(result?.message || "Failed to delete log.");
     }
     setDeletingId(null);
@@ -100,7 +101,7 @@ export const useSessionLogManager = ({
   const handleCancelEdit = () => {
     setEditingSessionLogId(null);
   };
-  
+
   const currentEditingLog = isEditing
     ? sessionLogs.find((l) => l.id === editingSessionLogId)
     : null;

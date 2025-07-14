@@ -12,20 +12,23 @@ import SkeletonProfileChecklist from "./_components/skeleton-profile-checklist";
 import SkeletonQuickActions from "./_components/skeleton-quick-actions";
 import SkeletonActivityFeed from "./_components/skeleton-activity-feed";
 import { Card, CardContent, CardHeader, Skeleton } from "@/components/ui";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function DashboardContent() {
-  const { data, error, isLoading } = useSWR("/api/dashboard", fetcher, {
+  const { data, error, isLoading, mutate } = useSWR("/api/dashboard", fetcher, {
     refreshInterval: 30000,
     revalidateOnFocus: true,
   });
 
   if (error)
     return (
-      <div className="text-red-500 p-4 bg-red-100 dark:bg-red-900/20 rounded-md">
-        Failed to load dashboard data
-      </div>
+      <ErrorState
+        title="Failed to load dashboard"
+        description="There was a problem fetching your dashboard data. Please try again."
+        onRetry={mutate}
+      />
     );
   if (isLoading || !data)
     return (

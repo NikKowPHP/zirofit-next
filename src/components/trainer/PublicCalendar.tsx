@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useFormState } from "react-dom";
 import { createBooking } from "@/app/profile/actions/booking-actions";
 import { Button, Input, Textarea, CardContent, CardHeader, CardTitle } from "@/components/ui";
@@ -21,6 +21,7 @@ import {
     set
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { toast } from "sonner";
 
 type ScheduleData = {
   availability: Record<string, string[]>;
@@ -49,6 +50,16 @@ export default function PublicCalendar({
     success: false,
   });
   
+  useEffect(() => {
+    if (formState.success && formState.message) {
+      toast.success(formState.message);
+      setSelectedDate(null);
+      setSelectedTime(null);
+    } else if (formState.error) {
+      toast.error(formState.error);
+    }
+  }, [formState]);
+
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
   const daysInMonth = eachDayOfInterval({
@@ -120,8 +131,9 @@ export default function PublicCalendar({
   if (formState.success) {
     return (
       <CardContent>
-        <div className="p-4 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-          {formState.message}
+        <div className="p-4 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md text-center">
+            <h3 className="font-semibold">Booking Confirmed!</h3>
+            <p className="text-sm">Check your email for details.</p>
         </div>
       </CardContent>
     );
@@ -237,7 +249,6 @@ export default function PublicCalendar({
               />
             </div>
             <Button type="submit" className="w-full">Confirm Booking</Button>
-            {formState.error && <p className="text-red-500 text-sm mt-2">{formState.error}</p>}
           </form>
         )}
       </CardContent>
