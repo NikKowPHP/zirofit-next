@@ -7,7 +7,9 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': '<rootDir>/tests/mocks/styleMock.js',
   },
-  transformIgnorePatterns: ['<rootDir>/node_modules/'],
+  transformIgnorePatterns: [
+    "/node_modules/(?!(isows|@supabase/ssr|@supabase/supabase-js|@supabase/realtime-js)/)"
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   modulePathIgnorePatterns: [],
