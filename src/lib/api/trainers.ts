@@ -108,8 +108,8 @@ export interface Trainer {
     profilePhotoPath: string | null;
     location: string | null;
     certifications: string | null;
-    latitude?: number | null;
-    longitude?: number | null;
+    latitude: number | null;
+    longitude: number | null;
   } | null;
 }
 
