@@ -1,11 +1,21 @@
+
 // src/lib/api/trainers.test.ts
 import { getPublishedTrainers } from "./trainers";
 import { prismaMock } from "../../../tests/singleton";
 import * as utils from '../utils';
 
+// This mock was too simplistic and caused the test to fail.
+// The real implementation handles all diacritics. We update the mock to be more realistic.
 jest.mock('../utils', () => ({
   ...jest.requireActual('../utils'),
-  normalizeLocation: jest.fn((loc: string) => loc.toLowerCase().replace('ł', 'l')),
+  normalizeLocation: jest.fn((loc: string) => {
+    if (!loc) return '';
+    return loc
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ł/g, 'l');
+  }),
 }));
 
 describe("Trainer API Logic", () => {

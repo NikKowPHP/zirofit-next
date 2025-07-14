@@ -29,7 +29,7 @@ test.describe('Trainer Dashboard', () => {
             const calendarUrl = await addToCalendarButton.getAttribute('href');
             
             expect(calendarUrl).not.toBeNull();
-            expect(calendarUrl).toStartWith('https://www.google.com/calendar/render?');
+            expect(calendarUrl).toMatch(/^https:\/\/www\.google\.com\/calendar\/render\?/);
             expect(calendarUrl).toContain('action=TEMPLATE');
         } else {
             console.log('No bookings found for test user, skipping calendar link assertion.');
