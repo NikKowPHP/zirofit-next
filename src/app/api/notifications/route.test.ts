@@ -47,8 +47,9 @@ describe("Notifications API GET", () => {
       take: 50,
     });
     expect(response.status).toBe(200);
-    // Compare after JSON serialization to handle Date objects
-    expect(body).toEqual(JSON.parse(JSON.stringify(mockNotifications)));
+    // The mock for NextResponse.json returns the body as is, so Date objects are not serialized.
+    // We should compare against the original mock object.
+    expect(body).toEqual(mockNotifications);
   });
 
   it("should return a 401 Unauthorized error if user is not authenticated", async () => {
