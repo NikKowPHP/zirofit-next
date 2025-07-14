@@ -1,7 +1,6 @@
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Link from "next/link";
-import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 import SortControl from "@/components/trainers/SortControl";
@@ -10,6 +9,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { TrainerGrid } from "@/components/trainers/TrainerGrid";
 
 export const metadata: Metadata = {
   title: "Find a Personal Trainer",
@@ -109,9 +109,7 @@ async function TrainerList({
   return (
     <>
       <div className="lg:col-span-2 space-y-6">
-        {trainers.map((trainer: Trainer) => (
-          <TrainerResultCard key={trainer.id} trainer={trainer} />
-        ))}
+        <TrainerGrid trainers={trainers} />
       </div>
       <div className="lg:col-span-1">
         <div className="sticky top-24 h-96 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl flex items-center justify-center border border-neutral-200 dark:border-neutral-700">

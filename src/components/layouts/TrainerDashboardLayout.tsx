@@ -12,6 +12,7 @@ import { usePathname } from "next/navigation";
 import NotificationIndicator from "@/components/notifications/NotificationIndicator";
 import { useTheme } from "@/context/ThemeContext";
 import BottomNavBar from "./BottomNavBar"; // Import the new component
+import { motion } from "framer-motion";
 
 interface TrainerDashboardLayoutProps {
   children: React.ReactNode;
@@ -117,9 +118,14 @@ export default function TrainerDashboardLayout({
           </div>
         </header>
         {/* Add bottom padding for mobile to avoid overlap with nav bar */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 animate-subtle-fade-in-up">
+        <motion.main
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: "easeInOut", duration: 0.4 }}
+          className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 pb-20 md:pb-6"
+        >
           {children}
-        </main>
+        </motion.main>
       </div>
 
       {/* Mobile Bottom Nav Bar */}

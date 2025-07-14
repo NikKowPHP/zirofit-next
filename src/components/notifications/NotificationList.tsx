@@ -17,16 +17,13 @@ export default function NotificationList({
 }: NotificationListProps) {
   const handleMarkRead = async (notificationId: string) => {
     try {
-      const response = await fetch("/api/notifications/mark-read", {
+      await fetch("/api/notifications/mark-read", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ notificationId }),
       });
-
-      if (!response.ok) throw new Error("Failed to mark notification as read");
-
       onMarkRead();
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -34,14 +31,14 @@ export default function NotificationList({
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200">
-      <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+    <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-lg border border-gray-200 dark:border-neutral-800">
+      <div className="p-4 border-b border-gray-200 dark:border-neutral-800 flex justify-between items-center">
         <h3 className="font-semibold">Notifications</h3>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-100 rounded-full"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full"
         >
-          <XMarkIcon className="h-5 w-5 text-gray-600" />
+          <XMarkIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
         </button>
       </div>
 
@@ -53,8 +50,8 @@ export default function NotificationList({
             <div
               key={notification.id}
               onClick={() => handleMarkRead(notification.id)}
-              className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                !notification.readStatus ? "bg-blue-50" : ""
+              className={`p-4 border-b border-gray-100 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-800/50 cursor-pointer ${
+                !notification.readStatus ? "bg-blue-50 dark:bg-blue-900/20" : ""
               }`}
             >
               <p className="text-sm">{notification.message}</p>

@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import LogoutButton from "@/components/auth/LogoutButton";
 import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Button } from "../ui/Button";
+import { motion } from "framer-motion";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -173,7 +174,14 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         </div>
       )}
 
-      <main className="flex-grow flex flex-col bg-white dark:bg-gray-900 animate-subtle-fade-in-up">{children}</main>
+      <motion.main 
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ease: "easeInOut", duration: 0.4 }}
+        className="flex-grow flex flex-col bg-white dark:bg-gray-900"
+      >
+        {children}
+      </motion.main>
 
       <footer className="bg-neutral-50 dark:bg-black border-t border-neutral-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">

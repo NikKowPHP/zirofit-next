@@ -22,16 +22,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? "span" : "button";
 
     const baseStyles =
-      "inline-flex items-center justify-center rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background)] transition-all ease-in-out duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed rounded-full";
+      "inline-flex items-center justify-center rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background transition-all ease-in-out duration-150 active:scale-[0.97] hover:scale-[1.03] disabled:opacity-50 disabled:cursor-not-allowed rounded-full transform";
 
     const variantStyles = {
       primary:
-        "bg-[var(--primary-blue)] text-white hover:opacity-90 focus:ring-[var(--primary-blue)]",
+        "bg-primary text-primary-foreground hover:opacity-90 focus:ring-primary",
       secondary:
-        "bg-neutral-200/80 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700 focus:ring-[var(--primary-blue)]",
-      danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+        "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-primary",
+      danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive",
       tertiary:
-        "bg-transparent text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/10 focus:ring-indigo-500",
+        "bg-transparent text-foreground hover:bg-accent focus:ring-ring",
     };
 
     const sizeStyles = {
