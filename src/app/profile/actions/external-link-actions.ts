@@ -32,8 +32,10 @@ export async function addExternalLink(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
+    const { label, linkUrl } = validated.data;
     const newLink = await profileService.createExternalLink({
-      ...validated.data,
+      label,
+      linkUrl,
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");

@@ -32,8 +32,10 @@ export async function addService(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
+    const { title, description } = validated.data;
     const newService = await profileService.createService({
-      ...validated.data,
+      title,
+      description,
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");

@@ -35,7 +35,9 @@ export async function addSocialLink(
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
     const newLink = await profileService.createSocialLink({
-      ...validated.data,
+      platform: validated.data.platform,
+      username: validated.data.username,
+      profileUrl: validated.data.profileUrl,
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
@@ -62,7 +64,11 @@ export async function updateSocialLink(
     const updatedLink = await profileService.updateSocialLink(
       linkId,
       profile.id,
-      validated.data,
+      {
+        platform: validated.data.platform,
+        username: validated.data.username,
+        profileUrl: validated.data.profileUrl,
+      },
     );
     revalidatePath("/profile/edit");
     return { success: true, message: "Social link updated.", updatedLink };

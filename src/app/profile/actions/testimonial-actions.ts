@@ -33,7 +33,8 @@ export async function addTestimonial(
     return { errors: validated.error.issues, error: "Validation failed" };
   try {
     const newTestimonial = await profileService.createTestimonial({
-      ...validated.data,
+      clientName: validated.data.clientName,
+      testimonialText: validated.data.testimonialText,
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
@@ -59,7 +60,10 @@ export async function updateTestimonial(
     const updatedTestimonial = await profileService.updateTestimonial(
       id,
       profile.id,
-      validated.data,
+      {
+        clientName: validated.data.clientName,
+        testimonialText: validated.data.testimonialText,
+      },
     );
     revalidatePath("/profile/edit");
     return {
