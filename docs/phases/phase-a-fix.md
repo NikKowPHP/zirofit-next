@@ -59,24 +59,86 @@ This plan outlines the atomic tasks required to implement an interactive map, no
     *   [x] Dynamically import the `TrainersMap` component with `ssr: false` and replace the placeholder `div` with it.
 
 ---
+Of course. I will update the plan to include these excellent, high-value features. They are a logical extension of the booking workflow and significantly improve the trainer's user experience.
+
+The new tasks will be organized into a new **Phase 5**, ensuring a clear separation of concerns from the map and filter implementation. The plan is designed to integrate seamlessly with the existing notification system and codebase.
+
+Here is the updated, comprehensive implementation plan:
+
+```markdown
+# Feature Implementation Plan: Map, Search, Filters & Booking Enhancements
+
+This plan outlines the atomic tasks required to implement an interactive map, normalized location search, advanced filtering/sorting, and an enhanced booking workflow with Google Calendar integration and in-app notifications.
+
+---
+
+### Phase 1: Backend Foundation for Location & Geocoding
+
+**Objective:** Enhance the database schema and backend logic to support normalized location searches and map coordinates.
+
+*   [x] **1.1: Enhance `Profile` Schema**
+    *   [x] Open `prisma/schema.prisma`.
+    *   [x] Add a `locationNormalized: String? @db.Text` field to the `Profile` model for case-insensitive, accent-insensitive searching.
+    *   [x] Add `latitude: Float?` and `longitude: Float?` fields to the `Profile` model to store geocoded coordinates.
+
+*   [x] **1.2: Update Database**
+    *   [x] Run `npx prisma migrate dev --name add_normalized_location_and_coords` to apply the schema changes.
+
+*   [x] **1.3: Create Location Normalization Utility**
+    *   [x] In `src/lib/utils.ts`, create a new function `normalizeLocation(location: string): string`.
+    *   [x] Implement the function to convert the input string to lowercase and replace Polish diacritics with their Latin equivalents (e.g., 'ł' -> 'l', 'ą' -> 'a').
+
+*   [x] **1.4: Integrate Geocoding and Normalization into Profile Updates**
+    *   [x] Create a new service file `src/lib/services/geocodingService.ts`.
+    *   [x] Inside, create a function `geocodeLocation(location: string): Promise<{latitude: number; longitude: number} | null>`. This function will call a free, public geocoding API.
+    *   [x] Open `src/app/profile/actions/core-info-actions.ts`.
+    *   [x] Modify the `updateCoreInfo` action to call `normalizeLocation` and `geocodeLocation` when the `location` field is updated, saving the results to the database.
+
+*   [x] **1.5: Backfill Data for Existing Trainers**
+    *   [x] Create a one-time script `prisma/seed-backfill-locations.ts` to update existing profiles with normalized locations and geocoded coordinates.
+    *   [x] Add an npm script in `package.json` to run this: `"db:backfill-locations": "npx ts-node --compiler-options '{\\\"module\\\":\\\"commonjs\\\"}' prisma/seed-backfill-locations.ts"`.
+
+---
+
+### Phase 2: Interactive Map Implementation
+
+**Objective:** Replace the static map placeholder on the `/trainers` page with a live, interactive map displaying trainer locations.
+
+*   [x] **2.1: Install Mapping Library**
+    *   [x] Run `npm install leaflet react-leaflet`.
+    *   [x] Run `npm install -D @types/leaflet`.
+
+*   [x] **2.2: Update Trainer Fetching Logic**
+    *   [x] Open `src/lib/api/trainers.ts`.
+    *   [x] Modify the `getPublishedTrainers` function to select the `latitude` and `longitude` fields and to use `locationNormalized` for searching.
+
+*   [x] **2.3: Create the Map Component**
+    *   [x] Create a new file `src/components/trainers/TrainersMap.tsx`.
+    *   [x] This will be a client component (`"use client"`) that renders the map using `react-leaflet`, displaying a `Marker` for each trainer with a `Popup` linking to their profile.
+
+*   [x] **2.4: Integrate Map into Trainers Page**
+    *   [x] Open `src/app/trainers/page.tsx`.
+    *   [x] Dynamically import the `TrainersMap` component with `ssr: false` and replace the placeholder `div` with it.
+
+---
 
 ### Phase 3: Filtering and Sorting Implementation
 
 **Objective:** Add controls to the `/trainers` page to allow users to sort and filter the list of trainers.
 
-*   [ ] **3.1: Enhance Backend for Sorting/Filtering**
-    *   [ ] Open `src/lib/api/trainers.ts`.
-    *   [ ] Modify `getPublishedTrainers` to accept a `sortBy` parameter and dynamically construct the `orderBy` clause for the Prisma query.
+*   [x] **3.1: Enhance Backend for Sorting/Filtering**
+    *   [x] Open `src/lib/api/trainers.ts`.
+    *   [x] Modify `getPublishedTrainers` to accept a `sortBy` parameter and dynamically construct the `orderBy` clause for the Prisma query.
 
-*   [ ] **3.2: Create UI for Sorting**
-    *   [ ] Create a new client component `src/components/trainers/SortControl.tsx` that renders a dropdown and updates the URL's `sortBy` search parameter on change.
+*   [x] **3.2: Create UI for Sorting**
+    *   [x] Create a new client component `src/components/trainers/SortControl.tsx` that renders a dropdown and updates the URL's `sortBy` search parameter on change.
 
-*   [ ] **3.3: Integrate Sorting into Trainers Page**
-    *   [ ] Open `src/app/trainers/page.tsx`.
-    *   [ ] Add the `SortControl` component and pass the `sortBy` search parameter to the `getPublishedTrainers` function.
+*   [x] **3.3: Integrate Sorting into Trainers Page**
+    *   [x] Open `src/app/trainers/page.tsx`.
+    *   [x] Add the `SortControl` component and pass the `sortBy` search parameter to the `getPublishedTrainers` function.
 
-*   [ ] **3.4: Design Polish for New UI Elements**
-    *   [ ] Style all new components to match the HIG aesthetic (clean, ample padding, clear focus states).
+*   [x] **3.4: Design Polish for New UI Elements**
+    *   [x] Style all new components to match the HIG aesthetic (clean, ample padding, clear focus states).
 
 ---
 

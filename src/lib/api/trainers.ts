@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { transformImagePath, normalizeLocation } from "../utils";
 import type { Prisma } from '@prisma/client';
 
-export async function getPublishedTrainers(page = 1, pageSize = 15, query?: string, location?: string) {
+export async function getPublishedTrainers(page = 1, pageSize = 15, query?: string, location?: string, sortBy?: string) {
   const skip = (page - 1) * pageSize;
 
   const whereClause: Prisma.UserWhereInput = {
@@ -41,6 +41,13 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
     }
   }
 
+  let orderBy: Prisma.UserOrderByWithRelationInput = { name: "asc" }; // Default sort
+  if (sortBy === 'name_desc') {
+    orderBy = { name: 'desc' };
+  } else if (sortBy === 'newest') {
+    orderBy = { createdAt: 'desc' };
+  }
+
   try {
     const trainers = await prisma.user.findMany({
       where: whereClause,
@@ -58,9 +65,7 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
           },
         },
       },
-      orderBy: {
-        name: "asc",
-      },
+      orderBy,
       skip,
       take: pageSize,
     });

@@ -6,6 +6,7 @@ import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui";
 import dynamic from "next/dynamic";
+import SortControl from "@/components/trainers/SortControl";
 
 const TrainersMap = dynamic(() => import('@/components/trainers/TrainersMap'), {
   ssr: false,
@@ -37,14 +38,15 @@ interface Trainer {
 export default async function TrainersPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ page?: string; q?: string; location?: string }>;
+  searchParams?: Promise<{ page?: string; q?: string; location?: string; sortBy?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
   const currentPage = Number(resolvedSearchParams?.page) || 1;
   const query = resolvedSearchParams?.q;
   const location = resolvedSearchParams?.location;
+  const sortBy = resolvedSearchParams?.sortBy;
 
-  const data = await getPublishedTrainers(currentPage, 15, query, location);
+  const data = await getPublishedTrainers(currentPage, 15, query, location, sortBy);
 
   if (data.error) {
     return (
@@ -67,6 +69,7 @@ export default async function TrainersPage({
     const params = new URLSearchParams();
     if (query) params.set("q", query);
     if (location) params.set("location", location);
+    if (sortBy) params.set("sortBy", sortBy);
     if (page > 1) params.set("page", page.toString());
     return `/trainers?${params.toString()}`;
   };
@@ -75,9 +78,12 @@ export default async function TrainersPage({
     <PublicLayout>
       <div className="bg-neutral-50 dark:bg-black flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-4 py-12">
-          <h1 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">
-            Meet Our Trainers
-          </h1>
+          <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Meet Our Trainers
+            </h1>
+            <SortControl />
+          </div>
 
           {trainers.length > 0 ? (
             <>
