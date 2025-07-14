@@ -2,8 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useFormStatus } from "react-dom";
-import { useActionState } from "react";
+import { useFormStatus, useFormState } from "react-dom";
 import {
   addBenefit,
   updateBenefit,
@@ -46,7 +45,7 @@ export default function BenefitsEditor({
 }: BenefitsEditorProps) {
   const [benefits, setBenefits] = useState<Benefit[]>(initialBenefits);
   const [editingBenefitId, setEditingBenefitId] = useState<string | null>(null);
-  const [addFormState, addFormAction] = useActionState(addBenefit, initialFormState);
+  const [addFormState, addFormAction] = useFormState(addBenefit, initialFormState);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);

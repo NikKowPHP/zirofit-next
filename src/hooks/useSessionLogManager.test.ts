@@ -3,10 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useSessionLogManager } from './useSessionLogManager';
 import * as actions from '@/app/clients/actions';
 
-jest.mock('react-dom', () => ({
-  ...jest.requireActual('react-dom'),
-  useFormState: (action, initialState) => [initialState, action],
-}));
 jest.mock('@/app/clients/actions', () => ({
   addSessionLog: jest.fn(),
   updateSessionLog: jest.fn(),

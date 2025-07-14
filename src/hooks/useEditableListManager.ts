@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useActionState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
 
 type Item = { id: string; createdAt: Date; [key: string]: any };
 
@@ -45,8 +46,8 @@ export function useEditableList<T extends Item>({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [addState, addFormAction] = useActionState(addAction, initialActionState);
-  const [updateState, updateFormAction] = useActionState(updateAction, initialActionState);
+  const [addState, addFormAction] = useFormState(addAction, initialActionState);
+  const [updateState, updateFormAction] = useFormState(updateAction, initialActionState);
 
   const isEditing = !!editingItemId;
   const currentEditingItem = isEditing

@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import { mockDeep } from 'jest-mock-extended';
 import { PrismaClient } from '@prisma/client';
 import { TextEncoder, TextDecoder } from 'util';
+import React from 'react';
 
 // Polyfills for Jest's Node.js environment
 global.TextEncoder = TextEncoder;
@@ -51,4 +52,18 @@ Object.defineProperty(window, 'matchMedia', {
 // Mock HTMLCanvasElement.getContext for Chart.js
 if (typeof HTMLCanvasElement !== 'undefined') {
   HTMLCanvasElement.prototype.getContext = () => null;
+}
+
+// Mock for useActionState since it's a new hook and may not be in the Jest environment's React version.
+if (typeof (React as any).useActionState === 'undefined') {
+  (React as any).useActionState = require('react-dom').useFormState;
+}
+
+// Mock for ResizeObserver, used by Headless UI
+if (typeof window.ResizeObserver === 'undefined') {
+    global.ResizeObserver = jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+        disconnect: jest.fn(),
+    }));
 }

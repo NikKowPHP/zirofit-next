@@ -21,7 +21,7 @@ describe("DashboardContent", () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByTestId("skeleton-at-a-glance")).toBeInTheDocument();
+    expect(screen.getByTestId("skeleton-at-a-glance-stats")).toBeInTheDocument();
     expect(
       screen.getByTestId("skeleton-profile-checklist"),
     ).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe("DashboardContent", () => {
     );
 
     expect(
-      screen.getByText("Failed to load dashboard data"),
+      screen.getByText("Failed to load dashboard"),
     ).toBeInTheDocument();
   });
 
@@ -80,7 +80,7 @@ describe("DashboardContent", () => {
 
     // Assert that skeleton loaders are not present
     expect(
-      screen.queryByTestId("skeleton-at-a-glance"),
+      screen.queryByTestId("skeleton-at-a-glance-stats"),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("skeleton-profile-checklist"),

@@ -1,8 +1,7 @@
 // src/app/auth/register/page.client.tsx
 "use client";
 
-import { useFormStatus } from "react-dom";
-import { useActionState } from "react";
+import { useFormStatus, useFormState } from "react-dom";
 import { registerUser } from "../actions";
 import PublicLayout from "../../../components/layouts/PublicLayout";
 import { Input, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
@@ -37,7 +36,7 @@ function SubmitButton() {
 }
 
 export default function RegisterPage() {
-  const [state, formAction] = useActionState(registerUser, initialState);
+  const [state, formAction] = useFormState(registerUser, initialState);
 
   return (
     <PublicLayout>

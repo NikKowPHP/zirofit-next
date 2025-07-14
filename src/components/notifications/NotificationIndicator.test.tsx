@@ -106,12 +106,14 @@ describe("NotificationIndicator", () => {
   it("toggles dropdown when clicked", async () => {
     render(<NotificationIndicator />);
 
-    const button = screen.getByRole("button");
+    const button = screen.getByRole("button", { name: /Toggle notifications/ });
     await userEvent.click(button);
 
-    expect(screen.getByText("Test notification")).toBeInTheDocument();
+    expect(await screen.findByText("Test notification")).toBeInTheDocument();
 
     await userEvent.click(button);
-    expect(screen.queryByText("Test notification")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText("Test notification")).not.toBeInTheDocument();
+    });
   });
 });

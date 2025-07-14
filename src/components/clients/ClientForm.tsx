@@ -1,7 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
@@ -43,7 +42,7 @@ function SubmitButton({ isEditing }: { isEditing: boolean }) {
 }
 
 export default function ClientForm({ initialData, action }: ClientFormProps) {
-  const [state, dispatch] = useActionState<State, FormData>(action, {
+  const [state, dispatch] = useFormState<State, FormData>(action, {
     message: null,
     errors: {},
   });

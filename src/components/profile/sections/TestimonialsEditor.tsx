@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useActionState } from "react";
+import { useFormState } from "react-dom";
 import {
   addTestimonial,
   updateTestimonial,
@@ -61,12 +61,12 @@ export default function TestimonialsEditor({
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [addState, addFormAction] = useActionState<FormState, FormData>(
+  const [addState, addFormAction] = useFormState<FormState, FormData>(
     addTestimonial as FormAction,
     initialAddState,
   );
 
-  const [updateState, updateFormAction] = useActionState<FormState, FormData>(
+  const [updateState, updateFormAction] = useFormState<FormState, FormData>(
     (prevState, formData) =>
       updateTestimonial(
         editingTestimonialId || "",

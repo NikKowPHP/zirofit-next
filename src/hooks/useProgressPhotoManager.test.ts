@@ -3,10 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useProgressPhotoManager } from './useProgressPhotoManager';
 import * as actions from '@/app/clients/actions/photo-actions';
 
-jest.mock('react-dom', () => ({
-  ...jest.requireActual('react-dom'),
-  useFormState: (action, initialState) => [initialState, action],
-}));
 jest.mock('@/app/clients/actions/photo-actions', () => ({
   addProgressPhoto: jest.fn(),
   deleteProgressPhoto: jest.fn(),

@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useActionState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useFormState } from "react-dom";
 import {
   addMeasurement,
   updateMeasurement,
@@ -29,11 +30,11 @@ export const useMeasurementManager = ({
 
   const initialActionState: MeasurementFormState = { message: "", success: false };
 
-  const [addState, addAction] = useActionState(
+  const [addState, addAction] = useFormState(
     addMeasurement,
     initialActionState,
   );
-  const [updateState, updateAction] = useActionState(
+  const [updateState, updateAction] = useFormState(
     updateMeasurement,
     initialActionState,
   );

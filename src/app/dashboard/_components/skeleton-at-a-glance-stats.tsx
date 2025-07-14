@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui";
 
 export default function SkeletonAtAGlanceStats() {
   return (
-    <Card data-testid="skeleton-at-a-glance">
+    <Card data-testid="skeleton-at-a-glance-stats">
       <CardHeader>
         <Skeleton className="h-6 w-1/3" />
       </CardHeader>
@@ -23,6 +23,6 @@ export default function SkeletonAtAGlanceStats() {
           </div>
         </div>
       </CardContent>
-    </Card>
+  </Card>
   );
 }

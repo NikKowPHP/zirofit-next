@@ -1,4 +1,5 @@
-import { useState, useActionState } from "react";
+import { useState } from "react";
+import { useFormState } from "react-dom";
 import {
   addProgressPhoto,
   deleteProgressPhoto,
@@ -65,7 +66,7 @@ export const useProgressPhotoManager = ({
     }
   };
 
-  const [addPhotoState, addPhotoAction] = useActionState<ActionState, FormData>(
+  const [addPhotoState, addPhotoAction] = useFormState<ActionState, FormData>(
     addPhotoActionWrapper,
     initialActionState,
   );
