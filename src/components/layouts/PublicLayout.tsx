@@ -173,7 +173,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         </div>
       )}
 
-      <main className="flex-grow bg-white dark:bg-gray-900 animate-subtle-fade-in-up">{children}</main>
+      <main className="flex-grow flex flex-col bg-white dark:bg-gray-900 animate-subtle-fade-in-up">{children}</main>
 
       <footer className="bg-neutral-50 dark:bg-black border-t border-neutral-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">

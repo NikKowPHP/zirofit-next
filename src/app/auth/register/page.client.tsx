@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
   return (
     <PublicLayout>
-      <div className="flex flex-col items-center justify-center bg-neutral-50 dark:bg-black py-12 sm:px-6 lg:px-8">
+      <div className="flex flex-col items-center justify-center bg-neutral-50 dark:bg-black py-12 sm:px-6 lg:px-8 flex-grow">
         <Card className="w-full max-w-md">
            <CardHeader>
             <CardTitle className="text-center">Register as Trainer</CardTitle>
