@@ -19,3 +19,18 @@ export function transformImagePath(path: string | null | undefined): string {
     ? path
     : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/zirofit/${path}`;
 }
+
+/**
+ * Normalizes a location string for searching by converting to lowercase and removing diacritics.
+ * @param location The location string to normalize.
+ * @returns The normalized location string.
+ */
+export function normalizeLocation(location: string): string {
+  if (!location) return "";
+
+  return location
+    .toLowerCase()
+    .normalize("NFD") // Decompose accented characters into base characters and diacritical marks
+    .replace(/[\u0300-\u036f]/g, "") // Remove the diacritical marks
+    .replace(/ł/g, "l"); // Special case for Polish 'ł' which doesn't decompose correctly
+}

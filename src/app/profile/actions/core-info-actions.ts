@@ -6,6 +6,8 @@ import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 import type { User, Profile } from "./_utils";
 import { Prisma } from "@prisma/client";
+import { normalizeLocation } from "@/lib/utils";
+import { geocodeLocation } from "@/lib/services/geocodingService";
 
 const CoreInfoSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -33,7 +35,7 @@ export async function updateCoreInfo(
   prevState: CoreInfoFormState | undefined,
   formData: FormData,
 ): Promise<CoreInfoFormState> {
-  const { user } = await getUserAndProfile();
+  const { user, profile } = await getUserAndProfile();
 
   const validatedFields = CoreInfoSchema.safeParse({
     name: formData.get("name"),
@@ -49,7 +51,7 @@ export async function updateCoreInfo(
     };
   }
 
-  const { name, username, ...profileData } = validatedFields.data;
+  const { name, username, ...profileDataFromForm } = validatedFields.data;
 
   try {
     if (username !== user.username) {
@@ -68,11 +70,30 @@ export async function updateCoreInfo(
       }
     }
 
+    const profileUpdates: Prisma.ProfileUpdateInput = { ...profileDataFromForm };
+
+    if (profileDataFromForm.location !== profile.location) {
+      if (profileDataFromForm.location) {
+        // Location added or changed
+        profileUpdates.locationNormalized = normalizeLocation(
+          profileDataFromForm.location,
+        );
+        const coords = await geocodeLocation(profileDataFromForm.location);
+        profileUpdates.latitude = coords?.latitude;
+        profileUpdates.longitude = coords?.longitude;
+      } else {
+        // Location cleared
+        profileUpdates.locationNormalized = null;
+        profileUpdates.latitude = null;
+        profileUpdates.longitude = null;
+      }
+    }
+
     const [updatedUser, updatedProfile] =
       await profileService.updateUserAndProfile(
         user.id,
         { name, username },
-        profileData,
+        profileUpdates,
       );
 
     revalidatePath("/profile/edit");

@@ -7,7 +7,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "jest",
-    "test:e2e": "npx playwright install --with-deps && playwright test"
+    "test:e2e": "npx playwright install --with-deps && playwright test",
+    "db:backfill-locations": "npx ts-node --compiler-options '{\\\"module\\\":\\\"commonjs\\\"}' prisma/seed-backfill-locations.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -66,6 +67,7 @@
     "roo": "latest",
     "swr": "^2.3.3",
     "tailwindcss": "^4.1.10",
-    "ts-jest": "^29.4.0"
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2"
   }
 }

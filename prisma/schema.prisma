@@ -52,6 +52,10 @@ model Profile {
   socialLinks        SocialLink[]
   availability       Json?     // e.g., { "mon": ["09:00-17:00"], "tue": ["..."] }
 
+  locationNormalized String?   @db.Text
+  latitude           Float?
+  longitude          Float?
+
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }

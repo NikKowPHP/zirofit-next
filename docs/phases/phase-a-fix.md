@@ -10,32 +10,31 @@ Here is the updated, comprehensive implementation plan:
 This plan outlines the atomic tasks required to implement an interactive map, normalized location search, advanced filtering/sorting, and an enhanced booking workflow with Google Calendar integration and in-app notifications.
 
 ---
-
 ### Phase 1: Backend Foundation for Location & Geocoding
 
 **Objective:** Enhance the database schema and backend logic to support normalized location searches and map coordinates.
 
-*   [ ] **1.1: Enhance `Profile` Schema**
-    *   [ ] Open `prisma/schema.prisma`.
-    *   [ ] Add a `locationNormalized: String? @db.Text` field to the `Profile` model for case-insensitive, accent-insensitive searching.
-    *   [ ] Add `latitude: Float?` and `longitude: Float?` fields to the `Profile` model to store geocoded coordinates.
+*   [x] **1.1: Enhance `Profile` Schema**
+    *   [x] Open `prisma/schema.prisma`.
+    *   [x] Add a `locationNormalized: String? @db.Text` field to the `Profile` model for case-insensitive, accent-insensitive searching.
+    *   [x] Add `latitude: Float?` and `longitude: Float?` fields to the `Profile` model to store geocoded coordinates.
 
-*   [ ] **1.2: Update Database**
-    *   [ ] Run `npx prisma migrate dev --name add_normalized_location_and_coords` to apply the schema changes.
+*   [x] **1.2: Update Database**
+    *   [x] Run `npx prisma migrate dev --name add_normalized_location_and_coords` to apply the schema changes.
 
-*   [ ] **1.3: Create Location Normalization Utility**
-    *   [ ] In `src/lib/utils.ts`, create a new function `normalizeLocation(location: string): string`.
-    *   [ ] Implement the function to convert the input string to lowercase and replace Polish diacritics with their Latin equivalents (e.g., 'ł' -> 'l', 'ą' -> 'a').
+*   [x] **1.3: Create Location Normalization Utility**
+    *   [x] In `src/lib/utils.ts`, create a new function `normalizeLocation(location: string): string`.
+    *   [x] Implement the function to convert the input string to lowercase and replace Polish diacritics with their Latin equivalents (e.g., 'ł' -> 'l', 'ą' -> 'a').
 
-*   [ ] **1.4: Integrate Geocoding and Normalization into Profile Updates**
-    *   [ ] Create a new service file `src/lib/services/geocodingService.ts`.
-    *   [ ] Inside, create a function `geocodeLocation(location: string): Promise<{latitude: number; longitude: number} | null>`. This function will call a free, public geocoding API.
-    *   [ ] Open `src/app/profile/actions/core-info-actions.ts`.
-    *   [ ] Modify the `updateCoreInfo` action to call `normalizeLocation` and `geocodeLocation` when the `location` field is updated, saving the results to the database.
+*   [x] **1.4: Integrate Geocoding and Normalization into Profile Updates**
+    *   [x] Create a new service file `src/lib/services/geocodingService.ts`.
+    *   [x] Inside, create a function `geocodeLocation(location: string): Promise<{latitude: number; longitude: number} | null>`. This function will call a free, public geocoding API.
+    *   [x] Open `src/app/profile/actions/core-info-actions.ts`.
+    *   [x] Modify the `updateCoreInfo` action to call `normalizeLocation` and `geocodeLocation` when the `location` field is updated, saving the results to the database.
 
-*   [ ] **1.5: Backfill Data for Existing Trainers**
-    *   [ ] Create a one-time script `prisma/seed-backfill-locations.ts` to update existing profiles with normalized locations and geocoded coordinates.
-    *   [ ] Add an npm script in `package.json` to run this: `"db:backfill-locations": "npx ts-node --compiler-options '{\\\"module\\\":\\\"commonjs\\\"}' prisma/seed-backfill-locations.ts"`.
+*   [x] **1.5: Backfill Data for Existing Trainers**
+    *   [x] Create a one-time script `prisma/seed-backfill-locations.ts` to update existing profiles with normalized locations and geocoded coordinates.
+    *   [x] Add an npm script in `package.json` to run this: `"db:backfill-locations": "npx ts-node --compiler-options '{\\\"module\\\":\\\"commonjs\\\"}' prisma/seed-backfill-locations.ts"`.
 
 ---
 
