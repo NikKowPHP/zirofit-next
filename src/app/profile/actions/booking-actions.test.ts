@@ -40,6 +40,7 @@ describe("Booking Actions", () => {
       expect(bookingService.isSlotAvailable).toHaveBeenCalled();
       expect(bookingService.createNewBooking).toHaveBeenCalled();
       expect(notificationService.sendBookingConfirmationEmail).toHaveBeenCalled();
+      expect(notificationService.createBookingNotification).toHaveBeenCalled();
       expect(result.success).toBe(true);
     });
 
@@ -57,6 +58,7 @@ describe("Booking Actions", () => {
 
       expect(bookingService.createNewBooking).not.toHaveBeenCalled();
       expect(notificationService.sendBookingConfirmationEmail).not.toHaveBeenCalled();
+      expect(notificationService.createBookingNotification).not.toHaveBeenCalled();
       expect(result.success).toBe(false);
       expect(result.error).toBe("Slot taken");
     });

@@ -39,6 +39,7 @@ describe("Notification Service", () => {
         expect.objectContaining({
           to: trainer.email,
           subject: `New Booking: ${booking.clientName}`,
+          html: expect.stringContaining("Add to Google Calendar"),
         }),
       );
 
@@ -49,6 +50,27 @@ describe("Notification Service", () => {
           subject: expect.stringContaining("is Confirmed!"),
         }),
       );
+    });
+  });
+
+  describe("createBookingNotification", () => {
+    it("should create a notification for a new booking", async () => {
+      const trainerId = "trainer-1";
+      const booking = {
+        id: "booking-1",
+        clientName: "John Doe",
+        startTime: new Date("2025-08-15"),
+      } as any;
+
+      await notificationService.createBookingNotification(trainerId, booking);
+
+      expect(prismaMock.notification.create).toHaveBeenCalledWith({
+        data: {
+          userId: trainerId,
+          message: expect.stringContaining("New booking from John Doe"),
+          type: "booking",
+        },
+      });
     });
   });
 

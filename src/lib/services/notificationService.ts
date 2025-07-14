@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { BookingConfirmation } from "@/emails/BookingConfirmation";
 import type { Booking } from "@prisma/client";
+import { generateGoogleCalendarLink } from "@/lib/utils";
 
 /**
  * Sends booking confirmation emails to both the trainer and the client.
@@ -14,6 +15,8 @@ export const sendBookingConfirmationEmail = async (
   trainer: { name: string | null; email: string },
 ) => {
   const resend = new Resend(process.env.RESEND_API_KEY!);
+  const calendarLink = generateGoogleCalendarLink(booking);
+
   // 1. Send notification to trainer
   await resend.emails.send({
     from: "bookings@ziro.fit",
@@ -29,6 +32,9 @@ export const sendBookingConfirmationEmail = async (
                 <li>Time: ${new Date(booking.startTime).toLocaleTimeString()} - ${new Date(booking.endTime).toLocaleTimeString()}</li>
                 ${booking.clientNotes ? `<li>Notes: ${booking.clientNotes}</li>` : ""}
             </ul>
+            <p style="margin-top: 20px;">
+              <a href="${calendarLink}" target="_blank" style="background-color: #4f46e5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Add to Google Calendar</a>
+            </p>
         `,
   });
 
@@ -46,6 +52,27 @@ export const sendBookingConfirmationEmail = async (
     }),
   });
 };
+
+/**
+ * Creates an in-app notification for a new booking.
+ * @param {string} trainerId - The ID of the trainer to notify.
+ * @param {Booking} booking - The new booking object.
+ */
+export async function createBookingNotification(
+  trainerId: string,
+  booking: Booking,
+) {
+  const message = `New booking from ${
+    booking.clientName
+  } on ${new Date(booking.startTime).toLocaleDateString()}`;
+  await prisma.notification.create({
+    data: {
+      userId: trainerId,
+      message,
+      type: "booking",
+    },
+  });
+}
 
 /**
  * Creates a notification for a trainer when a client reaches a session milestone.

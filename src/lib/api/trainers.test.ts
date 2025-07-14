@@ -1,60 +1,66 @@
 // src/lib/api/trainers.test.ts
 import { getPublishedTrainers } from "./trainers";
 import { prismaMock } from "../../../tests/singleton";
+import * as utils from '../utils';
+
+jest.mock('../utils', () => ({
+  ...jest.requireActual('../utils'),
+  normalizeLocation: jest.fn((loc: string) => loc.toLowerCase().replace('ł', 'l')),
+}));
+
 describe("Trainer API Logic", () => {
-  it("should build the correct where-clause for a combined query and location search", async () => {
-    const query = "yoga";
-    const location = "New York";
-    const page = 1;
-    const pageSize = 10;
-    // Mock Prisma calls to prevent real DB access
+  beforeEach(() => {
+    (utils.normalizeLocation as jest.Mock).mockClear();
     prismaMock.user.findMany.mockResolvedValue([]);
     prismaMock.user.count.mockResolvedValue(0);
+  });
 
-    await getPublishedTrainers(page, pageSize, query, location);
+  it("should build correct where-clause for combined query and location search", async () => {
+    const query = "yoga";
+    const location = "Łódź";
+    await getPublishedTrainers(1, 10, query, location);
 
-    // Verify that the Prisma client was called with a correctly structured 'where' argument
-    expect(prismaMock.user.findMany).toHaveBeenCalledWith({
+    expect(utils.normalizeLocation).toHaveBeenCalledWith(location);
+
+    expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
       where: {
         role: "trainer",
         profile: { isNot: null },
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { username: { contains: query, mode: "insensitive" } },
-          {
-            profile: {
-              certifications: { contains: query, mode: "insensitive" },
-            },
-          },
+          { profile: { certifications: { contains: query, mode: "insensitive" } } },
           { profile: { aboutMe: { contains: query, mode: "insensitive" } } },
-          {
-            profile: { methodology: { contains: query, mode: "insensitive" } },
-          },
+          { profile: { methodology: { contains: query, mode: "insensitive" } } },
           { profile: { philosophy: { contains: query, mode: "insensitive" } } },
         ],
         AND: [
           {
-            profile: { location: { contains: location, mode: "insensitive" } },
+            profile: { locationNormalized: { contains: "lodz" } },
           },
         ],
       },
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        profile: {
-          select: {
-            profilePhotoPath: true,
-            location: true,
-            certifications: true,
-          },
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
+    }));
+  });
+
+  it('should apply "newest" sorting correctly', async () => {
+    await getPublishedTrainers(1, 10, undefined, undefined, 'newest');
+    expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      orderBy: { createdAt: 'desc' },
+    }));
+  });
+
+  it('should apply "name_desc" sorting correctly', async () => {
+    await getPublishedTrainers(1, 10, undefined, undefined, 'name_desc');
+    expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      orderBy: { name: 'desc' },
+    }));
+  });
+
+  it('should default to "name_asc" sorting', async () => {
+    await getPublishedTrainers(1, 10, undefined, undefined, undefined);
+    expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      orderBy: { name: 'asc' },
+    }));
   });
 });

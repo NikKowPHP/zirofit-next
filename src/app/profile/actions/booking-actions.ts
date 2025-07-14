@@ -85,10 +85,13 @@ export async function createBooking(
       clientNotes,
     });
 
-    // Send email notifications
+    // Send in-app and email notifications
     try {
-      const trainer = await bookingService.getTrainerForBooking(trainerId);
+      // In-app notification for trainer dashboard
+      await notificationService.createBookingNotification(trainerId, booking);
 
+      // Email notifications
+      const trainer = await bookingService.getTrainerForBooking(trainerId);
       if (trainer?.email) {
         await notificationService.sendBookingConfirmationEmail(
           booking,
@@ -97,9 +100,9 @@ export async function createBooking(
       }
     } catch (e: unknown) {
       console.error(
-        `Failed to send booking notification emails: ${e instanceof Error ? e.message : String(e)}`,
+        `Failed to send booking notifications: ${e instanceof Error ? e.message : String(e)}`,
       );
-      // Don't fail the booking if emails fail
+      // Don't fail the booking if notifications fail, but log the error.
     }
 
     return { success: true, message: "Session booked successfully!" };
