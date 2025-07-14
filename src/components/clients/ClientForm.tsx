@@ -1,11 +1,9 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { addClient, updateClient } from "@/app/clients/actions";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
-import { Textarea } from "../../components/ui/Textarea";
 
 interface ClientFormProps {
   initialData: {
@@ -28,12 +26,26 @@ interface State {
   };
 }
 
+function SubmitButton({ isEditing }: { isEditing: boolean }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending
+        ? isEditing
+          ? "Updating..."
+          : "Creating..."
+        : isEditing
+          ? "Update Client"
+          : "Create Client"}
+    </Button>
+  );
+}
+
 export default function ClientForm({ initialData, action }: ClientFormProps) {
   const [state, dispatch] = useFormState<State, FormData>(action, {
     message: null,
     errors: {},
   });
-  const { pending } = useFormStatus();
 
   return (
     <form action={dispatch} className="space-y-4">
@@ -93,15 +105,7 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
           <p className="text-red-500 text-sm">{state?.errors?.status[0]}</p>
         )}
       </div>
-      <Button type="submit" disabled={pending}>
-        {pending
-          ? initialData
-            ? "Updating..."
-            : "Creating..."
-          : initialData
-            ? "Update Client"
-            : "Create Client"}
-      </Button>
+      <SubmitButton isEditing={!!initialData} />
       {state?.message && (
         <p className="text-red-500 text-sm">{state?.message}</p>
       )}

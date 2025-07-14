@@ -17,6 +17,13 @@ if (!global.fetch) {
   (global as any).Headers = Headers;
 }
 
+// Polyfill for form.requestSubmit in JSDOM, which is used by user-event for form submissions.
+if (typeof HTMLFormElement !== 'undefined' && !HTMLFormElement.prototype.requestSubmit) {
+  HTMLFormElement.prototype.requestSubmit = function (this: HTMLFormElement) {
+    this.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  };
+}
+
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';

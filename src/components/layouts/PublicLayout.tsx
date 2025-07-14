@@ -62,7 +62,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     <div
       className={`min-h-screen flex flex-col bg-neutral-50 dark:bg-gray-900`}
     >
-      <div className="sticky top-0 z-50 px-4 pt-4">
+      <div className="fixed w-full top-0 z-50 px-4 pt-4">
         <header className="max-w-7xl mx-auto bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-full ">
           <nav className="px-4 ">
             <div className="flex items-center justify-between h-16">

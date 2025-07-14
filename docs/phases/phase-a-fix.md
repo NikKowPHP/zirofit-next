@@ -1,88 +1,140 @@
-That is an excellent and insightful question. You've hit on the core challenge of modern testing: **UI tests can be brittle and expensive to maintain.**
+Of course. I will update the plan to include these excellent, high-value features. They are a logical extension of the booking workflow and significantly improve the trainer's user experience.
 
-The answer is: **Yes, we do need additional tests, but we must be strategic about it.**
+The new tasks will be organized into a new **Phase 5**, ensuring a clear separation of concerns from the map and filter implementation. The plan is designed to integrate seamlessly with the existing notification system and codebase.
 
-You are absolutely right that testing every minor UI detail is a losing battle. The goal is not 100% *UI* test coverage. The goal is **100% confidence in your critical user flows.**
+Here is the updated, comprehensive implementation plan:
 
-Our current tests give us confidence that the *building blocks* (services, hooks, actions) work correctly in isolation. However, they don't answer crucial user-centric questions:
+```markdown
+# Feature Implementation Plan: Map, Search, Filters & Booking Enhancements
 
-1.  **Can a user actually sign up?** We've tested the `registerUser` action, but we haven't tested that the form in `RegisterPage` correctly wires everything up and that a user can click through the entire process.
-2.  **Can a trainer create a client?** We've tested the `addClient` action, but not the `ClientForm` component's ability to call it correctly upon submission.
-3.  **Can a potential customer book a session?** This is the most critical flow for the business. It involves the `PublicCalendar`, selecting a time, filling a form, and triggering the `createBooking` action. This entire sequence is untested from the user's perspective.
-
-### The Testing Strategy: From Logic to User Experience
-
-Think of it like this: We've done an excellent job testing the engine, the transmission, and the brakes of our car (the services and actions). Now we need to get in the driver's seat and ensure someone can actually start the car, put it in gear, and drive to the store (the user flows).
-
-We will use two types of tests for this, leveraging the tools already in your project:
-
-1.  **End-to-End (E2E) Tests with Playwright:** These are the highest-level tests. They simulate a real user in a real browser, navigating through multiple pages to complete a critical task. They are the most valuable for confidence but also the most expensive to run and maintain. We only use them for "can't-fail" scenarios.
-2.  **Component Integration Tests with React Testing Library (RTL):** These tests render components and interact with them just as a user would (finding elements by text, clicking buttons). They are perfect for verifying that a single page or a complex component correctly integrates with its hooks and server actions.
-
-Here is a strategic, atomic plan to add the *minimum necessary* UI tests to be truly production-ready, focusing on behavior, not implementation details.
+This plan outlines the atomic tasks required to implement an interactive map, normalized location search, advanced filtering/sorting, and an enhanced booking workflow with Google Calendar integration and in-app notifications.
 
 ---
 
-# Production-Ready UI & E2E Test Plan
+### Phase 1: Backend Foundation for Location & Geocoding
 
-**Objective:** To validate critical user journeys from end-to-end and ensure key components are correctly integrated with the backend logic, providing maximum confidence with minimum maintenance.
+**Objective:** Enhance the database schema and backend logic to support normalized location searches and map coordinates.
 
-### Phase 1: Critical User Journey Tests (End-to-End with Playwright)
+*   [ ] **1.1: Enhance `Profile` Schema**
+    *   [ ] Open `prisma/schema.prisma`.
+    *   [ ] Add a `locationNormalized: String? @db.Text` field to the `Profile` model for case-insensitive, accent-insensitive searching.
+    *   [ ] Add `latitude: Float?` and `longitude: Float?` fields to the `Profile` model to store geocoded coordinates.
 
-**Focus:** The most important "happy path" flows that define the core business value.
+*   [ ] **1.2: Update Database**
+    *   [ ] Run `npx prisma migrate dev --name add_normalized_location_and_coords` to apply the schema changes.
 
-*   [ ] **1.1: Create E2E Test for New Trainer Registration**
-    *   [ ] Create a new test file: `tests/e2e/auth.spec.ts`.
-    *   [ ] The test should navigate to the homepage (`/`).
-    *   [ ] It should click the "Trainer Sign Up" button.
-    *   [ ] On the `/auth/register` page, it should fill in the name, email, and password fields.
-    *   [ ] It should submit the form.
-    *   [ ] It should assert that the page redirects to `/auth/login` and that the "Registration successful!" message is visible.
+*   [ ] **1.3: Create Location Normalization Utility**
+    *   [ ] In `src/lib/utils.ts`, create a new function `normalizeLocation(location: string): string`.
+    *   [ ] Implement the function to convert the input string to lowercase and replace Polish diacritics with their Latin equivalents (e.g., 'ł' -> 'l', 'ą' -> 'a').
 
-*   [ ] **1.2: Create E2E Test for Public Booking Flow**
-    *   [ ] Create a new test file: `tests/e2e/booking.spec.ts`.
-    *   [ ] The test should navigate to a specific trainer's profile page (e.g., `/trainer/test-trainer`). *(This will require seeding a test trainer in your test database setup).*
-    *   [ ] It should click on an available date in the `PublicCalendar`.
-    *   [ ] It should click on an available time slot.
-    *   [ ] It should fill in the client name and email in the booking form that appears.
-    *   [ ] It should submit the booking form.
-    *   [ ] It should assert that the success message ("Session booked successfully!") is displayed.
+*   [ ] **1.4: Integrate Geocoding and Normalization into Profile Updates**
+    *   [ ] Create a new service file `src/lib/services/geocodingService.ts`.
+    *   [ ] Inside, create a function `geocodeLocation(location: string): Promise<{latitude: number; longitude: number} | null>`. This function will call a free, public geocoding API.
+    *   [ ] Open `src/app/profile/actions/core-info-actions.ts`.
+    *   [ ] Modify the `updateCoreInfo` action to call `normalizeLocation` and `geocodeLocation` when the `location` field is updated, saving the results to the database.
 
-### Phase 2: Key Component Integration Tests (React Testing Library)
-
-**Focus:** Verifying that interactive components correctly manage state and communicate with the backend via server actions. These are more resilient to minor style changes than E2E tests.
-
-*   [ ] **2.1: Test the `ServicesEditor` Component Integration**
-    *   [ ] Create a new test file: `src/components/profile/sections/ServicesEditor.test.tsx`.
-    *   [ ] Render the `ServicesEditor` with initial services.
-    *   [ ] Simulate a user filling out the "Service Title" and "Service Description" fields.
-    *   [ ] Mock the `addService` action to return a successful state with a `newService` payload.
-    *   [ ] Simulate a user clicking the "Add Service" button.
-    *   [ ] Assert that the `addService` action was called.
-    *   [ ] Assert that the new service now appears in the list within the component.
-
-*   [ ] **2.2: Test the `ClientForm` Component for Client Creation**
-    *   [ ] Create a new test file: `src/components/clients/ClientForm.test.tsx`.
-    *   [ ] Render the `ClientForm` in its "create" state (no `initialData`).
-    *   [ ] Mock the `addClient` server action.
-    *   [ ] Simulate a user filling in the name, email, and phone, and selecting a status.
-    *   [ ] Simulate a click on the "Create Client" button.
-    *   [ ] Assert that the `addClient` action was called with the correct `FormData`.
-
-*   [ ] **2.3: Test the `DashboardContent` Data Loading States**
-    *   [ ] In `src/app/dashboard/DashboardContent.test.tsx`, add new test cases.
-    *   [ ] Write a test where the `useSWR` mock returns an `error`. Assert that the error message is displayed.
-    *   [ ] Write a test where the `useSWR` mock returns valid `data`. Assert that the skeleton loaders are **not** present and that components like `AtAGlanceStats` are rendered with the correct props.
+*   [ ] **1.5: Backfill Data for Existing Trainers**
+    *   [ ] Create a one-time script `prisma/seed-backfill-locations.ts` to update existing profiles with normalized locations and geocoded coordinates.
+    *   [ ] Add an npm script in `package.json` to run this: `"db:backfill-locations": "npx ts-node --compiler-options '{\\\"module\\\":\\\"commonjs\\\"}' prisma/seed-backfill-locations.ts"`.
 
 ---
 
-### Phase 3: Setup and Finalization
+### Phase 2: Interactive Map Implementation
 
-*   [ ] **3.1: Configure Test Environment for E2E**
-    *   [ ] Ensure `playwright.config.ts` is correctly set up to run the local dev server (`webServer` option).
-    *   [ ] Create a script in `package.json` to easily run the E2E tests, e.g., `"test:e2e": "playwright test"`.
+**Objective:** Replace the static map placeholder on the `/trainers` page with a live, interactive map displaying trainer locations.
 
-*   [ ] **3.2: Integrate E2E Tests into CI**
-    *   [ ] Update the `.github/workflows/ci.yml` file to add a new job or step that runs the E2E tests. This ensures that critical user flows are validated on every pull request.
+*   [ ] **2.1: Install Mapping Library**
+    *   [ ] Run `npm install leaflet react-leaflet`.
+    *   [ ] Run `npm install -D @types/leaflet`.
 
-By completing this plan, you will have a multi-layered testing strategy that provides extremely high confidence in your application's stability without the burden of testing every cosmetic detail.
+*   [ ] **2.2: Update Trainer Fetching Logic**
+    *   [ ] Open `src/lib/api/trainers.ts`.
+    *   [ ] Modify the `getPublishedTrainers` function to select the `latitude` and `longitude` fields and to use `locationNormalized` for searching.
+
+*   [ ] **2.3: Create the Map Component**
+    *   [ ] Create a new file `src/components/trainers/TrainersMap.tsx`.
+    *   [ ] This will be a client component (`"use client"`) that renders the map using `react-leaflet`, displaying a `Marker` for each trainer with a `Popup` linking to their profile.
+
+*   [ ] **2.4: Integrate Map into Trainers Page**
+    *   [ ] Open `src/app/trainers/page.tsx`.
+    *   [ ] Dynamically import the `TrainersMap` component with `ssr: false` and replace the placeholder `div` with it.
+
+---
+
+### Phase 3: Filtering and Sorting Implementation
+
+**Objective:** Add controls to the `/trainers` page to allow users to sort and filter the list of trainers.
+
+*   [ ] **3.1: Enhance Backend for Sorting/Filtering**
+    *   [ ] Open `src/lib/api/trainers.ts`.
+    *   [ ] Modify `getPublishedTrainers` to accept a `sortBy` parameter and dynamically construct the `orderBy` clause for the Prisma query.
+
+*   [ ] **3.2: Create UI for Sorting**
+    *   [ ] Create a new client component `src/components/trainers/SortControl.tsx` that renders a dropdown and updates the URL's `sortBy` search parameter on change.
+
+*   [ ] **3.3: Integrate Sorting into Trainers Page**
+    *   [ ] Open `src/app/trainers/page.tsx`.
+    *   [ ] Add the `SortControl` component and pass the `sortBy` search parameter to the `getPublishedTrainers` function.
+
+*   [ ] **3.4: Design Polish for New UI Elements**
+    *   [ ] Style all new components to match the HIG aesthetic (clean, ample padding, clear focus states).
+
+---
+
+### Phase 4: Comprehensive Testing (Part 1)
+
+**Objective:** Verify the functionality of the map, search, and filter features.
+
+*   [ ] **4.1: Unit & Integration Tests**
+    *   [ ] Test the `normalizeLocation` utility.
+    *   [ ] Expand tests for `getPublishedTrainers` to cover normalized location search and dynamic sorting.
+
+*   [ ] **4.2: Component Tests (React Testing Library)**
+    *   [ ] Test the `SortControl` component to ensure it correctly updates the URL.
+
+*   [ ] **4.3: End-to-End Tests (Playwright)**
+    *   [ ] Create `tests/e2e/trainers-search.spec.ts` to test normalized search, sorting, and basic map interaction (marker click).
+
+---
+
+### Phase 5: Booking Workflow Enhancements & Notifications
+
+**Objective:** To improve the post-booking experience for trainers by adding 'Add to Google Calendar' functionality and real-time in-app notifications.
+
+*   [ ] **5.1: Create Google Calendar Link Utility**
+    *   [ ] Open `src/lib/utils.ts`.
+    *   [ ] Create a new exported function `generateGoogleCalendarLink(booking: Booking)`.
+    *   [ ] Implement the function to construct a URL (`https://www.google.com/calendar/render?action=TEMPLATE...`) with URL-encoded parameters:
+        *   `text`: "Session with [Client Name]"
+        *   `dates`: ISO 8601 format of `startTime`/`endTime`.
+        *   `details`: Include client name, email, and notes.
+
+*   [ ] **5.2: Implement In-App Booking Notification**
+    *   [ ] Open `src/lib/services/notificationService.ts`.
+    *   [ ] Create a new exported async function `createBookingNotification(trainerId: string, booking: Booking)`.
+    *   [ ] Inside, call `prisma.notification.create` to save a new notification for the `trainerId` with a message like "New booking from [Client Name] on [Date]".
+    *   [ ] Open `src/app/profile/actions/booking-actions.ts`.
+    *   [ ] In the `createBooking` action, after the `createNewBooking` call is successful, add a call to `createBookingNotification(trainerId, booking)`.
+
+*   [ ] **5.3: Add Calendar Link to Trainer's Email**
+    *   [ ] Open `src/lib/services/notificationService.ts`.
+    *   [ ] In the `sendBookingConfirmationEmail` function, locate the HTML content being generated for the *trainer's* email.
+    *   [ ] Call the `generateGoogleCalendarLink` utility function.
+    *   [ ] Add a styled button/link to the email's HTML: `<a href="[generated_url]" target="_blank">Add to Google Calendar</a>`.
+
+*   [ ] **5.4: Add Calendar Link to Bookings Dashboard**
+    *   [ ] Open `src/app/dashboard/bookings/page.tsx`.
+    *   [ ] Import the `generateGoogleCalendarLink` utility from `@/lib/utils`.
+    *   [ ] Inside the `map` function that renders each booking `div`, generate the calendar link for the current `booking`.
+    *   [ ] Add a new `Button` component next to the booking details (e.g., `<Button asChild variant="secondary" size="sm">`).
+    *   [ ] The button should contain a `Link` (`<a>` tag) with `href={calendarLink}` and `target="_blank"`. Label it "Add to Calendar".
+
+*   [ ] **5.5: Comprehensive Testing (Part 2)**
+    *   [ ] **Unit Test:** In `src/lib/utils.test.ts` (create if needed), add tests for `generateGoogleCalendarLink` to ensure the URL is correctly formatted and encoded.
+    *   [ ] **Integration Test:**
+        *   In `src/lib/services/notificationService.test.ts`, add a test for `createBookingNotification`.
+        *   In `src/app/profile/actions/booking-actions.test.ts`, update the successful `createBooking` test to also assert that `createBookingNotification` was called.
+    *   [ ] **E2E Test (Enhancement):**
+        *   Create a test file `tests/e2e/dashboard.spec.ts`.
+        *   The test will log in as a trainer, navigate to `/dashboard/bookings`, and assert that the "Add to Calendar" link exists and its `href` attribute is a valid Google Calendar URL. This confirms the frontend integration.
+```
