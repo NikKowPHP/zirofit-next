@@ -2,6 +2,7 @@ import { getClientById } from "../actions";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import BackLink from "@/components/ui/BackLink";
 
 export default async function ClientDetailLayout({
   children,
@@ -20,12 +21,7 @@ export default async function ClientDetailLayout({
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <Link
-            href="/clients"
-            className="text-sm text-indigo-600 hover:underline mb-2 block"
-          >
-            ← Back to Client List
-          </Link>
+          <BackLink href="/clients" text="← Back to Client List" />
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
             {client.name}
           </h1>
