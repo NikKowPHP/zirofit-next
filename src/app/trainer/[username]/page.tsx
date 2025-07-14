@@ -172,7 +172,7 @@ export default async function TrainerProfilePage({
           defaultSrc={DEFAULT_BANNER_IMAGE}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-40 text-center">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-50 text-center">
           <div className="mb-6">
             <ProfileImage
               src={profile.profilePhotoPath || DEFAULT_PROFILE_IMAGE}
