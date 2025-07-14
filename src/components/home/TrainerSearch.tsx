@@ -39,7 +39,7 @@ export default function TrainerSearch() {
   );
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-4 tracking-tight">Find your expert.</h1>
       <h2 className="text-xl md:text-2xl text-center text-neutral-600 dark:text-neutral-400 mb-10">
         Search thousands of certified trainers to achieve your fitness goals.
