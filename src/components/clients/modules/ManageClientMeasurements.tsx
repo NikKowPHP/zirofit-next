@@ -7,6 +7,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { toast } from "sonner";
 
 interface ManageClientMeasurementsProps {
   clientId: string;
@@ -31,7 +32,6 @@ export default function ManageClientMeasurements({
     handleEdit,
     handleCancelEdit,
     isDeleting,
-    deleteError,
   } = useMeasurementManager({ initialMeasurements });
 
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
@@ -45,17 +45,24 @@ export default function ManageClientMeasurements({
     onSuccess: handleCancelEdit,
   });
 
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      const result = await handleDelete(itemToDelete);
+      if (result?.success) {
+        toast.success(result.message || "Measurement deleted.");
+      } else {
+        toast.error(result?.error || "Failed to delete measurement.");
+      }
+      setItemToDelete(null);
+    }
+  };
+
   return (
     <>
       <DeleteConfirmationModal
         isOpen={!!itemToDelete}
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
-        onConfirm={() => {
-          if (itemToDelete) {
-            handleDelete(itemToDelete);
-            setItemToDelete(null);
-          }
-        }}
+        onConfirm={handleConfirmDelete}
         isPending={isDeleting}
         title="Delete Measurement"
         description="Are you sure you want to delete this measurement record?"

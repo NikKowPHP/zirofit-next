@@ -5,7 +5,6 @@ import {
   deleteProgressPhoto,
 } from "@/app/clients/actions/photo-actions";
 import { ClientProgressPhoto } from "@/app/clients/actions";
-import { toast } from "sonner";
 
 interface ActionState {
   errors?: {
@@ -88,14 +87,12 @@ export const useProgressPhotoManager = ({
     setIsDeleting(true);
     const result = await deleteProgressPhoto({}, photoId);
     if (result?.success) {
-      toast.success(result.message || "Photo deleted.");
       setProgressPhotos((prevPhotos) =>
         prevPhotos.filter((photo) => photo.id !== photoId),
       );
-    } else {
-      toast.error(result?.message || "Failed to delete photo.");
     }
     setIsDeleting(false);
+    return result;
   };
 
   return {

@@ -1,7 +1,7 @@
 // src/components/profile/sections/BenefitsEditor.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useFormStatus, useFormState } from "react-dom";
 import {
   addBenefit,
@@ -9,10 +9,11 @@ import {
   deleteBenefit,
   updateBenefitOrder,
 } from "@/app/profile/actions/benefit-actions";
-import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "../../ui";
+import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent, DeleteConfirmationModal, RichTextEditor } from "@/components/ui";
 import type { Benefit } from "@prisma/client";
 import SortableJS from "sortablejs";
-import { RichTextEditor } from "../../ui/RichTextEditor";
+import { toast } from "sonner";
+import { useServerActionToast } from "@/hooks/useServerActionToast";
 
 interface BenefitsEditorProps {
   initialBenefits: Benefit[];
@@ -44,8 +45,13 @@ export default function BenefitsEditor({
 }: BenefitsEditorProps) {
   const [benefits, setBenefits] = useState<Benefit[]>(initialBenefits);
   const [editingBenefitId, setEditingBenefitId] = useState<string | null>(null);
-  const [formState, formAction] = useFormState(addBenefit, initialFormState);
-
+  const [addFormState, addFormAction] = useFormState(addBenefit, initialFormState);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  
+  useServerActionToast({ formState: addFormState, onSuccess: () => formRef.current?.reset() });
+  
   useEffect(() => {
     const sortable = new SortableJS(
       document.getElementById("benefits-list") as HTMLElement,
@@ -86,20 +92,33 @@ export default function BenefitsEditor({
     setEditingBenefitId(null);
   };
 
-  const handleDeleteBenefit = async (id: string) => {
+  const handleDeleteBenefit = async () => {
+    if (!itemToDelete) return;
+
+    setIsDeleting(true);
     try {
-      await deleteBenefit(id);
-      setBenefits((prevBenefits) =>
-        prevBenefits.filter((benefit) => benefit.id !== id),
-      );
+      const result = await deleteBenefit(itemToDelete);
+      if (result.success) {
+        toast.success(result.message || "Benefit deleted.");
+        setBenefits((prevBenefits) =>
+          prevBenefits.filter((benefit) => benefit.id !== itemToDelete),
+        );
+      } else {
+        toast.error(result.error || "Failed to delete benefit.");
+      }
     } catch (e: unknown) {
+      toast.error("An unexpected error occurred while deleting.");
       console.error("Failed to delete benefit: ", e);
+    } finally {
+        setIsDeleting(false);
+        setItemToDelete(null);
     }
   };
 
   const handleBenefitUpdate = async (id: string, formData: FormData) => {
     const result = await updateBenefit(id, undefined, formData);
     if (result?.success) {
+      toast.success(result.message || "Benefit updated.");
       setBenefits((prevBenefits) => {
         return prevBenefits.map((benefit) => {
           if (benefit.id === id) {
@@ -116,28 +135,27 @@ export default function BenefitsEditor({
       });
       setEditingBenefitId(null);
     } else {
+      toast.error(result.error || "Failed to update benefit.");
       console.error("Failed to update benefit: ", result?.error);
     }
   };
 
   return (
+    <>
+    <DeleteConfirmationModal
+        isOpen={!!itemToDelete}
+        setIsOpen={ (isOpen) => !isOpen && setItemToDelete(null) }
+        onConfirm={handleDeleteBenefit}
+        isPending={isDeleting}
+        title="Delete Benefit"
+        description="Are you sure you want to delete this benefit? This action cannot be undone."
+      />
     <Card>
       <CardHeader>
         <CardTitle>Manage Benefits</CardTitle>
       </CardHeader>
       <CardContent>
-        {formState?.success && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md">
-            {formState.message}
-          </div>
-        )}
-        {formState?.error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-md">
-            {formState.error}
-          </div>
-        )}
-
-        <form action={formAction} className="space-y-6">
+        <form ref={formRef} action={addFormAction} className="space-y-6">
           <div>
             <Label htmlFor="title">Title</Label>
             <Input id="title" name="title" type="text" required />
@@ -234,7 +252,7 @@ export default function BenefitsEditor({
                       type="button"
                       size="sm"
                       variant="danger"
-                      onClick={() => handleDeleteBenefit(benefit.id)}
+                      onClick={() => setItemToDelete(benefit.id)}
                     >
                       Delete
                     </Button>
@@ -246,5 +264,6 @@ export default function BenefitsEditor({
         </ul>
       </CardContent>
     </Card>
+    </>
   );
 }

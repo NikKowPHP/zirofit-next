@@ -2,14 +2,7 @@
   "compilerOptions": {
     "target": "es2017",
     "downlevelIteration": true,
-    "lib": [
-      "es5",
-      "dom",
-      "es2015",
-      "es2017",
-      "es2020",
-      "es2022"
-    ],
+    "lib": ["es5", "dom", "es2015", "es2017", "es2020", "es2022"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -23,15 +16,10 @@
     "jsx": "preserve",
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo",
-    "types": [
-      "jest",
-      "node"
-    ],
+    "types": ["jest", "node"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "plugins": [
       {
@@ -43,9 +31,8 @@
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
-, "next.config.ts"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    ".next/types/**/*.ts",
+    "next.config.ts"
+  ],
+  "exclude": ["node_modules"]
 }

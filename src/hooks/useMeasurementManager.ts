@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
-import { toast } from "sonner";
 import {
   addMeasurement,
   updateMeasurement,
@@ -68,12 +67,10 @@ export const useMeasurementManager = ({
     setIsDeleting(true);
     const result = await deleteMeasurement({}, measurementId);
     if (result?.success) {
-      toast.success(result.message || "Measurement deleted.");
       setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
-    } else {
-      toast.error(result?.error || "Failed to delete measurement.");
     }
     setIsDeleting(false);
+    return result;
   };
 
   const handleEdit = (measurement: ClientMeasurement) => {

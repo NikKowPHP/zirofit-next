@@ -7,6 +7,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { toast } from "sonner";
 
 interface ManageClientSessionLogsProps {
   clientId: string;
@@ -21,7 +22,6 @@ export default function ManageClientSessionLogs({
     sessionLogs,
     editingSessionLogId,
     deletingId,
-    deleteError,
     formRef,
     addState,
     addAction,
@@ -45,17 +45,24 @@ export default function ManageClientSessionLogs({
     onSuccess: handleCancelEdit,
   });
 
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      const result = await handleDelete(itemToDelete);
+      if (result?.success) {
+        toast.success(result.message || "Log deleted.");
+      } else {
+        toast.error(result?.message || "Failed to delete log.");
+      }
+      setItemToDelete(null);
+    }
+  };
+
   return (
     <>
       <DeleteConfirmationModal
         isOpen={!!itemToDelete}
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
-        onConfirm={() => {
-          if (itemToDelete) {
-            handleDelete(itemToDelete);
-            setItemToDelete(null);
-          }
-        }}
+        onConfirm={handleConfirmDelete}
         isPending={!!deletingId}
         title="Delete Session Log"
         description="Are you sure you want to delete this session log?"
@@ -157,9 +164,6 @@ export default function ManageClientSessionLogs({
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
             Session History
           </h3>
-          {deleteError && (
-            <p className="text-red-500 text-sm mb-2">{deleteError}</p>
-          )}
           <div className="space-y-4">
             {sessionLogs.map((sessionLog) => (
               <div

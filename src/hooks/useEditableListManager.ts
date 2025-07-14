@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
-import { toast } from "sonner";
 
 type Item = { id: string; createdAt: Date; [key: string]: any };
 
@@ -97,12 +96,10 @@ export function useEditableList<T extends Item>({
     setDeletingId(id);
     const result = await deleteAction(id);
     if (result.success && result.deletedId) {
-      toast.success("Item deleted successfully.");
       setItems((current) => current.filter((i) => i.id !== result.deletedId));
-    } else if (result.error) {
-      toast.error(result.error);
     }
     setDeletingId(null);
+    return result;
   };
 
   return {

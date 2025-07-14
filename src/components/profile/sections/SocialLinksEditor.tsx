@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useEditableList } from "@/hooks/useEditableListManager";
 import {
@@ -10,6 +10,9 @@ import {
 } from "@/app/profile/actions/social-link-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
+import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { toast } from "sonner";
 
 export interface SocialLink {
   id: string;
@@ -28,11 +31,12 @@ interface SocialLinksEditorProps {
 export default function SocialLinksEditor({
   initialSocialLinks,
 }: SocialLinksEditorProps) {
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   const {
     items: links,
     editingItemId,
     deletingId,
-    deleteError,
     formRef,
     addState,
     addFormAction,
@@ -58,173 +62,175 @@ export default function SocialLinksEditor({
     )?.message;
   };
 
+  useServerActionToast({ formState: addState, onSuccess: () => formRef.current?.reset() });
+  useServerActionToast({ formState: updateState, onSuccess: handleCancelEdit });
+
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      const result = await handleDelete(itemToDelete);
+      if (result?.success) {
+        toast.success("Social link deleted successfully.");
+      } else if (result?.error) {
+        toast.error(result.error);
+      }
+      setItemToDelete(null);
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {isEditing
-            ? `Edit Social Link: ${currentEditingLink?.platform}`
-            : "Add New Social Link"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {currentFormState.success && currentFormState.message && (
-          <div className="rounded-md bg-green-50 dark:bg-green-900/50 p-4 mb-4">
-            <h3 className="text-sm font-medium text-green-800 dark:text-green-300">
-              {currentFormState.message}
-            </h3>
-          </div>
-        )}
-        {currentFormState.error && (
-          <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4 mb-4">
-            <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
-              {currentFormState.error}
-            </h3>
-          </div>
-        )}
-
-        <form
-          action={isEditing ? updateFormAction : addFormAction}
-          key={editingItemId || "add-link"}
-          ref={formRef}
-          className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
-        >
-          {isEditing && (
-            <input type="hidden" name="linkId" value={editingItemId ?? ""} />
-          )}
-          <div>
-            <Label htmlFor="platform">Platform</Label>
-            <Input
-              id="platform"
-              name="platform"
-              type="text"
-              required
-              className="mt-1"
-              defaultValue={currentEditingLink?.platform ?? ""}
-            />
-            {getFieldError("platform") && (
-              <p className="text-red-500 text-xs mt-1">
-                {getFieldError("platform")}
-              </p>
-            )}
-          </div>
-          <div>
-            <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              name="username"
-              type="text"
-              required
-              className="mt-1"
-              defaultValue={currentEditingLink?.username ?? ""}
-            />
-            {getFieldError("username") && (
-              <p className="text-red-500 text-xs mt-1">
-                {getFieldError("username")}
-              </p>
-            )}
-          </div>
-          <div>
-            <Label htmlFor="profileUrl">Profile URL</Label>
-            <Input
-              id="profileUrl"
-              name="profileUrl"
-              type="url"
-              required
-              className="mt-1"
-              placeholder="https://example.com/username"
-              defaultValue={currentEditingLink?.profileUrl ?? ""}
-            />
-            {getFieldError("profileUrl") && (
-              <p className="text-red-500 text-xs mt-1">
-                {getFieldError("profileUrl")}
-              </p>
-            )}
-          </div>
-          <div className="flex justify-end space-x-3">
+    <>
+      <DeleteConfirmationModal
+        isOpen={!!itemToDelete}
+        setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        isPending={!!deletingId}
+        title="Delete Social Link"
+        description="Are you sure you want to permanently delete this social link?"
+      />
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {isEditing
+              ? `Edit Social Link: ${currentEditingLink?.platform}`
+              : "Add New Social Link"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form
+            action={isEditing ? updateFormAction : addFormAction}
+            key={editingItemId || "add-link"}
+            ref={formRef}
+            className="space-y-4 border-b dark:border-gray-700 pb-6 mb-6"
+          >
             {isEditing && (
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleCancelEdit}
-              >
-                Cancel
-              </Button>
+              <input type="hidden" name="linkId" value={editingItemId ?? ""} />
             )}
-            <Button type="submit">
-              {isEditing
-                ? formStatus.pending
-                  ? "Saving..."
-                  : "Save Changes"
-                : formStatus.pending
-                  ? "Adding..."
-                  : "Add Link"}
-            </Button>
-          </div>
-        </form>
-
-        {deleteError && (
-          <div className="rounded-md bg-red-50 p-4 mb-4">
-            <h3 className="text-sm font-medium text-red-800">
-              {deleteError}
-            </h3>
-          </div>
-        )}
-
-        <div>
-          <h4 className="text-md font-medium text-gray-800 mb-3">
-            Your Social Links
-          </h4>
-          {links.length === 0 ? (
-            <p className="text-gray-500">No social links added yet.</p>
-          ) : (
-            <div className="space-y-3">
-              {links.map((link) => (
-                <div
-                  key={link.id}
-                  className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-center transition-all duration-200"
-                >
-                  <div>
-                    <span className="font-medium text-gray-700">
-                      {link.platform}
-                    </span>
-                    : <span className="text-gray-600">@{link.username}</span>
-                    <a
-                      href={link.profileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-600 hover:underline text-sm block truncate"
-                    >
-                      {link.profileUrl}
-                    </a>
-                  </div>
-                  <div className="flex space-x-2 flex-shrink-0">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleEdit(link)}
-                      disabled={
-                        deletingId === link.id ||
-                        (isEditing && editingItemId === link.id)
-                      }
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDelete(link.id)}
-                      disabled={deletingId === link.id}
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+            <div>
+              <Label htmlFor="platform">Platform</Label>
+              <Input
+                id="platform"
+                name="platform"
+                type="text"
+                required
+                className="mt-1"
+                defaultValue={currentEditingLink?.platform ?? ""}
+              />
+              {getFieldError("platform") && (
+                <p className="text-red-500 text-xs mt-1">
+                  {getFieldError("platform")}
+                </p>
+              )}
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+            <div>
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="mt-1"
+                defaultValue={currentEditingLink?.username ?? ""}
+              />
+              {getFieldError("username") && (
+                <p className="text-red-500 text-xs mt-1">
+                  {getFieldError("username")}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="profileUrl">Profile URL</Label>
+              <Input
+                id="profileUrl"
+                name="profileUrl"
+                type="url"
+                required
+                className="mt-1"
+                placeholder="https://example.com/username"
+                defaultValue={currentEditingLink?.profileUrl ?? ""}
+              />
+              {getFieldError("profileUrl") && (
+                <p className="text-red-500 text-xs mt-1">
+                  {getFieldError("profileUrl")}
+                </p>
+              )}
+            </div>
+            <div className="flex justify-end space-x-3">
+              {isEditing && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit">
+                {isEditing
+                  ? formStatus.pending
+                    ? "Saving..."
+                    : "Save Changes"
+                  : formStatus.pending
+                    ? "Adding..."
+                    : "Add Link"}
+              </Button>
+            </div>
+          </form>
+
+          <div>
+            <h4 className="text-md font-medium text-gray-800 mb-3">
+              Your Social Links
+            </h4>
+            {links.length === 0 ? (
+              <p className="text-gray-500">No social links added yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {links.map((link) => (
+                  <div
+                    key={link.id}
+                    className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md flex justify-between items-center transition-all duration-200"
+                  >
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        {link.platform}
+                      </span>
+                      : <span className="text-gray-600">@{link.username}</span>
+                      <a
+                        href={link.profileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 hover:underline text-sm block truncate"
+                      >
+                        {link.profileUrl}
+                      </a>
+                    </div>
+                    <div className="flex space-x-2 flex-shrink-0">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleEdit(link)}
+                        disabled={
+                          deletingId === link.id ||
+                          (isEditing && editingItemId === link.id)
+                        }
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => setItemToDelete(link.id)}
+                        disabled={deletingId === link.id}
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

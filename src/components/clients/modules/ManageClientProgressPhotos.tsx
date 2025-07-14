@@ -7,6 +7,7 @@ import { ClientProgressPhoto } from "@/app/clients/actions";
 import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { toast } from "sonner";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;
@@ -31,17 +32,24 @@ export default function ManageClientProgressPhotos({
 
   useServerActionToast({ formState: addPhotoState });
 
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      const result = await handleDelete(itemToDelete);
+      if (result?.success) {
+        toast.success(result.message || "Photo deleted.");
+      } else {
+        toast.error(result.message || "Failed to delete photo.");
+      }
+      setItemToDelete(null);
+    }
+  };
+
   return (
     <>
       <DeleteConfirmationModal
         isOpen={!!itemToDelete}
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
-        onConfirm={() => {
-          if (itemToDelete) {
-            handleDelete(itemToDelete);
-            setItemToDelete(null);
-          }
-        }}
+        onConfirm={handleConfirmDelete}
         isPending={isDeleting}
         title="Delete Photo"
         description="Are you sure you want to delete this progress photo?"

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
-import { toast } from "sonner";
 import {
   addSessionLog,
   deleteSessionLog,
@@ -44,7 +43,6 @@ export const useSessionLogManager = ({
     null,
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const [addState, addAction] = useFormState(
@@ -82,16 +80,12 @@ export const useSessionLogManager = ({
 
   const handleDelete = async (sessionLogId: string) => {
     setDeletingId(sessionLogId);
-    setDeleteError(null);
     const result = await deleteSessionLog(sessionLogId);
     if (result?.success) {
-      toast.success(result.message || "Log deleted.");
       setSessionLogs((prev) => prev.filter((log) => log.id !== sessionLogId));
-    } else {
-      toast.error(result?.message || "Failed to delete log.");
-      setDeleteError(result?.message || "Failed to delete log.");
     }
     setDeletingId(null);
+    return result;
   };
 
   const handleEdit = (log: ClientSessionLog) => {
@@ -110,7 +104,6 @@ export const useSessionLogManager = ({
     sessionLogs,
     editingSessionLogId,
     deletingId,
-    deleteError,
     formRef,
     addState,
     addAction,
