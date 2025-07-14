@@ -42,21 +42,21 @@ This plan outlines the atomic tasks required to implement an interactive map, no
 
 **Objective:** Replace the static map placeholder on the `/trainers` page with a live, interactive map displaying trainer locations.
 
-*   [ ] **2.1: Install Mapping Library**
-    *   [ ] Run `npm install leaflet react-leaflet`.
-    *   [ ] Run `npm install -D @types/leaflet`.
+*   [x] **2.1: Install Mapping Library**
+    *   [x] Run `npm install leaflet react-leaflet`.
+    *   [x] Run `npm install -D @types/leaflet`.
 
-*   [ ] **2.2: Update Trainer Fetching Logic**
-    *   [ ] Open `src/lib/api/trainers.ts`.
-    *   [ ] Modify the `getPublishedTrainers` function to select the `latitude` and `longitude` fields and to use `locationNormalized` for searching.
+*   [x] **2.2: Update Trainer Fetching Logic**
+    *   [x] Open `src/lib/api/trainers.ts`.
+    *   [x] Modify the `getPublishedTrainers` function to select the `latitude` and `longitude` fields and to use `locationNormalized` for searching.
 
-*   [ ] **2.3: Create the Map Component**
-    *   [ ] Create a new file `src/components/trainers/TrainersMap.tsx`.
-    *   [ ] This will be a client component (`"use client"`) that renders the map using `react-leaflet`, displaying a `Marker` for each trainer with a `Popup` linking to their profile.
+*   [x] **2.3: Create the Map Component**
+    *   [x] Create a new file `src/components/trainers/TrainersMap.tsx`.
+    *   [x] This will be a client component (`"use client"`) that renders the map using `react-leaflet`, displaying a `Marker` for each trainer with a `Popup` linking to their profile.
 
-*   [ ] **2.4: Integrate Map into Trainers Page**
-    *   [ ] Open `src/app/trainers/page.tsx`.
-    *   [ ] Dynamically import the `TrainersMap` component with `ssr: false` and replace the placeholder `div` with it.
+*   [x] **2.4: Integrate Map into Trainers Page**
+    *   [x] Open `src/app/trainers/page.tsx`.
+    *   [x] Dynamically import the `TrainersMap` component with `ssr: false` and replace the placeholder `div` with it.
 
 ---
 

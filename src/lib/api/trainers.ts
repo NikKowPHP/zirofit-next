@@ -1,6 +1,6 @@
 // src/lib/api/trainers.ts
 import { prisma } from "@/lib/prisma";
-import { transformImagePath } from "../utils";
+import { transformImagePath, normalizeLocation } from "../utils";
 import type { Prisma } from '@prisma/client';
 
 export async function getPublishedTrainers(page = 1, pageSize = 15, query?: string, location?: string) {
@@ -27,7 +27,7 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
   if (location) {
     const locationFilter: Prisma.UserWhereInput = {
       profile: {
-        location: { contains: location, mode: 'insensitive' },
+        locationNormalized: { contains: normalizeLocation(location) },
       },
     };
     if (whereClause.AND) {
@@ -53,6 +53,8 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
             profilePhotoPath: true,
             location: true,
             certifications: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },
@@ -98,10 +100,12 @@ export interface Trainer {
   name: string;
   username: string | null;
   profile: {
-    profilePhotoPath: string;
-    location: string;
-    certifications: string;
-  };
+    profilePhotoPath: string | null;
+    location: string | null;
+    certifications: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  } | null;
 }
 
 export async function getTrainerProfileByUsername(username: string) {

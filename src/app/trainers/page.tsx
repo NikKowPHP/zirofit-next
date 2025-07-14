@@ -5,6 +5,12 @@ import Link from "next/link";
 import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui";
+import dynamic from "next/dynamic";
+
+const TrainersMap = dynamic(() => import('@/components/trainers/TrainersMap'), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full"><p>Loading map...</p></div>
+});
 
 export const metadata: Metadata = {
   title: "Find a Personal Trainer",
@@ -23,6 +29,8 @@ interface Trainer {
     location: string | null;
     certifications: string | null;
     profilePhotoPath: string | null;
+    latitude: number | null;
+    longitude: number | null;
   } | null;
 }
 
@@ -81,7 +89,7 @@ export default async function TrainersPage({
                 </div>
                 <div className="lg:col-span-1">
                   <div className="sticky top-24 h-96 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
-                    <p className="text-neutral-500">Map View Coming Soon</p>
+                    <TrainersMap trainers={trainers} />
                   </div>
                 </div>
               </div>
