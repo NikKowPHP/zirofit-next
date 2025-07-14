@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import LoginPage from "../login/page.client";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Trainer Login",
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 export default function PageWrapper() {
   return (
     <>
-      <LoginPage />
+      <Suspense fallback={<div>Loading...</div>}>
+        <LoginPage />
+      </Suspense>
     </>
   );
 }

@@ -43,6 +43,10 @@ function SubmitPhotoButton() {
   );
 }
 
+interface TransformationPhotosEditorProps {
+  initialTransformationPhotos: TransformationPhoto[];
+}
+
 export default function TransformationPhotosEditor({
   initialTransformationPhotos,
 }: TransformationPhotosEditorProps) {
