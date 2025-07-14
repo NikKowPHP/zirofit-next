@@ -1,5 +1,4 @@
 "use server";
-
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import * as profileService from "@/lib/services/profileService";
@@ -8,7 +7,6 @@ import type { User, Profile } from "./_utils";
 import { Prisma } from "@prisma/client";
 import { normalizeLocation } from "@/lib/utils";
 import { geocodeLocation } from "@/lib/services/geocodingService";
-
 const CoreInfoSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   username: z
@@ -16,13 +14,12 @@ const CoreInfoSchema = z.object({
     .min(3, "Username must be at least 3 characters.")
     .regex(
       /^[a-z0-9-]+$/,
-      "Username can only contain lowercase letters, numbers, and hyphens.",
+      "Username can only contain lowercase letters, numbers, and hyphens."
     ),
   certifications: z.string().max(255).optional().nullable(),
   location: z.string().max(100).optional().nullable(),
   phone: z.string().max(20).optional().nullable(),
 });
-
 interface CoreInfoFormState {
   message?: string | null;
   error?: string | null;
@@ -30,13 +27,11 @@ interface CoreInfoFormState {
   success?: boolean;
   updatedFields?: Partial<User & Profile>;
 }
-
 export async function updateCoreInfo(
   prevState: CoreInfoFormState | undefined,
-  formData: FormData,
+  formData: FormData
 ): Promise<CoreInfoFormState> {
   const { user, profile } = await getUserAndProfile();
-
   const validatedFields = CoreInfoSchema.safeParse({
     name: formData.get("name"),
     username: formData.get("username"),
@@ -50,9 +45,7 @@ export async function updateCoreInfo(
       error: "Validation failed.",
     };
   }
-
   const { name, username, ...profileDataFromForm } = validatedFields.data;
-
   try {
     if (username !== user.username) {
       const existingUser = await profileService.findUserByUsername(username);
@@ -69,16 +62,30 @@ export async function updateCoreInfo(
         };
       }
     }
-
-    const profileUpdates: Prisma.ProfileUpdateInput = { ...profileDataFromForm };
+    const profileUpdates: Prisma.ProfileUpdateInput = {
+      ...profileDataFromForm,
+    };
 
     if (profileDataFromForm.location !== profile.location) {
       if (profileDataFromForm.location) {
         // Location added or changed
         profileUpdates.locationNormalized = normalizeLocation(
-          profileDataFromForm.location,
+          profileDataFromForm.location
         );
         const coords = await geocodeLocation(profileDataFromForm.location);
+        if (profileDataFromForm.location && !coords) {
+          return {
+            error: "Could not verify location.",
+            errors: [
+              {
+                code: "custom",
+                path: ["location"],
+                message:
+                  "We couldn't find this location. Please try the 'City, Country' format.",
+              },
+            ],
+          };
+        }
         profileUpdates.latitude = coords?.latitude;
         profileUpdates.longitude = coords?.longitude;
       } else {
@@ -93,7 +100,7 @@ export async function updateCoreInfo(
       await profileService.updateUserAndProfile(
         user.id,
         { name, username },
-        profileUpdates,
+        profileUpdates
       );
 
     revalidatePath("/profile/edit");
@@ -123,6 +130,8 @@ export async function updateCoreInfo(
         ],
       };
     }
-    return { error: `Failed to update core info: ${e instanceof Error ? e.message : String(e)}` };
+    return {
+      error: `Failed to update core info: ${e instanceof Error ? e.message : String(e)} `,
+    };
   }
 }

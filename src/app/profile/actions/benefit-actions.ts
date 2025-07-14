@@ -32,7 +32,10 @@ export async function addBenefit(
   try {
     const maxOrder = await profileService.getMaxBenefitOrder(profile.id);
     await profileService.createBenefit({
-      ...validated.data,
+      title: validated.data.title,
+      description: validated.data.description,
+      iconName: validated.data.iconName,
+      iconStyle: validated.data.iconStyle,
       profileId: profile.id,
       orderColumn: (maxOrder._max.orderColumn ?? 0) + 1,
     });

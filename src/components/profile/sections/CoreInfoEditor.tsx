@@ -2,9 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { useFormStatus, useFormState } from "react-dom";
 import { updateCoreInfo } from "@/app/profile/actions/core-info-actions";
-import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
+import {
+  Input,
+  Label,
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui";
 import { z } from "zod";
-
 interface CoreInfoData {
   name: string;
   username: string;
@@ -12,11 +19,9 @@ interface CoreInfoData {
   location: string | null;
   phone: string | null;
 }
-
 interface CoreInfoEditorProps {
   initialData: CoreInfoData;
 }
-
 interface CoreInfoFormState {
   message?: string | null;
   error?: string | null;
@@ -24,14 +29,12 @@ interface CoreInfoFormState {
   success?: boolean;
   updatedFields?: Partial<CoreInfoData>;
 }
-
 const initialState: CoreInfoFormState = {
   message: null,
   error: null,
   errors: undefined,
   success: false,
 };
-
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -40,12 +43,10 @@ function SubmitButton() {
     </Button>
   );
 }
-
 export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
   const [state, formAction] = useFormState(updateCoreInfo, initialState);
   // Initialize formData from prop
   const [formData, setFormData] = useState<CoreInfoData>(initialData);
-
   // Update local form data if server action returns updated fields
   useEffect(() => {
     if (state.success && state.updatedFields) {
@@ -56,11 +57,9 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
       }));
     }
   }, [state.success, state.updatedFields]);
-
   // Removed the simulated isLoading and fetchInitialData useEffect
-
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -69,7 +68,6 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
     return state.errors?.find((err) => err.path && err.path.includes(fieldName))
       ?.message;
   };
-
   return (
     <Card>
       <CardHeader>
@@ -86,7 +84,6 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
             {state.error}
           </div>
         )}
-
         <form action={formAction} className="space-y-4">
           <div>
             <Label htmlFor="name">Full Name</Label>
@@ -100,7 +97,9 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
               className="mt-1"
             />
             {getFieldError("name") && (
-              <p className="text-red-500 text-xs mt-1">{getFieldError("name")}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("name")}
+              </p>
             )}
           </div>
           <div>
@@ -150,8 +149,12 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
               value={formData.location || ""}
               onChange={handleInputChange}
               className="mt-1"
-              placeholder="e.g., New York, NY or Remote"
+              placeholder="e.g., Warsaw, Poland"
             />
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              For best results, please use "City, Country" or "City, State"
+              format.
+            </p>
             {getFieldError("location") && (
               <p className="text-red-500 text-xs mt-1">
                 {getFieldError("location")}

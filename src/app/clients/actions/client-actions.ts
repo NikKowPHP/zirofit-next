@@ -306,22 +306,22 @@ export async function bulkExportClients(clientIds: string[]) {
         progressPhotos: Array<{ photoDate: Date; imagePath: string }>;
         sessionLogs: Array<{ sessionDate: Date; sessionNotes: string | null }>;
       }) => {
-        const lastMeasurement = client.measurements[0] || {};
-        const lastPhoto = client.progressPhotos[0] || {};
-        const lastSession = client.sessionLogs[0] || {};
+        const lastMeasurement = client.measurements[0];
+        const lastPhoto = client.progressPhotos[0];
+        const lastSession = client.sessionLogs[0];
 
         return [
           `"${client.name}"`,
           `"${client.email}"`,
           `"${client.phone}"`,
           `"${client.status}"`,
-          lastMeasurement.measurementDate || "",
-          lastMeasurement.weightKg || "",
-          lastMeasurement.bodyFatPercentage || "",
-          lastPhoto.photoDate || "",
-          lastPhoto.imagePath || "",
-          lastSession.sessionDate || "",
-          `"${lastSession.sessionNotes?.replace(/"/g, '""') || ""}"`,
+          lastMeasurement?.measurementDate || "",
+          lastMeasurement?.weightKg || "",
+          lastMeasurement?.bodyFatPercentage || "",
+          lastPhoto?.photoDate || "",
+          lastPhoto?.imagePath || "",
+          lastSession?.sessionDate || "",
+          `"${lastSession?.sessionNotes?.replace(/"/g, '""') || ""}"`,
         ].join(",");
       },
     );
