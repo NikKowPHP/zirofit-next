@@ -2,18 +2,25 @@ import { GET } from "./route";
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardData } from "@/lib/services/dashboardService";
 import { NextResponse } from "next/server";
-
 jest.mock("@/lib/supabase/server");
 jest.mock("@/lib/services/dashboardService");
-
+// Mock next/server
+jest.mock("next/server", () => ({
+  NextResponse: {
+    json: jest.fn((body, init) => ({
+      json: () => Promise.resolve(body),
+      status: init?.status || 200,
+      ok: (init?.status || 200) < 400,
+      headers: new Headers(),
+    })),
+  },
+}));
 const mockCreateSupabaseClient = createClient as jest.Mock;
 const mockGetDashboardData = getDashboardData as jest.Mock;
-
 describe("Dashboard API GET", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-
   it("should return dashboard data for an authenticated user", async () => {
     mockCreateSupabaseClient.mockResolvedValue({
       auth: {
@@ -24,7 +31,6 @@ describe("Dashboard API GET", () => {
       },
     });
     mockGetDashboardData.mockResolvedValue({ activeClients: 5 });
-
     const response = await GET();
     const body = await response.json();
 
@@ -32,7 +38,6 @@ describe("Dashboard API GET", () => {
     expect(response.status).toBe(200);
     expect(body).toEqual({ activeClients: 5 });
   });
-
   it("should return a 401 Unauthorized error if user is not authenticated", async () => {
     mockCreateSupabaseClient.mockResolvedValue({
       auth: {
@@ -42,7 +47,6 @@ describe("Dashboard API GET", () => {
         }),
       },
     });
-
     const response = await GET();
     const body = await response.json();
 
@@ -50,7 +54,6 @@ describe("Dashboard API GET", () => {
     expect(response.status).toBe(401);
     expect(body).toEqual({ error: "Unauthorized" });
   });
-
   it("should return a 500 Internal Server Error if getDashboardData fails", async () => {
     mockCreateSupabaseClient.mockResolvedValue({
       auth: {
@@ -61,7 +64,6 @@ describe("Dashboard API GET", () => {
       },
     });
     mockGetDashboardData.mockRejectedValue(new Error("Database error"));
-
     const response = await GET();
     const body = await response.json();
 

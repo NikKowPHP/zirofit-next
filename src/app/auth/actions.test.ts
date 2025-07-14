@@ -99,6 +99,11 @@ describe("Auth Actions", () => {
         .mockResolvedValueOnce(null) // for email check
         .mockResolvedValueOnce({ id: "another-user" } as any) // for username 'test-user'
         .mockResolvedValueOnce(null); // for username 'test-user-1'
+      
+      // Make the create operations return their arguments so they are not undefined in the transaction array.
+      (prismaMock.user.create as jest.Mock).mockImplementation((args) => args);
+      (prismaMock.profile.create as jest.Mock).mockImplementation((args) => args);
+
       prismaMock.$transaction.mockResolvedValue([
         { id: "user-id", name: "Test User" },
         { id: "profile-id" },

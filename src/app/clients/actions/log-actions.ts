@@ -29,7 +29,7 @@ const SessionLogSchema = z.object({
   sessionDate: z.string(),
   durationMinutes: z.string(),
   activitySummary: z.string(),
-  sessionNotes: z.string().optional(),
+  sessionNotes: z.string().optional().nullable(),
 });
 
 const UpdateSessionLogSchema = SessionLogSchema.extend({

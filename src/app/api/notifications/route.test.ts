@@ -5,6 +5,17 @@ import { NextResponse } from "next/server";
 
 jest.mock("@/lib/session");
 
+jest.mock("next/server", () => ({
+  NextResponse: {
+    json: jest.fn((body, init) => ({
+      json: () => Promise.resolve(body),
+      status: init?.status || 200,
+      ok: (init?.status || 200) < 400,
+      headers: new Headers(),
+    })),
+  },
+}));
+
 const mockGetCurrentUser = getCurrentUser as jest.Mock;
 
 describe("Notifications API GET", () => {

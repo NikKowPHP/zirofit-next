@@ -17,10 +17,11 @@ describe("Booking Actions", () => {
     formData.append("endTime", new Date(Date.now() + 3600000).toISOString());
     formData.append("clientName", "Test Client");
     formData.append("clientEmail", "client@test.com");
+    formData.append("clientNotes", "");
 
     it("should create a booking and send notifications if slot is available", async () => {
       (bookingService.getSchedule as jest.Mock).mockResolvedValue({
-        availability: {},
+        availability: { mon: ["09:00-17:00"] }, // Provide some availability
         bookings: [],
       });
       (bookingService.isSlotAvailable as jest.Mock).mockReturnValue({
@@ -31,6 +32,7 @@ describe("Booking Actions", () => {
       });
       (bookingService.getTrainerForBooking as jest.Mock).mockResolvedValue({
         email: "trainer@test.com",
+        name: "Test Trainer",
       });
 
       const result = await createBooking(undefined, formData);
@@ -43,7 +45,7 @@ describe("Booking Actions", () => {
 
     it("should return an error if slot is not available", async () => {
       (bookingService.getSchedule as jest.Mock).mockResolvedValue({
-        availability: {},
+        availability: { mon: ["09:00-17:00"] },
         bookings: [],
       });
       (bookingService.isSlotAvailable as jest.Mock).mockReturnValue({
@@ -57,6 +59,15 @@ describe("Booking Actions", () => {
       expect(notificationService.sendBookingConfirmationEmail).not.toHaveBeenCalled();
       expect(result.success).toBe(false);
       expect(result.error).toBe("Slot taken");
+    });
+
+    it("should return an error for invalid form data", async () => {
+      const invalidFormData = new FormData();
+      invalidFormData.append("trainerId", "trainer-1");
+      // missing fields
+      const result = await createBooking(undefined, invalidFormData);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Invalid form data.");
     });
   });
 });

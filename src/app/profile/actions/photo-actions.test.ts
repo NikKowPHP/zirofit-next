@@ -43,7 +43,8 @@ describe("Profile Photo Actions", () => {
       );
 
       const formData = new FormData();
-      formData.append("photoFile", new Blob(["photo content"]), "photo.jpg");
+      const mockFile = new File(["photo content"], "photo.jpg", { type: "image/jpeg" });
+      formData.append("photoFile", mockFile);
       formData.append("caption", "A great transformation!");
 
       const result = await addTransformationPhoto(undefined, formData);
@@ -65,7 +66,9 @@ describe("Profile Photo Actions", () => {
         .upload.mockResolvedValue({ error: { message: "Upload failed" } });
 
       const formData = new FormData();
-      formData.append("photoFile", new Blob(["photo content"]), "photo.jpg");
+      const mockFile = new File(["photo content"], "photo.jpg", { type: "image/jpeg" });
+      formData.append("photoFile", mockFile);
+      formData.append("caption", "A test caption");
 
       const result = await addTransformationPhoto(undefined, formData);
 

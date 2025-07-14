@@ -40,6 +40,7 @@ describe("Session Log Actions", () => {
       formData.append("sessionDate", new Date().toISOString());
       formData.append("durationMinutes", "60");
       formData.append("activitySummary", "Great session");
+      formData.append("sessionNotes", "Client felt strong.");
 
       (clientService.createSessionLog as jest.Mock).mockResolvedValue({
         id: sessionLogId,
@@ -66,6 +67,7 @@ describe("Session Log Actions", () => {
       formData.append("sessionDate", new Date().toISOString());
       formData.append("durationMinutes", "55");
       formData.append("activitySummary", "Updated summary");
+      formData.append("sessionNotes", "Updated notes.");
 
       (clientService.updateSessionLogById as jest.Mock).mockResolvedValue({
         id: sessionLogId,

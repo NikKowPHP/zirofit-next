@@ -32,9 +32,19 @@ describe("Dashboard Data Service", () => {
           client: { name: "Past Client" },
         },
       ] as any); // past sessions
-    prismaMock.clientMeasurement.findMany.mockResolvedValue([
-      { createdAt: new Date(), client: { name: "Measured Client" } },
-    ] as any);
+
+    // Correctly ordered mocks for clientMeasurement.findMany
+    prismaMock.clientMeasurement.findMany
+      .mockResolvedValueOnce([ // Call 1: for recentMeasurements in activity feed
+        { createdAt: new Date(), client: { name: "Measured Client" } },
+      ] as any)
+      .mockResolvedValueOnce([ // Call 2: for getSpotlightClient's measurements
+        {
+          measurementDate: new Date(),
+          weightKg: 80,
+        },
+      ] as any);
+      
     prismaMock.clientProgressPhoto.findMany.mockResolvedValue([
       { createdAt: new Date(), client: { name: "Photo Client" } },
     ] as any);
@@ -47,13 +57,7 @@ describe("Dashboard Data Service", () => {
         _count: { measurements: 2 },
       },
     ] as any);
-    prismaMock.clientMeasurement.findMany.mockResolvedValueOnce([
-      {
-        measurementDate: new Date(),
-        weightKg: 80,
-      },
-    ] as any); // spotlight measurements
-
+    
     const data = await getDashboardData(trainerId);
 
     // Assert stats

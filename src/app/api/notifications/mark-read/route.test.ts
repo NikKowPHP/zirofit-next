@@ -6,6 +6,17 @@ import { NextResponse } from "next/server";
 jest.mock("@/lib/session");
 const mockGetCurrentUser = getCurrentUser as jest.Mock;
 
+jest.mock("next/server", () => ({
+  NextResponse: {
+    json: jest.fn((body, init) => ({
+      json: () => Promise.resolve(body),
+      status: init?.status || 200,
+      ok: (init?.status || 200) < 400,
+      headers: new Headers(),
+    })),
+  },
+}));
+
 describe("Notifications Mark Read API POST", () => {
   afterEach(() => {
     jest.clearAllMocks();
