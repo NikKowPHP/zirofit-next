@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
 import type { Trainer } from "@/lib/api/trainers";
 
 const TrainersMap = dynamic(() => import('@/components/trainers/TrainersMap'), {
@@ -14,6 +13,5 @@ interface TrainersMapWrapperProps {
 }
 
 export default function TrainersMapWrapper({ trainers }: TrainersMapWrapperProps) {
-  const memoizedTrainers = useMemo(() => trainers, [trainers]);
-  return <TrainersMap trainers={memoizedTrainers} />;
+  return <TrainersMap trainers={trainers} />;
 }

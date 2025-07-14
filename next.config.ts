@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config) => {
+    return config;
+  },
 };
 
 const sentryWebpackPluginOptions = {

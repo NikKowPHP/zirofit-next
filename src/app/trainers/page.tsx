@@ -1,4 +1,3 @@
-// src/app/trainers/page.tsx
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Link from "next/link";
@@ -6,7 +5,13 @@ import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui";
 import SortControl from "@/components/trainers/SortControl";
-import TrainersMapWrapper from "@/components/trainers/TrainersMapWrapper";
+import dynamic from "next/dynamic";
+
+const TrainersMap = dynamic(() => import('@/components/trainers/TrainersMap'), {
+  ssr: true,
+  loading: () => <div className="flex items-center justify-center h-full"><p>Loading map...</p></div>
+});
+
 
 export const metadata: Metadata = {
   title: "Find a Personal Trainer",
@@ -60,6 +65,8 @@ export default async function TrainersPage({
 
   const { trainers, totalPages } = data;
 
+  const mapKey = trainers.map(t => t.id).join('-');
+
   const getPageUrl = (page: number) => {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
@@ -90,7 +97,7 @@ export default async function TrainersPage({
                 </div>
                 <div className="lg:col-span-1">
                   <div className="sticky top-24 h-96 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
-                    <TrainersMapWrapper trainers={trainers} />
+                    <TrainersMap key={mapKey} trainers={trainers} />
                   </div>
                 </div>
               </div>
