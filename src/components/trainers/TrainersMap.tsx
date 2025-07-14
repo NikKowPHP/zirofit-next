@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Link from 'next/link';
+import { useState, useEffect, useRef } from 'react';
 
 // Leaflet icon fix for Next.js
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -33,7 +34,39 @@ interface TrainersMapProps {
 }
 
 export default function TrainersMap({ trainers }: TrainersMapProps) {
+  const [isClient, setIsClient] = useState(false);
   const trainersWithCoords = trainers.filter(t => t.profile?.latitude && t.profile?.longitude);
+  const mapRef = useRef<L.Map | null>(null);
+
+  useEffect(() => {
+    // This effect runs only on the client, after the initial render.
+    // It sets a state variable to true, triggering a re-render.
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    // This effect runs when isClient becomes true.
+    if (isClient && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation: L.LatLngExpression = [position.coords.latitude, position.coords.longitude];
+          if (mapRef.current) {
+            mapRef.current.setView(userLocation, 13); // Use a city-level zoom
+          }
+        },
+        (error) => {
+          console.log("Geolocation error:", error.message);
+          // Keep default center if permission is denied or an error occurs.
+        }
+      );
+    }
+  }, [isClient]);
+
+  // The wrapper component handles the loading state. Here, we return null
+  // during server-side rendering or the first client-side render pass.
+  if (!isClient) {
+    return null;
+  }
 
   if (trainersWithCoords.length === 0) {
       return (
@@ -43,10 +76,13 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
       );
   }
 
-  const center: L.LatLngExpression = [52.2297, 21.0122]; // Default to Warsaw
-
   return (
-    <MapContainer center={center} zoom={6} style={{ height: '100%', width: '100%', borderRadius: '0.75rem' }}>
+    <MapContainer 
+      center={[52.2297, 21.0122]} 
+      zoom={6} 
+      style={{ height: '100%', width: '100%', borderRadius: '0.75rem' }}
+      ref={mapRef}
+    >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

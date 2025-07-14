@@ -5,12 +5,7 @@ import TrainerResultCard from "@/components/trainers/TrainerResultCard";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui";
 import SortControl from "@/components/trainers/SortControl";
-import dynamic from "next/dynamic";
-
-const TrainersMap = dynamic(() => import('@/components/trainers/TrainersMap'), {
-  ssr: true,
-  loading: () => <div className="flex items-center justify-center h-full"><p>Loading map...</p></div>
-});
+import TrainersMapWrapper from "@/components/trainers/TrainersMapWrapper";
 
 
 export const metadata: Metadata = {
@@ -97,7 +92,7 @@ export default async function TrainersPage({
                 </div>
                 <div className="lg:col-span-1">
                   <div className="sticky top-24 h-96 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
-                    <TrainersMap key={mapKey} trainers={trainers} />
+                    <TrainersMapWrapper key={mapKey} trainers={trainers} />
                   </div>
                 </div>
               </div>
