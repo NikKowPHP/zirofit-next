@@ -31,16 +31,29 @@ async function backfillLocations() {
       const locationNormalized = normalizeLocation(profile.location);
       const coords = await geocodeLocation(profile.location);
 
-      await prisma.profile.update({
-        where: { id: profile.id },
-        data: {
-          locationNormalized,
-          latitude: coords?.latitude,
-          longitude: coords?.longitude,
-        },
-      });
-
-      console.log(`  -> Successfully updated profile ${profile.id}.`);
+      if (coords) {
+        await prisma.profile.update({
+          where: { id: profile.id },
+          data: {
+            locationNormalized,
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          },
+        });
+        console.log(
+          `  -> Successfully updated profile ${profile.id} with coordinates.`,
+        );
+      } else {
+        await prisma.profile.update({
+          where: { id: profile.id },
+          data: {
+            locationNormalized,
+          },
+        });
+        console.warn(
+          `  -> Geocoding failed. Updated normalized location only for profile ${profile.id}.`,
+        );
+      }
 
       // To respect API rate limits, add a small delay.
       // Nominatim's policy is max 1 request/sec.

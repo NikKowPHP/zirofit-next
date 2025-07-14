@@ -17,6 +17,9 @@ export async function geocodeLocation(
     return null;
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+
   try {
     const params = new URLSearchParams({
       q: location,
@@ -28,7 +31,10 @@ export async function geocodeLocation(
       headers: {
         "User-Agent": "ZIRO.FIT Geocoding Service/1.0 (contact@ziro.fit)",
       },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       console.error(`Geocoding API failed with status: ${response.status}`);
@@ -45,8 +51,13 @@ export async function geocodeLocation(
     }
 
     return null;
-  } catch (error) {
-    console.error("Error during geocoding:", error);
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === "AbortError") {
+      console.error("Error during geocoding: Request timed out.");
+    } else {
+      console.error("Error during geocoding:", error);
+    }
     return null;
   }
 }

@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "test": "jest",
     "test:e2e": "npx playwright install --with-deps && playwright test",
-    "db:backfill-locations": "npx ts-node --compiler-options '{\\\"module\\\":\\\"commonjs\\\"}' prisma/seed-backfill-locations.ts"
+    "db:backfill-locations": "npx ts-node --project tsconfig-seed.json prisma/seed-backfill-locations.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
