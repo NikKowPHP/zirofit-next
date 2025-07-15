@@ -15,7 +15,7 @@ export type ClientExerciseLog = Prisma.ClientExerciseLogGetPayload<{
 
 const setSchema = z.object({
   reps: z.number().min(0),
-  weight: z.number().min(0),
+  weight: z.number().min(0).optional(),
 });
 
 const exerciseLogSchema = z.object({

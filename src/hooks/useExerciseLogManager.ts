@@ -99,9 +99,6 @@ export const useExerciseLogManager = ({
   useEffect(() => {
     if (searchQuery.length < 2 || blockSearch) {
       setSearchResults([]);
-      if (blockSearch) {
-        setBlockSearch(false);
-      }
       return;
     }
 

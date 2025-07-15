@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useExerciseLogManager } from "@/hooks/useExerciseLogManager";
-import { type ClientExerciseLog } from "@/app/clients/actions";
+import { type ClientExerciseLog, type Exercise } from "@/app/clients/actions";
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, EmptyState } from "@/components/ui";
 import { PencilIcon, TrashIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useState, useMemo, useEffect } from "react";
@@ -48,7 +47,7 @@ export default function ManageClientExerciseLogs({
 
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-  const [selectedExercise, setSelectedExercise] = useState<{ id: string; name: string } | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [sets, setSets] = useState<Set[]>([{ reps: "", weight: "" }]);
 
   const resetForm = () => {
@@ -59,6 +58,23 @@ export default function ManageClientExerciseLogs({
     setSearchResults([]);
     handleCancelEdit();
   };
+  
+  useEffect(() => {
+    if (isEditing && currentEditingLog) {
+      const exercise = currentEditingLog.exercise;
+      setSelectedExercise(exercise);
+      setSearchQuery(exercise.name);
+      // `sets` in DB can be an object from JSONB. Ensure it's an array.
+      const logSets = Array.isArray(currentEditingLog.sets) ? currentEditingLog.sets : [];
+      setSets(
+        (logSets as { reps: number; weight: number | null }[]).map(s => ({
+          reps: String(s.reps ?? ''),
+          weight: String(s.weight ?? ''),
+        })),
+      );
+      setBlockSearch(true);
+    }
+  }, [isEditing, currentEditingLog]);
 
   useEffect(() => {
     if (addState.success) {
@@ -108,12 +124,14 @@ export default function ManageClientExerciseLogs({
     }
   };
   
-  const handleSelectExercise = (exercise: { id: string; name: string }) => {
+  const handleSelectExercise = (exercise: Exercise) => {
     setSelectedExercise(exercise);
     setSearchQuery(exercise.name);
     setSearchResults([]);
     setBlockSearch(true);
   };
+
+  const isBodyweight = (isEditing ? currentEditingLog?.exercise.equipment : selectedExercise?.equipment) === 'Bodyweight';
 
   return (
     <>
@@ -154,7 +172,12 @@ export default function ManageClientExerciseLogs({
                 <Input type="date" name="logDate" required defaultValue={isEditing && currentEditingLog ? new Date(currentEditingLog.logDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} />
                 
                 <div className="relative">
-                  <Input type="text" placeholder="Search for an exercise..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} disabled={isEditing} />
+                  <Input type="text" placeholder="Search for an exercise..." value={searchQuery} onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setSelectedExercise(null);
+                      setBlockSearch(false);
+                    }}
+                    disabled={isEditing} />
                   {isSearching && <p className="text-sm text-gray-500">Searching...</p>}
                   {searchResults.length > 0 && (
                     <ul className="absolute z-10 w-full bg-white dark:bg-neutral-800 border rounded-md shadow-lg mt-1 max-h-60 overflow-auto">
@@ -168,19 +191,27 @@ export default function ManageClientExerciseLogs({
 
               <div>
                 <h4 className="font-medium mb-2">Sets</h4>
-                <input type="hidden" name="sets" value={JSON.stringify(sets.map(s => ({ reps: Number(s.reps), weight: Number(s.weight) })))} />
+                <input type="hidden" name="sets" value={JSON.stringify(sets.map(s => {
+                  const setData: { reps: number; weight?: number } = { reps: Number(s.reps) || 0 };
+                  if (!isBodyweight) {
+                    setData.weight = Number(s.weight) || 0;
+                  }
+                  return setData;
+                }))} />
                 <div className="space-y-2">
                 {sets.map((set, index) => (
                   <div key={index} className="flex items-center gap-2 flex-wrap">
                     <div className="flex items-center gap-2 flex-grow min-w-[200px]">
                       <span className="font-mono text-sm">{index + 1}.</span>
                       <Input type="number" placeholder="Reps" value={set.reps} onChange={(e) => handleSetChange(index, 'reps', e.target.value)} required className="min-w-0" />
-                      <Input type="number" placeholder="Weight (kg)" value={set.weight} onChange={(e) => handleSetChange(index, 'weight', e.target.value)} required className="min-w-0" />
+                      {!isBodyweight && <Input type="number" placeholder="Weight (kg)" value={set.weight} onChange={(e) => handleSetChange(index, 'weight', e.target.value)} className="min-w-0" />}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button type="button" variant="secondary" size="sm" onClick={() => handleSetChange(index, 'weight', '0')}>
-                        0 kg
-                      </Button>
+                      {!isBodyweight && (
+                        <Button type="button" variant="secondary" size="sm" onClick={() => handleSetChange(index, 'weight', '0')}>
+                          0 kg
+                        </Button>
+                      )}
                       <Button type="button" variant="danger" size="sm" onClick={() => removeSet(index)} disabled={sets.length === 1}>
                         <XMarkIcon className="h-4 w-4" />
                       </Button>
@@ -228,8 +259,8 @@ export default function ManageClientExerciseLogs({
                                 </div>
                               </div>
                               <ul className="text-sm space-y-1">
-                                {(log.sets as unknown as Set[]).map((set, i) => (
-                                  <li key={i}>{i+1}. {set.reps} reps @ {set.weight} kg</li>
+                                {(log.sets as unknown as {reps: number, weight?: number}[]).map((set, i) => (
+                                  <li key={i}>{i+1}. {set.reps} reps {set.weight != null ? `@ ${set.weight} kg` : ''}</li>
                                 ))}
                               </ul>
                             </div>

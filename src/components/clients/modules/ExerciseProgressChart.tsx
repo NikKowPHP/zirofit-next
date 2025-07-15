@@ -16,29 +16,38 @@ export default function ExerciseProgressChart({
   logs,
 }: ExerciseProgressChartProps) {
   const { theme } = useTheme();
+  const isBodyweight = logs[0]?.exercise.equipment === "Bodyweight";
 
   const chartData = useMemo(() => {
     const dataPoints = logs
       .map((log) => {
         const setsArray = Array.isArray(log.sets) ? log.sets : [];
-        const totalVolume = (
-          setsArray as { reps: any; weight: any }[]
-        ).reduce(
-          (sum, set) =>
-            sum + (Number(set.reps) || 0) * (Number(set.weight) || 0),
-          0,
-        );
+        const yValue = isBodyweight
+          ? (setsArray as { reps: any }[]).reduce(
+              (sum, set) => sum + (Number(set.reps) || 0),
+              0,
+            ) // Total Reps
+          : (setsArray as { reps: any; weight: any }[]).reduce(
+              (sum, set) =>
+                sum + (Number(set.reps) || 0) * (Number(set.weight) || 0),
+              0,
+            ); // Total Volume
+
         return {
           x: new Date(log.logDate),
-          y: totalVolume,
+          y: yValue,
         };
       })
       .sort((a, b) => a.x.getTime() - b.x.getTime());
 
+    const datasetLabel = isBodyweight
+      ? "Total Reps"
+      : "Total Volume (reps * weight)";
+
     return {
       datasets: [
         {
-          label: "Total Volume (reps * weight)",
+          label: datasetLabel,
           data: dataPoints,
           borderColor:
             theme === "dark" ? "rgb(99, 102, 241)" : "rgb(79, 70, 229)",
@@ -51,7 +60,7 @@ export default function ExerciseProgressChart({
         },
       ],
     };
-  }, [logs, theme]);
+  }, [logs, theme, isBodyweight]);
 
   if (logs.length < 2) {
     return (
@@ -81,7 +90,7 @@ export default function ExerciseProgressChart({
         beginAtZero: true,
         title: {
           display: true,
-          text: "Total Volume",
+          text: isBodyweight ? "Total Reps" : "Total Volume",
           color: textColor,
         },
         ticks: { color: textColor },
