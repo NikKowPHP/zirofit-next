@@ -5,6 +5,7 @@ import { type ClientExerciseLog, type Exercise } from "@/app/clients/actions";
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, EmptyState } from "@/components/ui";
 import { PencilIcon, TrashIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useState, useMemo, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { toast } from "sonner";
 import ExerciseProgressChart from "./ExerciseProgressChart";
@@ -18,6 +19,23 @@ interface Set {
   reps: string;
   weight: string;
 }
+
+function SubmitButton({ isEditing }: { isEditing: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending
+        ? isEditing
+          ? "Updating..."
+          : "Adding..."
+        : isEditing
+        ? "Update Log"
+        : "Add Log"}
+    </Button>
+  );
+}
+
 
 export default function ManageClientExerciseLogs({
   clientId,
@@ -225,7 +243,7 @@ export default function ManageClientExerciseLogs({
               </div>
 
               <div className="flex gap-2">
-                <Button type="submit">{isEditing ? "Update Log" : "Add Log"}</Button>
+                <SubmitButton isEditing={isEditing} />
                 <Button type="button" variant="secondary" onClick={resetForm}>Cancel</Button>
               </div>
             </form>
