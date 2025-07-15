@@ -1,8 +1,10 @@
+
 "use client";
 
 import { Notification } from "@/types/notifications";
 import { formatDistanceToNow } from "date-fns";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "next-intl";
 
 interface NotificationListProps {
   notifications: Notification[];
@@ -15,6 +17,8 @@ export default function NotificationList({
   onClose,
   onMarkRead,
 }: NotificationListProps) {
+  const t = useTranslations('Notifications');
+
   const handleMarkRead = async (notificationId: string) => {
     try {
       await fetch("/api/notifications/mark-read", {
@@ -26,14 +30,14 @@ export default function NotificationList({
       });
       onMarkRead();
     } catch (error) {
-      console.error("Error marking notification as read:", error);
+      console.error(t('markReadError'), error);
     }
   };
 
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-lg border border-gray-200 dark:border-neutral-800">
       <div className="p-4 border-b border-gray-200 dark:border-neutral-800 flex justify-between items-center">
-        <h3 className="font-semibold">Notifications</h3>
+        <h3 className="font-semibold">{t('title')}</h3>
         <button
           onClick={onClose}
           className="p-1 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full"
@@ -44,7 +48,7 @@ export default function NotificationList({
 
       <div className="max-h-96 overflow-y-auto">
         {notifications.length === 0 ? (
-          <p className="p-4 text-gray-500 text-center">No notifications</p>
+          <p className="p-4 text-gray-500 text-center">{t('noNotifications')}</p>
         ) : (
           notifications.map((notification) => (
             <div

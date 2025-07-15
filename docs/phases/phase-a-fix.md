@@ -64,18 +64,18 @@ Here is the revised, step-by-step task plan based on this clear constraint.
 
 ### **Phase C: Translating Authenticated Views (Dashboard)**
 
-*   [ ] **Task 3.1: Translate Main Dashboard Layout & Navigation**
+*   [x] **Task 3.1: Translate Main Dashboard Layout & Navigation**
     *   In `TrainerDashboardLayout` (`/src/components/layouts/TrainerDashboardLayout.tsx`), translate all sidebar navigation items and the "Logged in as" text.
     *   Translate button text in the `LogoutButton`.
     *   In `NotificationIndicator` and `NotificationList`, translate titles and any static text like "No notifications".
 
-*   [ ] **Task 3.2: Translate Dashboard Content**
+*   [x] **Task 3.2: Translate Dashboard Content**
     *   In `DashboardContent` and its sub-components (`AtAGlanceStats`, `ProfileChecklist`, `QuickActions`, etc.), translate all card titles and static labels.
 
-*   [ ] **Task 3.3: Translate Client Management UI**
+*   [x] **Task 3.3: Translate Client Management UI**
     *   Translate all headings, buttons, tabs, and form elements in the entire client management flow, from the client list (`ClientGrid`) to the client detail view and all its modules (`ManageClientMeasurements`, `ManageClientSessionLogs`, etc.).
 
-*   [ ] **Task 3.4: Translate Profile Editor UI**
+*   [x] **Task 3.4: Translate Profile Editor UI**
     *   In `ProfileEditorSidebar`, translate all section names.
     *   In every editor component within `src/components/profile/sections/`, translate all card titles, form labels, button texts, and helper/description texts.
 
@@ -118,30 +118,21 @@ Here is the revised, step-by-step task plan based on this clear constraint.
 ### src/messages/pl.json
 ```json
 ```
-### src/app/[locale]/page.tsx
+### src/app/[locale]/clients/actions/client-actions.ts
+```typescript
+```
+### src/components/auth/LogoutButton.tsx
 ```tsx
 ```
-### src/app/[locale]/trainer/[username]/page.tsx
+### src/components/layouts/TrainerDashboardLayout.tsx
 ```tsx
 ```
-### src/app/[locale]/trainers/page.tsx
+### src/components/notifications/NotificationIndicator.tsx
 ```tsx
 ```
-### src/components/home/TrainerSearch.tsx
+### src/components/notifications/NotificationList.tsx
 ```tsx
 ```
-### src/components/layouts/PublicLayout.tsx
-```tsx
-```
-### src/components/trainer/ContactForm.tsx
-```tsx
-```
-### src/components/trainer/PublicCalendar.tsx
-```tsx
-```
-### src/components/trainers/SortControl.tsx
-```tsx
-```
-### src/components/trainers/TrainerResultCard.tsx
+### src/app/[locale]/dashboard/DashboardContent.tsx
 ```tsx
 ```

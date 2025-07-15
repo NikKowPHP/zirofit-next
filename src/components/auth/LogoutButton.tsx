@@ -4,8 +4,10 @@
 
 import { logoutUser } from "../../app/[locale]/auth/actions";
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 
 export default function LogoutButton() {
+  const t = useTranslations('LogoutButton');
   const [isPending, startTransition] = useTransition();
 
   const handleLogout = () => {
@@ -20,7 +22,7 @@ export default function LogoutButton() {
       disabled={isPending}
       className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50"
     >
-      {isPending ? "Logging out..." : "Log Out"}
+      {isPending ? t('loggingOut') : t('logout')}
     </button>
   );
 }

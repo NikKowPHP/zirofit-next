@@ -14,10 +14,12 @@ import SkeletonQuickActions from "./_components/skeleton-quick-actions";
 import SkeletonActivityFeed from "./_components/skeleton-activity-feed";
 import { Card, CardContent, CardHeader, Skeleton } from "@/components/ui";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { useTranslations } from "next-intl";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function DashboardContent() {
+  const t = useTranslations('Dashboard');
   const { data, error, isLoading, mutate } = useSWR("/api/dashboard", fetcher, {
     refreshInterval: 30000,
     revalidateOnFocus: true,
@@ -26,8 +28,8 @@ export default function DashboardContent() {
   if (error)
     return (
       <ErrorState
-        title="Failed to load dashboard"
-        description="There was a problem fetching your dashboard data. Please try again."
+        title={t('failToLoad')}
+        description={t('failToLoadDescription')}
         onRetry={mutate}
       />
     );
@@ -98,22 +100,21 @@ export default function DashboardContent() {
         {clientProgressData.length > 0 ? (
           <ClientProgressChart
             data={clientProgressData}
-            title="Client Progress (Weight)"
+            title={t('clientProgressWeight')}
           />
         ) : (
           <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 text-center text-gray-500">
-            No client progress data to display. Add some measurements to a
-            client to see the chart.
+            {t('noClientProgress')}
           </div>
         )}
         {monthlyActivityData.length > 0 ? (
           <MonthlyActivityChart
             data={monthlyActivityData}
-            title="Monthly Activity"
+            title={t('monthlyActivity')}
           />
         ) : (
           <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 text-center text-gray-500">
-            No monthly activity data available.
+            {t('noMonthlyActivity')}
           </div>
         )}
       </div>

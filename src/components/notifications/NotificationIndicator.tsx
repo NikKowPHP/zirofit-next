@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, Fragment } from "react";
@@ -6,8 +7,10 @@ import { Notification } from "@/types/notifications";
 import NotificationList from "./NotificationList";
 import { createClient } from "@/lib/supabase/client";
 import { Popover, Transition } from "@headlessui/react";
+import { useTranslations } from "next-intl";
 
 export default function NotificationIndicator() {
+  const t = useTranslations('Notifications');
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [_userId, setUserId] = useState<string | null>(null);
@@ -57,7 +60,7 @@ export default function NotificationIndicator() {
           <>
             <Popover.Button
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-700/50 relative transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
-              aria-label={`Toggle notifications. ${unreadCount} unread.`}
+              aria-label={t('toggle', { count: unreadCount })}
             >
               <BellIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               {unreadCount > 0 && (

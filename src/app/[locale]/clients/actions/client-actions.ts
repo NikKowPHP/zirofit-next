@@ -1,3 +1,4 @@
+
 "use server";
 
 import { z } from "zod";
@@ -7,17 +8,20 @@ import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import * as clientService from "@/lib/services/clientService";
 import type { Prisma } from "@prisma/client";
+import { getLocale, getTranslations } from "next-intl/server";
 
-const FormSchema = z.object({
-  name: z.string().min(1, { message: "Name must be at least 1 character." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  phone: z.string().min(1, { message: "Phone must be at least 1 character." }),
-  status: z.enum(["active", "inactive", "pending"]),
-});
+const getFormSchema = async () => {
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "ZodErrors" });
 
-const UpdateFormSchema = FormSchema.extend({
-  id: z.string(),
-});
+  return z.object({
+    name: z.string().min(1, { message: t("name_min_1") }),
+    email: z.string().email({ message: t("invalid_email") }),
+    phone: z.string().min(1, { message: t("phone_min_1") }),
+    status: z.enum(["active", "inactive", "pending"]),
+  });
+};
+
 
 export async function getTrainerClients() {
   const supabase = await createSupabaseClient();
@@ -35,6 +39,7 @@ export async function getTrainerClients() {
 }
 
 export async function addClient(prevState: any, formData: FormData) {
+  const FormSchema = await getFormSchema();
   const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },
@@ -174,6 +179,11 @@ export async function getClientById(clientId: string) {
 }
 
 export async function updateClient(prevState: any, formData: FormData) {
+  const FormSchema = await getFormSchema();
+  const UpdateFormSchema = FormSchema.extend({
+    id: z.string(),
+  });
+  
   const supabase = await createSupabaseClient();
   const {
     data: { user: authUser },

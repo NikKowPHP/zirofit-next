@@ -1,3 +1,4 @@
+
 "use client";
 import React from "react";
 import Link from "next/link";
@@ -7,12 +8,13 @@ import {
   UserGroupIcon,
   CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
-import LogoutButton from "../../components/auth/LogoutButton";
+import LogoutButton from "../auth/LogoutButton";
 import { usePathname } from "next/navigation";
 import NotificationIndicator from "@/components/notifications/NotificationIndicator";
 import { useTheme } from "@/context/ThemeContext";
 import BottomNavBar from "./BottomNavBar"; // Import the new component
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface TrainerDashboardLayoutProps {
   children: React.ReactNode;
@@ -27,31 +29,32 @@ export default function TrainerDashboardLayout({
 }: TrainerDashboardLayoutProps) {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const t = useTranslations('TrainerDashboardLayout');
 
   const navigation = [
     {
-      name: "Dashboard",
+      name: t('dashboard'),
       href: "/dashboard",
       icon: HomeIcon,
-      current: pathname === "/dashboard",
+      current: pathname.endsWith("/dashboard"),
     },
     {
-      name: "Profile Settings",
+      name: t('profileSettings'),
       href: "/profile/edit",
       icon: UserCircleIcon,
-      current: pathname.startsWith("/profile"),
+      current: pathname.includes("/profile"),
     },
     {
-      name: "Manage Clients",
+      name: t('manageClients'),
       href: "/clients",
       icon: UserGroupIcon,
-      current: pathname.startsWith("/clients"),
+      current: pathname.includes("/clients"),
     },
     {
-      name: "My Bookings",
+      name: t('myBookings'),
       href: "/dashboard/bookings",
       icon: CalendarDaysIcon,
-      current: pathname.startsWith("/dashboard/bookings"),
+      current: pathname.includes("/dashboard/bookings"),
     },
   ];
 
@@ -97,7 +100,7 @@ export default function TrainerDashboardLayout({
           <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-800">
             {userEmail && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                Logged in as: {userEmail}
+                {t('loggedInAs', {email: userEmail})}
               </p>
             )}
             <LogoutButton />
@@ -109,7 +112,7 @@ export default function TrainerDashboardLayout({
         <header className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {headerTitle || "Dashboard"}
+              {headerTitle || t('header_dashboard')}
             </h1>
             <div className="flex items-center space-x-4">
              
