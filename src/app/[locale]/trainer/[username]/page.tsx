@@ -16,6 +16,7 @@ import { getTrainerSchedule } from "../../profile/actions/booking-actions";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { getTranslations } from "next-intl/server";
 
 // Define interfaces for the data structure
 interface Benefit {
@@ -78,13 +79,13 @@ const DEFAULT_BANNER_IMAGE = "/default-banner.jpg"; // Replace with actual defau
 const DEFAULT_PROFILE_IMAGE = "/default-profile.jpg"; // Replace with actual default profile image
 
 interface TrainerProfilePageProps {
-  params: Promise<{ username: string }>;
+  params: { username: string, locale: string };
 }
 
 export async function generateMetadata({
   params,
 }: TrainerProfilePageProps): Promise<Metadata> {
-  const username = (await params).username;
+  const username = params.username;
   const user = await getTrainerProfileByUsername(username);
 
   if (!user || !user.profile) {
@@ -141,7 +142,8 @@ export async function generateMetadata({
 export default async function TrainerProfilePage({
   params,
 }: TrainerProfilePageProps) {
-  const { username } = await params;
+  const t = await getTranslations({locale: params.locale, namespace: 'TrainerProfilePage'});
+  const { username } = params;
   const userWithProfile: UserWithProfile | null =
     await getTrainerProfileByUsername(username);
 
@@ -193,7 +195,7 @@ export default async function TrainerProfilePage({
             </p>
           )}
           <Button asChild size="lg">
-            <a href="#booking-section">Book a Session</a>
+            <a href="#booking-section">{t('bookSession')}</a>
           </Button>
           
           {profile.location && (
@@ -218,7 +220,7 @@ export default async function TrainerProfilePage({
                     {profile.aboutMe && (
                       <>
                         <h2 className="text-2xl font-semibold mb-3">
-                          About Me
+                          {t('aboutMe')}
                         </h2>
                         {renderHTML(profile.aboutMe)}
                       </>
@@ -226,7 +228,7 @@ export default async function TrainerProfilePage({
                     {profile.philosophy && (
                       <>
                         <h2 className="text-2xl font-semibold mt-8 mb-3">
-                          My Philosophy
+                          {t('myPhilosophy')}
                         </h2>
                         {renderHTML(profile.philosophy)}
                       </>
@@ -234,7 +236,7 @@ export default async function TrainerProfilePage({
                     {profile.methodology && (
                       <>
                         <h2 className="text-2xl font-semibold mt-8 mb-3">
-                          My Methodology
+                          {t('myMethodology')}
                         </h2>
                         {renderHTML(profile.methodology)}
                       </>
@@ -247,7 +249,7 @@ export default async function TrainerProfilePage({
             {/* Benefits Section */}
             {profile.benefits && profile.benefits.length > 0 && (
               <Card>
-                 <CardHeader><CardTitle>Why Train With Me?</CardTitle></CardHeader>
+                 <CardHeader><CardTitle>{t('whyTrainWithMe')}</CardTitle></CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {profile.benefits.map((benefit: Benefit) => (
@@ -271,7 +273,7 @@ export default async function TrainerProfilePage({
             {/* Services Section */}
             {profile.services && profile.services.length > 0 && (
               <Card>
-                <CardHeader><CardTitle>Services Offered</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t('servicesOffered')}</CardTitle></CardHeader>
                 <CardContent>
                     <div className="space-y-6">
                       {profile.services.map((service: Service) => (
@@ -295,7 +297,7 @@ export default async function TrainerProfilePage({
             {/* Transformation Photos Section */}
             {profile.transformationPhotos && profile.transformationPhotos.length > 0 && (
               <Card>
-                <CardHeader><CardTitle>Client Transformations</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t('clientTransformations')}</CardTitle></CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {profile.transformationPhotos.map(
@@ -329,7 +331,7 @@ export default async function TrainerProfilePage({
             {/* Testimonials Section */}
             {profile.testimonials && profile.testimonials.length > 0 && (
               <Card>
-                <CardHeader><CardTitle>What Clients Say</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t('whatClientsSay')}</CardTitle></CardHeader>
                 <CardContent>
                   <div className="space-y-6">
                       {profile.testimonials.map((testimonial: Testimonial) => (
@@ -363,7 +365,7 @@ export default async function TrainerProfilePage({
               
               {profile.externalLinks && profile.externalLinks.length > 0 && (
                 <Card>
-                  <CardHeader><CardTitle className="text-center">Find Me Online</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-center">{t('findMeOnline')}</CardTitle></CardHeader>
                   <CardContent>
                       <div className="flex flex-wrap justify-center gap-3">
                         {profile.externalLinks.map((link: ExternalLink) => (

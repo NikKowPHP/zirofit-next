@@ -1,14 +1,16 @@
+
 // src/components/trainer/ContactForm.tsx
 "use client";
 
 import { z } from "zod";
 import { useFormState, useFormStatus } from "react-dom";
-import { submitContactForm } from "@/app/trainer/actions"; // Adjust path if actions.ts is elsewhere
+import { submitContactForm } from "@/app/[locale]/trainer/actions"; // Adjust path if actions.ts is elsewhere
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 
 interface ContactFormProps {
   trainerEmail: string;
@@ -30,10 +32,11 @@ const initialState: ContactFormState = {
 };
 
 function SubmitButton() {
+  const t = useTranslations('ContactForm');
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? "Sending..." : "Send Message"}
+      {pending ? t('sending') : t('sendMessage')}
     </Button>
   );
 }
@@ -42,6 +45,7 @@ export default function ContactForm({
   trainerEmail,
   trainerName,
 }: ContactFormProps) {
+  const t = useTranslations('ContactForm');
   const [state, formAction] = useFormState(submitContactForm, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -63,7 +67,7 @@ export default function ContactForm({
     <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg shadow-md">
       {state.success && state.message && (
         <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm border border-green-200">
-          {state.message}
+          {t('successMessage')}
         </div>
       )}
       {state.error && !state.errors && (
@@ -77,7 +81,7 @@ export default function ContactForm({
         <input type="hidden" name="trainerName" value={trainerName} />
         <div>
           <Label htmlFor="contact-name" className="dark:text-gray-200">
-            Your Name
+            {t('yourName')}
           </Label>
           <Input
             type="text"
@@ -92,7 +96,7 @@ export default function ContactForm({
         </div>
         <div>
           <Label htmlFor="contact-email" className="dark:text-gray-200">
-            Your Email
+            {t('yourEmail')}
           </Label>
           <Input
             type="email"
@@ -120,7 +124,7 @@ export default function ContactForm({
         </div>
         <div>
           <Label htmlFor="contact-message" className="dark:text-gray-200">
-            Message
+            {t('message')}
           </Label>
           <Textarea
             id="contact-message"

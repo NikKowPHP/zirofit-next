@@ -28,5 +28,85 @@
     "platform_required": "Platforma jest wymagana.",
     "username_required": "Nazwa użytkownika jest wymagana.",
     "testimonial_text_min_10": "Tekst referencji jest wymagany."
+  },
+  "PublicLayout": {
+    "findTrainers": "Znajdź trenera",
+    "dashboard": "Panel",
+    "trainerLogin": "Logowanie trenera",
+    "trainerSignUp": "Rejestracja trenera",
+    "privacyPolicy": "Polityka prywatności",
+    "termsOfService": "Warunki korzystania",
+    "contact": "Kontakt",
+    "allRightsReserved": "© {year} ZIRO.FIT. Wszelkie prawa zastrzeżone."
+  },
+  "HomePage": {
+    "title": "Znajdź swojego idealnego trenera personalnego | ZIRO.FIT",
+    "description": "Wyszukaj i zarezerwuj certyfikowanych trenerów personalnych na sesje online lub stacjonarne. Osiągnij swoje cele fitness z odpowiednim ekspertem z ZIRO.FIT.",
+    "mainHeading": "Znajdź swojego eksperta.",
+    "subHeading": "Przeszukaj tysiące certyfikowanych trenerów, aby osiągnąć swoje cele fitness.",
+    "growBusinessHeading": "Rozwijaj swój biznes trenerski.",
+    "growBusinessSubheading": "Dołącz do społeczności najlepszych profesjonalistów. Zapewniamy narzędzia do budowania marki, nawiązywania kontaktów z klientami i płynnego zarządzania harmonogramem.",
+    "createFreeProfile": "Utwórz darmowy profil"
+  },
+  "TrainerSearch": {
+    "inPerson": "Na żywo",
+    "online": "Online",
+    "specialtyPlaceholder": "Specjalizacja lub imię trenera",
+    "locationPlaceholder": "Miasto lub kod pocztowy",
+    "search": "Szukaj",
+    "searching": "Wyszukiwanie..."
+  },
+  "TrainersPage": {
+    "title": "Znajdź trenera personalnego",
+    "description": "Przeglądaj nasz katalog certyfikowanych i doświadczonych trenerów personalnych. Znajdź odpowiedniego trenera fitness w pobliżu lub online, który pomoże Ci osiągnąć Twoje cele zdrowotne i fitness.",
+    "heading": "Poznaj naszych trenerów",
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "emptyStateTitle": "Nie znaleziono trenerów",
+    "emptyStateDescription": "Spróbuj zmienić zapytanie lub lokalizację."
+  },
+  "SortControl": {
+    "sortBy": "Sortuj według:",
+    "nameAsc": "Nazwa (A-Z)",
+    "nameDesc": "Nazwa (Z-A)",
+    "newest": "Najnowsi"
+  },
+  "TrainerResultCard": {
+    "viewProfile": "Zobacz profil",
+    "loading": "Ładowanie..."
+  },
+  "TrainerProfilePage": {
+    "bookSession": "Zarezerwuj sesję",
+    "aboutMe": "O mnie",
+    "myPhilosophy": "Moja filozofia",
+    "myMethodology": "Moja metodologia",
+    "whyTrainWithMe": "Dlaczego warto ze mną trenować?",
+    "servicesOffered": "Oferowane usługi",
+    "clientTransformations": "Metamorfozy klientów",
+    "whatClientsSay": "Co mówią klienci",
+    "findMeOnline": "Znajdź mnie online"
+  },
+  "PublicCalendar": {
+    "heading": "Zarezerwuj sesję",
+    "prevMonth": "Poprzedni miesiąc",
+    "nextMonth": "Następny miesiąc",
+    "availableSlotsFor": "Dostępne terminy na {date}",
+    "noSlots": "Brak dostępnych terminów.",
+    "confirmFor": "Potwierdź rezerwację na {date} o {time}",
+    "yourNamePlaceholder": "Twoje imię",
+    "yourEmailPlaceholder": "Twój email",
+    "notesPlaceholder": "Dodatkowe uwagi dla trenera (opcjonalnie)",
+    "confirmBooking": "Potwierdź rezerwację",
+    "confirming": "Potwierdzanie...",
+    "bookingConfirmedTitle": "Rezerwacja potwierdzona!",
+    "bookingConfirmedDescription": "Sprawdź swoją skrzynkę mailową, aby poznać szczegóły."
+  },
+  "ContactForm": {
+    "yourName": "Twoje imię",
+    "yourEmail": "Twój email",
+    "message": "Wiadomość",
+    "sendMessage": "Wyślij wiadomość",
+    "sending": "Wysyłanie...",
+    "successMessage": "Twoja wiadomość została wysłana pomyślnie! (Symulacja)"
   }
 }

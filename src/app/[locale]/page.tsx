@@ -4,16 +4,24 @@ import TrainerSearch from "@/components/home/TrainerSearch";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "Find Your Perfect Personal Trainer | ZIRO.FIT",
-  description: "Search and book certified personal trainers for online or in-person sessions. Achieve your fitness goals with the right expert from ZIRO.FIT.",
-  alternates: {
-    canonical: "/",
-  },
-};
+export async function generateMetadata({params: {locale}}): Promise<Metadata> {
+  const t = await getTranslations({locale, namespace: 'HomePage'});
+  
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: "/",
+    },
+  };
+}
+
 
 export default function Home() {
+  const t = useTranslations('HomePage');
   return (
     <PublicLayout>
       <div className="flex flex-col flex-grow">
@@ -28,15 +36,15 @@ export default function Home() {
         <section className="py-20 sm:py-32 bg-neutral-50 dark:bg-black">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              Grow your training business.
+              {t('growBusinessHeading')}
             </h2>
             <p className="mt-6 text-lg text-neutral-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Join a community of top-tier professionals. We provide the tools to build your brand, connect with clients, and manage your schedule seamlessly.
+              {t('growBusinessSubheading')}
             </p>
             <div className="mt-10">
               <Button asChild size="lg">
                 <Link href="/auth/register">
-                  Create Your Free Profile
+                  {t('createFreeProfile')}
                 </Link>
               </Button>
             </div>

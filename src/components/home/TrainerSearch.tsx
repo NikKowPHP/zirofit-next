@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -9,8 +10,12 @@ import {
   VideoCameraIcon,
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export default function TrainerSearch() {
+  const t = useTranslations('TrainerSearch');
+  const tHome = useTranslations('HomePage');
+
   const [activeTab, setActiveTab] = useState<"in-person" | "online">(
     "in-person"
   );
@@ -68,20 +73,20 @@ export default function TrainerSearch() {
     <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center pt-30">
       <div className="px-4">
         <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-4 tracking-tight">
-          Find your expert.
+          {tHome('mainHeading')}
         </h1>
         <h2 className="text-xl md:text-2xl text-center text-neutral-600 dark:text-neutral-400 mb-10">
-          Search thousands of certified trainers to achieve your fitness goals.
+          {tHome('subHeading')}
         </h2>
       </div>
       <div className=" w-full p-8">
         <div className="flex justify-center mb-4">
           <TabButton
-            label="In-Person"
+            label={t('inPerson')}
             tabId="in-person"
             icon={BuildingStorefrontIcon}
           />
-          <TabButton label="Online" tabId="online" icon={VideoCameraIcon} />
+          <TabButton label={t('online')} tabId="online" icon={VideoCameraIcon} />
         </div>
         <div className="w-full">
           <form
@@ -96,7 +101,7 @@ export default function TrainerSearch() {
               <Input
                 id="search-query"
                 type="text"
-                placeholder="Specialty or Trainer Name"
+                placeholder={t('specialtyPlaceholder')}
                 value={query}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setQuery(e.target.value)
@@ -109,7 +114,7 @@ export default function TrainerSearch() {
                 <Input
                   id="search-location"
                   type="text"
-                  placeholder="City or ZIP code"
+                  placeholder={t('locationPlaceholder')}
                   value={location}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setLocation(e.target.value)
@@ -148,10 +153,10 @@ export default function TrainerSearch() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Searching...
+                    {t('searching')}
                   </div>
                 ) : (
-                  "Search"
+                  t('search')
                 )}
               </Button>
             </div>

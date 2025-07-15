@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 // import Image from 'next/image'; // For logo
-import { useTheme } from "@/context/ThemeContext";
+import { useTranslations } from "next-intl";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -17,7 +17,7 @@ interface PublicLayoutProps {
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
-  // const { theme } = useTheme();
+  const t = useTranslations("PublicLayout");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,7 +82,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                         href="/trainers"
                         className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                       >
-                        Find Trainers
+                        {t('findTrainers')}
                       </Link>
                       {user ? (
                         <>
@@ -90,17 +90,17 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                             href="/dashboard"
                             className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                           >
-                            Dashboard
+                            {t('dashboard')}
                           </Link>
                           <LogoutButton />
                         </>
                       ) : (
                         <>
                           <Button asChild variant="secondary" size="md">
-                            <Link href="/auth/login">Trainer Login</Link>
+                            <Link href="/auth/login">{t('trainerLogin')}</Link>
                           </Button>
                           <Button asChild variant="primary" size="md">
-                            <Link href="/auth/register">Trainer Sign Up</Link>
+                            <Link href="/auth/register">{t('trainerSignUp')}</Link>
                           </Button>
                         </>
                       )}
@@ -143,7 +143,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                   className="text-2xl font-bold text-gray-800 dark:text-gray-200"
                   onClick={toggleMobileMenu}
                 >
-                  Find Trainers
+                  {t('findTrainers')}
                 </Link>
                 {user ? (
                   <>
@@ -152,7 +152,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       className="text-2xl font-bold text-gray-800 dark:text-gray-200"
                       onClick={toggleMobileMenu}
                     >
-                      Dashboard
+                      {t('dashboard')}
                     </Link>
                     <LogoutButton />
                   </>
@@ -160,10 +160,10 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                   <>
                     <div className="flex flex-col items-center space-y-4 pt-8">
                       <Button asChild variant="secondary" size="lg" onClick={toggleMobileMenu}>
-                          <Link href="/auth/login">Trainer Login</Link>
+                          <Link href="/auth/login">{t('trainerLogin')}</Link>
                       </Button>
                       <Button asChild size="lg" onClick={toggleMobileMenu}>
-                          <Link href="/auth/register">Trainer Sign Up</Link>
+                          <Link href="/auth/register">{t('trainerSignUp')}</Link>
                       </Button>
                     </div>
                   </>
@@ -186,13 +186,13 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       <footer className="bg-neutral-50 dark:bg-black border-t border-neutral-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            © {new Date().getFullYear()} ZIRO.FIT. All rights reserved.
+            {t('allRightsReserved', { year: new Date().getFullYear() })}
           </p>
           <nav className="mt-4">
             <div className="flex justify-center space-x-4">
-              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Contact</Link>
+              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">{t('privacyPolicy')}</Link>
+              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">{t('termsOfService')}</Link>
+              <Link href="#" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">{t('contact')}</Link>
             </div>
           </nav>
         </div>

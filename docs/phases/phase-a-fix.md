@@ -1,19 +1,3 @@
-### [BASH_COMMANDS]
-```bash
-mkdir -p src/messages
-mkdir -p "src/app/[locale]"
-mv src/app/auth "src/app/[locale]/auth"
-mv src/app/clients "src/app/[locale]/clients"
-mv src/app/dashboard "src/app/[locale]/dashboard"
-mv src/app/profile "src/app/[locale]/profile"
-mv src/app/trainer "src/app/[locale]/trainer"
-mv src/app/trainers "src/app/[locale]/trainers"
-mv src/app/layout.tsx "src/app/[locale]/layout.tsx"
-mv src/app/page.tsx "src/app/[locale]/page.tsx"
-touch src/i18n.ts
-touch src/messages/en.json
-touch src/messages/pl.json
-```
 ### docs/phases/phase-a-fix.md
 ```markdown
 Understood. That is a very practical and common approach for the initial phase of internationalization. We will focus exclusively on translating the application's UI and system-generated text, leaving all user-generated content (like trainer bios, service descriptions, testimonials, etc.) in its original language.
@@ -61,19 +45,19 @@ Here is the revised, step-by-step task plan based on this clear constraint.
 
 ### **Phase B: Translating Public-Facing UI**
 
-*   [ ] **Task 2.1: Translate Shared Public Layout**
+*   [x] **Task 2.1: Translate Shared Public Layout**
     *   In `PublicLayout` (`/src/components/layouts/PublicLayout.tsx`), translate all navigation links, button text, and footer content.
 
-*   [ ] **Task 2.2: Translate Home Page**
+*   [x] **Task 2.2: Translate Home Page**
     *   In `src/app/[locale]/page.tsx`, translate metadata and headings.
     *   In `TrainerSearch` (`/src/components/home/TrainerSearch.tsx`), translate tab names ("In-Person", "Online"), placeholders, and the "Search" button.
 
-*   [ ] **Task 2.3: Translate Trainer Search Page**
+*   [x] **Task 2.3: Translate Trainer Search Page**
     *   In `src/app/[locale]/trainers/page.tsx`, translate the "Meet Our Trainers" heading, pagination controls, and any `EmptyState` text.
     *   Translate options within `SortControl`.
     *   Translate the "View Profile" button in `TrainerResultCard`.
 
-*   [ ] **Task 2.4: Translate Public Trainer Profile Page**
+*   [x] **Task 2.4: Translate Public Trainer Profile Page**
     *   In `src/app/[locale]/trainer/[username]/page.tsx`, translate all UI-chrome headings like "About Me", "Services Offered", "What Clients Say", and "Book a Session".
     *   In `PublicCalendar`, translate all calendar UI text, including month/day names, button labels, and form placeholders.
     *   In `ContactForm`, translate all form labels and the "Send Message" button.
@@ -128,104 +112,36 @@ Here is the revised, step-by-step task plan based on this clear constraint.
 *   **Database Content Translation:** The schema will **not** be modified. All data entered by trainers will be stored and displayed in a single language.
 *   **Data Migration:** No data migration is needed as the schema is not changing.
 ```
-### package.json
-```json
-
-```
-### src/i18n.ts
-```typescript
-
-```
 ### src/messages/en.json
 ```json
-
 ```
 ### src/messages/pl.json
 ```json
 ```
-### src/middleware.ts
-```typescript
-```
-### src/app/[locale]/layout.tsx
-```tsx
-```
 ### src/app/[locale]/page.tsx
 ```tsx
-```
-### src/app/[locale]/auth/actions.ts
-```typescript
-```
-### src/app/[locale]/auth/login/page.client.tsx
-```tsx
-```
-### src/app/[locale]/auth/login/page.tsx
-```tsx
-```
-### src/app/[locale]/auth/register/page.client.tsx
-```tsx
-```
-### src/app/[locale]/auth/register/page.tsx
-```tsx
-```
-### src/app/[locale]/clients/[clientId]/edit/page.tsx
-```tsx
-```
-### src/app/[locale]/clients/[clientId]/layout.tsx
-```tsx
-```
-### src/app/[locale]/clients/[clientId]/page.tsx
-```tsx
-```
-### src/app/[locale]/clients/actions.ts
-```typescript
-```
-### src/app/[locale]/clients/create/page.tsx
-```tsx
-```
-### src/app/[locale]/clients/layout.tsx
-```tsx
-```
-### src/app/[locale]/clients/page.tsx
-```tsx
-```
-### src/app/[locale]/dashboard/DashboardContent.tsx
-```tsx
-```
-### src/app/[locale]/dashboard/bookings/page.tsx
-```tsx
-```
-### src/app/[locale]/dashboard/layout.tsx
-```tsx
-```
-### src/app/[locale]/dashboard/page.tsx
-```tsx
-```
-### src/app/[locale]/profile/actions.ts
-```typescript
-```
-### src/app/[locale]/profile/edit/page.tsx
-```tsx
-```
-### src/app/[locale]/profile/layout.tsx
-```tsx
-```
-### src/app/[locale]/profile/revalidate.ts
-```typescript
-```
-### src/app/[locale]/trainer/[username]/loading.tsx
-```tsx
-
 ```
 ### src/app/[locale]/trainer/[username]/page.tsx
 ```tsx
 ```
-### src/app/[locale]/trainer/actions.ts
-```typescript
-```
 ### src/app/[locale]/trainers/page.tsx
 ```tsx
-
 ```
-### src/components/auth/LogoutButton.tsx
+### src/components/home/TrainerSearch.tsx
+```tsx
+```
+### src/components/layouts/PublicLayout.tsx
+```tsx
+```
+### src/components/trainer/ContactForm.tsx
+```tsx
+```
+### src/components/trainer/PublicCalendar.tsx
+```tsx
+```
+### src/components/trainers/SortControl.tsx
+```tsx
+```
+### src/components/trainers/TrainerResultCard.tsx
 ```tsx
 ```

@@ -1,3 +1,4 @@
+
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
 import Link from "next/link";
@@ -10,15 +11,19 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { TrainerGrid } from "@/components/trainers/TrainerGrid";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "Find a Personal Trainer",
-  description:
-    "Browse our directory of certified and experienced personal trainers. Find the right fitness coach near you or online to help you achieve your health and fitness goals.",
-  alternates: {
-    canonical: "/trainers",
-  },
-};
+export async function generateMetadata({params: {locale}}): Promise<Metadata> {
+  const t = await getTranslations({locale, namespace: 'TrainersPage'});
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: "/trainers",
+    },
+  };
+}
 
 interface Trainer {
   id: string;
@@ -68,6 +73,7 @@ async function TrainerList({
   location?: string;
   sortBy?: string;
 }) {
+  const t = await getTranslations('TrainersPage');
   const { trainers, totalPages, error } = await getPublishedTrainers(
     page,
     15,
@@ -89,8 +95,8 @@ async function TrainerList({
       <div className="lg:col-span-3">
         <EmptyState
           icon={<MagnifyingGlassIcon className="h-12 w-12 text-gray-400" />}
-          title="No trainers found"
-          description="Try adjusting your search query or location."
+          title={t('emptyStateTitle')}
+          description={t('emptyStateDescription')}
         />
       </div>
     );
@@ -121,7 +127,7 @@ async function TrainerList({
         <div className="lg:col-span-3 mt-12 flex justify-center items-center space-x-2">
           {page > 1 && (
             <Button asChild variant="secondary" size="sm">
-              <Link href={getPageUrl(page - 1)}>Previous</Link>
+              <Link href={getPageUrl(page - 1)}>{t('previous')}</Link>
             </Button>
           )}
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -136,7 +142,7 @@ async function TrainerList({
           ))}
           {page < totalPages && (
             <Button asChild variant="secondary" size="sm">
-              <Link href={getPageUrl(page + 1)}>Next</Link>
+              <Link href={getPageUrl(page + 1)}>{t('next')}</Link>
             </Button>
           )}
         </div>
@@ -150,6 +156,7 @@ export default async function TrainersPage({
 }: {
   searchParams?: Promise<{ page?: string; q?: string; location?: string; sortBy?: string }>;
 }) {
+  const t = await getTranslations('TrainersPage');
   const resolvedSearchParams = await searchParams;
   const currentPage = Number(resolvedSearchParams?.page) || 1;
   const query = resolvedSearchParams?.q;
@@ -162,7 +169,7 @@ export default async function TrainersPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-4 pt-40 pb-12">
           <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Meet Our Trainers
+              {t('heading')}
             </h1>
             <SortControl />
           </div>

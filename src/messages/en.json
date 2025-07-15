@@ -1,3 +1,4 @@
+
 {
   "ZodErrors": {
     "name_min_2": "Name must be at least 2 characters",
@@ -27,5 +28,85 @@
     "platform_required": "Platform is required.",
     "username_required": "Username is required.",
     "testimonial_text_min_10": "Testimonial text is required."
+  },
+  "PublicLayout": {
+    "findTrainers": "Find Trainers",
+    "dashboard": "Dashboard",
+    "trainerLogin": "Trainer Login",
+    "trainerSignUp": "Trainer Sign Up",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "contact": "Contact",
+    "allRightsReserved": "© {year} ZIRO.FIT. All rights reserved."
+  },
+  "HomePage": {
+    "title": "Find Your Perfect Personal Trainer | ZIRO.FIT",
+    "description": "Search and book certified personal trainers for online or in-person sessions. Achieve your fitness goals with the right expert from ZIRO.FIT.",
+    "mainHeading": "Find your expert.",
+    "subHeading": "Search thousands of certified trainers to achieve your fitness goals.",
+    "growBusinessHeading": "Grow your training business.",
+    "growBusinessSubheading": "Join a community of top-tier professionals. We provide the tools to build your brand, connect with clients, and manage your schedule seamlessly.",
+    "createFreeProfile": "Create Your Free Profile"
+  },
+  "TrainerSearch": {
+    "inPerson": "In-Person",
+    "online": "Online",
+    "specialtyPlaceholder": "Specialty or Trainer Name",
+    "locationPlaceholder": "City or ZIP code",
+    "search": "Search",
+    "searching": "Searching..."
+  },
+  "TrainersPage": {
+    "title": "Find a Personal Trainer",
+    "description": "Browse our directory of certified and experienced personal trainers. Find the right fitness coach near you or online to help you achieve your health and fitness goals.",
+    "heading": "Meet Our Trainers",
+    "previous": "Previous",
+    "next": "Next",
+    "emptyStateTitle": "No trainers found",
+    "emptyStateDescription": "Try adjusting your search query or location."
+  },
+  "SortControl": {
+    "sortBy": "Sort by:",
+    "nameAsc": "Name (A-Z)",
+    "nameDesc": "Name (Z-A)",
+    "newest": "Newest"
+  },
+  "TrainerResultCard": {
+    "viewProfile": "View Profile",
+    "loading": "Loading..."
+  },
+  "TrainerProfilePage": {
+    "bookSession": "Book a Session",
+    "aboutMe": "About Me",
+    "myPhilosophy": "My Philosophy",
+    "myMethodology": "My Methodology",
+    "whyTrainWithMe": "Why Train With Me?",
+    "servicesOffered": "Services Offered",
+    "clientTransformations": "Client Transformations",
+    "whatClientsSay": "What Clients Say",
+    "findMeOnline": "Find Me Online"
+  },
+  "PublicCalendar": {
+    "heading": "Book a Session",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "availableSlotsFor": "Available slots for {date}",
+    "noSlots": "No available slots.",
+    "confirmFor": "Confirm for {date} at {time}",
+    "yourNamePlaceholder": "Your Name",
+    "yourEmailPlaceholder": "Your Email",
+    "notesPlaceholder": "Any notes for the trainer? (optional)",
+    "confirmBooking": "Confirm Booking",
+    "confirming": "Confirming...",
+    "bookingConfirmedTitle": "Booking Confirmed!",
+    "bookingConfirmedDescription": "Check your email for details."
+  },
+  "ContactForm": {
+    "yourName": "Your Name",
+    "yourEmail": "Your Email",
+    "message": "Message",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "successMessage": "Your message has been sent successfully! (Simulated)"
   }
 }

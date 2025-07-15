@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { createBooking } from "@/app/profile/actions/booking-actions";
+import { createBooking } from "@/app/[locale]/profile/actions/booking-actions";
 import { Button, Input, Textarea, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { 
     format, 
@@ -22,6 +23,7 @@ import {
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 type ScheduleData = {
   availability: Record<string, string[]>;
@@ -29,6 +31,7 @@ type ScheduleData = {
 };
 
 function SubmitButton() {
+  const t = useTranslations('PublicCalendar');
   const { pending } = useFormStatus();
 
   return (
@@ -55,10 +58,10 @@ function SubmitButton() {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          Confirming...
+          {t('confirming')}
         </>
       ) : (
-        "Confirm Booking"
+        t('confirmBooking')
       )}
     </Button>
   );
@@ -72,6 +75,7 @@ export default function PublicCalendar({
   trainerId: string;
   initialSchedule: ScheduleData;
 }) {
+  const t = useTranslations('PublicCalendar');
   const [schedule] = useState<ScheduleData>({
     ...initialSchedule,
     bookings: initialSchedule.bookings.map(b => ({
@@ -169,8 +173,8 @@ export default function PublicCalendar({
     return (
       <CardContent>
         <div className="p-4 mt-6 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md text-center">
-            <h3 className="font-semibold">Booking Confirmed!</h3>
-            <p className="text-sm">Check your email for details.</p>
+            <h3 className="font-semibold">{t('bookingConfirmedTitle')}</h3>
+            <p className="text-sm">{t('bookingConfirmedDescription')}</p>
         </div>
       </CardContent>
     );
@@ -182,7 +186,7 @@ export default function PublicCalendar({
   return (
     <>
       <CardHeader>
-        <CardTitle>Book a Session</CardTitle>
+        <CardTitle>{t('heading')}</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Calendar */}
@@ -193,12 +197,12 @@ export default function PublicCalendar({
                 variant="secondary" 
                 size="sm"
                 disabled={isSameMonth(currentDate, new Date())}
-                aria-label="Previous month"
+                aria-label={t('prevMonth')}
               >
                   <ChevronLeftIcon className="h-5 w-5" />
               </Button>
               <h4 className="font-semibold text-lg">{format(currentDate, "MMMM yyyy")}</h4>
-              <Button onClick={goToNextMonth} variant="secondary" size="sm" aria-label="Next month">
+              <Button onClick={goToNextMonth} variant="secondary" size="sm" aria-label={t('nextMonth')}>
                   <ChevronRightIcon className="h-5 w-5" />
               </Button>
           </div>
@@ -236,7 +240,7 @@ export default function PublicCalendar({
         {/* Time Slots */}
         {selectedDate && (
             <div className="mt-4">
-                <h4 className="font-semibold text-sm mb-2">Available slots for {format(selectedDate, "MMMM d, yyyy")}</h4>
+                <h4 className="font-semibold text-sm mb-2">{t('availableSlotsFor', { date: format(selectedDate, "MMMM d, yyyy")})}</h4>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {availableTimeSlots.length > 0 ? availableTimeSlots.map(time => (
                         <Button
@@ -248,7 +252,7 @@ export default function PublicCalendar({
                             {time}
                         </Button>
                     )) : (
-                        <p className="text-gray-500 col-span-full text-sm">No available slots.</p>
+                        <p className="text-gray-500 col-span-full text-sm">{t('noSlots')}</p>
                     )}
                 </div>
             </div>
@@ -258,7 +262,7 @@ export default function PublicCalendar({
         {selectedDate && selectedTime && (
           <form action={formAction} className="mt-6 space-y-4 border-t dark:border-neutral-800 pt-6">
             <h4 className="font-semibold text-sm">
-              Confirm for {format(selectedDate, 'MMMM d, yyyy')} at {selectedTime}
+              {t('confirmFor', { date: format(selectedDate, 'MMMM d, yyyy'), time: selectedTime })}
             </h4>
             <input type="hidden" name="trainerId" value={trainerId} />
             <input
@@ -273,15 +277,15 @@ export default function PublicCalendar({
             />
 
             <div>
-              <Input name="clientName" placeholder="Your Name" required />
+              <Input name="clientName" placeholder={t('yourNamePlaceholder')} required />
             </div>
             <div>
-              <Input name="clientEmail" type="email" placeholder="Your Email" required />
+              <Input name="clientEmail" type="email" placeholder={t('yourEmailPlaceholder')} required />
             </div>
             <div>
               <Textarea
                 name="clientNotes"
-                placeholder="Any notes for the trainer? (optional)"
+                placeholder={t('notesPlaceholder')}
                 rows={3}
               />
             </div>
