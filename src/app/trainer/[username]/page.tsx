@@ -161,7 +161,7 @@ export default async function TrainerProfilePage({
   return (
     <PublicLayout>
       {/* Hero Section */}
-      <section id="hero-section" className="relative bg-neutral-900 text-white -mt-[82px]">
+      <section id="hero-section" className="relative bg-neutral-900 text-white">
         <BannerImage
           src={profile.bannerImagePath || DEFAULT_BANNER_IMAGE}
           alt={`${name}'s banner`}

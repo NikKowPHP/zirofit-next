@@ -7,7 +7,7 @@ export default function Loading() {
   return (
     <PublicLayout>
       {/* Hero Section Skeleton */}
-      <section className="relative bg-neutral-900 text-white -mt-[82px]">
+      <section className="relative bg-neutral-900 text-white ">
         <div className="absolute inset-0 bg-neutral-800" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-50 text-center">
           <div className="mb-6">

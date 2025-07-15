@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { createBooking } from "@/app/profile/actions/booking-actions";
 import { Button, Input, Textarea, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { 
@@ -27,6 +27,43 @@ type ScheduleData = {
   availability: Record<string, string[]>;
   bookings: Array<{ startTime: Date; endTime: Date }>;
 };
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? (
+        <>
+          <svg
+            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Confirming...
+        </>
+      ) : (
+        "Confirm Booking"
+      )}
+    </Button>
+  );
+}
+
 
 export default function PublicCalendar({
   trainerId,
@@ -131,7 +168,7 @@ export default function PublicCalendar({
   if (formState.success) {
     return (
       <CardContent>
-        <div className="p-4 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md text-center">
+        <div className="p-4 mt-6 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-md text-center">
             <h3 className="font-semibold">Booking Confirmed!</h3>
             <p className="text-sm">Check your email for details.</p>
         </div>
@@ -248,7 +285,7 @@ export default function PublicCalendar({
                 rows={3}
               />
             </div>
-            <Button type="submit" className="w-full">Confirm Booking</Button>
+            <SubmitButton />
           </form>
         )}
       </CardContent>
