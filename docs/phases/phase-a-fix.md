@@ -151,3 +151,5 @@ This plan outlines the necessary steps to implement UI/UX refinements and add a 
     -   **File:** `src/components/clients/ClientDetailView.tsx`
     -   **Action:** Add "Exercise Performance" to the `tabs` array and `tabContent` object.
     -   **Details:** Use `React.lazy` to dynamically import the new `ManageClientExerciseLogs` component for better performance. Pass the client ID and initial exercise logs as props.
+
+

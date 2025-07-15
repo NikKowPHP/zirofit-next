@@ -1,4 +1,27 @@
 /// <reference types="node" />
+
+// Mock for react-dom hooks must be at the top
+// The useFormState and useFormStatus hooks are not available in the test environment (JSDOM), so we mock them.
+jest.mock('react-dom', () => ({
+  ...jest.requireActual('react-dom'),
+  useFormState: (action: Function, initialState: any) => {
+    // We must use `require` here because jest.mock is hoisted
+    const React = require('react'); 
+    const [state, setState] = React.useState(initialState);
+    const dispatch = async (formData: FormData) => {
+      const newState = await action(state, formData);
+      setState(newState);
+    };
+    return [state, dispatch];
+  },
+  useFormStatus: () => ({
+    pending: false,
+    data: null,
+    method: null,
+    action: null,
+  }),
+}));
+
 import '@testing-library/jest-dom';
 import { mockDeep } from 'jest-mock-extended';
 import { PrismaClient } from '@prisma/client';
@@ -52,11 +75,6 @@ Object.defineProperty(window, 'matchMedia', {
 // Mock HTMLCanvasElement.getContext for Chart.js
 if (typeof HTMLCanvasElement !== 'undefined') {
   HTMLCanvasElement.prototype.getContext = () => null;
-}
-
-// Mock for useActionState since it's a new hook and may not be in the Jest environment's React version.
-if (typeof (React as any).useActionState === 'undefined') {
-  (React as any).useActionState = require('react-dom').useFormState;
 }
 
 // Mock for ResizeObserver, used by Headless UI
