@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useExerciseLogManager } from "@/hooks/useExerciseLogManager";
 import { type ClientExerciseLog } from "@/app/clients/actions";
-import { Button, Input, Card, CardHeader, CardTitle, CardContent, EmptyState, ListSkeleton } from "@/components/ui";
+import { Button, Input, Card, CardHeader, CardTitle, CardContent, EmptyState } from "@/components/ui";
 import { PencilIcon, TrashIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { toast } from "sonner";
 import ExerciseProgressChart from "./ExerciseProgressChart";
@@ -39,6 +40,7 @@ export default function ManageClientExerciseLogs({
     searchResults,
     setSearchResults,
     isSearching,
+    setBlockSearch,
     handleDelete,
     handleEdit,
     handleCancelEdit,
@@ -48,6 +50,33 @@ export default function ManageClientExerciseLogs({
 
   const [selectedExercise, setSelectedExercise] = useState<{ id: string; name: string } | null>(null);
   const [sets, setSets] = useState<Set[]>([{ reps: "", weight: "" }]);
+
+  const resetForm = () => {
+    formRef.current?.reset();
+    setSets([{ reps: "", weight: "" }]);
+    setSelectedExercise(null);
+    setSearchQuery("");
+    setSearchResults([]);
+    handleCancelEdit();
+  };
+
+  useEffect(() => {
+    if (addState.success) {
+      toast.success(addState.message || "Log added!");
+      resetForm();
+    } else if (addState.error) {
+      toast.error(addState.error);
+    }
+  }, [addState]);
+
+  useEffect(() => {
+    if (updateState.success) {
+      toast.success(updateState.message || "Log updated!");
+      resetForm();
+    } else if (updateState.error) {
+      toast.error(updateState.error);
+    }
+  }, [updateState]);
 
   const groupedLogs = useMemo(() => {
     return logs.reduce(
@@ -83,16 +112,9 @@ export default function ManageClientExerciseLogs({
     setSelectedExercise(exercise);
     setSearchQuery(exercise.name);
     setSearchResults([]);
+    setBlockSearch(true);
   };
 
-  const resetForm = () => {
-    formRef.current?.reset();
-    setSets([{ reps: "", weight: "" }]);
-    setSelectedExercise(null);
-    setSearchQuery("");
-    handleCancelEdit();
-  };
-  
   return (
     <>
       <DeleteConfirmationModal
@@ -149,13 +171,20 @@ export default function ManageClientExerciseLogs({
                 <input type="hidden" name="sets" value={JSON.stringify(sets.map(s => ({ reps: Number(s.reps), weight: Number(s.weight) })))} />
                 <div className="space-y-2">
                 {sets.map((set, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="font-mono text-sm">{index + 1}.</span>
-                    <Input type="number" placeholder="Reps" value={set.reps} onChange={(e) => handleSetChange(index, 'reps', e.target.value)} required />
-                    <Input type="number" placeholder="Weight (kg)" value={set.weight} onChange={(e) => handleSetChange(index, 'weight', e.target.value)} required />
-                    <Button type="button" variant="danger" size="sm" onClick={() => removeSet(index)} disabled={sets.length === 1}>
-                      <XMarkIcon className="h-4 w-4" />
-                    </Button>
+                  <div key={index} className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-grow min-w-[200px]">
+                      <span className="font-mono text-sm">{index + 1}.</span>
+                      <Input type="number" placeholder="Reps" value={set.reps} onChange={(e) => handleSetChange(index, 'reps', e.target.value)} required className="min-w-0" />
+                      <Input type="number" placeholder="Weight (kg)" value={set.weight} onChange={(e) => handleSetChange(index, 'weight', e.target.value)} required className="min-w-0" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button type="button" variant="secondary" size="sm" onClick={() => handleSetChange(index, 'weight', '0')}>
+                        0 kg
+                      </Button>
+                      <Button type="button" variant="danger" size="sm" onClick={() => removeSet(index)} disabled={sets.length === 1}>
+                        <XMarkIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
                 </div>

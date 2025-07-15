@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 interface FormState {
@@ -27,13 +28,25 @@ export function useServerActionToast({
   formState,
   onSuccess,
 }: UseServerActionToastProps) {
+  const stateRef = useRef(formState);
+  const onSuccessRef = useRef(onSuccess);
+
+  // Keep the onSuccess callback reference updated
   useEffect(() => {
-    // We check for `error` first. The `message` might be present in both cases.
-    if (formState?.error) {
-      toast.error(formState.error);
-    } else if (formState?.success && formState?.message) {
-      toast.success(formState.message);
-      onSuccess?.();
+    onSuccessRef.current = onSuccess;
+  }, [onSuccess]);
+
+  useEffect(() => {
+    // Only trigger on actual state change, not on re-renders from the parent
+    if (formState !== stateRef.current) {
+      if (formState?.error) {
+        toast.error(formState.error);
+      } else if (formState?.success && formState?.message) {
+        toast.success(formState.message);
+        onSuccessRef.current?.();
+      }
+      // Update the ref to the new state so it doesn't fire again until the state changes again
+      stateRef.current = formState;
     }
-  }, [formState, onSuccess]);
+  }, [formState]);
 }

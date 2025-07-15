@@ -1,8 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { useFormState } from "react-dom";
+import { useState, useRef, useEffect, useActionState } from "react";
 import {
   addExerciseLog,
   updateExerciseLog,
@@ -13,7 +12,6 @@ import {
   type Exercise,
 } from "@/app/clients/actions/exercise-log-actions";
 import { toast } from "sonner";
-import { useServerActionToast } from "./useServerActionToast";
 
 interface UseExerciseLogManagerProps {
   initialExerciseLogs: ClientExerciseLog[];
@@ -33,9 +31,13 @@ export const useExerciseLogManager = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Exercise[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [blockSearch, setBlockSearch] = useState(false);
 
-  const [addState, addAction] = useFormState(addExerciseLog, initialActionState);
-  const [updateState, updateAction] = useFormState(
+  const [addState, addAction] = useActionState(
+    addExerciseLog,
+    initialActionState,
+  );
+  const [updateState, updateAction] = useActionState(
     updateExerciseLog,
     initialActionState,
   );
@@ -45,41 +47,32 @@ export const useExerciseLogManager = ({
     ? logs.find((l) => l.id === editingLogId)
     : null;
 
-  useServerActionToast({
-    formState: addState,
-    onSuccess: () => {
-      if (addState.newLog) {
-        setLogs((prev) =>
-          [...prev, addState.newLog!].sort(
+  useEffect(() => {
+    if (addState.success && addState.newLog) {
+      setLogs((prev) =>
+        [...prev, addState.newLog!].sort(
+          (a, b) =>
+            new Date(b.logDate).getTime() - new Date(a.logDate).getTime(),
+        ),
+      );
+    }
+  }, [addState]);
+
+  useEffect(() => {
+    if (updateState.success && updateState.updatedLog) {
+      setLogs((prev) =>
+        prev
+          .map((l) =>
+            l.id === updateState.updatedLog!.id ? updateState.updatedLog! : l,
+          )
+          .sort(
             (a, b) =>
               new Date(b.logDate).getTime() - new Date(a.logDate).getTime(),
           ),
-        );
-        formRef.current?.reset();
-      }
-      toast.success(addState.message || "Log added!");
-    },
-  });
-
-  useServerActionToast({
-    formState: updateState,
-    onSuccess: () => {
-      if (updateState.updatedLog) {
-        setLogs((prev) =>
-          prev
-            .map((l) =>
-              l.id === updateState.updatedLog!.id ? updateState.updatedLog! : l,
-            )
-            .sort(
-              (a, b) =>
-                new Date(b.logDate).getTime() - new Date(a.logDate).getTime(),
-            ),
-        );
-        setEditingLogId(null);
-      }
-      toast.success(updateState.message || "Log updated!");
-    },
-  });
+      );
+      setEditingLogId(null);
+    }
+  }, [updateState]);
 
   const handleDelete = async (logId: string) => {
     setDeletingId(logId);
@@ -104,8 +97,11 @@ export const useExerciseLogManager = ({
 
   // Debounced search
   useEffect(() => {
-    if (searchQuery.length < 2) {
+    if (searchQuery.length < 2 || blockSearch) {
       setSearchResults([]);
+      if (blockSearch) {
+        setBlockSearch(false);
+      }
       return;
     }
 
@@ -119,7 +115,7 @@ export const useExerciseLogManager = ({
     return () => {
       clearTimeout(handler);
     };
-  }, [searchQuery]);
+  }, [searchQuery, blockSearch]);
 
   return {
     logs,
@@ -137,6 +133,7 @@ export const useExerciseLogManager = ({
     searchResults,
     setSearchResults,
     isSearching,
+    setBlockSearch,
     handleDelete,
     handleEdit,
     handleCancelEdit,

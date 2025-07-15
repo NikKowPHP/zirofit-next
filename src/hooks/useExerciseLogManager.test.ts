@@ -2,9 +2,9 @@
 import { renderHook, act } from "@testing-library/react";
 import { useExerciseLogManager } from "./useExerciseLogManager";
 import * as actions from "@/app/clients/actions/exercise-log-actions";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 
-// Mock the actions and react-dom hooks
+// Mock the actions and react hooks
 jest.mock("@/app/clients/actions/exercise-log-actions", () => ({
   addExerciseLog: jest.fn(),
   updateExerciseLog: jest.fn(),
@@ -12,12 +12,12 @@ jest.mock("@/app/clients/actions/exercise-log-actions", () => ({
   searchExercisesAction: jest.fn(),
 }));
 
-jest.mock("react-dom", () => ({
-  ...jest.requireActual("react-dom"),
-  useFormState: jest.fn(),
+jest.mock("react", () => ({
+  ...jest.requireActual("react"),
+  useActionState: jest.fn(),
 }));
 
-const mockUseFormState = useFormState as jest.Mock;
+const mockUseActionState = useActionState as jest.Mock;
 const mockSearchAction = actions.searchExercisesAction as jest.Mock;
 const mockDeleteAction = actions.deleteExerciseLog as jest.Mock;
 
@@ -45,8 +45,8 @@ describe("useExerciseLogManager", () => {
     addActionDispatch = jest.fn();
     updateActionDispatch = jest.fn();
 
-    // Setup mock for useFormState
-    mockUseFormState.mockImplementation((action, initialState) => {
+    // Setup mock for useActionState
+    mockUseActionState.mockImplementation((action, initialState) => {
       if (action === actions.addExerciseLog) {
         return [{ success: false }, addActionDispatch];
       }
