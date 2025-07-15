@@ -1,8 +1,10 @@
+
 "use server";
 
 import { z } from "zod";
 import * as bookingService from "@/lib/services/bookingService";
 import * as notificationService from "@/lib/services/notificationService";
+import { getLocale } from "next-intl/server";
 
 export interface BookingFormState {
   message?: string;
@@ -89,6 +91,7 @@ export async function createBooking(
     try {
       // In-app notification for trainer dashboard
       await notificationService.createBookingNotification(trainerId, booking);
+      const locale = await getLocale();
 
       // Email notifications
       const trainer = await bookingService.getTrainerForBooking(trainerId);
@@ -96,6 +99,7 @@ export async function createBooking(
         await notificationService.sendBookingConfirmationEmail(
           booking,
           trainer,
+          locale,
         );
       }
     } catch (e: unknown) {

@@ -1,138 +1,82 @@
-### docs/phases/phase-a-fix.md
-```markdown
-Understood. That is a very practical and common approach for the initial phase of internationalization. We will focus exclusively on translating the application's UI and system-generated text, leaving all user-generated content (like trainer bios, service descriptions, testimonials, etc.) in its original language.
+Excellent work on the internationalization effort. A significant amount of progress has been made, and the core infrastructure using `next-intl` has been implemented correctly. The routing, middleware, and server-side setup are solid foundations.
 
-This simplifies the project significantly by removing the need for database schema changes. The plan is now leaner and focuses on the chrome of the application.
+Let's break down the implementation against the plan.
 
-Here is the revised, step-by-step task plan based on this clear constraint.
+### What Was Implemented Correctly (The Wins)
 
----
+You have successfully completed a large portion of the plan, especially the foundational and most complex parts:
 
-### **Project: UI Internationalization (en/pl)**
+*   **Core Infrastructure:** The `next-intl` setup, including `i18n.ts`, the new `[locale]` directory structure, and the `NextIntlClientProvider` in the root layout, are all correctly in place.
+*   **Routing and Middleware:** The `middleware.ts` file correctly combines i18n routing with Supabase authentication, which is a critical and tricky piece of the puzzle. It properly handles redirects while preserving the locale.
+*   **Public Pages:** The main public-facing pages (`/`, `/trainers`, `/trainer/[username]`) and their shared layouts (`PublicLayout`) have been successfully translated.
+*   **Backend Logic:** You've correctly refactored server actions (`auth/actions.ts`) to use `messageKey` for translatable success/error messages, and `useServerActionToast` to consume them. The email templates are also correctly internationalized.
+*   **Zod Validation:** You've successfully implemented i18n for Zod server-side validation messages, which is an advanced and important step.
 
-**Goal:** Translate the application's user interface, system messages, validation errors, and emails into English and Polish. User-generated content from the database will remain untranslated.
+### What Is Missing or Incomplete
 
----
+While the foundation is strong, the translation effort needs to be extended to cover the entire authenticated user experience. The primary gaps are within the trainer's dashboard.
 
-### **Phase A: Core i18n Infrastructure**
+**1. Untranslated Dashboard Components (Major Gap)**
 
-*   [x] **Task 1.1: Install Dependencies**
-    *   Add `next-intl` to `package.json`.
-    *   Run `npm install`.
+*   **Issue:** A significant number of components within the authenticated dashboard (`/clients`, `/profile/edit`) still have hardcoded English strings. The translation work stopped after the main layouts and public pages.
+*   **Examples:**
+    *   `src/components/clients/ClientDetailView.tsx`: Tab names like "Statistics", "Measurements", "Progress Photos" are hardcoded.
+    *   `src/components/clients/modules/*.tsx`: All of these components (`ManageClientMeasurements`, `ManageClientSessionLogs`, etc.) contain untranslated titles, labels, placeholders, and button text (e.g., "Manage Measurements", "Add New Measurement", "Weight (kg)").
+    *   `src/components/profile/sections/*.tsx`: The profile editor sections (`BrandingEditor`, `CoreInfoEditor`, `ServicesEditor`, etc.) have hardcoded titles, labels, and button text.
 
-*   [x] **Task 1.2: Create Translation Files**
-    *   Create the `src/messages` directory.
-    *   Create `en.json` and `pl.json` inside it with some initial keys.
+**2. Date & Time Formatting**
 
-*   [x] **Task 1.3: Configure `next-intl`**
-    *   Create `src/i18n.ts` to define locales and message loading logic.
+*   **Issue:** Some components still use generic date formatting methods like `toLocaleDateString()` without passing the current locale.
+*   **Example:** In `src/app/[locale]/dashboard/_components/ActivityFeed.tsx`, the line `new Date(activity.date).toLocaleDateString()` will use the server's or browser's default locale, not the one from the URL (`en` or `pl`). This can lead to inconsistent date formats.
+*   **Fix:** Use `useFormatter` from `next-intl` or pass the locale to `toLocaleDateString({locale})` to ensure consistent formatting.
 
-*   [x] **Task 1.4: Implement Locale-based Routing**
-    *   In `src/app`, create a `[locale]` directory and move all UI-related pages and layouts into it. The `api` directory remains outside.
+**3. Language Switcher Component**
 
-*   [x] **Task 1.5: Update Middleware**
-    *   Modify `src/middleware.ts` to integrate `next-intl/middleware` for automatic locale detection and routing, while preserving existing authentication rules.
+*   **Issue:** The plan included creating a language switcher component to allow users to manually toggle between `en` and `pl`. This component has not been created or added to the layouts.
+*   **Impact:** This is a key feature for both usability and for easily testing the internationalization work.
 
-*   [x] **Task 1.6: Update Root Layout**
-    *   Modify `src/app/[locale]/layout.tsx` to:
-        *   Wrap the `<body>` content with `<NextIntlClientProvider messages={useMessages()}>`.
-        *   Set the `lang` attribute on the `<html>` tag to the current locale.
-        *   Generate alternate `hreflang` link tags in the metadata for SEO.
+### Minor Refinement
 
-*   [x] **Task 1.7: Implement I18n for Zod Validation**
-    *   Create a utility (e.g., `src/lib/zod-i18n.ts`) to provide translated error messages for Zod schemas based on the current locale.
-    *   Refactor all Zod schemas in server actions to use this new utility for user-facing validation messages.
+*   **Login Page Logic:** In `src/app/[locale]/auth/login/page.client.tsx`, the component checks for `state?.message`. However, the server action `loginUser` no longer returns a `message`, but redirects with a `messageKey` in the URL params. This part of the code is now redundant, though harmless. The check for `searchParams.get("messageKey")` is correct and handles the flow.
 
-### **Phase B: Translating Public-Facing UI**
+### Conclusion and Updated To-Do List
 
-*   [x] **Task 2.1: Translate Shared Public Layout**
-    *   In `PublicLayout` (`/src/components/layouts/PublicLayout.tsx`), translate all navigation links, button text, and footer content.
+You have successfully completed about **60%** of the internationalization plan. The most difficult structural work is done. The remaining work is primarily a matter of applying the established translation pattern across the rest of the application's components.
 
-*   [x] **Task 2.2: Translate Home Page**
-    *   In `src/app/[locale]/page.tsx`, translate metadata and headings.
-    *   In `TrainerSearch` (`/src/components/home/TrainerSearch.tsx`), translate tab names ("In-Person", "Online"), placeholders, and the "Search" button.
-
-*   [x] **Task 2.3: Translate Trainer Search Page**
-    *   In `src/app/[locale]/trainers/page.tsx`, translate the "Meet Our Trainers" heading, pagination controls, and any `EmptyState` text.
-    *   Translate options within `SortControl`.
-    *   Translate the "View Profile" button in `TrainerResultCard`.
-
-*   [x] **Task 2.4: Translate Public Trainer Profile Page**
-    *   In `src/app/[locale]/trainer/[username]/page.tsx`, translate all UI-chrome headings like "About Me", "Services Offered", "What Clients Say", and "Book a Session".
-    *   In `PublicCalendar`, translate all calendar UI text, including month/day names, button labels, and form placeholders.
-    *   In `ContactForm`, translate all form labels and the "Send Message" button.
-
-### **Phase C: Translating Authenticated Views (Dashboard)**
-
-*   [x] **Task 3.1: Translate Main Dashboard Layout & Navigation**
-    *   In `TrainerDashboardLayout` (`/src/components/layouts/TrainerDashboardLayout.tsx`), translate all sidebar navigation items and the "Logged in as" text.
-    *   Translate button text in the `LogoutButton`.
-    *   In `NotificationIndicator` and `NotificationList`, translate titles and any static text like "No notifications".
-
-*   [x] **Task 3.2: Translate Dashboard Content**
-    *   In `DashboardContent` and its sub-components (`AtAGlanceStats`, `ProfileChecklist`, `QuickActions`, etc.), translate all card titles and static labels.
-
-*   [x] **Task 3.3: Translate Client Management UI**
-    *   Translate all headings, buttons, tabs, and form elements in the entire client management flow, from the client list (`ClientGrid`) to the client detail view and all its modules (`ManageClientMeasurements`, `ManageClientSessionLogs`, etc.).
-
-*   [x] **Task 3.4: Translate Profile Editor UI**
-    *   In `ProfileEditorSidebar`, translate all section names.
-    *   In every editor component within `src/components/profile/sections/`, translate all card titles, form labels, button texts, and helper/description texts.
-
-### **Phase D: Translating Backend Messages & Emails**
-
-*   [ ] **Task 4.1: Internationalize Server Action Responses**
-    *   Refactor all server actions to return message *keys* (e.g., `{ success: true, messageKey: "profileUpdated" }`) instead of hardcoded strings.
-    *   Update client-side hooks like `useServerActionToast` to use `useTranslations` to display the correct message based on the returned key.
-
-*   [ ] **Task 4.2: Internationalize Email Templates**
-    *   Modify `sendBookingConfirmationEmail` in `notificationService.ts` to accept a `locale` parameter.
-    *   Use `getTranslations` within the service to fetch the appropriate email subject and body text from the JSON message files.
-    *   Update the `BookingConfirmation` React email component to receive all text content via props.
-
-### **Phase E: Finalization & Testing**
-
-*   [ ] **Task 5.1: Internationalize Date/Time Formatting**
-    *   Ensure all instances of `date-fns` or `.toLocaleDateString()` use the current locale for correct formatting.
-
-*   [ ] **Task 5.2: Add a Language Switcher Component**
-    *   Create a simple component that allows users to manually switch between `/en` and `/pl` routes. Add it to the main layouts.
-
-*   [ ] **Task 5.3: Comprehensive QA**
-    *   Thoroughly test the application in both English and Polish.
-    *   Verify that all UI text, validation errors, and success messages are translated.
-    *   **Crucially, verify that user-generated content (trainer bios, service titles, etc.) correctly remains untranslated.**
-    *   Check `hreflang` tags in the page source for correct SEO setup.
-    *   Trigger and inspect the booking confirmation email for both languages.
+Here is the updated, focused to-do list to complete the implementation:
 
 ---
 
-### **Out of Scope (For This Iteration)**
+### **Next Steps: Completing UI Internationalization**
 
-*   **Database Content Translation:** The schema will **not** be modified. All data entered by trainers will be stored and displayed in a single language.
-*   **Data Migration:** No data migration is needed as the schema is not changing.
-```
-### src/messages/en.json
-```json
-```
-### src/messages/pl.json
-```json
-```
-### src/app/[locale]/clients/actions/client-actions.ts
-```typescript
-```
-### src/components/auth/LogoutButton.tsx
-```tsx
-```
-### src/components/layouts/TrainerDashboardLayout.tsx
-```tsx
-```
-### src/components/notifications/NotificationIndicator.tsx
-```tsx
-```
-### src/components/notifications/NotificationList.tsx
-```tsx
-```
-### src/app/[locale]/dashboard/DashboardContent.tsx
-```tsx
-```
+**Phase 1: Translate All Remaining Dashboard Components**
+
+*   [ ] **Task 1.1: Translate Client Management UI:**
+    *   Go through every file in `src/components/clients/` and `src/components/clients/modules/`.
+    *   Use the `useTranslations` hook to replace all hardcoded strings (titles, labels, buttons, empty states, etc.) with keys from `en.json` and `pl.json`.
+
+*   [ ] **Task 1.2: Translate Profile Editor UI:**
+    *   Go through every file in `src/components/profile/sections/`.
+    *   Use `useTranslations` to translate all titles, labels, buttons, placeholders, and helper text.
+    *   Update `ProfileEditorSidebar` to translate the section names.
+
+**Phase 2: Finalization & Polish**
+
+*   [ ] **Task 2.1: Implement Consistent Date Formatting:**
+    *   Search the project for any instances of `.toLocaleDateString()`, `.toLocaleTimeString()`, and `format()` from `date-fns`.
+    *   Ensure they are all passed the current `locale` to guarantee correct formatting for both English and Polish users.
+
+*   [ ] **Task 2.2: Create and Add Language Switcher:**
+    *   Create a new component (`LanguageSwitcher.tsx`).
+    *   Use the `useRouter` and `usePathname` from `next-intl/client` to build links that switch the locale.
+    *   Add this component to a visible part of the `PublicLayout` and `TrainerDashboardLayout` headers.
+
+**Phase 3: Final QA**
+
+*   [ ] **Task 3.1: Full Application Review:**
+    *   Navigate through every single page and component in both `/en` and `/pl`.
+    *   Verify that no English text remains on Polish pages (except for user-generated content).
+    *   Test all forms, server actions, and toast notifications to ensure messages are translated.
+    *   Send a test booking confirmation email and verify it is translated correctly.
+
+By completing these remaining tasks, the application's UI will be fully internationalized as planned.

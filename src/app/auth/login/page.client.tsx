@@ -1,14 +1,12 @@
-
 // src/app/auth/login/page.client.tsx
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { loginUser } from "../actions";
-import PublicLayout from "../../../../components/layouts/PublicLayout";
+import { loginUser } from "./actions";
+import PublicLayout from "../../../components/layouts/PublicLayout";
 import { Input, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
 
 interface FormState {
   message: string | null;
@@ -39,10 +37,7 @@ function SubmitButton() {
 export default function LoginPage() {
   const [state, formAction] = useFormState(loginUser, initialState);
   const searchParams = useSearchParams();
-  const t = useTranslations('ServerActions');
-  const messageKey = searchParams.get("messageKey");
-  const successMessage = messageKey ? t(messageKey) : null;
-  const errorMessage = searchParams.get("error");
+  const successMessage = searchParams.get("message");
 
   return (
     <PublicLayout>
@@ -57,14 +52,14 @@ export default function LoginPage() {
                 {state.error}
               </p>
             )}
-            {errorMessage && !state.error && (
-              <p className="text-red-500 text-sm mb-4 bg-red-100 dark:bg-red-900/20 p-3 rounded-md">
-                {errorMessage}
-              </p>
-            )}
             {successMessage && !state.error && (
               <p className="text-green-600 text-sm mb-4 bg-green-100 dark:bg-green-900/20 p-3 rounded-md">
                 {successMessage}
+              </p>
+            )}
+            {state?.message && !state.error && !successMessage && (
+              <p className="text-green-600 text-sm mb-4 bg-green-100 dark:bg-green-900/20 p-3 rounded-md">
+                {state.message}
               </p>
             )}
 

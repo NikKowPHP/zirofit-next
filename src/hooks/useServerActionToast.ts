@@ -3,11 +3,12 @@
 
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface FormState {
   success?: boolean;
   error?: string | null;
-  message?: string | null;
+  messageKey?: string | null;
   // Allows for Zod-flattened errors, but we don't use them directly in the toast
   errors?: any;
 }
@@ -28,6 +29,7 @@ export function useServerActionToast({
   formState,
   onSuccess,
 }: UseServerActionToastProps) {
+  const t = useTranslations('ServerActions');
   const stateRef = useRef(formState);
   const onSuccessRef = useRef(onSuccess);
 
@@ -41,12 +43,12 @@ export function useServerActionToast({
     if (formState !== stateRef.current) {
       if (formState?.error) {
         toast.error(formState.error);
-      } else if (formState?.success && formState?.message) {
-        toast.success(formState.message);
+      } else if (formState?.success && formState?.messageKey) {
+        toast.success(t(formState.messageKey));
         onSuccessRef.current?.();
       }
       // Update the ref to the new state so it doesn't fire again until the state changes again
       stateRef.current = formState;
     }
-  }, [formState]);
+  }, [formState, t]);
 }

@@ -1,5 +1,5 @@
 
-import { getClientDetails } from "../../actions";
+import { getClientDetails } from "../actions";
 import { notFound } from "next/navigation";
 import ClientDetailView from "@/components/clients/ClientDetailView";
 

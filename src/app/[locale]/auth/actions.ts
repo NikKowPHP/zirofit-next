@@ -134,11 +134,8 @@ export async function registerUser(
     };
   }
 
-  // For now, redirect to login. Later, might redirect to a "check your email" page if confirmation is enabled.
-  // Or directly to dashboard if auto-login after signup is desired (Supabase handles session)
-  // Supabase signUp by default logs the user in.
-  // return { success: true, message: "Registration successful! Please log in." };
-  redirect("/auth/login?message=Registration successful! Please log in."); // Redirect after successful creation
+  const locale = await getLocale();
+  redirect(`/${locale}/auth/login?messageKey=registrationSuccess`);
 }
 
 const getLoginSchema = async () => {
@@ -192,9 +189,8 @@ export async function loginUser(
     return { error: error.message || "Failed to log in.", success: false };
   }
 
-  // On successful Supabase login, the session cookies are automatically set by the Supabase client.
-  // Redirect to dashboard. The middleware will handle session refresh.
-  redirect("/dashboard"); // Or wherever your authenticated users should go
+  const locale = await getLocale();
+  redirect(`/${locale}/dashboard`);
 }
 
 export async function logoutUser() {
@@ -209,5 +205,6 @@ export async function logoutUser() {
     // Consider how to handle this error more gracefully if needed.
   }
 
-  redirect("/auth/login?message=Logged out successfully."); // Redirect to login page
+  const locale = await getLocale();
+  redirect(`/${locale}/auth/login?messageKey=logoutSuccess`);
 }

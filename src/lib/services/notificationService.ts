@@ -1,19 +1,24 @@
+
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { BookingConfirmation } from "@/emails/BookingConfirmation";
 import type { Booking } from "@prisma/client";
 import { generateGoogleCalendarLink } from "@/lib/utils";
+import { getTranslations } from "next-intl/server";
 
 /**
  * Sends booking confirmation emails to both the trainer and the client.
  * @param {Booking} booking - The booking object.
  * @param {{ name: string | null; email: string }} trainer - The trainer's details.
+ * @param {string} locale - The locale for translation.
  * @returns {Promise<void>}
  */
 export const sendBookingConfirmationEmail = async (
   booking: Booking,
   trainer: { name: string | null; email: string },
+  locale: string,
 ) => {
+  const t = await getTranslations({ locale, namespace: 'Emails' });
   const resend = new Resend(process.env.RESEND_API_KEY!);
   const calendarLink = generateGoogleCalendarLink(booking);
 
@@ -21,19 +26,19 @@ export const sendBookingConfirmationEmail = async (
   await resend.emails.send({
     from: "bookings@ziro.fit",
     to: trainer.email,
-    subject: `New Booking: ${booking.clientName}`,
+    subject: t('trainerNotificationSubject', { clientName: booking.clientName }),
     html: `
-            <h1>New Booking Notification</h1>
-            <p>Hi ${trainer.name},</p>
-            <p>You have a new booking from ${booking.clientName} (${booking.clientEmail}).</p>
-            <p><strong>Details:</strong></p>
+            <h1>${t('trainerNotificationHeading')}</h1>
+            <p>${t('trainerNotificationSalutation', { trainerName: trainer.name || 'Trainer' })}</p>
+            <p>${t('trainerNotificationBody', { clientName: booking.clientName, clientEmail: booking.clientEmail })}</p>
+            <p><strong>${t('trainerNotificationDetails')}</strong></p>
             <ul>
-                <li>Date: ${new Date(booking.startTime).toLocaleDateString()}</li>
-                <li>Time: ${new Date(booking.startTime).toLocaleTimeString()} - ${new Date(booking.endTime).toLocaleTimeString()}</li>
-                ${booking.clientNotes ? `<li>Notes: ${booking.clientNotes}</li>` : ""}
+                <li>${t('trainerNotificationDate')} ${new Date(booking.startTime).toLocaleDateString()}</li>
+                <li>${t('trainerNotificationTime')} ${new Date(booking.startTime).toLocaleTimeString()} - ${new Date(booking.endTime).toLocaleTimeString()}</li>
+                ${booking.clientNotes ? `<li>${t('trainerNotificationNotes')} ${booking.clientNotes}</li>` : ""}
             </ul>
             <p style="margin-top: 20px;">
-              <a href="${calendarLink}" target="_blank" style="background-color: #4f46e5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Add to Google Calendar</a>
+              <a href="${calendarLink}" target="_blank" style="background-color: #4f46e5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">${t('trainerNotificationCta')}</a>
             </p>
         `,
   });
@@ -42,13 +47,23 @@ export const sendBookingConfirmationEmail = async (
   await resend.emails.send({
     from: "bookings@ziro.fit",
     to: booking.clientEmail,
-    subject: `Your Training Session with ${trainer?.name || "your trainer"} is Confirmed!`,
+    subject: t('clientConfirmationSubject', { trainerName: trainer?.name || "your trainer" }),
     react: BookingConfirmation({
-      trainerName: trainer?.name || "your trainer",
+      heading: t('clientConfirmationHeading'),
+      hello: t('clientConfirmationHello'),
+      body: t('clientConfirmationBody', { trainerName: trainer?.name || "your trainer" }),
+      detailsHeading: t('clientConfirmationDetailsHeading'),
+      dateLabel: t('clientConfirmationDate'),
+      timeLabel: t('clientConfirmationTime'),
+      locationLabel: t('clientConfirmationLocation'),
       bookingDate: new Date(booking.startTime).toLocaleDateString(),
       bookingTime: `${new Date(booking.startTime).toLocaleTimeString()} - ${new Date(booking.endTime).toLocaleTimeString()}`,
       bookingLocation: "Your chosen location", // TODO: Replace with actual location if available
       cancellationLink: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel-booking/${booking.id}`,
+      cancellationLinkText: t('clientConfirmationCancellationLink'),
+      cta: t('clientConfirmationCta'),
+      contactText: t('clientConfirmationContact'),
+      footerText: t('clientConfirmationFooter', { year: new Date().getFullYear() })
     }),
   });
 };
