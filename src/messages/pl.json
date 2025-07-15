@@ -1,0 +1,32 @@
+
+{
+  "ZodErrors": {
+    "name_min_2": "Imię musi mieć co najmniej 2 znaki",
+    "invalid_email": "Nieprawidłowy adres email",
+    "password_min_8": "Hasło musi mieć co najmniej 8 znaków",
+    "required": "To pole jest wymagane",
+    "password_is_required": "Hasło jest wymagane",
+    "name_min_1": "Imię musi mieć co najmniej 1 znak.",
+    "phone_min_1": "Telefon musi mieć co najmniej 1 znak.",
+    "invalid_date": "Nieprawidłowa data",
+    "at_least_one_set": "Wymagana jest co najmniej jedna prawidłowa seria.",
+    "invalid_sets_format": "Nieprawidłowy format serii.",
+    "exercise_required": "Proszę wybrać ćwiczenie.",
+    "contact_name_required": "Imię jest wymagane.",
+    "contact_message_min_10": "Wiadomość musi mieć co najmniej 10 znaków.",
+    "username_min_3": "Nazwa użytkownika musi mieć co najmniej 3 znaki.",
+    "username_regex": "Nazwa użytkownika może zawierać tylko małe litery, cyfry i myślniki.",
+    "certifications_max_255": "Certyfikaty muszą mieć 255 znaków lub mniej.",
+    "location_max_100": "Lokalizacja musi mieć 100 znaków lub mniej.",
+    "phone_max_20": "Telefon musi mieć 20 znaków lub mniej.",
+    "location_not_verified": "Nie udało się zweryfikować tej lokalizacji. Spróbuj formatu 'Miasto, Kraj'.",
+    "username_taken": "Nazwa użytkownika jest już zajęta.",
+    "url_invalid": "Musi być prawidłowym adresem URL.",
+    "photo_required": "Plik ze zdjęciem jest wymagany.",
+    "photo_size_max_2mb": "Maksymalny rozmiar pliku to 2MB.",
+    "description_required": "Opis jest wymagany.",
+    "platform_required": "Platforma jest wymagana.",
+    "username_required": "Nazwa użytkownika jest wymagana.",
+    "testimonial_text_min_10": "Tekst referencji jest wymagany."
+  }
+}

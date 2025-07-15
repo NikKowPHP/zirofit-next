@@ -1,7 +1,8 @@
+
 // src/components/auth/LogoutButton.tsx
 "use client";
 
-import { logoutUser } from "../../app/auth/actions";
+import { logoutUser } from "../../app/[locale]/auth/actions";
 import { useTransition } from "react";
 
 export default function LogoutButton() {

@@ -1,13 +1,21 @@
+
 // src/middleware.ts
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import createIntlMiddleware from 'next-intl/middleware';
+import { locales } from './i18n';
+
+const protectedRoutes = ["/dashboard", "/profile", "/clients"];
+const authRoutes = ["/auth/login", "/auth/register"];
+
+const handleI18nRouting = createIntlMiddleware({
+  locales,
+  defaultLocale: 'en',
+  localePrefix: 'always'
+});
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+  const response = handleI18nRouting(request);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,68 +26,37 @@ export async function middleware(request: NextRequest) {
           return request.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
+          response.cookies.set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: "",
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: "",
-            ...options,
-          });
+          response.cookies.set({ name, value: "", ...options });
         },
       },
     },
   );
 
-  // Refresh session if expired - important to keep user logged in
-  // Get user info
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  const pathname  = request.nextUrl.pathname;
 
-  // Define protected and auth routes
-  const protectedRoutes = ["/dashboard", "/profile", "/clients"]; // Add more as needed
-  const authRoutes = ["/auth/login", "/auth/register"];
+  // Since next-intl middleware runs first, it strips the locale.
+  // We need to know the original locale to construct correct redirect URLs.
+  // 'x-next-intl-locale' is a header added by the middleware.
+  const locale = request.headers.get('x-next-intl-locale') || 'en';
+  
+  // Use the pathname without locale for route matching
+  const pathnameWithoutLocale = pathname.startsWith(`/${locale}`) 
+    ? pathname.substring(`/${locale}`.length) || "/" 
+    : pathname;
 
-  const { pathname } = request.nextUrl;
-
-  // If user is not logged in and trying to access a protected route, redirect to login
-  if (!user && protectedRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(
-      new URL(
-        "/auth/login?error=Please log in to access this page.",
-        request.url,
-      ),
-    );
+  if (!user && protectedRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
+    const url = new URL(`/${locale}/auth/login`, request.url);
+    url.searchParams.set('error', 'Please log in to access this page.');
+    return NextResponse.redirect(url);
   }
 
-  // If user is logged in and trying to access an auth route (login/register), redirect to dashboard
-  if (user && authRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (user && authRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
+    const url = new URL(`/${locale}/dashboard`, request.url);
+    return NextResponse.redirect(url);
   }
 
   return response;
@@ -89,11 +66,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
