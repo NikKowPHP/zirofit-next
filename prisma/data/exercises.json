@@ -1,0 +1,1136 @@
+[
+  {
+    "name": "Barbell Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Barbell",
+    "description": "A compound exercise that targets the chest, shoulders, and triceps by pressing a barbell upwards from a flat bench."
+  },
+  {
+    "name": "Incline Barbell Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Barbell",
+    "description": "Targets the upper portion of the pectoralis major, as well as the anterior deltoids and triceps."
+  },
+  {
+    "name": "Decline Barbell Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Barbell",
+    "description": "Focuses on the lower pectoral muscles by pressing a barbell on a declined bench."
+  },
+  {
+    "name": "Dumbbell Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "A variation of the bench press using dumbbells, allowing for a greater range of motion and independent arm work."
+  },
+  {
+    "name": "Incline Dumbbell Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "Emphasizes the upper chest using dumbbells on an incline bench."
+  },
+  {
+    "name": "Decline Dumbbell Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "Targets the lower chest using dumbbells on a decline bench."
+  },
+  {
+    "name": "Dumbbell Fly",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "An isolation exercise that stretches and contracts the pectoral muscles through a wide arc."
+  },
+  {
+    "name": "Incline Dumbbell Fly",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "Targets the upper chest with a flying motion on an incline bench."
+  },
+  {
+    "name": "Cable Crossover",
+    "muscleGroup": "Chest",
+    "equipment": "Cable",
+    "description": "A cable exercise that provides constant tension on the chest muscles through a full range of motion."
+  },
+  {
+    "name": "Push-up",
+    "muscleGroup": "Chest",
+    "equipment": "Bodyweight",
+    "description": "A fundamental bodyweight exercise that builds chest, shoulder, and tricep strength."
+  },
+  {
+    "name": "Dips",
+    "muscleGroup": "Chest",
+    "equipment": "Bodyweight",
+    "description": "A bodyweight exercise performed on parallel bars, targeting the lower chest and triceps."
+  },
+  {
+    "name": "Machine Chest Press",
+    "muscleGroup": "Chest",
+    "equipment": "Machine",
+    "description": "A guided pressing movement that provides stability and focuses on the chest muscles."
+  },
+  {
+    "name": "Pec Deck Machine",
+    "muscleGroup": "Chest",
+    "equipment": "Machine",
+    "description": "An isolation machine for the chest, mimicking a fly movement."
+  },
+  {
+    "name": "Barbell Deadlift",
+    "muscleGroup": "Back",
+    "equipment": "Barbell",
+    "description": "A full-body compound lift that primarily targets the entire back, glutes, and hamstrings."
+  },
+  {
+    "name": "Bent-Over Barbell Row",
+    "muscleGroup": "Back",
+    "equipment": "Barbell",
+    "description": "A compound exercise for the middle back, lats, and biceps, performed by rowing a barbell towards the torso."
+  },
+  {
+    "name": "Pull-up",
+    "muscleGroup": "Back",
+    "equipment": "Bodyweight",
+    "description": "A challenging bodyweight exercise that targets the latissimus dorsi and biceps by pulling the body up to a bar."
+  },
+  {
+    "name": "Chin-up",
+    "muscleGroup": "Back",
+    "equipment": "Bodyweight",
+    "description": "A pull-up variation with a supinated (underhand) grip, placing more emphasis on the biceps."
+  },
+  {
+    "name": "Lat Pulldown",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "A machine-based exercise that mimics the pull-up motion to target the lats."
+  },
+  {
+    "name": "Seated Cable Row",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "A rowing exercise that targets the middle back, rhomboids, and lats."
+  },
+  {
+    "name": "Single-Arm Dumbbell Row",
+    "muscleGroup": "Back",
+    "equipment": "Dumbbell",
+    "description": "A unilateral rowing exercise that allows for a deep stretch and contraction of the lat muscles."
+  },
+  {
+    "name": "T-Bar Row",
+    "muscleGroup": "Back",
+    "equipment": "Barbell",
+    "description": "A rowing variation using a T-bar apparatus to target the middle back."
+  },
+  {
+    "name": "Back Extension",
+    "muscleGroup": "Back",
+    "equipment": "Bodyweight",
+    "description": "An exercise that targets the lower back (erector spinae), glutes, and hamstrings."
+  },
+  {
+    "name": "Straight-Arm Pulldown",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "An isolation exercise for the lats using a cable machine."
+  },
+  {
+    "name": "Inverted Row",
+    "muscleGroup": "Back",
+    "equipment": "Bodyweight",
+    "description": "A bodyweight rowing exercise that is a good precursor to pull-ups."
+  },
+  {
+    "name": "Barbell Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A fundamental compound exercise for overall leg development, targeting quads, glutes, and hamstrings."
+  },
+  {
+    "name": "Leg Press",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine exercise that allows for heavy leg pressing in a supported position."
+  },
+  {
+    "name": "Lunge",
+    "muscleGroup": "Legs",
+    "equipment": "Bodyweight",
+    "description": "A unilateral exercise that targets the quads, glutes, and hamstrings of each leg individually."
+  },
+  {
+    "name": "Dumbbell Lunge",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "Lunges performed while holding dumbbells to increase the resistance."
+  },
+  {
+    "name": "Romanian Deadlift (RDL)",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A hinge movement that primarily targets the hamstrings and glutes."
+  },
+  {
+    "name": "Leg Extension",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "An isolation exercise that specifically targets the quadriceps."
+  },
+  {
+    "name": "Leg Curl",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "An isolation exercise for the hamstrings, performed either lying or seated."
+  },
+  {
+    "name": "Goblet Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "A squat variation holding a single dumbbell or kettlebell at chest level, promoting an upright torso."
+  },
+  {
+    "name": "Bulgarian Split Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "A single-leg squat variation with the rear foot elevated, intensely targeting the quads and glutes."
+  },
+  {
+    "name": "Hip Thrust",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A powerful exercise that isolates and builds the gluteus maximus."
+  },
+  {
+    "name": "Calf Raise",
+    "muscleGroup": "Legs",
+    "equipment": "Bodyweight",
+    "description": "An isolation exercise for the calf muscles (gastrocnemius and soleus)."
+  },
+  {
+    "name": "Seated Calf Raise",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "Targets the soleus muscle, a part of the calf, from a seated position."
+  },
+  {
+    "name": "Hack Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine-based squat variation that puts more emphasis on the quadriceps."
+  },
+  {
+    "name": "Barbell Overhead Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "A compound exercise for the shoulders, performed by pressing a barbell overhead."
+  },
+  {
+    "name": "Seated Dumbbell Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "A shoulder press variation using dumbbells while seated, providing stability and focus."
+  },
+  {
+    "name": "Lateral Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "An isolation exercise that targets the medial (side) deltoid for shoulder width."
+  },
+  {
+    "name": "Front Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "An isolation exercise for the anterior (front) deltoid."
+  },
+  {
+    "name": "Bent-Over Dumbbell Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "Targets the posterior (rear) deltoids by raising dumbbells to the side in a bent-over position."
+  },
+  {
+    "name": "Face Pull",
+    "muscleGroup": "Shoulders",
+    "equipment": "Cable",
+    "description": "An excellent exercise for rear delt development and overall shoulder health."
+  },
+  {
+    "name": "Arnold Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "A unique dumbbell press that incorporates rotation to hit all three heads of the deltoid."
+  },
+  {
+    "name": "Upright Row",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "A pulling movement that targets the deltoids and upper trapezius muscles."
+  },
+  {
+    "name": "Machine Shoulder Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Machine",
+    "description": "A guided overhead press that provides stability and isolates the shoulder muscles."
+  },
+  {
+    "name": "Barbell Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Barbell",
+    "description": "A fundamental mass-building exercise for the biceps."
+  },
+  {
+    "name": "Dumbbell Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "description": "A classic bicep exercise using dumbbells, which can be performed seated or standing, alternating or together."
+  },
+  {
+    "name": "Hammer Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "description": "A curl variation with a neutral grip, targeting the brachialis and brachioradialis in addition to the biceps."
+  },
+  {
+    "name": "Preacher Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Machine",
+    "description": "An isolation exercise for the biceps using a preacher bench to prevent cheating."
+  },
+  {
+    "name": "Concentration Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "description": "A seated curl with the arm braced against the thigh to strictly isolate the bicep."
+  },
+  {
+    "name": "Cable Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Cable",
+    "description": "A bicep curl using a cable machine, providing constant tension throughout the movement."
+  },
+  {
+    "name": "Incline Dumbbell Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "description": "Performed on an incline bench, this exercise provides a deep stretch on the long head of the bicep."
+  },
+  {
+    "name": "Tricep Pushdown",
+    "muscleGroup": "Triceps",
+    "equipment": "Cable",
+    "description": "A popular cable exercise that isolates the triceps. Can be done with a rope, V-bar, or straight bar."
+  },
+  {
+    "name": "Skull Crusher",
+    "muscleGroup": "Triceps",
+    "equipment": "Barbell",
+    "description": "A lying tricep extension that is highly effective for building tricep mass."
+  },
+  {
+    "name": "Close-Grip Bench Press",
+    "muscleGroup": "Triceps",
+    "equipment": "Barbell",
+    "description": "A bench press variation with a narrow grip that places more emphasis on the triceps."
+  },
+  {
+    "name": "Overhead Tricep Extension",
+    "muscleGroup": "Triceps",
+    "equipment": "Dumbbell",
+    "description": "Targets the long head of the triceps by extending a dumbbell overhead."
+  },
+  {
+    "name": "Tricep Dips",
+    "muscleGroup": "Triceps",
+    "equipment": "Bodyweight",
+    "description": "A bodyweight exercise that can be performed on a bench or dip station to target the triceps."
+  },
+  {
+    "name": "Tricep Kickback",
+    "muscleGroup": "Triceps",
+    "equipment": "Dumbbell",
+    "description": "An isolation exercise that targets the triceps by extending the arm back against gravity."
+  },
+  {
+    "name": "Plank",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An isometric core exercise that involves maintaining a position similar to a push-up for the maximum possible time."
+  },
+  {
+    "name": "Crunch",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A classic abdominal exercise that targets the rectus abdominis."
+  },
+  {
+    "name": "Leg Raise",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An exercise that targets the lower abdominals by raising the legs from a lying position."
+  },
+  {
+    "name": "Russian Twist",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A core exercise that targets the obliques through a twisting motion."
+  },
+  {
+    "name": "Hanging Leg Raise",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A challenging core exercise performed by hanging from a bar and raising the legs."
+  },
+  {
+    "name": "Cable Crunch",
+    "muscleGroup": "Abs",
+    "equipment": "Cable",
+    "description": "A weighted crunch variation using a cable machine for added resistance."
+  },
+  {
+    "name": "Ab Roller",
+    "muscleGroup": "Abs",
+    "equipment": "Other",
+    "description": "An advanced core exercise using a wheel to extend and contract the torso."
+  },
+  {
+    "name": "Kettlebell Swing",
+    "muscleGroup": "Full Body",
+    "equipment": "Kettlebell",
+    "description": "A dynamic, explosive exercise that works the entire posterior chain, including glutes, hamstrings, and back."
+  },
+  {
+    "name": "Burpee",
+    "muscleGroup": "Full Body",
+    "equipment": "Bodyweight",
+    "description": "A full-body exercise used in strength training and as an aerobic exercise, involving a squat, a push-up, and a jump."
+  },
+  {
+    "name": "Jumping Jacks",
+    "muscleGroup": "Full Body",
+    "equipment": "Bodyweight",
+    "description": "A calisthenic jump, performed by jumping to a position with the legs spread wide and the hands touching overhead."
+  },
+  {
+    "name": "Mountain Climber",
+    "muscleGroup": "Full Body",
+    "equipment": "Bodyweight",
+    "description": "A core and cardio exercise that mimics the motion of climbing in a plank position."
+  },
+  {
+    "name": "Box Jump",
+    "muscleGroup": "Legs",
+    "equipment": "Other",
+    "description": "A plyometric exercise that builds explosive power by jumping onto a box."
+  },
+  {
+    "name": "Sled Push",
+    "muscleGroup": "Full Body",
+    "equipment": "Other",
+    "description": "A high-intensity exercise that builds lower body strength and cardiovascular endurance by pushing a weighted sled."
+  },
+  {
+    "name": "Battle Ropes",
+    "muscleGroup": "Full Body",
+    "equipment": "Other",
+    "description": "A full-body workout that improves strength and endurance by creating waves with heavy ropes."
+  },
+  {
+    "name": "Diamond Push-up",
+    "muscleGroup": "Triceps",
+    "equipment": "Bodyweight",
+    "description": "A push-up variation with hands close together, forming a diamond shape, to emphasize the triceps."
+  },
+  {
+    "name": "Wide-Grip Push-up",
+    "muscleGroup": "Chest",
+    "equipment": "Bodyweight",
+    "description": "A push-up with a wider hand placement to increase the focus on the chest muscles."
+  },
+  {
+    "name": "Pendlay Row",
+    "muscleGroup": "Back",
+    "equipment": "Barbell",
+    "description": "A strict, explosive barbell row where the bar rests on the floor between each rep, building back power."
+  },
+  {
+    "name": "Good Morning",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A hip-hinge exercise with a barbell on the back, excellent for strengthening the hamstrings and lower back."
+  },
+  {
+    "name": "Front Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A squat variation with the barbell held across the front of the shoulders, emphasizing the quads and core stability."
+  },
+  {
+    "name": "Sumo Deadlift",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A deadlift variation with a wide stance, targeting the glutes, adductors, and hamstrings."
+  },
+  {
+    "name": "Dumbbell Pullover",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "A classic exercise performed lying on a bench, stretching the lats and chest."
+  },
+  {
+    "name": "Landmine Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "A single-arm overhead press using a landmine attachment, offering a unique angle for shoulder development."
+  },
+  {
+    "name": "Zottman Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "description": "A bicep curl that includes wrist rotation to work both the biceps and forearms."
+  },
+  {
+    "name": "Spider Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "description": "A bicep curl performed on an incline bench facing down, isolating the short head of the bicep."
+  },
+  {
+    "name": "JM Press",
+    "muscleGroup": "Triceps",
+    "equipment": "Barbell",
+    "description": "A hybrid between a close-grip bench press and a skull crusher, known for building tricep strength."
+  },
+  {
+    "name": "Wood Chop",
+    "muscleGroup": "Abs",
+    "equipment": "Cable",
+    "description": "A rotational core exercise performed with a cable, mimicking a chopping motion to target the obliques."
+  },
+  {
+    "name": "Turkish Get-Up",
+    "muscleGroup": "Full Body",
+    "equipment": "Kettlebell",
+    "description": "A complex, multi-step movement that builds total-body stability, strength, and coordination."
+  },
+  {
+    "name": "Renegade Row",
+    "muscleGroup": "Back",
+    "equipment": "Dumbbell",
+    "description": "A challenging exercise combining a plank with a dumbbell row, building core stability and back strength."
+  },
+  {
+    "name": "Pistol Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Bodyweight",
+    "description": "An advanced single-leg squat that requires significant strength, balance, and mobility."
+  },
+  {
+    "name": "Glute-Ham Raise (GHR)",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A powerful exercise for the posterior chain, targeting hamstrings, glutes, and lower back."
+  },
+  {
+    "name": "Cable Pull-Through",
+    "muscleGroup": "Legs",
+    "equipment": "Cable",
+    "description": "A hip-hinge movement using a low cable pulley to effectively target the glutes and hamstrings."
+  },
+  {
+    "name": "Band Pull-Apart",
+    "muscleGroup": "Shoulders",
+    "equipment": "Bands",
+    "description": "A simple yet effective exercise with a resistance band for rear deltoid and upper back health."
+  },
+  {
+    "name": "Chest-Supported Row",
+    "muscleGroup": "Back",
+    "equipment": "Dumbbell",
+    "description": "A dumbbell row performed while lying face down on an incline bench, isolating the back by removing momentum."
+  },
+  {
+    "name": "Single-Leg RDL",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "A unilateral Romanian deadlift that challenges balance and stability while targeting the hamstring and glute of one leg."
+  },
+  {
+    "name": "Kettlebell Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Kettlebell",
+    "description": "An overhead press using a kettlebell, which challenges shoulder stability due to its unique weight distribution."
+  },
+  {
+    "name": "Rope Hammer Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Cable",
+    "description": "A hammer curl performed with a rope attachment on a cable machine for constant tension."
+  },
+  {
+    "name": "Rope Tricep Pushdown",
+    "muscleGroup": "Triceps",
+    "equipment": "Cable",
+    "description": "A tricep pushdown using a rope attachment, allowing for a greater range of motion and peak contraction."
+  },
+  {
+    "name": "Side Plank",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An isometric exercise that focuses on the obliques and core stability."
+  },
+  {
+    "name": "Incline Push-up",
+    "muscleGroup": "Chest",
+    "equipment": "Bodyweight",
+    "description": "A push-up variation with hands on an elevated surface, making it easier and targeting the lower chest."
+  },
+  {
+    "name": "Decline Push-up",
+    "muscleGroup": "Chest",
+    "equipment": "Bodyweight",
+    "description": "A push-up variation with feet elevated, increasing the difficulty and targeting the upper chest."
+  },
+  {
+    "name": "Assisted Pull-up Machine",
+    "muscleGroup": "Back",
+    "equipment": "Machine",
+    "description": "A machine that provides assistance to help users perform pull-ups and chin-ups."
+  },
+  {
+    "name": "Barbell Shrug",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "An isolation exercise for the trapezius muscles by elevating the shoulders."
+  },
+  {
+    "name": "Dumbbell Shrug",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "A shrug variation using dumbbells, allowing for a more natural arm position."
+  },
+  {
+    "name": "Barbell Hip Thrust",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A primary glute-building exercise performed by thrusting a barbell upwards with the hips."
+  },
+  {
+    "name": "Dumbbell Step-Up",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "A unilateral leg exercise that involves stepping onto a box or bench while holding dumbbells."
+  },
+  {
+    "name": "EZ-Bar Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Barbell",
+    "description": "A bicep curl using an EZ-curl bar, which can be more comfortable on the wrists than a straight bar."
+  },
+  {
+    "name": "EZ-Bar Skull Crusher",
+    "muscleGroup": "Triceps",
+    "equipment": "Barbell",
+    "description": "A skull crusher performed with an EZ-curl bar for a more wrist-friendly grip."
+  },
+  {
+    "name": "Bicycle Crunch",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A dynamic core exercise that works the rectus abdominis and obliques by bringing opposite elbows to knees."
+  },
+  {
+    "name": "Handstand Push-up",
+    "muscleGroup": "Shoulders",
+    "equipment": "Bodyweight",
+    "description": "An advanced bodyweight exercise that builds significant shoulder and tricep strength by pressing the body up from a handstand."
+  },
+  {
+    "name": "Muscle-Up",
+    "muscleGroup": "Full Body",
+    "equipment": "Bodyweight",
+    "description": "An advanced calisthenics movement that combines a pull-up with a dip, performed on a bar or rings."
+  },
+  {
+    "name": "Plate Front Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Other",
+    "description": "A front raise variation using a weight plate, often held like a steering wheel."
+  },
+  {
+    "name": "Kettlebell Goblet Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Kettlebell",
+    "description": "A squat performed while holding a kettlebell at the chest, promoting good form and core engagement."
+  },
+  {
+    "name": "Lying Leg Curl",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine exercise for isolating the hamstrings, performed while lying face down."
+  },
+  {
+    "name": "Seated Leg Curl",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine exercise for isolating the hamstrings from a seated position."
+  },
+  {
+    "name": "Incline Chest Press Machine",
+    "muscleGroup": "Chest",
+    "equipment": "Machine",
+    "description": "A machine-based press on an incline to target the upper chest with added stability."
+  },
+  {
+    "name": "Seated Overhead Dumbbell Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "An overhead press with dumbbells performed while seated to isolate the shoulders."
+  },
+  {
+    "name": "Cable Lateral Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Cable",
+    "description": "A lateral raise using a low cable pulley, providing constant tension on the medial deltoid."
+  },
+  {
+    "name": "Preacher Curl Machine",
+    "muscleGroup": "Biceps",
+    "equipment": "Machine",
+    "description": "A machine that replicates the preacher curl, isolating the biceps."
+  },
+  {
+    "name": "Bench Dip",
+    "muscleGroup": "Triceps",
+    "equipment": "Bodyweight",
+    "description": "A tricep dip performed with hands on a bench and feet on the floor or another bench."
+  },
+  {
+    "name": "V-Up",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An advanced core exercise where the body forms a 'V' shape by simultaneously lifting the legs and torso."
+  },
+  {
+    "name": "High-to-Low Cable Fly",
+    "muscleGroup": "Chest",
+    "equipment": "Cable",
+    "description": "A cable fly variation with pulleys set high, targeting the lower chest."
+  },
+  {
+    "name": "Low-to-High Cable Fly",
+    "muscleGroup": "Chest",
+    "equipment": "Cable",
+    "description": "A cable fly variation with pulleys set low, targeting the upper chest."
+  },
+  {
+    "name": "Wide-Grip Lat Pulldown",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "A lat pulldown with a wide grip to emphasize the outer lats for back width."
+  },
+  {
+    "name": "Close-Grip Lat Pulldown",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "A lat pulldown with a close, underhand grip to target the lower lats and biceps."
+  },
+  {
+    "name": "Hack Squat Machine",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A squat machine that targets the quads with a unique angle and back support."
+  },
+  {
+    "name": "Hip Abduction Machine",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine for isolating the gluteus medius and minimus by pushing the legs apart against resistance."
+  },
+  {
+    "name": "Hip Adduction Machine",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine for isolating the inner thigh muscles (adductors) by squeezing the legs together."
+  },
+  {
+    "name": "Push Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "An explosive overhead press that uses leg drive to lift heavier weight, building power."
+  },
+  {
+    "name": "High Cable Bicep Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Cable",
+    "description": "A bicep curl performed with high cable pulleys, excellent for peak contraction."
+  },
+  {
+    "name": "Overhead Cable Tricep Extension",
+    "muscleGroup": "Triceps",
+    "equipment": "Cable",
+    "description": "A tricep extension using a cable machine, targeting the long head with constant tension."
+  },
+  {
+    "name": "Decline Crunch",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A crunch performed on a decline bench to increase the range of motion and difficulty."
+  },
+  {
+    "name": "Smith Machine Bench Press",
+    "muscleGroup": "Chest",
+    "equipment": "Machine",
+    "description": "A bench press performed on a Smith machine, providing a fixed path for safety and isolation."
+  },
+  {
+    "name": "Smith Machine Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A squat performed on a Smith machine, allowing for different foot placements to target specific leg muscles."
+  },
+  {
+    "name": "Pike Push-up",
+    "muscleGroup": "Shoulders",
+    "equipment": "Bodyweight",
+    "description": "A bodyweight press in a pike position, a progression towards handstand push-ups."
+  },
+  {
+    "name": "Kettlebell Goblet Lunge",
+    "muscleGroup": "Legs",
+    "equipment": "Kettlebell",
+    "description": "A lunge performed while holding a kettlebell in the goblet position for added core work."
+  },
+  {
+    "name": "TRX Row",
+    "muscleGroup": "Back",
+    "equipment": "Other",
+    "description": "A bodyweight row using a TRX suspension trainer, with difficulty adjusted by body angle."
+  },
+  {
+    "name": "TRX Chest Press",
+    "muscleGroup": "Chest",
+    "equipment": "Other",
+    "description": "A bodyweight chest press using a TRX, challenging stability and core strength."
+  },
+  {
+    "name": "Medicine Ball Slam",
+    "muscleGroup": "Full Body",
+    "equipment": "Other",
+    "description": "An explosive, high-intensity exercise that builds power and conditioning by slamming a medicine ball into the ground."
+  },
+  {
+    "name": "Zercher Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A squat variation where the barbell is held in the crook of the elbows, heavily engaging the core and upper back."
+  },
+  {
+    "name": "Cable Kickback",
+    "muscleGroup": "Legs",
+    "equipment": "Cable",
+    "description": "A glute isolation exercise using a low cable pulley and an ankle strap."
+  },
+  {
+    "name": "Reverse Pec Deck",
+    "muscleGroup": "Shoulders",
+    "equipment": "Machine",
+    "description": "A machine exercise that targets the rear deltoids and upper back muscles."
+  },
+  {
+    "name": "Reverse Lunge",
+    "muscleGroup": "Legs",
+    "equipment": "Bodyweight",
+    "description": "A lunge variation where you step backward, which can be easier on the knees."
+  },
+  {
+    "name": "Sit-up",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A classic abdominal exercise that involves lifting the entire torso off the floor."
+  },
+  {
+    "name": "Dumbbell Pullover (Cross-Bench)",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "A pullover variation performed with the upper back across a bench, allowing for a greater stretch."
+  },
+  {
+    "name": "Hammer Strength Chest Press",
+    "muscleGroup": "Chest",
+    "equipment": "Machine",
+    "description": "A popular plate-loaded machine press that allows for independent arm movement."
+  },
+  {
+    "name": "Hammer Strength Row",
+    "muscleGroup": "Back",
+    "equipment": "Machine",
+    "description": "A plate-loaded machine row that targets the mid-back and lats effectively."
+  },
+  {
+    "name": "Barbell Reverse Lunge",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A reverse lunge performed with a barbell on the back for increased load."
+  },
+  {
+    "name": "Dumbbell Romanian Deadlift",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "An RDL performed with dumbbells, excellent for unilateral focus and grip."
+  },
+  {
+    "name": "Standing Calf Raise Machine",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "A machine dedicated to performing calf raises from a standing position."
+  },
+  {
+    "name": "Dumbbell Front Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Dumbbell",
+    "description": "A front squat variation holding two dumbbells on the shoulders."
+  },
+  {
+    "name": "Barbell Push Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "An explosive overhead press using leg drive to move heavier weight and build power."
+  },
+  {
+    "name": "Seated Barbell Overhead Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "A strict overhead press performed while seated to isolate the shoulders."
+  },
+  {
+    "name": "Scott Curl (Preacher Curl with Barbell)",
+    "muscleGroup": "Biceps",
+    "equipment": "Barbell",
+    "description": "A preacher curl performed with a barbell or EZ-bar to isolate the biceps."
+  },
+  {
+    "name": "Lying Dumbbell Tricep Extension",
+    "muscleGroup": "Triceps",
+    "equipment": "Dumbbell",
+    "description": "A skull crusher variation using dumbbells, allowing for a neutral grip."
+  },
+  {
+    "name": "Flutter Kicks",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An abdominal exercise performed lying down, involving small, rapid up-and-down leg movements."
+  },
+  {
+    "name": "Hanging Knee Raise",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A hanging core exercise where the knees are brought up towards the chest, targeting the lower abs."
+  },
+  {
+    "name": "Resistance Band Bicep Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Bands",
+    "description": "A bicep curl using resistance bands, providing accommodating resistance."
+  },
+  {
+    "name": "Resistance Band Tricep Pushdown",
+    "muscleGroup": "Triceps",
+    "equipment": "Bands",
+    "description": "A tricep pushdown using a resistance band anchored high."
+  },
+  {
+    "name": "Resistance Band Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Bands",
+    "description": "A squat performed with a resistance band around the knees or under the feet for added tension."
+  },
+  {
+    "name": "Resistance Band Chest Press",
+    "muscleGroup": "Chest",
+    "equipment": "Bands",
+    "description": "A chest press using resistance bands, excellent for warm-ups or at-home workouts."
+  },
+  {
+    "name": "Resistance Band Row",
+    "muscleGroup": "Back",
+    "equipment": "Bands",
+    "description": "A rowing motion performed with a resistance band, great for back activation."
+  },
+  {
+    "name": "Resistance Band Overhead Press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Bands",
+    "description": "An overhead press using resistance bands for a portable shoulder workout."
+  },
+  {
+    "name": "Dumbbell Floor Press",
+    "muscleGroup": "Chest",
+    "equipment": "Dumbbell",
+    "description": "A bench press variation performed on the floor, limiting the range of motion to focus on lockout strength."
+  },
+  {
+    "name": "Clean and Press",
+    "muscleGroup": "Full Body",
+    "equipment": "Barbell",
+    "description": "A compound, olympic-style lift that involves lifting a barbell from the floor to the shoulders, then pressing it overhead."
+  },
+  {
+    "name": "Snatch",
+    "muscleGroup": "Full Body",
+    "equipment": "Barbell",
+    "description": "An olympic lift where the barbell is lifted from the floor to an overhead position in one continuous motion."
+  },
+  {
+    "name": "Clean and Jerk",
+    "muscleGroup": "Full Body",
+    "equipment": "Barbell",
+    "description": "An olympic lift composed of two movements: the clean (floor to shoulders) and the jerk (shoulders to overhead)."
+  },
+  {
+    "name": "Kettlebell Snatch",
+    "muscleGroup": "Full Body",
+    "equipment": "Kettlebell",
+    "description": "An explosive kettlebell exercise that moves the weight from the floor to an overhead position."
+  },
+  {
+    "name": "Kettlebell Clean and Press",
+    "muscleGroup": "Full Body",
+    "equipment": "Kettlebell",
+    "description": "A kettlebell complex involving a clean to the rack position followed by an overhead press."
+  },
+  {
+    "name": "Farmer's Walk",
+    "muscleGroup": "Full Body",
+    "equipment": "Dumbbell",
+    "description": "A simple yet effective exercise for building grip strength, core stability, and overall toughness by carrying heavy weights."
+  },
+  {
+    "name": "Tire Flip",
+    "muscleGroup": "Full Body",
+    "equipment": "Other",
+    "description": "A functional, full-body strength exercise that involves flipping a large, heavy tire."
+  },
+  {
+    "name": "High Knees",
+    "muscleGroup": "Full Body",
+    "equipment": "Bodyweight",
+    "description": "A cardio-intensive exercise that involves running in place while bringing the knees up as high as possible."
+  },
+  {
+    "name": "Cable Front Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Cable",
+    "description": "A front raise performed with a low cable pulley for constant tension on the anterior deltoid."
+  },
+  {
+    "name": "Meadows Row",
+    "muscleGroup": "Back",
+    "equipment": "Barbell",
+    "description": "A single-arm landmine row variation that targets the upper back and lats from a unique angle."
+  },
+  {
+    "name": "Deficit Deadlift",
+    "muscleGroup": "Back",
+    "equipment": "Barbell",
+    "description": "A deadlift performed while standing on a small platform, increasing the range of motion and difficulty off the floor."
+  },
+  {
+    "name": "Pause Squat",
+    "muscleGroup": "Legs",
+    "equipment": "Barbell",
+    "description": "A squat with a deliberate pause at the bottom of the movement, building strength out of the hole."
+  },
+  {
+    "name": "Spoto Press",
+    "muscleGroup": "Chest",
+    "equipment": "Barbell",
+    "description": "A bench press variation with a pause just above the chest, improving control and power."
+  },
+  {
+    "name": "Seated Cable Fly",
+    "muscleGroup": "Chest",
+    "equipment": "Cable",
+    "description": "A chest fly performed while seated, isolating the pectoral muscles."
+  },
+  {
+    "name": "Wide-Grip Seated Cable Row",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "A seated row with a wide bar to emphasize the upper back and rear deltoids."
+  },
+  {
+    "name": "V-Bar Pulldown",
+    "muscleGroup": "Back",
+    "equipment": "Cable",
+    "description": "A lat pulldown using a V-bar attachment for a close, neutral grip."
+  },
+  {
+    "name": "Leg Press Calf Raise",
+    "muscleGroup": "Legs",
+    "equipment": "Machine",
+    "description": "Performing a calf raise using the leg press machine for heavy resistance."
+  },
+  {
+    "name": "Dumbbell Upright Row",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "description": "An upright row performed with dumbbells, allowing for a more comfortable wrist position."
+  },
+  {
+    "name": "Barbell Front Raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "description": "A front raise using a barbell for heavier loading of the anterior deltoids."
+  },
+  {
+    "name": "Reverse-Grip Barbell Curl",
+    "muscleGroup": "Biceps",
+    "equipment": "Barbell",
+    "description": "A barbell curl with a pronated (overhand) grip to target the brachioradialis and forearms."
+  },
+  {
+    "name": "Single-Arm Tricep Pushdown",
+    "muscleGroup": "Triceps",
+    "equipment": "Cable",
+    "description": "A unilateral tricep pushdown to address muscle imbalances."
+  },
+  {
+    "name": "Dragon Flag",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An advanced core exercise popularized by Bruce Lee, involving lowering the entire body from a vertical position."
+  },
+  {
+    "name": "Toes-to-Bar",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "A CrossFit and gymnastics staple, performed by hanging from a bar and bringing the toes up to touch it."
+  },
+  {
+    "name": "Wall Sit",
+    "muscleGroup": "Legs",
+    "equipment": "Bodyweight",
+    "description": "An isometric exercise where you hold a squat position with your back against a wall."
+  },
+  {
+    "name": "Glute Bridge",
+    "muscleGroup": "Legs",
+    "equipment": "Bodyweight",
+    "description": "A floor-based exercise that activates and strengthens the glute muscles."
+  },
+  {
+    "name": "Reverse Crunch",
+    "muscleGroup": "Abs",
+    "equipment": "Bodyweight",
+    "description": "An ab exercise that targets the lower abs by curling the hips and legs towards the chest."
+  },
+  {
+    "name": "Cable Upright Row",
+    "muscleGroup": "Shoulders",
+    "equipment": "Cable",
+    "description": "An upright row performed with a cable machine for constant tension."
+  }
+]
