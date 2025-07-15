@@ -62,7 +62,10 @@ export default function TrainerSearch() {
   );
 
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center pt-10">
+    <div>
+
+    
+    <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center pt-30">
       <div className="px-4">
         <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-4 tracking-tight">
           Find your expert.
@@ -71,7 +74,7 @@ export default function TrainerSearch() {
           Search thousands of certified trainers to achieve your fitness goals.
         </h2>
       </div>
-      <div className="bg-neutral-100 dark:bg-neutral-950 w-full p-8">
+      <div className=" w-full p-8">
         <div className="flex justify-center mb-4">
           <TabButton
             label="In-Person"
@@ -155,6 +158,7 @@ export default function TrainerSearch() {
           </form>
         </div>
       </div>
-    </div>
+      </div>
+      </div>
   );
 }

@@ -61,7 +61,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div
-      className={`min-h-screen flex flex-col bg-neutral-50 dark:bg-gray-900`}
+      className={`min-h-screen flex flex-col bg-neutral-50 dark:bg-neutral-950`}
     >
       <div className="fixed w-full top-0 z-50 px-4 pt-4">
         <header className="max-w-7xl mx-auto bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-full ">
@@ -178,7 +178,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ease: "easeInOut", duration: 0.4 }}
-        className="flex-grow flex flex-col bg-white dark:bg-gray-900 "
+        className="flex-grow flex flex-col  "
       >
         {children}
       </motion.main>
