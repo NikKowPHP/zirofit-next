@@ -1,49 +1,39 @@
-Of course. Here is the updated, more detailed plan that incorporates the request for a comprehensive, production-ready list of exercises.
 
-# ZIRO.FIT Feature Enhancement Plan (V2)
+### **Revised Feature Enhancement Plan**
 
-This plan outlines the necessary steps to implement UI/UX refinements and add a new, comprehensive exercise performance logging feature.
+#### Phase 1: Standardize Back Navigation (Still Required)
 
-## Phase 1: Standardize Back Navigation
+**Goal:** Ensure all secondary pages within the trainer dashboard use the consistent `BackLink` component for navigation. The `BackLink` component exists, but is not yet used everywhere.
 
-**Goal:** Ensure all secondary pages within the trainer dashboard use the consistent `BackLink` component for navigation.
-
--   [ ] **Task 1.1: Update Create Client Page**
+-   [x] **Task 1.1: Update Create Client Page**
     -   **File:** `src/app/clients/create/page.tsx`
     -   **Action:** Replace the existing `<Link>` component with the `<BackLink>` component.
     -   **Details:** Change `<Link href="/clients" ...>Back to Client List</Link>` to `<BackLink href="/clients" text="← Back to Client List" />`. Import `BackLink` from `@/components/ui/BackLink`.
 
--   [ ] **Task 1.2: Update Edit Client Page**
+-   [x] **Task 1.2: Update Edit Client Page**
     -   **File:** `src/app/clients/[clientId]/edit/page.tsx`
     -   **Action:** Replace the existing `<Link>` component with the `<BackLink>` component.
     -   **Details:** Change `<Link href="/clients" ...>Back to Client List</Link>` to `<BackLink href="/clients" text="← Back to Client List" />`. Import `BackLink` from `@/components/ui/BackLink`.
 
-## Phase 2: Refine Chart Empty States
+#### Phase 2: Refine Chart Empty States (Partially Complete, Refinement Needed)
 
-**Goal:** Provide clear, user-friendly messages on charts when there is no data to display.
+**Goal:** Provide clear, user-friendly messages on the client-specific statistics charts when there is no data to display. (The dashboard-level charts are already handled).
 
--   [ ] **Task 2.1: Enhance Dashboard's Client Progress Chart**
-    -   **File:** `src/app/dashboard/_components/ClientProgressChart.tsx`
-    -   **Action:** Add a condition to render an `EmptyState` component if the `data` prop is an empty array.
-    -   **Details:** Before the `<Card>` return, add `if (!data || data.length === 0) { ... }` to return an `<EmptyState>` with a title of "No Progress Data" and a description prompting the user to add client measurements.
-
--   [ ] **Task 2.2: Enhance Dashboard's Monthly Activity Chart**
-    -   **File:** `src/app/dashboard/_components/MonthlyActivityChart.tsx`
-    -   **Action:** Add a similar empty state check for the `data` prop.
-    -   **Details:** If `data` is empty, render an `<EmptyState>` component with a title like "No Activity Data" and a description like "Log client sessions to see your monthly activity."
-
--   [ ] **Task 2.3: Enhance Client-Specific Statistics Charts**
+-   [x] **Task 2.1: Enhance Client-Specific Statistics Charts**
     -   **File:** `src/components/clients/modules/ClientStatistics.tsx`
-    -   **Action:** For each chart (Weight and Body Fat), check if there's valid data to display. If not, show an `<EmptyState>`.
-    -   **Details:** Inside the component, filter the data to only include valid points. For each chart's container `div`, use a ternary expression: if the filtered data array is empty, render an `<EmptyState>` with a message like "No weight data logged.". Otherwise, render the `<Line>` chart component.
+    -   **Action:** For each chart (Weight and Body Fat), check if there is valid data to display. If not, render the `EmptyState` component.
+    -   **Details:**
+        1.  In the `ClientStatistics` component, filter the data for each chart to count valid data points (e.g., non-null `weightKg` or `bodyFatPercentage`).
+        2.  For the "Weight Progress" chart container, use a ternary operator. If there are no valid weight data points, render `<EmptyState title="No Weight Data" description="Log your client's weight to see their progress here." />`. Otherwise, render the `<Line>` chart.
+        3.  Repeat the same logic for the "Body Fat Progress" chart.
 
-## Phase 3: Implement Advanced Exercise Performance Logging
+#### Phase 3: Implement Advanced Exercise Performance Logging (Still Required)
 
-**Goal:** Build a comprehensive system for trainers to log and track client performance on specific exercises.
+**Goal:** Build a comprehensive system for trainers to log and track client performance on specific exercises. This feature does not exist yet, so the original plan is fully valid.
 
-### Sub-Phase 3.1: Database & Seeding
+##### Sub-Phase 3.1: Database & Seeding
 
--   [ ] **Task 3.1.1: Update Database Schema**
+-   [x] **Task 3.1.1: Update Database Schema**
     -   **File:** `prisma/schema.prisma`
     -   **Action:** Define two new models: `Exercise` and `ClientExerciseLog`.
     -   **Details:**
@@ -80,76 +70,72 @@ This plan outlines the necessary steps to implement UI/UX refinements and add a 
         }
         ```
 
--   [ ] **Task 3.1.2: Create and Apply Migration**
+-   [x] **Task 3.1.2: Create and Apply Migration**
     -   **Action:** Run the Prisma migration command to apply schema changes to the database.
     -   **Command:** `npx prisma migrate dev --name add_exercise_logging`
 
--   [ ] **Task 3.1.3: Create Comprehensive Exercise Seed Data**
+-   [x] **Task 3.1.3: Create Comprehensive Exercise Seed Data**
     -   **File:** `prisma/data/exercises.json` (New file)
-    -   **Action:** Create a **production-ready, comprehensive JSON file** containing a large, categorized list of exercises.
-    -   **Requirements:**
-        1.  **Size:** The list must contain at least **200 exercises** to be considered comprehensive.
-        2.  **Categorization:** Exercises must be categorized by `muscleGroup` and `equipment`.
-        3.  **Coverage:** Ensure all major muscle groups are covered (e.g., Chest, Back, Shoulders, Biceps, Triceps, Quadriceps, Hamstrings, Glutes, Calves, Abs).
-        4.  **Equipment Variety:** Include exercises for various equipment types (e.g., Barbell, Dumbbell, Kettlebell, Machine, Cable, Bands, Bodyweight).
-        5.  **Structure:** Each entry must be a JSON object with `name` (string), `muscleGroup` (string), and `equipment` (string).
+    -   **Action:** Create a **production-ready, comprehensive JSON file** containing a large, categorized list of exercises (at least 200).
+    -   **Requirements:** Categorize by `muscleGroup` and `equipment`. Cover all major muscle groups (Chest, Back, Shoulders, Legs, Arms, Abs) and equipment types (Barbell, Dumbbell, Kettlebell, Machine, Cable, Bands, Bodyweight).
 
--   [ ] **Task 3.1.4: Create Seeding Script**
+-   [x] **Task 3.1.4: Create Seeding Script**
     -   **File:** `prisma/seed-exercises.ts` (New file)
-    -   **Action:** Write a script to read `prisma/data/exercises.json` and populate the `Exercise` table, avoiding duplicates.
-    -   **Details:** The script will connect to Prisma, iterate through the JSON data, and use `prisma.exercise.upsert` with the `name` field as the unique identifier to add each exercise. Log the number of exercises added or updated.
+    -   **Action:** Write a script to read `prisma/data/exercises.json` and populate the `Exercise` table, using `prisma.exercise.upsert` to avoid duplicates.
 
--   [ ] **Task 3.1.5: Add Seeder Script to `package.json`**
+-   [x] **Task 3.1.5: Add Seeder Script to `package.json`**
     -   **File:** `package.json`
-    -   **Action:** Add a new script to the `"scripts"` section to easily run the seeder.
-    -   **Details:** `"db:seed-exercises": "npx ts-node --project tsconfig-seed.json prisma/seed-exercises.ts"`
+    -   **Action:** Add a new script: `"db:seed-exercises": "npx ts-node --project tsconfig-seed.json prisma/seed-exercises.ts"`.
 
-### Sub-Phase 3.2: Backend Logic
+##### Sub-Phase 3.2: Backend Logic
 
--   [ ] **Task 3.2.1: Extend Client Service**
+-   [x] **Task 3.2.1: Extend Client Service**
     -   **File:** `src/lib/services/clientService.ts`
-    -   **Action:** Add new functions for `Exercise` and `ClientExerciseLog` CRUD, and update the client details payload.
-    -   **Details:**
-        -   Create `searchExercises(query: string)`.
-        -   Create `createExerciseLog(...)`, `updateExerciseLog(...)`, `deleteExerciseLog(...)`.
-        -   Update `getClientDetailsForTrainer` to `include` `exerciseLogs`, ordered by `logDate`.
+    -   **Action:** Add functions for `Exercise` and `ClientExerciseLog` CRUD, and update the client details payload.
+    -   **Details:** Add `searchExercises(query: string)`, `createExerciseLog(...)`, `updateExerciseLog(...)`, `deleteExerciseLog(...)`. Update `getClientDetailsForTrainer` to `include` `exerciseLogs { orderBy: { logDate: 'desc' } }`.
 
--   [ ] **Task 3.2.2: Create Exercise Log Server Actions**
+-   [x] **Task 3.2.2: Create Exercise Log Server Actions**
     -   **File:** `src/app/clients/actions/exercise-log-actions.ts` (New file)
-    -   **Action:** Create server actions that wrap the new service functions.
-    -   **Details:** Implement `searchExercises`, `addExerciseLog`, `updateExerciseLog`, and `deleteExerciseLog` actions. Use Zod for validation, especially for the `sets` JSON data which should be an array of objects with `reps` and `weight`.
+    -   **Action:** Create server actions that wrap the new service functions. Use Zod to validate input, especially the `sets` JSON.
 
--   [ ] **Task 3.2.3: Export New Actions**
+-   [x] **Task 3.2.3: Export New Actions**
     -   **File:** `src/app/clients/actions.ts`
     -   **Action:** Export all functions from the new `exercise-log-actions.ts` file.
 
-### Sub-Phase 3.3: Frontend UI & Integration
+##### Sub-Phase 3.3: Frontend UI & Integration
 
--   [ ] **Task 3.3.1: Create Exercise Progress Chart Component**
+-   [x] **Task 3.3.1: Create Exercise Progress Chart Component**
     -   **File:** `src/components/clients/modules/ExerciseProgressChart.tsx` (New file)
-    -   **Action:** Build a reusable line chart component to visualize performance for a single exercise over time.
-    -   **Details:** The chart should be able to display total volume (`sets * reps * weight`) or 1-rep max estimates. It must handle empty states gracefully.
+    -   **Action:** Build a reusable line chart component to visualize performance (e.g., total volume) for a single exercise over time. It must handle empty states.
 
--   [ ] **Task 3.3.2: Create Exercise Log Management Hook**
+-   [x] **Task 3.3.2: Create Exercise Log Management Hook**
     -   **File:** `src/hooks/useExerciseLogManager.ts` (New file)
-    -   **Action:** Create a custom hook to encapsulate the logic for managing exercise logs on the client.
-    -   **Details:** This hook will manage state for the logs list, the dynamic "sets" form, searching exercises (debounced), and handling form submissions via server actions.
+    -   **Action:** Create a custom hook to manage state for the exercise logs list, the dynamic "sets" form, debounced exercise searching, and form submissions.
 
--   [ ] **Task 3.3.3: Create Exercise Log Management UI**
+-   [x] **Task 3.3.3: Create Exercise Log Management UI**
     -   **File:** `src/components/clients/modules/ManageClientExerciseLogs.tsx` (New file)
     -   **Action:** Build the main component for the new "Exercise Performance" tab.
-    -   **Details:**
-        -   Use the `useExerciseLogManager` hook.
-        -   Implement a form for adding new logs. This form must include:
-            -   A date picker.
-            -   A searchable input that calls the `searchExercises` action to find an exercise.
-            -   A dynamic section where the user can click "Add Set" to add new rows for `reps` and `weight`.
-        -   Display a list of historical logs, grouped by exercise.
-        -   Integrate the `ExerciseProgressChart`, allowing a user to click an exercise to see its historical performance chart.
+    -   **Details:** Use the hook. Implement a form with a date picker, a searchable exercise input, and a dynamic "Add Set" section. Display historical logs grouped by exercise, and integrate the `ExerciseProgressChart`.
 
--   [ ] **Task 3.3.4: Integrate New Tab in Client Detail View**
+-   [x] **Task 3.3.4: Integrate New Tab in Client Detail View**
     -   **File:** `src/components/clients/ClientDetailView.tsx`
-    -   **Action:** Add "Exercise Performance" to the `tabs` array and `tabContent` object.
-    -   **Details:** Use `React.lazy` to dynamically import the new `ManageClientExerciseLogs` component for better performance. Pass the client ID and initial exercise logs as props.
+    -   **Action:** Add "Exercise Performance" to the `tabs` array and `tabContent` object, lazily importing the new component.
+    -   **Details:** Add `{ name: "Exercise Performance", id: "exercise" }` to the `tabs` array. Add a new entry to `tabContent` for `exercise`, rendering the `ManageClientExerciseLogs` component. Update the `getClientDetails` call and type to include `exerciseLogs`.
+```
 
+I have analyzed the provided TypeScript errors and will now implement the necessary fixes. The errors stem from a missing returned function from a custom hook and unsafe type casting of Prisma's `JsonValue` type.
 
+I will correct the `useExerciseLogManager` hook to return the `setSearchResults` function. Then, I will update the `ManageClientExerciseLogs` component to properly destructure and use this function. I will also correct the type assertions for the `sets` property, which is of type `JsonValue`, in both the `ManageClientExerciseLogs` and `ExerciseProgressChart` components to ensure type safety.
+
+### src/hooks/useExerciseLogManager.ts
+```ts
+```
+
+### src/components/clients/modules/ExerciseProgressChart.tsx
+```tsx
+```
+
+### src/components/clients/modules/ManageClientExerciseLogs.tsx
+```tsx
+
+```

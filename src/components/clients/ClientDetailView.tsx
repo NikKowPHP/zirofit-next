@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, Suspense, lazy } from "react";
@@ -7,6 +8,8 @@ import type {
   ClientProgressPhoto,
 } from "@/app/clients/actions/client-actions";
 import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
+import type { ClientExerciseLog } from "@/app/clients/actions/exercise-log-actions";
+
 const ManageClientMeasurements = lazy(
   () => import("./modules/ManageClientMeasurements"),
 );
@@ -17,11 +20,15 @@ const ManageClientSessionLogs = lazy(
   () => import("./modules/ManageClientSessionLogs"),
 );
 const ClientStatistics = lazy(() => import("./modules/ClientStatistics"));
+const ManageClientExerciseLogs = lazy(
+  () => import("./modules/ManageClientExerciseLogs"),
+);
 
 type ClientWithDetails = Client & {
   measurements: ClientMeasurement[];
   progressPhotos: ClientProgressPhoto[];
   sessionLogs: ClientSessionLog[];
+  exerciseLogs: ClientExerciseLog[];
 };
 
 interface ClientDetailViewProps {
@@ -33,6 +40,7 @@ const tabs = [
   { name: "Measurements", id: "measurements" },
   { name: "Progress Photos", id: "photos" },
   { name: "Session Logs", id: "logs" },
+  { name: "Exercise Performance", id: "exercise" },
 ];
 
 export default function ClientDetailView({ client }: ClientDetailViewProps) {
@@ -58,13 +66,19 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
         initialSessionLogs={client.sessionLogs}
       />
     ),
+    exercise: (
+      <ManageClientExerciseLogs
+        clientId={client.id}
+        initialExerciseLogs={client.exerciseLogs}
+      />
+    ),
   };
 
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
       <div className="p-2">
         <nav
-          className="bg-neutral-200 dark:bg-neutral-800 rounded-lg p-1 flex justify-center"
+          className="bg-neutral-200 dark:bg-neutral-800 rounded-lg p-1 flex justify-center overflow-x-auto"
           aria-label="Tabs"
         >
           {tabs.map((tab) => (

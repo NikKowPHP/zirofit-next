@@ -1,6 +1,6 @@
 import ClientForm from "@/components/clients/ClientForm";
 import { getClientById, updateClient } from "@/app/clients/actions";
-import Link from "next/link";
+import BackLink from "@/components/ui/BackLink";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -24,9 +24,7 @@ export default async function EditClientPage({ params }: PageProps) {
 
   return (
     <div>
-      <Link href="/clients" className="mb-4 inline-block">
-        Back to Client List
-      </Link>
+      <BackLink href="/clients" text="← Back to Client List" />
       <ClientForm initialData={client} action={updateClient} />
     </div>
   );

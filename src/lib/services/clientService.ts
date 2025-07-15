@@ -1,3 +1,4 @@
+
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 
@@ -44,6 +45,10 @@ export const getClientDetailsForTrainer = async (
       measurements: { orderBy: { measurementDate: "desc" } },
       progressPhotos: { orderBy: { photoDate: "desc" } },
       sessionLogs: { orderBy: { sessionDate: "desc" } },
+      exerciseLogs: {
+        include: { exercise: true },
+        orderBy: { logDate: "desc" },
+      },
     },
   });
 };
@@ -235,4 +240,45 @@ export const findProgressPhotoById = async (id: string) => {
  */
 export const deleteProgressPhotoById = async (id: string) => {
   return prisma.clientProgressPhoto.delete({ where: { id } });
+};
+
+// Exercise and Log related services
+export const searchExercises = async (query: string) => {
+  return prisma.exercise.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    take: 10,
+  });
+};
+
+export const createExerciseLog = async (
+  data: Prisma.ClientExerciseLogUncheckedCreateInput,
+) => {
+  return prisma.clientExerciseLog.create({
+    data,
+    include: { exercise: true },
+  });
+};
+
+export const updateExerciseLog = async (
+  id: string,
+  data: Prisma.ClientExerciseLogUncheckedUpdateInput,
+) => {
+  return prisma.clientExerciseLog.update({
+    where: { id },
+    data,
+    include: { exercise: true },
+  });
+};
+
+export const findExerciseLogById = async (id: string) => {
+  return prisma.clientExerciseLog.findUnique({ where: { id } });
+};
+
+export const deleteExerciseLog = async (id: string) => {
+  return prisma.clientExerciseLog.delete({ where: { id } });
 };

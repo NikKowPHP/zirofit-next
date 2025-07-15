@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
@@ -19,6 +20,7 @@ import {
   getBodyFatProgress,
 } from "@/lib/services/ClientStatisticsService";
 import { useTheme } from "@/context/ThemeContext";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 ChartJS.register(
   CategoryScale,
@@ -71,11 +73,16 @@ export default function ClientStatistics({
     },
   });
 
+  const weightMeasurements = measurements.filter((m) => m.weightKg != null);
+  const bodyFatMeasurements = measurements.filter(
+    (m) => m.bodyFatPercentage != null,
+  );
+
   const weightData = {
     datasets: [
       {
         label: "Weight (kg)",
-        data: getWeightProgress(measurements),
+        data: getWeightProgress(weightMeasurements),
         borderColor: "rgb(239, 68, 68)",
         backgroundColor: "rgba(239, 68, 68, 0.5)",
       },
@@ -86,7 +93,7 @@ export default function ClientStatistics({
     datasets: [
       {
         label: "Body Fat (%)",
-        data: getBodyFatProgress(measurements),
+        data: getBodyFatProgress(bodyFatMeasurements),
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.5)",
       },
@@ -102,13 +109,27 @@ export default function ClientStatistics({
         <h3 className="font-semibold mb-2 dark:text-gray-200">
           Weight Progress
         </h3>
-        <Line options={chartOptions("Weight (kg)")} data={weightData} />
+        {weightMeasurements.length > 1 ? (
+          <Line options={chartOptions("Weight (kg)")} data={weightData} />
+        ) : (
+          <EmptyState
+            title="No Weight Data"
+            description="Log your client's weight at least twice to see their progress here."
+          />
+        )}
       </div>
       <div className="h-80">
         <h3 className="font-semibold mb-2 dark:text-gray-200">
           Body Fat Progress
         </h3>
-        <Line options={chartOptions("Body Fat %")} data={bodyFatData} />
+        {bodyFatMeasurements.length > 1 ? (
+          <Line options={chartOptions("Body Fat %")} data={bodyFatData} />
+        ) : (
+          <EmptyState
+            title="No Body Fat Data"
+            description="Log your client's body fat percentage at least twice to see their progress here."
+          />
+        )}
       </div>
     </div>
   );
