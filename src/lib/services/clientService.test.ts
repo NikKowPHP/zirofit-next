@@ -5,6 +5,8 @@ import * as clientService from "./clientService";
 describe("Client Service", () => {
   const trainerId = "test-trainer-id";
   const clientId = "test-client-id";
+  const exerciseId = "exercise-1";
+  const logId = "log-1";
 
   it("should get clients for a specific trainer", async () => {
     const mockClients = [{ id: clientId, name: "Test Client", trainerId }];
@@ -18,7 +20,7 @@ describe("Client Service", () => {
     });
   });
 
-  it("should get client details for a specific trainer", async () => {
+  it("should get client details for a specific trainer including exercise logs", async () => {
     await clientService.getClientDetailsForTrainer(clientId, trainerId);
     expect(prismaMock.client.findFirst).toHaveBeenCalledWith({
       where: { id: clientId, trainerId: trainerId },
@@ -26,6 +28,10 @@ describe("Client Service", () => {
         measurements: { orderBy: { measurementDate: "desc" } },
         progressPhotos: { orderBy: { photoDate: "desc" } },
         sessionLogs: { orderBy: { sessionDate: "desc" } },
+        exerciseLogs: {
+          include: { exercise: true },
+          orderBy: { logDate: "desc" },
+        },
       },
     });
   });
@@ -86,5 +92,60 @@ describe("Client Service", () => {
         },
       }),
     );
+  });
+
+  // New tests for exercise functions
+  describe("Exercise-related functions", () => {
+    it("should search for exercises", async () => {
+      const query = "bench";
+      await clientService.searchExercises(query);
+      expect(prismaMock.exercise.findMany).toHaveBeenCalledWith({
+        where: {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        take: 10,
+      });
+    });
+
+    it("should create an exercise log", async () => {
+      const logData = {
+        clientId,
+        exerciseId,
+        logDate: new Date(),
+        sets: [{ reps: 10, weight: 100 }],
+      };
+      await clientService.createExerciseLog(logData as any);
+      expect(prismaMock.clientExerciseLog.create).toHaveBeenCalledWith({
+        data: logData,
+        include: { exercise: true },
+      });
+    });
+
+    it("should update an exercise log", async () => {
+      const updateData = { sets: [{ reps: 12, weight: 105 }] };
+      await clientService.updateExerciseLog(logId, updateData);
+      expect(prismaMock.clientExerciseLog.update).toHaveBeenCalledWith({
+        where: { id: logId },
+        data: updateData,
+        include: { exercise: true },
+      });
+    });
+
+    it("should find an exercise log by ID", async () => {
+      await clientService.findExerciseLogById(logId);
+      expect(prismaMock.clientExerciseLog.findUnique).toHaveBeenCalledWith({
+        where: { id: logId },
+      });
+    });
+
+    it("should delete an exercise log", async () => {
+      await clientService.deleteExerciseLog(logId);
+      expect(prismaMock.clientExerciseLog.delete).toHaveBeenCalledWith({
+        where: { id: logId },
+      });
+    });
   });
 });
