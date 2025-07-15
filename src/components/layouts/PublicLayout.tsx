@@ -1,4 +1,4 @@
-// src/components/layouts/PublicLayout.tsx
+
 "use client"; // This component now uses a hook, so it must be a client component.
 
 import { useState, useEffect } from "react";
@@ -178,7 +178,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ease: "easeInOut", duration: 0.4 }}
-        className="flex-grow flex flex-col bg-white dark:bg-gray-900"
+        className="flex-grow flex flex-col bg-white dark:bg-gray-900 "
       >
         {children}
       </motion.main>
