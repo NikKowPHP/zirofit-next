@@ -1,6 +1,6 @@
 import { GET } from "./route";
 import { getCurrentUser } from "@/lib/session";
-import { prismaMock } from "../../../../tests/singleton";
+import { prismaMock } from "../@tests/singleton";
 import { NextResponse } from "next/server";
 
 jest.mock("@/lib/session");

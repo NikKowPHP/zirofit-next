@@ -1,5 +1,5 @@
 import { registerUser, loginUser, logoutUser } from "./actions";
-import { prismaMock } from "../../../tests/singleton";
+import { prismaMock } from "@tests/singleton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 

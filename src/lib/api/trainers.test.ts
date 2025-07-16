@@ -1,6 +1,6 @@
 // src/lib/api/trainers.test.ts
 import { getPublishedTrainers } from "./trainers";
-import { prismaMock } from "../../../tests/singleton";
+import { prismaMock } from "@tests/singleton";
 import * as utils from '../utils';
 
 jest.mock('../utils', () => ({

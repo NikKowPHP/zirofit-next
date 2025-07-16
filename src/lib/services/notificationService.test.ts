@@ -1,4 +1,4 @@
-import { prismaMock } from "../../../tests/singleton";
+import { prismaMock } from "@tests/singleton";
 import * as notificationService from "./notificationService";
 import { Resend } from "resend";
 

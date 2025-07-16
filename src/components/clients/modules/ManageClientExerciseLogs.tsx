@@ -118,7 +118,7 @@ export default function ManageClientExerciseLogs({
   }, [updateState]);
 
   const groupedLogs = useMemo(() => {
-    return logs.reduce(
+    return logs.reduce<Record<string, ClientExerciseLog[]>>(
       (acc, log) => {
         const key = log.exercise.name;
         if (!acc[key]) {
@@ -127,7 +127,7 @@ export default function ManageClientExerciseLogs({
         acc[key].push(log);
         return acc;
       },
-      {} as Record<string, ClientExerciseLog[]>,
+      {},
     );
   }, [logs]);
 
@@ -282,7 +282,7 @@ export default function ManageClientExerciseLogs({
                                 </div>
                               </div>
                               <ul className="text-sm space-y-1">
-                                {(Array.isArray(log.sets) ? (log.sets as any[]) : []).map((set: any, i: number) => (
+                                {(Array.isArray(log.sets) ? log.sets : []).map((set: any, i: number) => (
                                   <li key={i}>{i+1}. {set.reps} reps {set.weight != null ? `@ ${set.weight} kg` : ''}</li>
                                 ))}
                               </ul>

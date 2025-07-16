@@ -2,7 +2,7 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from 'next-intl/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 
 export default function LanguageSwitcher() {
@@ -14,7 +14,14 @@ export default function LanguageSwitcher() {
   const onSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const nextLocale = event.target.value;
     startTransition(() => {
-      router.replace(pathname, { locale: nextLocale });
+      // Manually construct the new path
+      const pathWithoutLocale = pathname.startsWith(`/${locale}`)
+        ? pathname.slice(`/${locale}`.length)
+        : pathname;
+      
+      // Ensure the root path is handled correctly
+      const newPath = `/${nextLocale}${pathWithoutLocale || '/'}`;
+      router.replace(newPath);
     });
   };
 

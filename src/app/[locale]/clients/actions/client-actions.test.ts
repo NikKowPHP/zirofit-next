@@ -2,7 +2,7 @@ import { addClient, updateClient, deleteClient } from "./client-actions";
 import * as clientService from "@/lib/services/clientService";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { prismaMock } from "../../../../tests/singleton";
+import { prismaMock } from "@tests/singleton";
 import { revalidatePath } from "next/cache";
 
 jest.mock("@/lib/services/clientService");
