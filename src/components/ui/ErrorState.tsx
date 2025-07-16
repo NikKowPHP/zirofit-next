@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -11,6 +12,7 @@ import { Button } from "./Button";
  * @param {string} [props.title="An error occurred"] - The main title text for the error state.
  * @param {string} [props.description] - An optional description of the error.
  * @param {() => void} [props.onRetry] - An optional function to call when the retry button is clicked.
+ * @param {string} [props.retryButtonText="Try Again"] - Text for the retry button.
  * @returns {JSX.Element} The rendered ErrorState component.
  *
  * @example
@@ -18,16 +20,19 @@ import { Button } from "./Button";
  *   title="Could not load data"
  *   description="There was a problem fetching the required information."
  *   onRetry={() => refetch()}
+ *   retryButtonText="Retry"
  * />
  */
 export function ErrorState({
   title = "An error occurred",
   description,
   onRetry,
+  retryButtonText = "Try Again",
 }: {
   title?: string;
   description?: string;
   onRetry?: () => void;
+  retryButtonText?: string;
 }) {
   return (
     <motion.div
@@ -48,7 +53,7 @@ export function ErrorState({
       {onRetry && (
         <div className="mt-6">
           <Button variant="danger" onClick={onRetry}>
-            Try Again
+            {retryButtonText}
           </Button>
         </div>
       )}

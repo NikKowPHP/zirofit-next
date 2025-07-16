@@ -441,5 +441,15 @@
     "trainerNotificationTime": "Godzina:",
     "trainerNotificationNotes": "Notatki:",
     "trainerNotificationCta": "Dodaj do Kalendarza Google"
+  },
+  "NotFound": {
+    "title": "Strona nie została znaleziona",
+    "description": "Przepraszamy, nie mogliśmy znaleźć strony, której szukasz. Mogła zostać przeniesiona lub usunięta.",
+    "goHome": "Przejdź do strony głównej"
+  },
+  "ErrorPage": {
+    "title": "Coś poszło nie tak",
+    "description": "Wystąpił nieoczekiwany błąd. Prosimy spróbować ponownie za chwilę.",
+    "retryButton": "Spróbuj ponownie"
   }
 }
