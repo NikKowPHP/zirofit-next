@@ -15,7 +15,7 @@ type FieldName = "aboutMe" | "philosophy" | "methodology";
 
 async function updateProfileTextField(
   fieldName: FieldName,
-  prevState: TextContentFormState | undefined,
+  _prevState: TextContentFormState | undefined,
   formData: FormData,
 ): Promise<TextContentFormState> {
   const { profile } = await getUserAndProfile();

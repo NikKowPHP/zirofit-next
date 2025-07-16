@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -71,7 +72,7 @@ export default function ExternalLinksEditor({
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
       if (result?.success && result.messageKey) {
-        toast.success(t_server(result.messageKey));
+        toast.success(t_server(result.messageKey as any));
       } else if (result?.error) {
         toast.error(result.error);
       }

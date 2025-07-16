@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Button } from "./Button";
 
+interface ErrorStateProps {
+  title?: string;
+  description?: string;
+  onRetry?: () => void;
+  retryButtonText?: string;
+}
+
 /**
  * A component to display when an error occurs.
- *
- * @param {object} props - The component props.
- * @param {string} [props.title="An error occurred"] - The main title text for the error state.
- * @param {string} [props.description] - An optional description of the error.
- * @param {() => void} [props.onRetry] - An optional function to call when the retry button is clicked.
- * @param {string} [props.retryButtonText="Try Again"] - Text for the retry button.
- * @returns {JSX.Element} The rendered ErrorState component.
  *
  * @example
  * <ErrorState
@@ -28,12 +28,7 @@ export function ErrorState({
   description,
   onRetry,
   retryButtonText = "Try Again",
-}: {
-  title?: string;
-  description?: string;
-  onRetry?: () => void;
-  retryButtonText?: string;
-}) {
+}: ErrorStateProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

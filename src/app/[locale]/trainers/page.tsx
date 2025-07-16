@@ -12,7 +12,6 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { TrainerGrid } from "@/components/trainers/TrainerGrid";
 import { getTranslations } from "next-intl/server";
-import { useTranslations } from "next-intl";
 
 export async function generateMetadata({params: {locale}}): Promise<Metadata> {
   const t = await getTranslations({locale, namespace: 'TrainersPage'});
@@ -23,19 +22,6 @@ export async function generateMetadata({params: {locale}}): Promise<Metadata> {
       canonical: "/trainers",
     },
   };
-}
-
-interface Trainer {
-  id: string;
-  name: string;
-  username: string | null;
-  profile: {
-    location: string | null;
-    certifications: string | null;
-    profilePhotoPath: string | null;
-    latitude: number | null;
-    longitude: number | null;
-  } | null;
 }
 
 function TrainerCardSkeleton() {
@@ -102,7 +88,7 @@ async function TrainerList({
     );
   }
 
-  const mapKey = trainers.map((t) => t.id).join("-");
+  const mapKey = trainers.map((t: any) => t.id).join("-");
   const getPageUrl = (p: number) => {
     const params = new URLSearchParams();
     if (query) params.set("q", query);

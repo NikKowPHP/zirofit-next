@@ -2,7 +2,6 @@
 "use client"; // This component needs to handle client-side state for active section
 
 import {
-  Cog6ToothIcon,
   SwatchIcon,
   GiftIcon,
   DocumentTextIcon,

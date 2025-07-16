@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import {
   addProgressPhoto,
   deleteProgressPhoto,
-} from "@/app/clients/actions/photo-actions";
-import { ClientProgressPhoto } from "@/app/clients/actions";
+} from "@/app/[locale]/clients/actions/photo-actions";
+import { ClientProgressPhoto } from "@/app/[locale]/clients/actions";
 
 interface ActionState {
   errors?: {

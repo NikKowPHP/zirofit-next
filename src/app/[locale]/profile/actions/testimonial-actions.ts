@@ -22,7 +22,7 @@ export interface TestimonialFormState {
 }
 
 export async function addTestimonial(
-  prevState: TestimonialFormState | undefined,
+  _prevState: TestimonialFormState | undefined,
   formData: FormData,
 ): Promise<TestimonialFormState> {
   const { profile } = await getUserAndProfile();
@@ -47,7 +47,7 @@ export async function addTestimonial(
 
 export async function updateTestimonial(
   id: string,
-  prevState: TestimonialFormState | undefined,
+  _prevState: TestimonialFormState | undefined,
   formData: FormData,
 ): Promise<TestimonialFormState> {
   const { profile } = await getUserAndProfile();

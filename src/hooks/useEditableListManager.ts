@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 
@@ -13,7 +14,7 @@ type UpdateAction<T extends Item> = (
 ) => Promise<any>;
 type DeleteAction = (
   id: string,
-) => Promise<{ success: boolean; deletedId?: string; error?: string }>;
+) => Promise<{ success: boolean; deletedId?: string; error?: string; messageKey?: string }>;
 
 interface UseEditableListProps<T extends Item> {
   initialItems: T[];

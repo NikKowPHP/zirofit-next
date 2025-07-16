@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useExerciseLogManager } from "@/hooks/useExerciseLogManager";
@@ -263,7 +264,7 @@ export default function ManageClientExerciseLogs({
             <EmptyState title={t("exLogs_noLogs")} description={t("exLogs_noLogsDesc")}/>
           ) : (
             <div className="space-y-6">
-              {Object.entries(groupedLogs).map(([exerciseName, logs]) => (
+              {Object.entries(groupedLogs).map(([exerciseName, exerciseLogs]) => (
                 <Card key={exerciseName}>
                    <CardHeader>
                      <CardTitle>{exerciseName}</CardTitle>
@@ -271,7 +272,7 @@ export default function ManageClientExerciseLogs({
                    <CardContent>
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
-                          {logs.map(log => (
+                          {exerciseLogs.map(log => (
                             <div key={log.id} className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md">
                               <div className="flex justify-between items-center mb-2">
                                 <p className="font-semibold">{new Date(log.logDate).toLocaleDateString(locale)}</p>
@@ -281,7 +282,7 @@ export default function ManageClientExerciseLogs({
                                 </div>
                               </div>
                               <ul className="text-sm space-y-1">
-                                {Array.isArray(log.sets) && (log.sets as {reps: number, weight?: number}[]).map((set, i) => (
+                                {(Array.isArray(log.sets) ? (log.sets as any[]) : []).map((set: any, i: number) => (
                                   <li key={i}>{i+1}. {set.reps} reps {set.weight != null ? `@ ${set.weight} kg` : ''}</li>
                                 ))}
                               </ul>
@@ -289,7 +290,7 @@ export default function ManageClientExerciseLogs({
                           ))}
                         </div>
                         <div className="h-80">
-                           <ExerciseProgressChart logs={logs} />
+                           <ExerciseProgressChart logs={exerciseLogs} />
                         </div>
                       </div>
                    </CardContent>

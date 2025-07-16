@@ -1,5 +1,4 @@
 
-// src/app/auth/actions.ts
 "use server";
 
 import { createClient } from "../../../lib/supabase/server";
@@ -31,7 +30,7 @@ interface RegisterState {
 }
 
 export async function registerUser(
-  prevState: RegisterState | undefined,
+  _prevState: RegisterState | undefined,
   formData: FormData,
 ): Promise<RegisterState> {
   const registerSchema = await getRegisterSchema();
@@ -105,7 +104,7 @@ export async function registerUser(
       count++;
     }
 
-    const [newUser] = await prisma.$transaction([
+    const [_newUser] = await prisma.$transaction([
       prisma.user.create({
         data: {
           id: authData.user.id, // Use Supabase Auth UUID as the primary key
@@ -159,7 +158,7 @@ interface LoginState {
 }
 
 export async function loginUser(
-  prevState: LoginState | undefined,
+  _prevState: LoginState | undefined,
   formData: FormData,
 ): Promise<LoginState> {
   const loginSchema = await getLoginSchema();

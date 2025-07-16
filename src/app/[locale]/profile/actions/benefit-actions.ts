@@ -19,7 +19,7 @@ const BenefitSchema = z.object({
 });
 
 export async function addBenefit(
-  prevState: BenefitFormState | undefined,
+  _prevState: BenefitFormState | undefined,
   formData: FormData,
 ): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();
@@ -49,7 +49,7 @@ export async function addBenefit(
 
 export async function updateBenefit(
   id: string,
-  prevState: BenefitFormState | undefined,
+  _prevState: BenefitFormState | undefined,
   formData: FormData,
 ): Promise<BenefitFormState> {
   const { profile } = await getUserAndProfile();

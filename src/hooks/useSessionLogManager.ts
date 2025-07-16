@@ -1,11 +1,12 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
 import {
   addSessionLog,
   deleteSessionLog,
   updateSessionLog,
-} from "@/app/clients/actions";
-import type { ClientSessionLog } from "@/app/clients/actions";
+} from "@/app/[locale]/clients/actions";
+import type { ClientSessionLog } from "@/app/[locale]/clients/actions";
 
 interface ActionState {
   errors?: {

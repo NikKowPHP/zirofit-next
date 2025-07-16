@@ -29,7 +29,7 @@ interface CoreInfoFormState {
   updatedFields?: Partial<User & Profile>;
 }
 export async function updateCoreInfo(
-  prevState: CoreInfoFormState | undefined,
+  _prevState: CoreInfoFormState | undefined,
   formData: FormData
 ): Promise<CoreInfoFormState> {
   const { user, profile } = await getUserAndProfile();

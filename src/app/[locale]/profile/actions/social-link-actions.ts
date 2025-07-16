@@ -23,7 +23,7 @@ export interface SocialLinkFormState {
 }
 
 export async function addSocialLink(
-  prevState: SocialLinkFormState | undefined,
+  _prevState: SocialLinkFormState | undefined,
   formData: FormData,
 ): Promise<SocialLinkFormState> {
   const { profile } = await getUserAndProfile();
@@ -49,7 +49,7 @@ export async function addSocialLink(
 }
 
 export async function updateSocialLink(
-  prevState: SocialLinkFormState | undefined,
+  _prevState: SocialLinkFormState | undefined,
   formData: FormData,
 ): Promise<SocialLinkFormState> {
   const { profile } = await getUserAndProfile();
@@ -80,7 +80,7 @@ export async function updateSocialLink(
 
 export async function deleteSocialLink(
   linkId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string; messageKey?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteSocialLink(linkId, profile.id);

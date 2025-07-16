@@ -22,7 +22,7 @@ export interface ExternalLinkFormState {
 }
 
 export async function addExternalLink(
-  prevState: ExternalLinkFormState | undefined,
+  _prevState: ExternalLinkFormState | undefined,
   formData: FormData,
 ): Promise<ExternalLinkFormState> {
   const { profile } = await getUserAndProfile();
@@ -47,7 +47,7 @@ export async function addExternalLink(
 }
 
 export async function updateExternalLink(
-  prevState: ExternalLinkFormState | undefined,
+  _prevState: ExternalLinkFormState | undefined,
   formData: FormData,
 ): Promise<ExternalLinkFormState> {
   const { profile } = await getUserAndProfile();
@@ -73,7 +73,7 @@ export async function updateExternalLink(
 
 export async function deleteExternalLink(
   linkId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string; messageKey?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteExternalLink(linkId, profile.id);

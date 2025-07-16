@@ -1,4 +1,5 @@
-import { renderWithIntl, screen } from "@/tests/test-utils";
+
+import { renderWithIntl, screen } from "../../../../tests/test-utils";
 import "@testing-library/jest-dom";
 import ExerciseProgressChart from "./ExerciseProgressChart";
 import { ThemeProvider } from "@/context/ThemeContext";

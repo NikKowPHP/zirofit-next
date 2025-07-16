@@ -8,10 +8,6 @@ import { getTranslations } from "next-intl/server";
 
 /**
  * Sends booking confirmation emails to both the trainer and the client.
- * @param {Booking} booking - The booking object.
- * @param {{ name: string | null; email: string }} trainer - The trainer's details.
- * @param {string} locale - The locale for translation.
- * @returns {Promise<void>}
  */
 export const sendBookingConfirmationEmail = async (
   booking: Booking,
@@ -81,9 +77,6 @@ export const sendBookingConfirmationEmail = async (
 
 /**
  * Creates an in-app notification for a new booking.
- * @param {string} trainerId - The ID of the trainer to notify.
- * @param {Booking} booking - The new booking object.
- * @param {string} locale - The locale for date formatting.
  */
 export async function createBookingNotification(
   trainerId: string,
@@ -104,9 +97,6 @@ export async function createBookingNotification(
 
 /**
  * Creates a notification for a trainer when a client reaches a session milestone.
- * @param {string} userId - The ID of the trainer (user).
- * @param {string} clientId - The ID of the client.
- * @returns {Promise<void>}
  */
 export const createMilestoneNotification = async (
   userId: string,

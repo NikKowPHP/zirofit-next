@@ -28,7 +28,7 @@ const AvailabilitySchema = z.object({
 });
 
 export async function updateAvailability(
-    prevState: AvailabilityFormState | undefined,
+    _prevState: AvailabilityFormState | undefined,
     formData: FormData
 ): Promise<AvailabilityFormState> {
     const { profile } = await getUserAndProfile();

@@ -39,7 +39,7 @@ export async function getTrainerBookings(trainerId: string) {
 }
 
 export async function createBooking(
-  prevState: BookingFormState | undefined,
+  _prevState: BookingFormState | undefined,
   formData: FormData,
 ): Promise<BookingFormState> {
   const validatedFields = BookingSchema.safeParse({

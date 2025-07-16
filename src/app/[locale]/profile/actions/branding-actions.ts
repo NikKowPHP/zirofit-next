@@ -13,7 +13,7 @@ export interface BrandingFormState {
 }
 
 export async function updateBrandingImages(
-  prevState: BrandingFormState | undefined,
+  _prevState: BrandingFormState | undefined,
   formData: FormData,
 ): Promise<BrandingFormState> {
   const { profile, authUser } = await getUserAndProfile();

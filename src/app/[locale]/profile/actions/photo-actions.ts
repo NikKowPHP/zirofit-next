@@ -26,7 +26,7 @@ export interface TransformationPhotoFormState {
 }
 
 export async function addTransformationPhoto(
-    prevState: TransformationPhotoFormState | undefined,
+    _prevState: TransformationPhotoFormState | undefined,
     formData: FormData,
 ): Promise<TransformationPhotoFormState> {
     const { profile, authUser } = await getUserAndProfile();

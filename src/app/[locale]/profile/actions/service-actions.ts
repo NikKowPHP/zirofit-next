@@ -22,7 +22,7 @@ export interface ServiceFormState {
 }
 
 export async function addService(
-  prevState: ServiceFormState | undefined,
+  _prevState: ServiceFormState | undefined,
   formData: FormData,
 ): Promise<ServiceFormState> {
   const { profile } = await getUserAndProfile();
@@ -47,7 +47,7 @@ export async function addService(
 }
 
 export async function updateService(
-  prevState: ServiceFormState | undefined,
+  _prevState: ServiceFormState | undefined,
   formData: FormData,
 ): Promise<ServiceFormState> {
   const { profile } = await getUserAndProfile();
@@ -73,7 +73,7 @@ export async function updateService(
 
 export async function deleteService(
   serviceId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string; messageKey?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteService(serviceId, profile.id);

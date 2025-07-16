@@ -1,4 +1,5 @@
-import { renderWithIntl, screen, waitFor, act } from "@/tests/test-utils";
+
+import { renderWithIntl, screen, waitFor } from "../../../tests/test-utils";
 import userEvent from "@testing-library/user-event";
 import NotificationIndicator from "./NotificationIndicator";
 
@@ -6,7 +7,7 @@ import NotificationIndicator from "./NotificationIndicator";
 class WebSocket {
   constructor() {
     this.onopen = jest.fn();
-    this.onmessage = jest.fn((event?: MessageEvent) => {});
+    this.onmessage = jest.fn((_event?: MessageEvent) => {});
     this.onerror = jest.fn();
     this.close = jest.fn();
     Object.assign(WebSocket, {
@@ -17,7 +18,7 @@ class WebSocket {
     });
   }
   onopen() {}
-  onmessage(event?: MessageEvent) {}
+  onmessage(_event?: MessageEvent) {}
   onerror() {}
   close() {}
 }
