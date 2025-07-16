@@ -34,7 +34,7 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 transition-shadow duration-300 hover:shadow-md flex flex-col sm:flex-row items-center gap-6">
+    <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 transition-shadow duration-300 hover:shadow-md flex flex-col sm:flex-row items-center gap-6" data-testid="trainer-card">
       <div className="flex-shrink-0">
         <Image
           src={trainer.profile.profilePhotoPath || "/default-profile.jpg"}
@@ -46,7 +46,7 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
       </div>
       <div className="flex-grow text-center sm:text-left">
         <Link href={`/trainer/${trainer.username}`}>
-          <h2 className="text-xl font-bold text-[var(--primary-blue)] hover:underline">
+          <h2 className="text-xl font-bold text-[var(--primary-blue)] hover:underline" data-testid="trainer-card-name">
             {trainer.name}
           </h2>
         </Link>
@@ -61,7 +61,7 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
         )}
       </div>
       <div className="flex-shrink-0 sm:ml-auto">
-        <Button variant="secondary" onClick={handleClick} disabled={isLoading}>
+        <Button variant="secondary" onClick={handleClick} disabled={isLoading} data-testid="view-profile-button">
           {isLoading ? (
             <>
               <svg

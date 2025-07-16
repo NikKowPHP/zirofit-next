@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -13,6 +14,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export interface SocialLink {
   id: string;
@@ -31,6 +33,8 @@ interface SocialLinksEditorProps {
 export default function SocialLinksEditor({
   initialSocialLinks,
 }: SocialLinksEditorProps) {
+  const t = useTranslations("ProfileEditor");
+  const t_server = useTranslations("ServerActions");
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const {
@@ -68,8 +72,8 @@ export default function SocialLinksEditor({
   const handleConfirmDelete = async () => {
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
-      if (result?.success) {
-        toast.success("Social link deleted successfully.");
+      if (result?.success && result.messageKey) {
+        toast.success(t_server(result.messageKey));
       } else if (result?.error) {
         toast.error(result.error);
       }
@@ -84,15 +88,15 @@ export default function SocialLinksEditor({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={handleConfirmDelete}
         isPending={!!deletingId}
-        title="Delete Social Link"
-        description="Are you sure you want to permanently delete this social link?"
+        title={t("socialDeleteTitle")}
+        description={t("socialDeleteDesc")}
       />
       <Card>
         <CardHeader>
           <CardTitle>
             {isEditing
-              ? `Edit Social Link: ${currentEditingLink?.platform}`
-              : "Add New Social Link"}
+              ? t("socialLinksEditTitle", { platform: currentEditingLink?.platform })
+              : t("socialLinksTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -106,7 +110,7 @@ export default function SocialLinksEditor({
               <input type="hidden" name="linkId" value={editingItemId ?? ""} />
             )}
             <div>
-              <Label htmlFor="platform">Platform</Label>
+              <Label htmlFor="platform">{t("socialPlatform")}</Label>
               <Input
                 id="platform"
                 name="platform"
@@ -122,7 +126,7 @@ export default function SocialLinksEditor({
               )}
             </div>
             <div>
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{t("socialUsername")}</Label>
               <Input
                 id="username"
                 name="username"
@@ -138,14 +142,14 @@ export default function SocialLinksEditor({
               )}
             </div>
             <div>
-              <Label htmlFor="profileUrl">Profile URL</Label>
+              <Label htmlFor="profileUrl">{t("socialProfileUrl")}</Label>
               <Input
                 id="profileUrl"
                 name="profileUrl"
                 type="url"
                 required
                 className="mt-1"
-                placeholder="https://example.com/username"
+                placeholder={t("socialProfileUrlPlaceholder")}
                 defaultValue={currentEditingLink?.profileUrl ?? ""}
               />
               {getFieldError("profileUrl") && (
@@ -161,27 +165,27 @@ export default function SocialLinksEditor({
                   variant="secondary"
                   onClick={handleCancelEdit}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               )}
               <Button type="submit">
                 {isEditing
                   ? formStatus.pending
-                    ? "Saving..."
-                    : "Save Changes"
+                    ? t("saving")
+                    : t("socialSaveButton")
                   : formStatus.pending
-                    ? "Adding..."
-                    : "Add Link"}
+                    ? t("adding")
+                    : t("socialAddButton")}
               </Button>
             </div>
           </form>
 
           <div>
             <h4 className="text-md font-medium text-gray-800 mb-3">
-              Your Social Links
+              {t("socialYourLinks")}
             </h4>
             {links.length === 0 ? (
-              <p className="text-gray-500">No social links added yet.</p>
+              <p className="text-gray-500">{t("socialNone")}</p>
             ) : (
               <div className="space-y-3">
                 {links.map((link) => (

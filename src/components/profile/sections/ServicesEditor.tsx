@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -14,6 +15,7 @@ import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface ServicesEditorProps {
   initialServices: Service[];
@@ -22,6 +24,8 @@ interface ServicesEditorProps {
 export default function ServicesEditor({
   initialServices,
 }: ServicesEditorProps) {
+  const t = useTranslations("ProfileEditor");
+  const t_server = useTranslations("ServerActions");
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const {
@@ -59,8 +63,8 @@ export default function ServicesEditor({
   const handleConfirmDelete = async () => {
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
-      if (result?.success) {
-        toast.success("Service deleted successfully.");
+      if (result?.success && result.messageKey) {
+        toast.success(t_server(result.messageKey));
       } else if (result?.error) {
         toast.error(result.error);
       }
@@ -75,12 +79,12 @@ export default function ServicesEditor({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={handleConfirmDelete}
         isPending={!!deletingId}
-        title="Delete Service"
-        description="Are you sure you want to permanently delete this service?"
+        title={t("serviceDeleteTitle")}
+        description={t("serviceDeleteDesc")}
       />
       <Card>
         <CardHeader>
-          <CardTitle>{isEditing ? `Edit Service` : "Add New Service"}</CardTitle>
+          <CardTitle>{isEditing ? t("servicesEditTitle") : t("servicesTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form
@@ -93,7 +97,7 @@ export default function ServicesEditor({
               <input type="hidden" name="serviceId" value={editingItemId ?? ""} />
             )}
             <div>
-              <Label htmlFor="title">Service Title</Label>
+              <Label htmlFor="title">{t("serviceTitleLabel")}</Label>
               <Input
                 id="title"
                 name="title"
@@ -110,7 +114,7 @@ export default function ServicesEditor({
             </div>
             <div>
               <RichTextEditor
-                label="Service Description"
+                label={t("serviceDescLabel")}
                 name="description"
                 initialValue={currentEditingService?.description ?? ""}
               />
@@ -127,28 +131,28 @@ export default function ServicesEditor({
                   variant="secondary"
                   onClick={handleCancelEdit}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               )}
               <Button type="submit">
                 {isEditing
                   ? formStatus.pending
-                    ? "Saving..."
-                    : "Save Changes"
+                    ? t("saving")
+                    : t("serviceSaveButton")
                   : formStatus.pending
-                    ? "Adding..."
-                    : "Add Service"}
+                    ? t("adding")
+                    : t("serviceAddButton")}
               </Button>
             </div>
           </form>
 
         <div>
           <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
-            Your Services
+            {t("serviceYourServices")}
           </h4>
           {services.length === 0 ? (
             <p className="text-gray-500">
-              You haven't added any services yet.
+              {t("serviceNone")}
             </p>
           ) : (
             <div className="space-y-4">

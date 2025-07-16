@@ -1,4 +1,5 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
+
+import { renderWithIntl, screen, waitFor, act } from "../../tests/test-utils";
 import userEvent from "@testing-library/user-event";
 import NotificationIndicator from "./NotificationIndicator";
 
@@ -89,7 +90,7 @@ describe("NotificationIndicator", () => {
   });
 
   it("displays unread count", async () => {
-    render(<NotificationIndicator />);
+    renderWithIntl(<NotificationIndicator />);
 
     // Trigger the fetchNotifications call
     const button = screen.getByRole("button");
@@ -104,11 +105,12 @@ describe("NotificationIndicator", () => {
   });
 
   it("toggles dropdown when clicked", async () => {
-    render(<NotificationIndicator />);
+    renderWithIntl(<NotificationIndicator />);
 
     const button = screen.getByRole("button", { name: /Toggle notifications/ });
     await userEvent.click(button);
 
+    expect(await screen.findByText("Notifications")).toBeInTheDocument();
     expect(await screen.findByText("Test notification")).toBeInTheDocument();
 
     await userEvent.click(button);

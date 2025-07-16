@@ -36,7 +36,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
+    <Button type="submit" className="w-full" disabled={pending} data-testid="booking-confirm-button">
       {pending ? (
         <>
           <svg
@@ -190,7 +190,7 @@ export default function PublicCalendar({
   return (
     <>
       <CardHeader>
-        <CardTitle>{t('heading')}</CardTitle>
+        <CardTitle data-testid="booking-heading">{t('heading')}</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Calendar */}
@@ -213,7 +213,7 @@ export default function PublicCalendar({
           <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 dark:text-gray-400">
               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => <div key={day}>{day}</div>)}
           </div>
-          <div className="grid grid-cols-7 gap-1 mt-2">
+          <div className="grid grid-cols-7 gap-1 mt-2" data-testid="calendar-grid">
               {daysInMonth.map(day => {
                   const dayOfWeek = format(day, "EEE").toLowerCase();
                   const isPast = isBefore(day, today);
@@ -244,14 +244,15 @@ export default function PublicCalendar({
         {/* Time Slots */}
         {selectedDate && (
             <div className="mt-4">
-                <h4 className="font-semibold text-sm mb-2">{t('availableSlotsFor', { date: format(selectedDate, "MMMM d, yyyy", { locale: fnsLocale })})}</h4>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                <h4 className="font-semibold text-sm mb-2" data-testid="available-slots-heading">{t('availableSlotsFor', { date: format(selectedDate, "MMMM d, yyyy", { locale: fnsLocale })})}</h4>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2" data-testid="time-slot-container">
                     {availableTimeSlots.length > 0 ? availableTimeSlots.map(time => (
                         <Button
                             key={time}
                             onClick={() => setSelectedTime(time)}
                             variant={selectedTime === time ? "primary" : "secondary"}
                             size="sm"
+                            data-testid="available-time-slot"
                         >
                             {time}
                         </Button>
@@ -281,10 +282,10 @@ export default function PublicCalendar({
             />
 
             <div>
-              <Input name="clientName" placeholder={t('yourNamePlaceholder')} required />
+              <Input name="clientName" placeholder={t('yourNamePlaceholder')} required data-testid="booking-name-input" />
             </div>
             <div>
-              <Input name="clientEmail" type="email" placeholder={t('yourEmailPlaceholder')} required />
+              <Input name="clientEmail" type="email" placeholder={t('yourEmailPlaceholder')} required data-testid="booking-email-input" />
             </div>
             <div>
               <Textarea

@@ -1,4 +1,4 @@
-// src/components/profile/sections/BrandingEditor.tsx
+
 "use client";
 
 import React, { useState } from "react";
@@ -7,6 +7,7 @@ import { updateBrandingImages } from "@/app/profile/actions/branding-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { BannerImage, ProfileImage } from "@/components/ui/ImageComponents";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { useTranslations } from "next-intl";
 
 interface BrandingEditorProps {
   initialData: {
@@ -32,14 +33,16 @@ const DEFAULT_PHOTO = "/default-profile.jpg";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const t = useTranslations("ProfileEditor");
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Branding"}
+      {pending ? t("saving") : t("saveBranding")}
     </Button>
   );
 }
 
 export default function BrandingEditor({ initialData }: BrandingEditorProps) {
+  const t = useTranslations("ProfileEditor");
   const [state, formAction] = useFormState(
     updateBrandingImages,
     initialFormState,
@@ -65,14 +68,14 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Manage Profile Branding</CardTitle>
+        <CardTitle>{t("brandingTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-6">
           {/* Banner Image Section */}
           <div className="relative">
             <Label htmlFor="bannerImage">
-              Banner Image (Recommended: 1200x400)
+              {t("bannerImageLabel")}
             </Label>
             <div className="w-full h-48 mt-2 mb-2 bg-gray-100 dark:bg-gray-700 rounded-md relative overflow-hidden">
               <BannerImage
@@ -98,7 +101,7 @@ export default function BrandingEditor({ initialData }: BrandingEditorProps) {
           {/* Profile Photo Section */}
           <div>
             <Label htmlFor="profilePhoto">
-              Profile Photo (Recommended: 400x400)
+              {t("profilePhotoLabel")}
             </Label>
             <ProfileImage
               src={currentProfilePhotoUrl || ""}

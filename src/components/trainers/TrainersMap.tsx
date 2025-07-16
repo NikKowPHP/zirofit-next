@@ -1,3 +1,4 @@
+
 "use client";
 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -82,6 +83,7 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
       zoom={6} 
       style={{ height: '100%', width: '100%', borderRadius: '0.75rem' }}
       ref={mapRef}
+      data-testid="trainers-map"
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -93,7 +95,7 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
             position={[trainer.profile!.latitude!, trainer.profile!.longitude!]}
         >
           <Popup>
-            <Link href={`/trainer/${trainer.username}`} className="font-semibold text-indigo-600 hover:underline">
+            <Link href={`/trainer/${trainer.username}`} className="font-semibold text-indigo-600 hover:underline" data-testid={`map-popup-link-${trainer.username}`}>
               {trainer.name}
             </Link>
           </Popup>

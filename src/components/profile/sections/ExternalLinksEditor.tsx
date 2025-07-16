@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -13,6 +14,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface ExternalLink {
   id: string;
@@ -30,6 +32,8 @@ interface ExternalLinksEditorProps {
 export default function ExternalLinksEditor({
   initialExternalLinks,
 }: ExternalLinksEditorProps) {
+  const t = useTranslations("ProfileEditor");
+  const t_server = useTranslations("ServerActions");
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const {
@@ -67,8 +71,8 @@ export default function ExternalLinksEditor({
   const handleConfirmDelete = async () => {
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
-      if (result?.success) {
-        toast.success("Link deleted successfully.");
+      if (result?.success && result.messageKey) {
+        toast.success(t_server(result.messageKey));
       } else if (result?.error) {
         toast.error(result.error);
       }
@@ -83,15 +87,15 @@ export default function ExternalLinksEditor({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={handleConfirmDelete}
         isPending={!!deletingId}
-        title="Delete External Link"
-        description="Are you sure you want to permanently delete this link?"
+        title={t("extLinksDeleteTitle")}
+        description={t("extLinksDeleteDesc")}
       />
       <Card>
         <CardHeader>
           <CardTitle>
             {isEditing
-              ? `Edit Link: ${currentEditingLink?.label}`
-              : "Add New External Link"}
+              ? t("extLinksEditTitle", { label: currentEditingLink?.label })
+              : t("extLinksTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -105,7 +109,7 @@ export default function ExternalLinksEditor({
               <input type="hidden" name="linkId" value={editingItemId ?? ""} />
             )}
             <div>
-              <Label htmlFor="label">Label</Label>
+              <Label htmlFor="label">{t("extLinksLabel")}</Label>
               <Input
                 id="label"
                 name="label"
@@ -121,14 +125,14 @@ export default function ExternalLinksEditor({
               )}
             </div>
             <div>
-              <Label htmlFor="linkUrl">URL</Label>
+              <Label htmlFor="linkUrl">{t("extLinksUrl")}</Label>
               <Input
                 id="linkUrl"
                 name="linkUrl"
                 type="url"
                 required
                 className="mt-1"
-                placeholder="https://example.com"
+                placeholder={t("extLinksUrlPlaceholder")}
                 defaultValue={currentEditingLink?.linkUrl ?? ""}
               />
               {getFieldError("linkUrl") && (
@@ -144,28 +148,28 @@ export default function ExternalLinksEditor({
                   variant="secondary"
                   onClick={handleCancelEdit}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               )}
               <Button type="submit">
                 {isEditing
                   ? formStatus.pending
-                    ? "Saving..."
-                    : "Save Changes"
+                    ? t("saving")
+                    : t("extLinksSaveButton")
                   : formStatus.pending
-                    ? "Adding..."
-                    : "Add Link"}
+                    ? t("adding")
+                    : t("extLinksAddButton")}
               </Button>
             </div>
           </form>
 
           <div>
             <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
-              Your External Links
+              {t("extLinksYourLinks")}
             </h4>
             {links.length === 0 ? (
               <p className="text-gray-500 dark:text-gray-400">
-                No external links added yet.
+                {t("extLinksNone")}
               </p>
             ) : (
               <div className="space-y-3">

@@ -90,6 +90,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                           <Link
                             href="/dashboard"
                             className="text-neutral-600 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                            data-testid="dashboard-link"
                           >
                             {t('dashboard')}
                           </Link>
@@ -98,10 +99,10 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       ) : (
                         <>
                           <Button asChild variant="secondary" size="md">
-                            <Link href="/auth/login">{t('trainerLogin')}</Link>
+                            <Link href="/auth/login" data-testid="login-link">{t('trainerLogin')}</Link>
                           </Button>
                           <Button asChild variant="primary" size="md">
-                            <Link href="/auth/register">{t('trainerSignUp')}</Link>
+                            <Link href="/auth/register" data-testid="signup-link">{t('trainerSignUp')}</Link>
                           </Button>
                         </>
                       )}
@@ -165,10 +166,10 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                   <>
                     <div className="flex flex-col items-center space-y-4 pt-8">
                       <Button asChild variant="secondary" size="lg" onClick={toggleMobileMenu}>
-                          <Link href="/auth/login">{t('trainerLogin')}</Link>
+                          <Link href="/auth/login" data-testid="login-link">{t('trainerLogin')}</Link>
                       </Button>
                       <Button asChild size="lg" onClick={toggleMobileMenu}>
-                          <Link href="/auth/register">{t('trainerSignUp')}</Link>
+                          <Link href="/auth/register" data-testid="signup-link">{t('trainerSignUp')}</Link>
                       </Button>
                     </div>
                   </>

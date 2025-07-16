@@ -30,7 +30,7 @@ const initialState: FormState = {
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full">
+    <Button type="submit" disabled={pending} className="w-full" data-testid="login-submit-button">
       {pending ? "Logging in..." : "Log In"}
     </Button>
   );
@@ -63,7 +63,7 @@ export default function LoginPage() {
               </p>
             )}
             {successMessage && !state.error && (
-              <p className="text-green-600 text-sm mb-4 bg-green-100 dark:bg-green-900/20 p-3 rounded-md">
+              <p className="text-green-600 text-sm mb-4 bg-green-100 dark:bg-green-900/20 p-3 rounded-md" data-testid="login-success-message">
                 {successMessage}
               </p>
             )}
@@ -83,6 +83,7 @@ export default function LoginPage() {
                   autoComplete="email"
                   required
                   className="mt-1"
+                  data-testid="login-email-input"
                 />
                 {state?.errors?.email &&
                   state.errors.email.map((err: string) => (
@@ -105,6 +106,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   required
                   className="mt-1"
+                  data-testid="login-password-input"
                 />
                 {state?.errors?.password &&
                   state.errors.password.map((err: string) => (

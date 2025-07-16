@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+
+import { renderWithIntl, screen } from "../../../../tests/test-utils";
 import DashboardContent from "./DashboardContent";
 import { ThemeProvider } from "@/context/ThemeContext";
 import useSWR from "swr";
@@ -15,7 +16,7 @@ describe("DashboardContent", () => {
       isLoading: true,
     });
 
-    render(
+    renderWithIntl(
       <ThemeProvider>
         <DashboardContent />
       </ThemeProvider>,
@@ -36,7 +37,7 @@ describe("DashboardContent", () => {
       isLoading: false,
     });
 
-    render(
+    renderWithIntl(
       <ThemeProvider>
         <DashboardContent />
       </ThemeProvider>,
@@ -62,8 +63,8 @@ describe("DashboardContent", () => {
         transformationPhotos: [{ id: "1" }],
       },
       activityFeed: [],
-      clientProgressData: [],
-      monthlyActivityData: [],
+      clientProgressData: [{ x: '2025-01-01', y: 80 }, { x: '2025-01-08', y: 79 }],
+      monthlyActivityData: [{ x: 'Week 1', y: 5 }],
     };
 
     mockedUseSWR.mockReturnValue({
@@ -72,7 +73,7 @@ describe("DashboardContent", () => {
       isLoading: false,
     });
 
-    render(
+    renderWithIntl(
       <ThemeProvider>
         <DashboardContent />
       </ThemeProvider>,
@@ -97,5 +98,9 @@ describe("DashboardContent", () => {
     expect(
       screen.getByText("Pending Clients").nextElementSibling,
     ).toHaveTextContent("3");
+
+    // Assert translated chart titles are rendered
+    expect(screen.getByText("Client Progress (Weight)")).toBeInTheDocument();
+    expect(screen.getByText("Monthly Activity")).toBeInTheDocument();
   });
 });

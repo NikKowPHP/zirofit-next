@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+
+import { renderWithIntl, screen, fireEvent } from '../../tests/test-utils';
 import '@testing-library/jest-dom';
 import SortControl from './SortControl';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
@@ -15,13 +16,24 @@ const mockUseSearchParams = useSearchParams as jest.Mock;
 const mockUsePathname = usePathname as jest.Mock;
 
 describe('SortControl', () => {
+  it('should render the label and default value', () => {
+    mockUseRouter.mockReturnValue({ push: jest.fn() });
+    mockUseSearchParams.mockReturnValue(new URLSearchParams());
+    mockUsePathname.mockReturnValue('/trainers');
+    
+    renderWithIntl(<SortControl />);
+    
+    expect(screen.getByLabelText('Sort by:')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toHaveValue('name_asc');
+  });
+
   it('should update URL search params on selection change', () => {
     const push = jest.fn();
     mockUseRouter.mockReturnValue({ push });
     mockUseSearchParams.mockReturnValue(new URLSearchParams());
     mockUsePathname.mockReturnValue('/trainers');
 
-    render(<SortControl />);
+    renderWithIntl(<SortControl />);
     
     const select = screen.getByRole('combobox');
     
@@ -41,7 +53,7 @@ describe('SortControl', () => {
     mockUseSearchParams.mockReturnValue(new URLSearchParams('sortBy=newest'));
     mockUsePathname.mockReturnValue('/trainers');
 
-    render(<SortControl />);
+    renderWithIntl(<SortControl />);
     
     const select = screen.getByRole('combobox') as HTMLSelectElement;
     expect(select.value).toBe('newest');

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -14,6 +15,7 @@ import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { useTranslations } from "next-intl";
 
 interface Testimonial {
   id: string;
@@ -28,8 +30,10 @@ type FormState = {
   success: boolean;
   error: string | null;
   message?: string | null;
+  messageKey?: string | null;
   newTestimonial?: Testimonial;
   updatedTestimonial?: Testimonial;
+  deletedId?: string;
 };
 
 type FormAction = (
@@ -52,6 +56,9 @@ export default function TestimonialsEditor({
 }: {
   initialTestimonials: Testimonial[];
 }) {
+  const t = useTranslations("ProfileEditor");
+  const t_server = useTranslations("ServerActions");
+
   const [testimonials, setTestimonials] =
     useState<Testimonial[]>(initialTestimonials);
   const [editingTestimonialId, setEditingTestimonialId] = useState<
@@ -143,14 +150,16 @@ export default function TestimonialsEditor({
   const handleDeleteTestimonial = async (testimonialId: string) => {
     setDeletingId(testimonialId);
     const result = await deleteTestimonial(testimonialId, undefined);
-    if (result?.success && result?.deletedId) {
-      toast.success(result.message || "Testimonial deleted.");
+    if (result?.success && result.messageKey && result?.deletedId) {
+      toast.success(t_server(result.messageKey));
       setTestimonials((current) =>
         current.filter((t) => t.id !== result?.deletedId),
       );
       await revalidateProfilePath();
     } else if (result?.error) {
       toast.error(result.error);
+    } else {
+      toast.error(t_server("genericError"));
     }
     setDeletingId(null);
   };
@@ -174,13 +183,13 @@ export default function TestimonialsEditor({
           }
         }}
         isPending={!!deletingId}
-        title="Delete Testimonial"
-        description="Are you sure you want to permanently delete this testimonial?"
+        title={t("testimonialDeleteTitle")}
+        description={t("testimonialDeleteDesc")}
       />
       <Card>
         <CardHeader>
           <CardTitle>
-            {isEditing ? "Edit Testimonial" : "Add Testimonial"}
+            {isEditing ? t("testimonialsEditTitle") : t("testimonialsTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -193,7 +202,7 @@ export default function TestimonialsEditor({
             <div className="grid gap-4">
               <Input
                 name="clientName"
-                placeholder="Client name"
+                placeholder={t("testimonialClientName")}
                 defaultValue={
                   isEditing
                     ? testimonials.find((t) => t.id === editingTestimonialId)
@@ -203,7 +212,7 @@ export default function TestimonialsEditor({
                 className={getFieldError("clientName") ? "border-red-500" : ""}
               />
               <RichTextEditor
-                label="Testimonial Text"
+                label={t("testimonialText")}
                 name="testimonialText"
                 initialValue={
                   isEditing
@@ -219,7 +228,7 @@ export default function TestimonialsEditor({
               />
               <div className="flex gap-2">
                 <Button type="submit" variant="primary">
-                  {isEditing ? "Update" : "Add"} Testimonial
+                  {isEditing ? t("testimonialUpdateButton") : t("testimonialAddButton")}
                 </Button>
                 {isEditing && (
                   <Button
@@ -227,7 +236,7 @@ export default function TestimonialsEditor({
                     variant="secondary"
                     onClick={handleCancelEdit}
                   >
-                    Cancel
+                    {t("cancel")}
                   </Button>
                 )}
               </div>

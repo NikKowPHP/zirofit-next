@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -14,6 +15,7 @@ import { TransformationImage } from "@/components/ui/ImageComponents";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
+import { useTranslations } from "next-intl";
 
 export type TransformationPhoto = {
   id: string;
@@ -38,10 +40,11 @@ const initialState: TransformationPhotoFormState = {
 };
 
 function SubmitPhotoButton() {
+  const t = useTranslations("ProfileEditor");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Uploading..." : "Upload Photo"}
+      {pending ? t("photosUploading") : t("photosUploadButton")}
     </Button>
   );
 }
@@ -53,6 +56,8 @@ interface TransformationPhotosEditorProps {
 export default function TransformationPhotosEditor({
   initialTransformationPhotos,
 }: TransformationPhotosEditorProps) {
+  const t = useTranslations("ProfileEditor");
+  const t_server = useTranslations("ServerActions");
   const [state, formAction] = useFormState(
     addTransformationPhoto,
     initialState,
@@ -103,8 +108,8 @@ export default function TransformationPhotosEditor({
   const handleDeletePhoto = async (photoId: string) => {
     setDeletingId(photoId);
     const result = await deleteTransformationPhoto(photoId);
-    if (result.success && result.deletedId) {
-      toast.success("Photo deleted successfully.");
+    if (result.success && result.messageKey && result.deletedId) {
+      toast.success(t_server(result.messageKey));
       setPhotos((current) => current.filter((p) => p.id !== result.deletedId));
     } else if (result.error) {
       toast.error(result.error);
@@ -120,12 +125,12 @@ export default function TransformationPhotosEditor({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={() => itemToDelete && handleDeletePhoto(itemToDelete)}
         isPending={!!deletingId}
-        title="Delete Photo"
-        description="Are you sure you want to permanently delete this transformation photo?"
+        title={t("photosDeleteTitle")}
+        description={t("photosDeleteDesc")}
       />
       <Card>
         <CardHeader>
-          <CardTitle>Manage Transformation Photos</CardTitle>
+          <CardTitle>{t("photosTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form
@@ -135,7 +140,7 @@ export default function TransformationPhotosEditor({
             encType="multipart/form-data"
           >
             <div>
-              <Label htmlFor="photoFile">Photo File (Max 2MB)</Label>
+              <Label htmlFor="photoFile">{t("photosFileLabel")}</Label>
               <Input
                 id="photoFile"
                 name="photoFile"
@@ -154,7 +159,7 @@ export default function TransformationPhotosEditor({
             </div>
             {previewUrl && (
               <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                <p className="text-sm text-gray-500 mb-1">{t("photosPreview")}</p>
                 <Image
                   src={previewUrl}
                   alt="Selected preview"
@@ -165,7 +170,7 @@ export default function TransformationPhotosEditor({
               </div>
             )}
             <div>
-              <Label htmlFor="caption">Caption (Optional)</Label>
+              <Label htmlFor="caption">{t("photosCaptionLabel")}</Label>
               <Textarea id="caption" name="caption" rows={3} className="mt-1" />
               {getFieldError("caption") && (
                 <p className="text-red-500 text-xs mt-1">
@@ -180,10 +185,10 @@ export default function TransformationPhotosEditor({
 
           <div>
             <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
-              Your Uploaded Photos
+              {t("photosYourPhotos")}
             </h4>
             {photos.length === 0 ? (
-              <p className="text-gray-500">No photos uploaded yet.</p>
+              <p className="text-gray-500">{t("photosNone")}</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {photos.map((photo) => (

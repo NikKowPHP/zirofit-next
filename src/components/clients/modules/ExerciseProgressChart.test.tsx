@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+
+import { renderWithIntl, screen } from "../../../tests/test-utils";
 import "@testing-library/jest-dom";
 import ExerciseProgressChart from "./ExerciseProgressChart";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -62,7 +63,7 @@ const mockLogs: ClientExerciseLog[] = [
 ];
 
 const renderWithTheme = (ui: React.ReactElement) => {
-  return render(<ThemeProvider>{ui}</ThemeProvider>);
+  return renderWithIntl(<ThemeProvider>{ui}</ThemeProvider>);
 };
 
 describe("ExerciseProgressChart", () => {

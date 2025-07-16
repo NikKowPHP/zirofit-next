@@ -54,6 +54,7 @@ export default function TrainerSearch() {
           ? "text-neutral-900 dark:text-white"
           : "text-neutral-500 hover:text-neutral-700 dark:hover:text-white"
       }`}
+      data-testid={`search-type-${tabId}`}
     >
       <Icon className="w-5 h-5 mr-2" />
       {label}
@@ -107,6 +108,7 @@ export default function TrainerSearch() {
                   setQuery(e.target.value)
                 }
                 size="lg"
+                data-testid="search-query-input"
               />
             </div>
             {activeTab === "in-person" && (
@@ -120,6 +122,7 @@ export default function TrainerSearch() {
                     setLocation(e.target.value)
                   }
                   size="lg"
+                  data-testid="search-location-input"
                 />
               </div>
             )}
@@ -130,6 +133,7 @@ export default function TrainerSearch() {
                 className="w-full"
                 size="lg"
                 disabled={isLoading}
+                data-testid="search-submit-button"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">

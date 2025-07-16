@@ -27,6 +27,7 @@ export default function SortControl() {
         onChange={handleSortChange} 
         defaultValue={searchParams.get('sortBy') || 'name_asc'}
         className="h-10 rounded-md border border-neutral-300 bg-white dark:bg-black dark:border-neutral-700 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--primary-blue)]"
+        data-testid="sort-by-select"
       >
         <option value="name_asc">{t('nameAsc')}</option>
         <option value="name_desc">{t('nameDesc')}</option>

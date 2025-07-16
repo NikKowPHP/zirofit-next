@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test';
 
 test.describe('Trainer Dashboard', () => {
@@ -8,22 +9,21 @@ test.describe('Trainer Dashboard', () => {
     const TEST_USER_PASS = 'password123';
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/auth/login');
-        await page.locator('input[name="email"]').fill(TEST_USER_EMAIL);
-        await page.locator('input[name="password"]').fill(TEST_USER_PASS);
-        await page.getByRole('button', { name: 'Log In' }).click();
-        await expect(page).toHaveURL('/dashboard', { timeout: 15000 });
+        await page.goto('/en/auth/login');
+        await page.getByTestId('login-email-input').fill(TEST_USER_EMAIL);
+        await page.getByTestId('login-password-input').fill(TEST_USER_PASS);
+        await page.getByTestId('login-submit-button').click();
+        await expect(page).toHaveURL('/en/dashboard', { timeout: 15000 });
     });
 
     test('bookings page should have "Add to Calendar" links for bookings', async ({ page }) => {
-        await page.goto('/dashboard/bookings');
+        await page.goto('/en/dashboard/bookings');
         
         // Wait for the bookings to load. This targets the container for a single booking.
-        const firstBooking = page.locator('div > h3').first();
+        const firstBooking = page.getByTestId(/booking-card-/).first();
         
         if (await firstBooking.isVisible()) {
-            const bookingContainer = firstBooking.locator('.. >> ..'); // Navigate up to the booking card container
-            const addToCalendarButton = bookingContainer.getByRole('link', { name: 'Add to Calendar' });
+            const addToCalendarButton = firstBooking.getByTestId(/add-to-calendar-link-/);
             
             await expect(addToCalendarButton).toBeVisible();
             const calendarUrl = await addToCalendarButton.getAttribute('href');

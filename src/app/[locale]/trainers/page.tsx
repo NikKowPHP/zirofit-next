@@ -168,7 +168,7 @@ export default async function TrainersPage({
       <div className="bg-neutral-50 dark:bg-black flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-4 pt-40 pb-12">
           <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="trainers-heading">
               {t('heading')}
             </h1>
             <SortControl />

@@ -1,3 +1,4 @@
+
 import { createClient } from "@/lib/supabase/server";
 import { getTrainerBookings } from "../../profile/actions/booking-actions";
 import { generateGoogleCalendarLink } from "@/lib/utils";
@@ -32,6 +33,7 @@ export default async function BookingsPage({
           <div
             key={booking.id}
             className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+            data-testid={`booking-card-${booking.id}`}
           >
             <div className="flex justify-between items-start">
               <div>
@@ -70,7 +72,7 @@ export default async function BookingsPage({
               )}
               <div className="flex justify-end mt-4">
                 <Button asChild variant="secondary" size="sm">
-                  <Link href={calendarLink} target="_blank">
+                  <Link href={calendarLink} target="_blank" data-testid={`add-to-calendar-link-${booking.id}`}>
                     Add to Calendar
                   </Link>
                 </Button>

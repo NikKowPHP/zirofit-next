@@ -1,5 +1,3 @@
-
-// src/app/auth/register/page.client.tsx
 "use client";
 
 import { useFormStatus, useFormState } from "react-dom";
@@ -30,7 +28,7 @@ const initialState: FormState = {
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full">
+    <Button type="submit" disabled={pending} className="w-full" data-testid="register-submit-button">
       {pending ? "Registering..." : "Register"}
     </Button>
   );
@@ -72,6 +70,7 @@ export default function RegisterPage() {
                   type="text"
                   required
                   className="mt-1"
+                  data-testid="register-name-input"
                 />
                 {state?.errors?.name &&
                   state.errors.name.map((err: string) => (
@@ -94,6 +93,7 @@ export default function RegisterPage() {
                   autoComplete="email"
                   required
                   className="mt-1"
+                  data-testid="register-email-input"
                 />
                 {state?.errors?.email &&
                   state.errors.email.map((err: string) => (
@@ -116,6 +116,7 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   required
                   className="mt-1"
+                  data-testid="register-password-input"
                 />
                 {state?.errors?.password &&
                   state.errors.password.map((err) => (

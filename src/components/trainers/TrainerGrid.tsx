@@ -1,3 +1,4 @@
+
 "use client";
 import { motion } from "framer-motion";
 import TrainerResultCard from "./TrainerResultCard";
@@ -34,7 +35,7 @@ export function TrainerGrid({ trainers }: { trainers: Trainer[] }) {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       {trainers.map((trainer: Trainer) => (
-        <motion.div key={trainer.id} variants={itemVariants} className="mb-6">
+        <motion.div key={trainer.id} variants={itemVariants} className="mb-6" data-testid="trainer-card-container">
           <TrainerResultCard trainer={trainer} />
         </motion.div>
       ))}
