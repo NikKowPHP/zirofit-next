@@ -3,8 +3,9 @@
 
 import { Notification } from "@/types/notifications";
 import { formatDistanceToNow } from "date-fns";
+import { enUS, pl } from "date-fns/locale";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface NotificationListProps {
   notifications: Notification[];
@@ -18,6 +19,8 @@ export default function NotificationList({
   onMarkRead,
 }: NotificationListProps) {
   const t = useTranslations('Notifications');
+  const locale = useLocale();
+  const fnsLocale = locale === 'pl' ? pl : enUS;
 
   const handleMarkRead = async (notificationId: string) => {
     try {
@@ -62,6 +65,7 @@ export default function NotificationList({
               <p className="text-xs text-gray-500 mt-1">
                 {formatDistanceToNow(new Date(notification.createdAt), {
                   addSuffix: true,
+                  locale: fnsLocale,
                 })}
               </p>
             </div>

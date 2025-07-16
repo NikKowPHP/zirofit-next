@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
@@ -16,7 +17,7 @@ const TransformationPhotoSchema = z.object({
 });
 
 export interface TransformationPhotoFormState {
-    message?: string | null;
+    messageKey?: string | null;
     error?: string | null;
     errors?: z.ZodIssue[];
     success?: boolean;
@@ -52,7 +53,7 @@ export async function addTransformationPhoto(
         revalidatePath("/profile/edit");
         return {
             success: true,
-            message: "Photo uploaded.",
+            messageKey: "photoUploaded",
             newPhoto: { ...newPhoto, publicUrl },
         };
     } catch (e: unknown) {
@@ -63,7 +64,7 @@ export async function addTransformationPhoto(
 
 export async function deleteTransformationPhoto(
     photoId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
     const { profile } = await getUserAndProfile();
     try {
         const photo = await profileService.findTransformationPhoto(photoId, profile.id);
@@ -71,7 +72,7 @@ export async function deleteTransformationPhoto(
         await supabase.storage.from("zirofit").remove([photo.imagePath]);
         await profileService.deleteTransformationPhoto(photoId);
         revalidatePath("/profile/edit");
-        return { success: true, deletedId: photoId };
+        return { success: true, deletedId: photoId, messageKey: "photoDeleted" };
     } catch (e: unknown) {
         return { success: false, error: `Failed to delete photo: ${e instanceof Error ? e.message : String(e)}` };
     }

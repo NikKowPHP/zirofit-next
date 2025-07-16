@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -12,7 +13,7 @@ const SocialLinkSchema = z.object({
 });
 
 export interface SocialLinkFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
@@ -41,7 +42,7 @@ export async function addSocialLink(
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
-    return { success: true, message: "Social link added.", newLink };
+    return { success: true, messageKey: "socialLinkAdded", newLink };
   } catch (e: unknown) {
     return { error: "Failed to add social link." };
   }
@@ -71,7 +72,7 @@ export async function updateSocialLink(
       },
     );
     revalidatePath("/profile/edit");
-    return { success: true, message: "Social link updated.", updatedLink };
+    return { success: true, messageKey: "socialLinkUpdated", updatedLink };
   } catch (e: unknown) {
     return { error: "Failed to update social link." };
   }
@@ -79,12 +80,12 @@ export async function updateSocialLink(
 
 export async function deleteSocialLink(
   linkId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteSocialLink(linkId, profile.id);
     revalidatePath("/profile/edit");
-    return { success: true, deletedId: linkId };
+    return { success: true, deletedId: linkId, messageKey: "socialLinkDeleted" };
   } catch (e: unknown) {
     return { success: false, error: "Failed to delete social link." };
   }

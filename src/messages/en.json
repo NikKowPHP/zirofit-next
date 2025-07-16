@@ -161,6 +161,8 @@
     "newProgressPhoto": "New progress photo from {clientName}"
   },
   "Clients": {
+    "createClientTitle": "Create Client",
+    "editClientTitle": "Edit Client",
     "clientManagement": "Client Management",
     "addNewClient": "Add New Client",
     "noClientsFound": "No clients found",
@@ -228,7 +230,9 @@
     "logs_addEditTitle_edit": "Editing Log from {date}",
     "logs_duration": "Duration (minutes)",
     "logs_summary": "Activity Summary",
+    "logs_summary_label": "Summary:",
     "logs_privateNotes": "Private Session Notes",
+    "logs_notes_label": "Notes:",
     "logs_addButton": "Add Session Log",
     "logs_updateButton": "Update Log",
     "logs_history": "Session History",
@@ -253,7 +257,15 @@
     "exLogs_deleteTitle": "Delete Exercise Log",
     "exLogs_deleteDesc": "Are you sure you want to delete this exercise log? This action cannot be undone.",
     "exLogs_deleted": "Log deleted.",
-    "exLogs_failDelete": "Failed to delete log."
+    "exLogs_failDelete": "Failed to delete log.",
+    "exLogs_totalReps": "Total Reps",
+    "exLogs_totalVolume": "Total Volume (reps * weight)",
+    "exLogs_yAxisTotalReps": "Total Reps",
+    "exLogs_yAxisTotalVolume": "Total Volume",
+    "exLogs_notEnoughData_title": "Not Enough Data",
+    "exLogs_notEnoughData_desc": "Log this exercise at least twice to see a progress chart.",
+    "exLogs_updating": "Updating...",
+    "exLogs_adding": "Adding..."
   },
   "ProfileEditor": {
     "sidebarTitle": "Profile Sections",
@@ -377,7 +389,9 @@
     "testimonialDeleteDesc": "Are you sure you want to permanently delete this testimonial?",
     "testimonialAdded": "Testimonial added.",
     "testimonialUpdated": "Testimonial updated.",
-    "testimonialDeleted": "Testimonial deleted."
+    "testimonialDeleted": "Testimonial deleted.",
+    "editButton": "Edit",
+    "deleteButton": "Delete"
   },
   "ServerActions": {
     "registrationSuccess": "Registration successful! Please log in.",
@@ -426,10 +440,10 @@
     "clientConfirmationDate": "Date:",
     "clientConfirmationTime": "Time:",
     "clientConfirmationLocation": "Location:",
-    "clientConfirmationCta": "We’re looking forward to helping you achieve your fitness goals!",
-    "clientConfirmationCancellationLink": "Cancel Booking",
-    "clientConfirmationContact": "Need to make changes? Please contact your trainer directly or reply to this email.",
-    "clientConfirmationFooter": "© {year} ZIRO.FIT - All rights reserved",
+    "cancellationLinkText": "Cancel Booking",
+    "cta": "We’re looking forward to helping you achieve your fitness goals!",
+    "contactText": "Need to make changes? Please contact your trainer directly or reply to this email.",
+    "footerText": "© {year} ZIRO.FIT - All rights reserved",
     "trainerNotificationSubject": "New Booking: {clientName}",
     "trainerNotificationHeading": "New Booking Notification",
     "trainerNotificationSalutation": "Hi {trainerName},",

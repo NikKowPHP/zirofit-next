@@ -1,17 +1,20 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface TextContentFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   success?: boolean;
   updatedContent?: string | null;
 }
 
+type FieldName = "aboutMe" | "philosophy" | "methodology";
+
 async function updateProfileTextField(
-  fieldName: "aboutMe" | "philosophy" | "methodology",
+  fieldName: FieldName,
   prevState: TextContentFormState | undefined,
   formData: FormData,
 ): Promise<TextContentFormState> {
@@ -21,9 +24,11 @@ async function updateProfileTextField(
   try {
     await profileService.updateProfileTextField(profile.id, fieldName, content);
     revalidatePath("/profile/edit");
+    const messageKey = `${fieldName.charAt(0).toLowerCase() + fieldName.slice(1)}Updated` as const;
+    
     return {
       success: true,
-      message: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} updated successfully!`,
+      messageKey: messageKey,
       updatedContent: content,
     };
   } catch (e: unknown) {

@@ -7,6 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useMemo } from "react";
 import { ClientExerciseLog } from "@/app/clients/actions";
+import { useTranslations } from "next-intl";
 
 interface ExerciseProgressChartProps {
   logs: ClientExerciseLog[];
@@ -15,6 +16,7 @@ interface ExerciseProgressChartProps {
 export default function ExerciseProgressChart({
   logs,
 }: ExerciseProgressChartProps) {
+  const t = useTranslations("Clients");
   const { theme } = useTheme();
   const isBodyweight = logs[0]?.exercise.equipment === "Bodyweight";
 
@@ -41,8 +43,8 @@ export default function ExerciseProgressChart({
       .sort((a, b) => a.x.getTime() - b.x.getTime());
 
     const datasetLabel = isBodyweight
-      ? "Total Reps"
-      : "Total Volume (reps * weight)";
+      ? t("exLogs_totalReps")
+      : t("exLogs_totalVolume");
 
     return {
       datasets: [
@@ -60,14 +62,14 @@ export default function ExerciseProgressChart({
         },
       ],
     };
-  }, [logs, theme, isBodyweight]);
+  }, [logs, theme, isBodyweight, t]);
 
   if (logs.length < 2) {
     return (
       <div className="h-full flex items-center justify-center">
         <EmptyState
-          title="Not Enough Data"
-          description="Log this exercise at least twice to see a progress chart."
+          title={t("exLogs_notEnoughData_title")}
+          description={t("exLogs_notEnoughData_desc")}
         />
       </div>
     );
@@ -90,7 +92,7 @@ export default function ExerciseProgressChart({
         beginAtZero: true,
         title: {
           display: true,
-          text: isBodyweight ? "Total Reps" : "Total Volume",
+          text: isBodyweight ? t("exLogs_yAxisTotalReps") : t("exLogs_yAxisTotalVolume"),
           color: textColor,
         },
         ticks: { color: textColor },

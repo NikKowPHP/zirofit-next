@@ -11,6 +11,7 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Button } from "../ui/Button";
 import { motion } from "framer-motion";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -104,6 +105,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                           </Button>
                         </>
                       )}
+                      <LanguageSwitcher />
                     </>
                   )}
                 </div>
@@ -136,6 +138,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           </button>
           
           <div className="flex flex-col items-center justify-center h-full space-y-8">
+            <div className="absolute top-6 left-6">
+              <LanguageSwitcher />
+            </div>
             {!loading && (
               <>
                 <Link

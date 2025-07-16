@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -7,16 +8,17 @@ import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { useTranslations } from "next-intl";
 
 interface TextContentFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   success?: boolean;
   updatedContent?: string | null;
 }
 
 const initialState: TextContentFormState = {
-  message: null,
+  messageKey: null,
   error: null,
   success: false,
   updatedContent: null,
@@ -27,10 +29,11 @@ interface MethodologyEditorProps {
 }
 
 function SubmitButton() {
+  const t = useTranslations("ProfileEditor");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Methodology"}
+      {pending ? t("saving") : t("saveMethodology")}
     </Button>
   );
 }
@@ -38,6 +41,7 @@ function SubmitButton() {
 export default function MethodologyEditor({
   initialMethodology,
 }: MethodologyEditorProps) {
+  const t = useTranslations("ProfileEditor");
   const [state, formAction] = useFormState(updateMethodology, initialState);
   const [content, setContent] = useState(initialMethodology || "");
 
@@ -55,12 +59,12 @@ export default function MethodologyEditor({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Methodology</CardTitle>
+        <CardTitle>{t("methodologyTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction}>
           <RichTextEditor
-            label="Edit Content"
+            label={t("editContent")}
             name="methodologyContent"
             initialValue={content}
           />

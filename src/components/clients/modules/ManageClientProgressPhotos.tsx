@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useProgressPhotoManager } from "@/hooks/useProgressPhotoManager";
@@ -8,6 +9,7 @@ import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;
@@ -18,6 +20,8 @@ export default function ManageClientProgressPhotos({
   clientId,
   initialProgressPhotos,
 }: ManageClientProgressPhotosProps) {
+  const t = useTranslations("Clients");
+  const locale = useLocale();
   const {
     progressPhotos,
     selectedImage,
@@ -36,9 +40,9 @@ export default function ManageClientProgressPhotos({
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
       if (result?.success) {
-        toast.success(result.message || "Photo deleted.");
+        toast.success(result.message || t("photos_deleted"));
       } else {
-        toast.error(result.message || "Failed to delete photo.");
+        toast.error(result.message || t("photos_failDelete"));
       }
       setItemToDelete(null);
     }
@@ -51,18 +55,18 @@ export default function ManageClientProgressPhotos({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={handleConfirmDelete}
         isPending={isDeleting}
-        title="Delete Photo"
-        description="Are you sure you want to delete this progress photo?"
+        title={t("photos_deleteTitle")}
+        description={t("photos_deleteDesc")}
       />
 
       <div className="space-y-8">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          Manage Progress Photos
+          {t("photos_manage")}
         </h2>
 
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-            Add New Photo
+            {t("photos_addNew")}
           </h3>
           <form action={addPhotoAction} className="space-y-4">
             <input type="hidden" name="clientId" value={clientId} />
@@ -72,7 +76,7 @@ export default function ManageClientProgressPhotos({
               <Input
                 type="text"
                 name="caption"
-                placeholder="Caption (optional)"
+                placeholder={t("photos_caption")}
               />
             </div>
 
@@ -97,13 +101,13 @@ export default function ManageClientProgressPhotos({
               )}
             </div>
 
-            <Button type="submit">Add Photo</Button>
+            <Button type="submit">{t("photos_add")}</Button>
           </form>
         </div>
 
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-            Photo Gallery
+            {t("photos_gallery")}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {progressPhotos.map((photo) => (
@@ -121,13 +125,13 @@ export default function ManageClientProgressPhotos({
                       size="sm"
                       onClick={() => setItemToDelete(photo.id)}
                     >
-                      Delete
+                      {t("deleteButton")}
                     </Button>
                   </div>
                 </div>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {photo.photoDate
-                    ? new Date(photo.photoDate).toLocaleDateString()
+                    ? new Date(photo.photoDate).toLocaleDateString(locale)
                     : ""}
                 </p>
                 {photo.caption && (

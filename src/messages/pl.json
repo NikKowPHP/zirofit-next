@@ -161,6 +161,8 @@
     "newProgressPhoto": "Nowe zdjęcie postępów od {clientName}"
   },
   "Clients": {
+    "createClientTitle": "Utwórz klienta",
+    "editClientTitle": "Edytuj klienta",
     "clientManagement": "Zarządzanie klientami",
     "addNewClient": "Dodaj nowego klienta",
     "noClientsFound": "Nie znaleziono klientów",
@@ -228,7 +230,9 @@
     "logs_addEditTitle_edit": "Edycja dziennika z dnia {date}",
     "logs_duration": "Czas trwania (minuty)",
     "logs_summary": "Podsumowanie aktywności",
+    "logs_summary_label": "Podsumowanie:",
     "logs_privateNotes": "Prywatne notatki z sesji",
+    "logs_notes_label": "Notatki:",
     "logs_addButton": "Dodaj dziennik sesji",
     "logs_updateButton": "Zaktualizuj dziennik",
     "logs_history": "Historia sesji",
@@ -253,7 +257,15 @@
     "exLogs_deleteTitle": "Usuń dziennik ćwiczeń",
     "exLogs_deleteDesc": "Czy na pewno chcesz usunąć ten dziennik ćwiczeń? Tej akcji nie można cofnąć.",
     "exLogs_deleted": "Dziennik usunięty.",
-    "exLogs_failDelete": "Nie udało się usunąć dziennika."
+    "exLogs_failDelete": "Nie udało się usunąć dziennika.",
+    "exLogs_totalReps": "Suma powtórzeń",
+    "exLogs_totalVolume": "Całkowita objętość (powt. * waga)",
+    "exLogs_yAxisTotalReps": "Suma powtórzeń",
+    "exLogs_yAxisTotalVolume": "Całkowita objętość",
+    "exLogs_notEnoughData_title": "Niewystarczająca ilość danych",
+    "exLogs_notEnoughData_desc": "Zapisz to ćwiczenie przynajmniej dwa razy, aby zobaczyć wykres postępów.",
+    "exLogs_updating": "Aktualizowanie...",
+    "exLogs_adding": "Dodawanie..."
   },
   "ProfileEditor": {
     "sidebarTitle": "Sekcje profilu",
@@ -377,7 +389,9 @@
     "testimonialDeleteDesc": "Czy na pewno chcesz trwale usunąć tę opinię?",
     "testimonialAdded": "Opinia dodana.",
     "testimonialUpdated": "Opinia zaktualizowana.",
-    "testimonialDeleted": "Opinia usunięta."
+    "testimonialDeleted": "Opinia usunięta.",
+    "editButton": "Edytuj",
+    "deleteButton": "Usuń"
   },
   "ServerActions": {
     "registrationSuccess": "Rejestracja pomyślna! Proszę się zalogować.",
@@ -426,10 +440,10 @@
     "clientConfirmationDate": "Data:",
     "clientConfirmationTime": "Godzina:",
     "clientConfirmationLocation": "Lokalizacja:",
-    "clientConfirmationCta": "Cieszymy się, że możemy pomóc Ci osiągnąć Twoje cele fitness!",
-    "clientConfirmationCancellationLink": "Anuluj rezerwację",
-    "clientConfirmationContact": "Chcesz wprowadzić zmiany? Skontaktuj się bezpośrednio z trenerem lub odpowiedz na ten e-mail.",
-    "clientConfirmationFooter": "© {year} ZIRO.FIT - Wszelkie prawa zastrzeżone",
+    "cancellationLinkText": "Anuluj rezerwację",
+    "cta": "Cieszymy się, że możemy pomóc Ci osiągnąć Twoje cele fitness!",
+    "contactText": "Chcesz wprowadzić zmiany? Skontaktuj się bezpośrednio z trenerem lub odpowiedz na ten e-mail.",
+    "footerText": "© {year} ZIRO.FIT - Wszelkie prawa zastrzeżone",
     "trainerNotificationSubject": "Nowa rezerwacja: {clientName}",
     "trainerNotificationHeading": "Powiadomienie o nowej rezerwacji",
     "trainerNotificationSalutation": "Cześć {trainerName},",

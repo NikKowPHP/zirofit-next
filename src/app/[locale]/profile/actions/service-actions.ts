@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -11,7 +12,7 @@ const ServiceSchema = z.object({
 });
 
 export interface ServiceFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
@@ -39,7 +40,7 @@ export async function addService(
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
-    return { success: true, message: "Service added.", newService };
+    return { success: true, messageKey: "serviceAdded", newService };
   } catch (e: unknown) {
     return { error: "Failed to add service." };
   }
@@ -64,7 +65,7 @@ export async function updateService(
       validated.data,
     );
     revalidatePath("/profile/edit");
-    return { success: true, message: "Service updated.", updatedService };
+    return { success: true, messageKey: "serviceUpdated", updatedService };
   } catch (e: unknown) {
     return { error: "Failed to update service." };
   }
@@ -72,12 +73,12 @@ export async function updateService(
 
 export async function deleteService(
   serviceId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteService(serviceId, profile.id);
     revalidatePath("/profile/edit");
-    return { success: true, deletedId: serviceId };
+    return { success: true, deletedId: serviceId, messageKey: "serviceDeleted" };
   } catch (e: unknown) {
     return { success: false, error: "Failed to delete service." };
   }

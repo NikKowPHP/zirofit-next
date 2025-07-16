@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -11,7 +12,7 @@ const TestimonialSchema = z.object({
 });
 
 export interface TestimonialFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
@@ -38,7 +39,7 @@ export async function addTestimonial(
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
-    return { success: true, message: "Testimonial added.", newTestimonial };
+    return { success: true, messageKey: "testimonialAdded", newTestimonial };
   } catch (e: unknown) {
     return { error: "Failed to add testimonial." };
   }
@@ -68,7 +69,7 @@ export async function updateTestimonial(
     revalidatePath("/profile/edit");
     return {
       success: true,
-      message: "Testimonial updated.",
+      messageKey: "testimonialUpdated",
       updatedTestimonial,
     };
   } catch (e: unknown) {
@@ -84,7 +85,7 @@ export async function deleteTestimonial(
   try {
     await profileService.deleteTestimonial(id, profile.id);
     revalidatePath("/profile/edit");
-    return { success: true, message: "Testimonial deleted.", deletedId: id };
+    return { success: true, messageKey: "testimonialDeleted", deletedId: id };
   } catch (e: unknown) {
     return { error: `Failed to delete testimonial: ${e instanceof Error ? e.message : String(e)}` };
   }

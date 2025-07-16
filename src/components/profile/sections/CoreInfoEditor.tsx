@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useEffect, useState } from "react";
 import { useFormStatus, useFormState } from "react-dom";
@@ -13,6 +14,8 @@ import {
 } from "@/components/ui";
 import { z } from "zod";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { useTranslations } from "next-intl";
+
 interface CoreInfoData {
   name: string;
   username: string;
@@ -24,27 +27,29 @@ interface CoreInfoEditorProps {
   initialData: CoreInfoData;
 }
 interface CoreInfoFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
   updatedFields?: Partial<CoreInfoData>;
 }
 const initialState: CoreInfoFormState = {
-  message: null,
+  messageKey: null,
   error: null,
   errors: undefined,
   success: false,
 };
 function SubmitButton() {
+  const t = useTranslations("ProfileEditor");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Core Info"}
+      {pending ? t("saving") : t("saveCoreInfo")}
     </Button>
   );
 }
 export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
+  const t = useTranslations("ProfileEditor");
   const [state, formAction] = useFormState(updateCoreInfo, initialState);
   const [formData, setFormData] = useState<CoreInfoData>(initialData);
 
@@ -72,12 +77,12 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Core Information</CardTitle>
+        <CardTitle>{t("coreInfoTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
           <div>
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{t("fullNameLabel")}</Label>
             <Input
               id="name"
               name="name"
@@ -94,7 +99,7 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
             )}
           </div>
           <div>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t("usernameLabel")}</Label>
             <Input
               id="username"
               name="username"
@@ -110,12 +115,11 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
               </p>
             )}
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Used for your public profile URL. Lowercase letters, numbers, and
-              hyphens only.
+              {t("usernameHint")}
             </p>
           </div>
           <div>
-            <Label htmlFor="certifications">Certifications</Label>
+            <Label htmlFor="certifications">{t("certificationsLabel")}</Label>
             <Input
               id="certifications"
               name="certifications"
@@ -123,7 +127,7 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
               value={formData.certifications || ""}
               onChange={handleInputChange}
               className="mt-1"
-              placeholder="e.g., NASM CPT, CPR/AED"
+              placeholder={t("certificationsPlaceholder")}
             />
             {getFieldError("certifications") && (
               <p className="text-red-500 text-xs mt-1">
@@ -132,7 +136,7 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
             )}
           </div>
           <div>
-            <Label htmlFor="location">Location</Label>
+            <Label htmlFor="location">{t("locationLabel")}</Label>
             <Input
               id="location"
               name="location"
@@ -140,11 +144,10 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
               value={formData.location || ""}
               onChange={handleInputChange}
               className="mt-1"
-              placeholder="e.g., Warsaw, Poland"
+              placeholder={t("locationPlaceholder")}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              For best results, please use "City, Country" or "City, State"
-              format.
+              {t("locationHint")}
             </p>
             {getFieldError("location") && (
               <p className="text-red-500 text-xs mt-1">
@@ -153,7 +156,7 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
             )}
           </div>
           <div>
-            <Label htmlFor="phone">Phone (Optional)</Label>
+            <Label htmlFor="phone">{t("phoneLabel")}</Label>
             <Input
               id="phone"
               name="phone"
@@ -161,7 +164,7 @@ export default function CoreInfoEditor({ initialData }: CoreInfoEditorProps) {
               value={formData.phone || ""}
               onChange={handleInputChange}
               className="mt-1"
-              placeholder="e.g., (555) 123-4567"
+              placeholder={t("phonePlaceholder")}
             />
             {getFieldError("phone") && (
               <p className="text-red-500 text-xs mt-1">

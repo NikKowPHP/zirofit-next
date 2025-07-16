@@ -18,27 +18,32 @@ export const sendBookingConfirmationEmail = async (
   trainer: { name: string | null; email: string },
   locale: string,
 ) => {
-  const t = await getTranslations({ locale, namespace: 'Emails' });
+  const t = await getTranslations({ locale, namespace: "Emails" });
   const resend = new Resend(process.env.RESEND_API_KEY!);
   const calendarLink = generateGoogleCalendarLink(booking);
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  };
 
   // 1. Send notification to trainer
   await resend.emails.send({
     from: "bookings@ziro.fit",
     to: trainer.email,
-    subject: t('trainerNotificationSubject', { clientName: booking.clientName }),
+    subject: t("trainerNotificationSubject", { clientName: booking.clientName }),
     html: `
-            <h1>${t('trainerNotificationHeading')}</h1>
-            <p>${t('trainerNotificationSalutation', { trainerName: trainer.name || 'Trainer' })}</p>
-            <p>${t('trainerNotificationBody', { clientName: booking.clientName, clientEmail: booking.clientEmail })}</p>
-            <p><strong>${t('trainerNotificationDetails')}</strong></p>
+            <h1>${t("trainerNotificationHeading")}</h1>
+            <p>${t("trainerNotificationSalutation", { trainerName: trainer.name || "Trainer" })}</p>
+            <p>${t("trainerNotificationBody", { clientName: booking.clientName, clientEmail: booking.clientEmail })}</p>
+            <p><strong>${t("trainerNotificationDetails")}</strong></p>
             <ul>
-                <li>${t('trainerNotificationDate')} ${new Date(booking.startTime).toLocaleDateString()}</li>
-                <li>${t('trainerNotificationTime')} ${new Date(booking.startTime).toLocaleTimeString()} - ${new Date(booking.endTime).toLocaleTimeString()}</li>
-                ${booking.clientNotes ? `<li>${t('trainerNotificationNotes')} ${booking.clientNotes}</li>` : ""}
+                <li>${t("trainerNotificationDate")} ${new Date(booking.startTime).toLocaleDateString(locale)}</li>
+                <li>${t("trainerNotificationTime")} ${new Date(booking.startTime).toLocaleTimeString(locale, timeOptions)} - ${new Date(booking.endTime).toLocaleTimeString(locale, timeOptions)}</li>
+                ${booking.clientNotes ? `<li>${t("trainerNotificationNotes")} ${booking.clientNotes}</li>` : ""}
             </ul>
             <p style="margin-top: 20px;">
-              <a href="${calendarLink}" target="_blank" style="background-color: #4f46e5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">${t('trainerNotificationCta')}</a>
+              <a href="${calendarLink}" target="_blank" style="background-color: #4f46e5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">${t("trainerNotificationCta")}</a>
             </p>
         `,
   });
@@ -47,23 +52,29 @@ export const sendBookingConfirmationEmail = async (
   await resend.emails.send({
     from: "bookings@ziro.fit",
     to: booking.clientEmail,
-    subject: t('clientConfirmationSubject', { trainerName: trainer?.name || "your trainer" }),
+    subject: t("clientConfirmationSubject", {
+      trainerName: trainer?.name || "your trainer",
+    }),
     react: BookingConfirmation({
-      heading: t('clientConfirmationHeading'),
-      hello: t('clientConfirmationHello'),
-      body: t('clientConfirmationBody', { trainerName: trainer?.name || "your trainer" }),
-      detailsHeading: t('clientConfirmationDetailsHeading'),
-      dateLabel: t('clientConfirmationDate'),
-      timeLabel: t('clientConfirmationTime'),
-      locationLabel: t('clientConfirmationLocation'),
-      bookingDate: new Date(booking.startTime).toLocaleDateString(),
-      bookingTime: `${new Date(booking.startTime).toLocaleTimeString()} - ${new Date(booking.endTime).toLocaleTimeString()}`,
+      heading: t("clientConfirmationHeading"),
+      hello: t("clientConfirmationHello"),
+      body: t("clientConfirmationBody", {
+        trainerName: trainer?.name || "your trainer",
+      }),
+      detailsHeading: t("clientConfirmationDetailsHeading"),
+      dateLabel: t("clientConfirmationDate"),
+      timeLabel: t("clientConfirmationTime"),
+      locationLabel: t("clientConfirmationLocation"),
+      bookingDate: new Date(booking.startTime).toLocaleDateString(locale),
+      bookingTime: `${new Date(booking.startTime).toLocaleTimeString(locale, timeOptions)} - ${new Date(booking.endTime).toLocaleTimeString(locale, timeOptions)}`,
       bookingLocation: "Your chosen location", // TODO: Replace with actual location if available
       cancellationLink: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel-booking/${booking.id}`,
-      cancellationLinkText: t('clientConfirmationCancellationLink'),
-      cta: t('clientConfirmationCta'),
-      contactText: t('clientConfirmationContact'),
-      footerText: t('clientConfirmationFooter', { year: new Date().getFullYear() })
+      cancellationLinkText: t("clientConfirmationCancellationLink"),
+      cta: t("clientConfirmationCta"),
+      contactText: t("clientConfirmationContact"),
+      footerText: t("clientConfirmationFooter", {
+        year: new Date().getFullYear(),
+      }),
     }),
   });
 };
@@ -72,14 +83,16 @@ export const sendBookingConfirmationEmail = async (
  * Creates an in-app notification for a new booking.
  * @param {string} trainerId - The ID of the trainer to notify.
  * @param {Booking} booking - The new booking object.
+ * @param {string} locale - The locale for date formatting.
  */
 export async function createBookingNotification(
   trainerId: string,
   booking: Booking,
+  locale: string,
 ) {
   const message = `New booking from ${
     booking.clientName
-  } on ${new Date(booking.startTime).toLocaleDateString()}`;
+  } on ${new Date(booking.startTime).toLocaleDateString(locale)}`;
   await prisma.notification.create({
     data: {
       userId: trainerId,

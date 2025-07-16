@@ -9,6 +9,7 @@ import type {
 } from "@/app/clients/actions/client-actions";
 import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
 import type { ClientExerciseLog } from "@/app/clients/actions/exercise-log-actions";
+import { useTranslations } from "next-intl";
 
 const ManageClientMeasurements = lazy(
   () => import("./modules/ManageClientMeasurements"),
@@ -35,16 +36,17 @@ interface ClientDetailViewProps {
   client: ClientWithDetails;
 }
 
-const tabs = [
-  { name: "Statistics", id: "stats" },
-  { name: "Measurements", id: "measurements" },
-  { name: "Progress Photos", id: "photos" },
-  { name: "Session Logs", id: "logs" },
-  { name: "Exercise Performance", id: "exercise" },
-];
-
 export default function ClientDetailView({ client }: ClientDetailViewProps) {
+  const t = useTranslations("Clients");
   const [activeTab, setActiveTab] = useState("stats");
+
+  const tabs = [
+    { name: t("clientDetail_statistics"), id: "stats" },
+    { name: t("clientDetail_measurements"), id: "measurements" },
+    { name: t("clientDetail_progressPhotos"), id: "photos" },
+    { name: t("clientDetail_sessionLogs"), id: "logs" },
+    { name: t("clientDetail_exercisePerformance"), id: "exercise" },
+  ];
 
   const tabContent: { [key: string]: React.ReactNode } = {
     stats: <ClientStatistics measurements={client.measurements} />,

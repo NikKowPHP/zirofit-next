@@ -1,9 +1,11 @@
+
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
+import { useTranslations } from "next-intl";
 
 interface ClientFormProps {
   initialData: {
@@ -27,21 +29,23 @@ interface State {
 }
 
 function SubmitButton({ isEditing }: { isEditing: boolean }) {
+  const t = useTranslations("Clients");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
       {pending
         ? isEditing
-          ? "Updating..."
-          : "Creating..."
+          ? t("clientForm_updating")
+          : t("clientForm_creating")
         : isEditing
-          ? "Update Client"
-          : "Create Client"}
+          ? t("clientForm_updateClient")
+          : t("clientForm_createClient")}
     </Button>
   );
 }
 
 export default function ClientForm({ initialData, action }: ClientFormProps) {
+  const t = useTranslations("Clients");
   const [state, dispatch] = useFormState<State, FormData>(action, {
     message: null,
     errors: {},
@@ -53,7 +57,7 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
         <input type="hidden" name="id" defaultValue={initialData.id} />
       )}
       <div>
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name">{t("clientForm_name")}</Label>
         <Input
           type="text"
           id="name"
@@ -66,7 +70,7 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
         )}
       </div>
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t("clientForm_email")}</Label>
         <Input
           type="email"
           id="email"
@@ -78,7 +82,7 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
         )}
       </div>
       <div>
-        <Label htmlFor="phone">Phone</Label>
+        <Label htmlFor="phone">{t("clientForm_phone")}</Label>
         <Input
           type="text"
           id="phone"
@@ -90,16 +94,16 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
         )}
       </div>
       <div>
-        <Label htmlFor="status">Status</Label>
+        <Label htmlFor="status">{t("clientForm_status")}</Label>
         <select
           id="status"
           name="status"
           defaultValue={initialData?.status || "pending"}
           className="w-full p-2 border rounded"
         >
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="pending">Pending</option>
+          <option value="active">{t("clientForm_active")}</option>
+          <option value="inactive">{t("clientForm_inactive")}</option>
+          <option value="pending">{t("clientForm_pending")}</option>
         </select>
         {state?.errors?.status && (
           <p className="text-red-500 text-sm">{state?.errors?.status[0]}</p>
@@ -107,7 +111,11 @@ export default function ClientForm({ initialData, action }: ClientFormProps) {
       </div>
       <SubmitButton isEditing={!!initialData} />
       {state?.message && (
-        <p className="text-red-500 text-sm">{state?.message}</p>
+        <p className="text-red-500 text-sm">
+          {state.message === "Client with this email already exists."
+            ? t("clientForm_emailExists")
+            : state.message}
+        </p>
       )}
     </form>
   );

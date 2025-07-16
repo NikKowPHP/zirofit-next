@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useExerciseLogManager } from "@/hooks/useExerciseLogManager";
@@ -9,6 +10,7 @@ import { useFormStatus } from "react-dom";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { toast } from "sonner";
 import ExerciseProgressChart from "./ExerciseProgressChart";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ManageClientExerciseLogsProps {
   clientId: string;
@@ -22,16 +24,17 @@ interface Set {
 
 function SubmitButton({ isEditing }: { isEditing: boolean }) {
   const { pending } = useFormStatus();
+  const t = useTranslations("Clients");
 
   return (
     <Button type="submit" disabled={pending}>
       {pending
         ? isEditing
-          ? "Updating..."
-          : "Adding..."
+          ? t("exLogs_updating")
+          : t("exLogs_adding")
         : isEditing
-        ? "Update Log"
-        : "Add Log"}
+        ? t("exLogs_updateButton")
+        : t("exLogs_addButton")}
     </Button>
   );
 }
@@ -41,6 +44,8 @@ export default function ManageClientExerciseLogs({
   clientId,
   initialExerciseLogs,
 }: ManageClientExerciseLogsProps) {
+  const t = useTranslations("Clients");
+  const locale = useLocale();
   const {
     logs,
     editingLogId,
@@ -163,19 +168,19 @@ export default function ManageClientExerciseLogs({
           }
         }}
         isPending={!!deletingId}
-        title="Delete Exercise Log"
-        description="Are you sure you want to delete this exercise log? This action cannot be undone."
+        title={t("exLogs_deleteTitle")}
+        description={t("exLogs_deleteDesc")}
       />
 
       <div className="space-y-8">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          Manage Exercise Performance
+          {t("exLogs_manage")}
         </h2>
 
         {/* Add/Edit Form */}
         <Card>
           <CardHeader>
-            <CardTitle>{isEditing ? `Editing Log` : "Add New Exercise Log"}</CardTitle>
+            <CardTitle>{isEditing ? t("exLogs_addEditTitle_edit") : t("exLogs_addEditTitle_add")}</CardTitle>
           </CardHeader>
           <CardContent>
             <form ref={formRef} action={isEditing ? updateAction : addAction} className="space-y-4" key={editingLogId || 'add'}>
@@ -190,13 +195,13 @@ export default function ManageClientExerciseLogs({
                 <Input type="date" name="logDate" required defaultValue={isEditing && currentEditingLog ? new Date(currentEditingLog.logDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} />
                 
                 <div className="relative">
-                  <Input type="text" placeholder="Search for an exercise..." value={searchQuery} onChange={(e) => {
+                  <Input type="text" placeholder={t("exLogs_searchPlaceholder")} value={searchQuery} onChange={(e) => {
                       setSearchQuery(e.target.value);
                       setSelectedExercise(null);
                       setBlockSearch(false);
                     }}
                     disabled={isEditing} />
-                  {isSearching && <p className="text-sm text-gray-500">Searching...</p>}
+                  {isSearching && <p className="text-sm text-gray-500">{t("exLogs_searching")}</p>}
                   {searchResults.length > 0 && (
                     <ul className="absolute z-10 w-full bg-white dark:bg-neutral-800 border rounded-md shadow-lg mt-1 max-h-60 overflow-auto">
                       {searchResults.map(ex => (
@@ -208,7 +213,7 @@ export default function ManageClientExerciseLogs({
               </div>
 
               <div>
-                <h4 className="font-medium mb-2">Sets</h4>
+                <h4 className="font-medium mb-2">{t("exLogs_sets")}</h4>
                 <input type="hidden" name="sets" value={JSON.stringify(sets.map(s => {
                   const setData: { reps: number; weight?: number } = { reps: Number(s.reps) || 0 };
                   if (!isBodyweight) {
@@ -221,8 +226,8 @@ export default function ManageClientExerciseLogs({
                   <div key={index} className="flex items-center gap-2 flex-wrap">
                     <div className="flex items-center gap-2 flex-grow min-w-[200px]">
                       <span className="font-mono text-sm">{index + 1}.</span>
-                      <Input type="number" placeholder="Reps" value={set.reps} onChange={(e) => handleSetChange(index, 'reps', e.target.value)} required className="min-w-0" />
-                      {!isBodyweight && <Input type="number" placeholder="Weight (kg)" value={set.weight} onChange={(e) => handleSetChange(index, 'weight', e.target.value)} className="min-w-0" />}
+                      <Input type="number" placeholder={t("exLogs_reps")} value={set.reps} onChange={(e) => handleSetChange(index, 'reps', e.target.value)} required className="min-w-0" />
+                      {!isBodyweight && <Input type="number" placeholder={t("exLogs_weight")} value={set.weight} onChange={(e) => handleSetChange(index, 'weight', e.target.value)} className="min-w-0" />}
                     </div>
                     <div className="flex items-center gap-2">
                       {!isBodyweight && (
@@ -238,13 +243,13 @@ export default function ManageClientExerciseLogs({
                 ))}
                 </div>
                 <Button type="button" variant="secondary" size="sm" onClick={addSet} className="mt-2">
-                  <PlusIcon className="h-4 w-4 mr-2" /> Add Set
+                  <PlusIcon className="h-4 w-4 mr-2" /> {t("exLogs_addSet")}
                 </Button>
               </div>
 
               <div className="flex gap-2">
                 <SubmitButton isEditing={isEditing} />
-                <Button type="button" variant="secondary" onClick={resetForm}>Cancel</Button>
+                <Button type="button" variant="secondary" onClick={resetForm}>{t("measurements_cancelButton")}</Button>
               </div>
             </form>
           </CardContent>
@@ -253,10 +258,10 @@ export default function ManageClientExerciseLogs({
         {/* Log History */}
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-            Exercise History
+            {t("exLogs_history")}
           </h3>
           {Object.keys(groupedLogs).length === 0 ? (
-            <EmptyState title="No Exercise Logs" description="Add a log above to get started."/>
+            <EmptyState title={t("exLogs_noLogs")} description={t("exLogs_noLogsDesc")}/>
           ) : (
             <div className="space-y-6">
               {Object.entries(groupedLogs).map(([exerciseName, logs]) => (
@@ -270,7 +275,7 @@ export default function ManageClientExerciseLogs({
                           {logs.map(log => (
                             <div key={log.id} className="p-3 bg-neutral-100 dark:bg-neutral-800/50 rounded-md">
                               <div className="flex justify-between items-center mb-2">
-                                <p className="font-semibold">{new Date(log.logDate).toLocaleDateString()}</p>
+                                <p className="font-semibold">{new Date(log.logDate).toLocaleDateString(locale)}</p>
                                 <div className="flex gap-2">
                                   <Button variant="secondary" size="sm" onClick={() => handleEdit(log)}><PencilIcon className="h-4 w-4"/></Button>
                                   <Button variant="danger" size="sm" onClick={() => setItemToDelete(log.id)}><TrashIcon className="h-4 w-4" /></Button>

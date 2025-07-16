@@ -21,6 +21,7 @@ import {
 } from "@/lib/services/ClientStatisticsService";
 import { useTheme } from "@/context/ThemeContext";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useTranslations } from "next-intl";
 
 ChartJS.register(
   CategoryScale,
@@ -40,6 +41,7 @@ interface ClientStatisticsProps {
 export default function ClientStatistics({
   measurements,
 }: ClientStatisticsProps) {
+  const t = useTranslations("Clients");
   const { theme } = useTheme();
 
   const textColor =
@@ -81,7 +83,7 @@ export default function ClientStatistics({
   const weightData = {
     datasets: [
       {
-        label: "Weight (kg)",
+        label: t("measurements_weight_kg"),
         data: getWeightProgress(weightMeasurements),
         borderColor: "rgb(239, 68, 68)",
         backgroundColor: "rgba(239, 68, 68, 0.5)",
@@ -92,7 +94,7 @@ export default function ClientStatistics({
   const bodyFatData = {
     datasets: [
       {
-        label: "Body Fat (%)",
+        label: t("measurements_bodyFat"),
         data: getBodyFatProgress(bodyFatMeasurements),
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.5)",
@@ -103,31 +105,31 @@ export default function ClientStatistics({
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-        Client Statistics
+        {t("clientStats_title")}
       </h2>
       <div className="h-80">
         <h3 className="font-semibold mb-2 dark:text-gray-200">
-          Weight Progress
+          {t("clientStats_weightProgress")}
         </h3>
         {weightMeasurements.length > 1 ? (
-          <Line options={chartOptions("Weight (kg)")} data={weightData} />
+          <Line options={chartOptions(t("measurements_weight_kg"))} data={weightData} />
         ) : (
           <EmptyState
-            title="No Weight Data"
-            description="Log your client's weight at least twice to see their progress here."
+            title={t("clientStats_noWeightData")}
+            description={t("clientStats_noWeightDataDesc")}
           />
         )}
       </div>
       <div className="h-80">
         <h3 className="font-semibold mb-2 dark:text-gray-200">
-          Body Fat Progress
+          {t("clientStats_bodyFatProgress")}
         </h3>
         {bodyFatMeasurements.length > 1 ? (
-          <Line options={chartOptions("Body Fat %")} data={bodyFatData} />
+          <Line options={chartOptions(t("measurements_bodyFat"))} data={bodyFatData} />
         ) : (
           <EmptyState
-            title="No Body Fat Data"
-            description="Log your client's body fat percentage at least twice to see their progress here."
+            title={t("clientStats_noBodyFatData")}
+            description={t("clientStats_noBodyFatDataDesc")}
           />
         )}
       </div>

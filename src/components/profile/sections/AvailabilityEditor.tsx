@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -5,40 +6,44 @@ import { useFormState, useFormStatus } from "react-dom";
 import { updateAvailability } from "@/app/profile/actions/availability-actions";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { useTranslations } from "next-intl";
 
 interface AvailabilityEditorProps {
   initialAvailability: Record<string, string[]>; // Stored as JSON
 }
 
 const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-const dayLabels: { [key: string]: string } = {
-  mon: "Monday",
-  tue: "Tuesday",
-  wed: "Wednesday",
-  thu: "Thursday",
-  fri: "Friday",
-  sat: "Saturday",
-  sun: "Sunday",
-};
 
 function SubmitButton() {
+  const t = useTranslations("ProfileEditor");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Availability"}
+      {pending ? t("saving") : t("saveAvailability")}
     </Button>
   );
 }
 
 export default function AvailabilityEditor({ initialAvailability }: AvailabilityEditorProps) {
+  const t = useTranslations("ProfileEditor");
   const [schedule, setSchedule] = useState(initialAvailability || {});
 
   const [state, formAction] = useFormState(updateAvailability, {
-    message: null,
+    messageKey: null,
     error: null,
     success: false,
   });
 
+  const dayLabels: { [key: string]: string } = {
+    mon: t("days.mon"),
+    tue: t("days.tue"),
+    wed: t("days.wed"),
+    thu: t("days.thu"),
+    fri: t("days.fri"),
+    sat: t("days.sat"),
+    sun: t("days.sun"),
+  };
+  
   useServerActionToast({ formState: state });
 
   const handleTimeChange = (day: string, index: number, value: string) => {
@@ -64,7 +69,7 @@ export default function AvailabilityEditor({ initialAvailability }: Availability
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Set Your Weekly Availability</CardTitle>
+        <CardTitle>{t("availabilityTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction}>

@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -5,7 +6,7 @@ import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface AvailabilityFormState {
-    message?: string | null;
+    messageKey?: string | null;
     error?: string | null;
     success?: boolean;
 }
@@ -49,7 +50,7 @@ export async function updateAvailability(
         revalidatePath("/profile/edit");
         return {
             success: true,
-            message: "Your availability has been updated successfully!",
+            messageKey: "availabilityUpdated",
         };
     } catch (e: unknown) {
         console.error("Failed to update availability:", e);

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -7,6 +8,7 @@ import { PlusIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import DeleteClientButton from "@/components/clients/DeleteClientButton";
 import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useTranslations } from "next-intl";
 
 interface Client {
   id: string;
@@ -32,17 +34,18 @@ const itemVariants = {
 };
 
 export default function ClientGrid({ clients }: { clients: Client[] }) {
+  const t = useTranslations("Clients");
   if (clients.length === 0) {
     return (
       <EmptyState
         icon={<UserGroupIcon className="h-12 w-12 text-gray-400" />}
-        title="No clients found"
-        description="Get started by adding your first client."
+        title={t("noClientsFound")}
+        description={t("noClientsDescription")}
         action={
           <Button asChild>
             <Link href="/clients/create">
               <PlusIcon className="h-5 w-5 mr-2" />
-              Add Client
+              {t("addNewClient")}
             </Link>
           </Button>
         }
@@ -100,7 +103,9 @@ export default function ClientGrid({ clients }: { clients: Client[] }) {
                   size="sm"
                   className="transition-all duration-200"
                 >
-                  <Link href={`/clients/${client.id}`}>Manage</Link>
+                  <Link href={`/clients/${client.id}`}>
+                    {t("manageButton")}
+                  </Link>
                 </Button>
                 <Button
                   asChild
@@ -108,7 +113,9 @@ export default function ClientGrid({ clients }: { clients: Client[] }) {
                   size="sm"
                   className="transition-all duration-200"
                 >
-                  <Link href={`/clients/${client.id}/edit`}>Edit</Link>
+                  <Link href={`/clients/${client.id}/edit`}>
+                    {t("editButton")}
+                  </Link>
                 </Button>
                 <DeleteClientButton clientId={client.id} />
               </div>

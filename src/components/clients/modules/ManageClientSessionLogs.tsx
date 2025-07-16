@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useSessionLogManager } from "@/hooks/useSessionLogManager";
@@ -8,6 +9,7 @@ import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ManageClientSessionLogsProps {
   clientId: string;
@@ -18,6 +20,8 @@ export default function ManageClientSessionLogs({
   clientId,
   initialSessionLogs,
 }: ManageClientSessionLogsProps) {
+  const t = useTranslations("Clients");
+  const locale = useLocale();
   const {
     sessionLogs,
     editingSessionLogId,
@@ -49,9 +53,9 @@ export default function ManageClientSessionLogs({
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
       if (result?.success) {
-        toast.success(result.message || "Log deleted.");
+        toast.success(result.message || t("logs_deleted"));
       } else {
-        toast.error(result?.message || "Failed to delete log.");
+        toast.error(result?.message || t("logs_failDelete"));
       }
       setItemToDelete(null);
     }
@@ -64,22 +68,24 @@ export default function ManageClientSessionLogs({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={handleConfirmDelete}
         isPending={!!deletingId}
-        title="Delete Session Log"
-        description="Are you sure you want to delete this session log?"
+        title={t("logs_deleteTitle")}
+        description={t("logs_deleteDesc")}
       />
       <div className="space-y-8">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          Manage Session Logs
+          {t("logs_manage")}
         </h2>
 
         {/* Add/Edit Session Log Form */}
         <div className="mb-8">
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
             {isEditing && currentEditingLog
-              ? `Editing Log from ${new Date(
-                  currentEditingLog.sessionDate,
-                ).toLocaleDateString()}`
-              : "Add New Session Log"}
+              ? t("logs_addEditTitle_edit", {
+                  date: new Date(
+                    currentEditingLog.sessionDate,
+                  ).toLocaleDateString(locale),
+                })
+              : t("logs_addEditTitle_add")}
           </h3>
           <form
             ref={formRef}
@@ -112,7 +118,7 @@ export default function ManageClientSessionLogs({
               <Input
                 type="number"
                 name="durationMinutes"
-                placeholder="Duration (minutes)"
+                placeholder={t("logs_duration")}
                 required
                 defaultValue={
                   isEditing && currentEditingLog
@@ -124,7 +130,7 @@ export default function ManageClientSessionLogs({
 
             <Textarea
               name="activitySummary"
-              placeholder="Activity Summary"
+              placeholder={t("logs_summary")}
               required
               defaultValue={
                 isEditing && currentEditingLog
@@ -134,7 +140,7 @@ export default function ManageClientSessionLogs({
             />
             <Textarea
               name="sessionNotes"
-              placeholder="Private Session Notes"
+              placeholder={t("logs_privateNotes")}
               defaultValue={
                 isEditing && currentEditingLog
                   ? currentEditingLog.sessionNotes ?? ""
@@ -144,7 +150,7 @@ export default function ManageClientSessionLogs({
 
             <div className="flex gap-2">
               <Button type="submit">
-                {isEditing ? "Update Log" : "Add Session Log"}
+                {isEditing ? t("logs_updateButton") : t("logs_addButton")}
               </Button>
               {isEditing && (
                 <Button
@@ -152,7 +158,7 @@ export default function ManageClientSessionLogs({
                   variant="secondary"
                   onClick={handleCancelEdit}
                 >
-                  Cancel
+                  {t("measurements_cancelButton")}
                 </Button>
               )}
             </div>
@@ -162,7 +168,7 @@ export default function ManageClientSessionLogs({
         {/* Session Log List */}
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-            Session History
+            {t("logs_history")}
           </h3>
           <div className="space-y-4">
             {sessionLogs.map((sessionLog) => (
@@ -172,7 +178,7 @@ export default function ManageClientSessionLogs({
               >
                 <div className="flex justify-between items-start">
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 pt-2">
-                    {new Date(sessionLog.sessionDate).toLocaleDateString()} -{" "}
+                    {new Date(sessionLog.sessionDate).toLocaleDateString(locale)} -{" "}
                     {sessionLog.durationMinutes} mins
                   </h4>
                   <div className="flex gap-2">
@@ -200,12 +206,12 @@ export default function ManageClientSessionLogs({
                   </div>
                 </div>
                 <div>
-                  <p className="font-semibold text-sm">Summary:</p>
+                  <p className="font-semibold text-sm">{t("logs_summary_label")}</p>
                   <p className="text-sm">{sessionLog.activitySummary}</p>
                 </div>
                 {sessionLog.sessionNotes && (
                   <div>
-                    <p className="font-semibold text-sm">Notes:</p>
+                    <p className="font-semibold text-sm">{t("logs_notes_label")}</p>
                     <p className="text-sm">{sessionLog.sessionNotes}</p>
                   </div>
                 )}

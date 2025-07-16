@@ -1,3 +1,4 @@
+
 "use server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -21,7 +22,7 @@ const CoreInfoSchema = z.object({
   phone: z.string().max(20).optional().nullable(),
 });
 interface CoreInfoFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
@@ -106,7 +107,7 @@ export async function updateCoreInfo(
     revalidatePath("/profile/edit");
     return {
       success: true,
-      message: "Core info updated successfully!",
+      messageKey: "coreInfoUpdated",
       updatedFields: {
         name: updatedUser.name,
         username: updatedUser.username,

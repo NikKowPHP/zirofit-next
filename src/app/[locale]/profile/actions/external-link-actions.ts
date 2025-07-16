@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -11,7 +12,7 @@ const ExternalLinkSchema = z.object({
 });
 
 export interface ExternalLinkFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   errors?: z.ZodIssue[];
   success?: boolean;
@@ -39,7 +40,7 @@ export async function addExternalLink(
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
-    return { success: true, message: "Link added.", newLink };
+    return { success: true, messageKey: "linkAdded", newLink };
   } catch (e: unknown) {
     return { error: "Failed to add link." };
   }
@@ -64,7 +65,7 @@ export async function updateExternalLink(
       validated.data,
     );
     revalidatePath("/profile/edit");
-    return { success: true, message: "Link updated.", updatedLink };
+    return { success: true, messageKey: "linkUpdated", updatedLink };
   } catch (e: unknown) {
     return { error: "Failed to update link." };
   }
@@ -72,12 +73,12 @@ export async function updateExternalLink(
 
 export async function deleteExternalLink(
   linkId: string,
-): Promise<{ success: boolean; error?: string; deletedId?: string }> {
+): Promise<{ success: boolean; error?: string; deletedId?: string, messageKey?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteExternalLink(linkId, profile.id);
     revalidatePath("/profile/edit");
-    return { success: true, deletedId: linkId };
+    return { success: true, deletedId: linkId, messageKey: "linkDeleted" };
   } catch (e: unknown) {
     return { success: false, error: "Failed to delete link." };
   }

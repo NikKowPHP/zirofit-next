@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMeasurementManager } from "@/hooks/useMeasurementManager";
@@ -8,6 +9,7 @@ import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ManageClientMeasurementsProps {
   clientId: string;
@@ -18,6 +20,8 @@ export default function ManageClientMeasurements({
   clientId,
   initialMeasurements,
 }: ManageClientMeasurementsProps) {
+  const t = useTranslations("Clients");
+  const locale = useLocale();
   const {
     measurements,
     editingMeasurementId,
@@ -49,9 +53,9 @@ export default function ManageClientMeasurements({
     if (itemToDelete) {
       const result = await handleDelete(itemToDelete);
       if (result?.success) {
-        toast.success(result.message || "Measurement deleted.");
+        toast.success(result.message || t("measurements_deleted"));
       } else {
-        toast.error(result?.error || "Failed to delete measurement.");
+        toast.error(result?.error || t("measurements_failDelete"));
       }
       setItemToDelete(null);
     }
@@ -64,22 +68,24 @@ export default function ManageClientMeasurements({
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
         onConfirm={handleConfirmDelete}
         isPending={isDeleting}
-        title="Delete Measurement"
-        description="Are you sure you want to delete this measurement record?"
+        title={t("measurements_deleteTitle")}
+        description={t("measurements_deleteDesc")}
       />
       <div className="space-y-8">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          Manage Measurements
+          {t("measurements_manage")}
         </h2>
 
         {/* Add/Edit Measurement Form */}
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
             {isEditing && currentEditingMeasurement
-              ? `Editing Measurement from ${new Date(
-                  currentEditingMeasurement.measurementDate,
-                ).toLocaleDateString()}`
-              : "Add New Measurement"}
+              ? t("measurements_addEditTitle_edit", {
+                  date: new Date(
+                    currentEditingMeasurement.measurementDate,
+                  ).toLocaleDateString(locale),
+                })
+              : t("measurements_addEditTitle_add")}
           </h3>
           <form
             ref={formRef}
@@ -113,7 +119,7 @@ export default function ManageClientMeasurements({
                 type="number"
                 name="weightKg"
                 step="0.01"
-                placeholder="Weight (kg)"
+                placeholder={t("measurements_weight_kg")}
                 defaultValue={
                   isEditing && currentEditingMeasurement
                     ? String(currentEditingMeasurement.weightKg ?? "")
@@ -124,7 +130,7 @@ export default function ManageClientMeasurements({
                 type="number"
                 name="bodyFatPercentage"
                 step="0.01"
-                placeholder="Body Fat %"
+                placeholder={t("measurements_bodyFat")}
                 defaultValue={
                   isEditing && currentEditingMeasurement
                     ? String(currentEditingMeasurement.bodyFatPercentage ?? "")
@@ -134,7 +140,7 @@ export default function ManageClientMeasurements({
             </div>
             <Textarea
               name="notes"
-              placeholder="Notes..."
+              placeholder={t("measurements_notes")}
               defaultValue={
                 isEditing && currentEditingMeasurement
                   ? currentEditingMeasurement.notes ?? ""
@@ -144,7 +150,9 @@ export default function ManageClientMeasurements({
 
             <div className="flex gap-2">
               <Button type="submit">
-                {isEditing ? "Update" : "Add"} Measurement
+                {isEditing
+                  ? t("measurements_updateButton")
+                  : t("measurements_addButton")}
               </Button>
               {isEditing && (
                 <Button
@@ -152,7 +160,7 @@ export default function ManageClientMeasurements({
                   variant="secondary"
                   onClick={handleCancelEdit}
                 >
-                  Cancel
+                  {t("measurements_cancelButton")}
                 </Button>
               )}
             </div>
@@ -162,7 +170,7 @@ export default function ManageClientMeasurements({
         {/* Measurement List */}
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-            Existing Measurements
+            {t("measurements_existing")}
           </h3>
           <div className="space-y-4">
             {measurements.map((measurement) => (
@@ -175,16 +183,16 @@ export default function ManageClientMeasurements({
                     <div className="font-semibold">
                       {new Date(
                         measurement.measurementDate,
-                      ).toLocaleDateString()}
+                      ).toLocaleDateString(locale)}
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-300">
                       {measurement.weightKg != null &&
-                        `Weight: ${measurement.weightKg}kg`}
+                        `${t("measurements_weight_kg")}: ${measurement.weightKg}`}
                       {measurement.weightKg != null &&
                         measurement.bodyFatPercentage != null &&
                         ` | `}
                       {measurement.bodyFatPercentage != null &&
-                        `Body Fat: ${measurement.bodyFatPercentage}%`}
+                        `${t("measurements_bodyFat")}: ${measurement.bodyFatPercentage}`}
                     </div>
                     {measurement.notes && (
                       <p className="text-sm mt-1">{measurement.notes}</p>

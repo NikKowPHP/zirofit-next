@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -5,7 +6,7 @@ import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface BenefitFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   success?: boolean;
 }
@@ -40,7 +41,7 @@ export async function addBenefit(
       orderColumn: (maxOrder._max.orderColumn ?? 0) + 1,
     });
     revalidatePath("/profile/edit");
-    return { success: true, message: "Benefit added." };
+    return { success: true, messageKey: "benefitAdded" };
   } catch (e: unknown) {
     return { error: "Failed to add benefit." };
   }
@@ -62,18 +63,18 @@ export async function updateBenefit(
   try {
     await profileService.updateBenefit(id, profile.id, validated.data);
     revalidatePath("/profile/edit");
-    return { success: true, message: "Benefit updated." };
+    return { success: true, messageKey: "benefitUpdated" };
   } catch (e: unknown) {
     return { error: "Failed to update benefit." };
   }
 }
 
-export async function deleteBenefit(id: string): Promise<BenefitFormState> {
+export async function deleteBenefit(id: string): Promise<BenefitFormState & { deletedId?: string }> {
   const { profile } = await getUserAndProfile();
   try {
     await profileService.deleteBenefit(id, profile.id);
     revalidatePath("/profile/edit");
-    return { success: true, message: "Benefit deleted." };
+    return { success: true, messageKey: "benefitDeleted", deletedId: id };
   } catch (e: unknown) {
     return { error: "Failed to delete benefit." };
   }
@@ -86,7 +87,7 @@ export async function updateBenefitOrder(
   try {
     await profileService.updateBenefitOrder(profile.id, ids);
     revalidatePath("/profile/edit");
-    return { success: true, message: "Order updated." };
+    return { success: true, messageKey: "benefitOrderUpdated" };
   } catch (e: unknown) {
     return { error: "Failed to update order." };
   }

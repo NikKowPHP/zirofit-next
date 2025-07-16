@@ -1,3 +1,4 @@
+
 "use server";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
@@ -6,7 +7,7 @@ import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
 
 export interface BrandingFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   success?: boolean;
 }
@@ -46,7 +47,7 @@ export async function updateBrandingImages(
     }
 
     revalidatePath("/profile/edit");
-    return { success: true, message: "Branding updated successfully!" };
+    return { success: true, messageKey: "brandingUpdated" };
   } catch (e: unknown) {
     return { error: `Failed to update branding: ${e instanceof Error ? e.message : String(e)}` };
   }

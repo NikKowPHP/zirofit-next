@@ -1,3 +1,4 @@
+
 "use client"; // This component needs to handle client-side state for active section
 
 import {
@@ -14,37 +15,40 @@ import {
   ShareIcon
 } from "@heroicons/react/24/outline";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 interface ProfileEditorSidebarProps {
   currentSection: string;
   onSelectSection: (section: string) => void;
 }
 
-const sections = [
-  { id: "core-info", name: "Core Info", icon: UserCircleIcon },
-  { id: "branding", name: "Branding", icon: SwatchIcon },
-  { id: "about-details", name: "About & Details", icon: DocumentTextIcon },
-  { id: "services", name: "Services", icon: BriefcaseIcon },
-  { id: "benefits", name: "Benefits", icon: GiftIcon },
-  { id: "availability", name: "Availability", icon: CalendarDaysIcon },
-  { id: "photos", name: "Photos", icon: PhotoIcon },
-  {
-    id: "testimonials",
-    name: "Testimonials",
-    icon: ChatBubbleLeftEllipsisIcon,
-  },
-  { id: "social-links", name: "Social Links", icon: ShareIcon },
-  { id: "links", name: "External Links", icon: LinkIcon },
-];
-
 export default function ProfileEditorSidebar({
   currentSection,
   onSelectSection,
 }: ProfileEditorSidebarProps) {
+  const t = useTranslations("ProfileEditor");
+
+  const sections = [
+    { id: "core-info", name: t("coreInfo"), icon: UserCircleIcon },
+    { id: "branding", name: t("branding"), icon: SwatchIcon },
+    { id: "about-details", name: t("aboutDetails"), icon: DocumentTextIcon },
+    { id: "services", name: t("services"), icon: BriefcaseIcon },
+    { id: "benefits", name: t("benefits"), icon: GiftIcon },
+    { id: "availability", name: t("availability"), icon: CalendarDaysIcon },
+    { id: "photos", name: t("photos"), icon: PhotoIcon },
+    {
+      id: "testimonials",
+      name: t("testimonials"),
+      icon: ChatBubbleLeftEllipsisIcon,
+    },
+    { id: "social-links", name: t("socialLinks"), icon: ShareIcon },
+    { id: "links", name: t("externalLinks"), icon: LinkIcon },
+  ];
+
   return (
     <aside className="w-full md:w-1/4 lg:w-1/5">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 px-2">
-        Profile Sections
+        {t("sidebarTitle")}
       </h3>
       <nav className="space-y-1">
         {sections.map((section) => (

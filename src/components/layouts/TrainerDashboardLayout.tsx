@@ -15,6 +15,7 @@ import { useTheme } from "@/context/ThemeContext";
 import BottomNavBar from "./BottomNavBar"; // Import the new component
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/layouts/LanguageSwitcher";
 
 interface TrainerDashboardLayoutProps {
   children: React.ReactNode;
@@ -115,7 +116,7 @@ export default function TrainerDashboardLayout({
               {headerTitle || t('header_dashboard')}
             </h1>
             <div className="flex items-center space-x-4">
-             
+              <LanguageSwitcher />
               <NotificationIndicator />
             </div>
           </div>

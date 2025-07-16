@@ -1,3 +1,4 @@
+
 // src/components/profile/sections/BenefitsEditor.tsx
 "use client";
 
@@ -14,28 +15,30 @@ import type { Benefit } from "@prisma/client";
 import SortableJS from "sortablejs";
 import { toast } from "sonner";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
+import { useTranslations } from "next-intl";
 
 interface BenefitsEditorProps {
   initialBenefits: Benefit[];
 }
 
 interface BenefitFormState {
-  message?: string | null;
+  messageKey?: string | null;
   error?: string | null;
   success?: boolean;
 }
 
 const initialFormState: BenefitFormState = {
-  message: null,
+  messageKey: null,
   error: null,
   success: false,
 };
 
-function SubmitButton() {
+function SubmitButton({isEditing}: {isEditing: boolean}) {
   const { pending } = useFormStatus();
+  const t = useTranslations("ProfileEditor");
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Benefit"}
+      {pending ? t("saving") : isEditing ? t("updateBenefit") : t("saveBenefit")}
     </Button>
   );
 }
@@ -43,6 +46,8 @@ function SubmitButton() {
 export default function BenefitsEditor({
   initialBenefits,
 }: BenefitsEditorProps) {
+  const t = useTranslations("ProfileEditor");
+  const t_server = useTranslations("ServerActions");
   const [benefits, setBenefits] = useState<Benefit[]>(initialBenefits);
   const [editingBenefitId, setEditingBenefitId] = useState<string | null>(null);
   const [addFormState, addFormAction] = useFormState(addBenefit, initialFormState);
@@ -57,13 +62,19 @@ export default function BenefitsEditor({
       document.getElementById("benefits-list") as HTMLElement,
       {
         handle: ".drag-handle",
-        onEnd: () => {
+        onEnd: async () => {
           const newOrder = Array.from(
             document.getElementById("benefits-list")?.children || [],
           )
             .map((item) => (item as HTMLElement).dataset.id)
             .filter((id): id is string => id !== undefined);
-          updateBenefitOrder(newOrder);
+          const result = await updateBenefitOrder(newOrder);
+          if (result.success && result.messageKey) {
+            toast.success(t_server(result.messageKey));
+          } else {
+            toast.error(result.error || t_server('genericError'));
+          }
+
           setBenefits((prevBenefits) => {
             const newBenefits = [...prevBenefits];
             newOrder.forEach((id, index) => {
@@ -82,7 +93,7 @@ export default function BenefitsEditor({
     return () => {
       sortable.destroy();
     };
-  }, []);
+  }, [t_server]);
 
   const handleEditBenefit = (benefit: Benefit) => {
     setEditingBenefitId(benefit.id);
@@ -98,16 +109,16 @@ export default function BenefitsEditor({
     setIsDeleting(true);
     try {
       const result = await deleteBenefit(itemToDelete);
-      if (result.success) {
-        toast.success(result.message || "Benefit deleted.");
+      if (result.success && result.messageKey) {
+        toast.success(t_server(result.messageKey));
         setBenefits((prevBenefits) =>
           prevBenefits.filter((benefit) => benefit.id !== itemToDelete),
         );
       } else {
-        toast.error(result.error || "Failed to delete benefit.");
+        toast.error(result.error || t_server('genericError'));
       }
     } catch (e: unknown) {
-      toast.error("An unexpected error occurred while deleting.");
+      toast.error(t_server('genericError'));
       console.error("Failed to delete benefit: ", e);
     } finally {
         setIsDeleting(false);
@@ -117,8 +128,8 @@ export default function BenefitsEditor({
 
   const handleBenefitUpdate = async (id: string, formData: FormData) => {
     const result = await updateBenefit(id, undefined, formData);
-    if (result?.success) {
-      toast.success(result.message || "Benefit updated.");
+    if (result?.success && result.messageKey) {
+      toast.success(t_server(result.messageKey));
       setBenefits((prevBenefits) => {
         return prevBenefits.map((benefit) => {
           if (benefit.id === id) {
@@ -135,7 +146,7 @@ export default function BenefitsEditor({
       });
       setEditingBenefitId(null);
     } else {
-      toast.error(result.error || "Failed to update benefit.");
+      toast.error(result.error || t_server('genericError'));
       console.error("Failed to update benefit: ", result?.error);
     }
   };
@@ -147,36 +158,36 @@ export default function BenefitsEditor({
         setIsOpen={ (isOpen) => !isOpen && setItemToDelete(null) }
         onConfirm={handleDeleteBenefit}
         isPending={isDeleting}
-        title="Delete Benefit"
-        description="Are you sure you want to delete this benefit? This action cannot be undone."
+        title={t("deleteBenefitTitle")}
+        description={t("deleteBenefitDesc")}
       />
     <Card>
       <CardHeader>
-        <CardTitle>Manage Benefits</CardTitle>
+        <CardTitle>{t("benefitsTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form ref={formRef} action={addFormAction} className="space-y-6">
           <div>
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t("benefitTitle")}</Label>
             <Input id="title" name="title" type="text" required />
           </div>
           <div>
-            <RichTextEditor
-              label="Description (Optional)"
+             <RichTextEditor
+              label={t("benefitDescription")}
               name="description"
               initialValue=""
             />
           </div>
           <div>
-            <Label htmlFor="iconName">Icon Name</Label>
+            <Label htmlFor="iconName">{t("benefitIcon")}</Label>
             <Input id="iconName" name="iconName" type="text" />
           </div>
           <div>
-            <Label htmlFor="iconStyle">Icon Style</Label>
+            <Label htmlFor="iconStyle">{t("benefitIconStyle")}</Label>
             <Input id="iconStyle" name="iconStyle" type="text" />
           </div>
           <div className="flex justify-end pt-2">
-            <SubmitButton />
+            <SubmitButton isEditing={false} />
           </div>
         </form>
 
@@ -191,7 +202,7 @@ export default function BenefitsEditor({
               {editingBenefitId === benefit.id ? (
                 <form
                   action={(formData) => handleBenefitUpdate(benefit.id, formData)}
-                  className="flex-1 flex items-center space-x-2"
+                  className="flex-1 flex flex-col space-y-2"
                 >
                   <Input
                     type="text"
@@ -199,36 +210,38 @@ export default function BenefitsEditor({
                     defaultValue={benefit.title}
                     className="flex-1"
                   />
-                  <div className="flex-1">
-                    <RichTextEditor
-                      label=""
-                      name="description"
-                      initialValue={benefit.description ?? ""}
+                  <RichTextEditor
+                    label=""
+                    name="description"
+                    initialValue={benefit.description ?? ""}
+                  />
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      name="iconName"
+                      defaultValue={benefit.iconName ?? ""}
+                      className="flex-1"
+                      placeholder={t("benefitIcon")}
+                    />
+                    <Input
+                      type="text"
+                      name="iconStyle"
+                      defaultValue={benefit.iconStyle ?? ""}
+                      className="flex-1"
+                      placeholder={t("benefitIconStyle")}
                     />
                   </div>
-                  <Input
-                    type="text"
-                    name="iconName"
-                    defaultValue={benefit.iconName ?? ""}
-                    className="flex-1"
-                  />
-                  <Input
-                    type="text"
-                    name="iconStyle"
-                    defaultValue={benefit.iconStyle ?? ""}
-                    className="flex-1"
-                  />
-                  <Button type="submit" size="sm">
-                    Update
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="secondary"
-                    onClick={handleCancelEdit}
-                  >
-                    Cancel
-                  </Button>
+                  <div className="flex gap-2 justify-end">
+                    <SubmitButton isEditing={true} />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={handleCancelEdit}
+                    >
+                      {t("cancel")}
+                    </Button>
+                  </div>
                 </form>
               ) : (
                 <>
@@ -236,9 +249,7 @@ export default function BenefitsEditor({
                     <div className="font-medium text-gray-900 dark:text-gray-100">
                       {benefit.title}
                     </div>
-                    <div className="text-gray-600 dark:text-gray-300 text-sm">
-                      {benefit.description}
-                    </div>
+                    <div className="text-gray-600 dark:text-gray-300 text-sm" dangerouslySetInnerHTML={{__html: benefit.description || ''}} />
                   </div>
                   <div className="flex space-x-2">
                     <Button
@@ -246,7 +257,7 @@ export default function BenefitsEditor({
                       size="sm"
                       onClick={() => handleEditBenefit(benefit)}
                     >
-                      Edit
+                      {t("editButton")}
                     </Button>
                     <Button
                       type="button"
@@ -254,7 +265,7 @@ export default function BenefitsEditor({
                       variant="danger"
                       onClick={() => setItemToDelete(benefit.id)}
                     >
-                      Delete
+                      {t("deleteButton")}
                     </Button>
                   </div>
                 </>

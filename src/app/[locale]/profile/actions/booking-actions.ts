@@ -89,9 +89,13 @@ export async function createBooking(
 
     // Send in-app and email notifications
     try {
-      // In-app notification for trainer dashboard
-      await notificationService.createBookingNotification(trainerId, booking);
       const locale = await getLocale();
+      // In-app notification for trainer dashboard
+      await notificationService.createBookingNotification(
+        trainerId,
+        booking,
+        locale,
+      );
 
       // Email notifications
       const trainer = await bookingService.getTrainerForBooking(trainerId);

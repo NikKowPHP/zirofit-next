@@ -21,9 +21,10 @@ import {
     isAfter,
     set
 } from "date-fns";
+import { enUS, pl } from 'date-fns/locale';
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 type ScheduleData = {
   availability: Record<string, string[]>;
@@ -76,6 +77,9 @@ export default function PublicCalendar({
   initialSchedule: ScheduleData;
 }) {
   const t = useTranslations('PublicCalendar');
+  const locale = useLocale();
+  const fnsLocale = locale === 'pl' ? pl : enUS;
+
   const [schedule] = useState<ScheduleData>({
     ...initialSchedule,
     bookings: initialSchedule.bookings.map(b => ({
@@ -104,8 +108,8 @@ export default function PublicCalendar({
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
   const daysInMonth = eachDayOfInterval({
-    start: startOfWeek(firstDayOfMonth),
-    end: endOfWeek(lastDayOfMonth),
+    start: startOfWeek(firstDayOfMonth, { locale: fnsLocale }),
+    end: endOfWeek(lastDayOfMonth, { locale: fnsLocale }),
   });
 
   const goToNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
@@ -201,7 +205,7 @@ export default function PublicCalendar({
               >
                   <ChevronLeftIcon className="h-5 w-5" />
               </Button>
-              <h4 className="font-semibold text-lg">{format(currentDate, "MMMM yyyy")}</h4>
+              <h4 className="font-semibold text-lg">{format(currentDate, "MMMM yyyy", { locale: fnsLocale })}</h4>
               <Button onClick={goToNextMonth} variant="secondary" size="sm" aria-label={t('nextMonth')}>
                   <ChevronRightIcon className="h-5 w-5" />
               </Button>
@@ -240,7 +244,7 @@ export default function PublicCalendar({
         {/* Time Slots */}
         {selectedDate && (
             <div className="mt-4">
-                <h4 className="font-semibold text-sm mb-2">{t('availableSlotsFor', { date: format(selectedDate, "MMMM d, yyyy")})}</h4>
+                <h4 className="font-semibold text-sm mb-2">{t('availableSlotsFor', { date: format(selectedDate, "MMMM d, yyyy", { locale: fnsLocale })})}</h4>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {availableTimeSlots.length > 0 ? availableTimeSlots.map(time => (
                         <Button
@@ -262,7 +266,7 @@ export default function PublicCalendar({
         {selectedDate && selectedTime && (
           <form action={formAction} className="mt-6 space-y-4 border-t dark:border-neutral-800 pt-6">
             <h4 className="font-semibold text-sm">
-              {t('confirmFor', { date: format(selectedDate, 'MMMM d, yyyy'), time: selectedTime })}
+              {t('confirmFor', { date: format(selectedDate, 'MMMM d, yyyy', { locale: fnsLocale }), time: selectedTime })}
             </h4>
             <input type="hidden" name="trainerId" value={trainerId} />
             <input

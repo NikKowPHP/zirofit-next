@@ -1,4 +1,6 @@
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
+import { useLocale } from "next-intl";
 
 interface ActivityItem {
   type:
@@ -16,6 +18,8 @@ interface ActivityFeedProps {
 }
 
 export default function ActivityFeed({ activityFeed }: ActivityFeedProps) {
+  const locale = useLocale();
+
   return (
     <Card>
       <CardHeader>
@@ -35,7 +39,7 @@ export default function ActivityFeed({ activityFeed }: ActivityFeedProps) {
               >
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   {activity.date
-                    ? new Date(activity.date).toLocaleDateString()
+                    ? new Date(activity.date).toLocaleDateString(locale)
                     : ""}{" "}
                   - {activity.message || ""}
                 </p>

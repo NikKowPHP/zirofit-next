@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { Card, CardContent } from "@/components/ui/Card";
 import ClientGrid from "@/components/clients/ClientGrid";
 import { getTrainerClients } from "./actions";
+import { getTranslations } from "next-intl/server";
 
 function ClientCardSkeleton() {
   return (
@@ -35,17 +36,18 @@ async function ClientList() {
   return <ClientGrid clients={clients} />;
 }
 
-export default function ClientListPage() {
+export default async function ClientListPage() {
+  const t = await getTranslations("Clients");
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-          Client Management
+          {t("clientManagement")}
         </h1>
         <Link href="/clients/create">
           <Button>
             <PlusIcon className="h-5 w-5 mr-2" />
-            Add New Client
+            {t("addNewClient")}
           </Button>
         </Link>
       </div>
