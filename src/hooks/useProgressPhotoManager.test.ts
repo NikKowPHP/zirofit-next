@@ -1,9 +1,9 @@
-// src/hooks/useProgressPhotoManager.test.ts
+
 import { renderHook, act } from '@testing-library/react';
 import { useProgressPhotoManager } from './useProgressPhotoManager';
-import * as actions from '@/app/clients/actions/photo-actions';
+import * as actions from '@/app/[locale]/clients/actions/photo-actions';
 
-jest.mock('@/app/clients/actions/photo-actions', () => ({
+jest.mock('@/app/[locale]/clients/actions/photo-actions', () => ({
   addProgressPhoto: jest.fn(),
   deleteProgressPhoto: jest.fn(),
 }));

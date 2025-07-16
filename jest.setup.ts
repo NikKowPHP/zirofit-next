@@ -1,3 +1,4 @@
+
 /// <reference types="node" />
 
 // Mock for react-dom hooks must be at the top
@@ -74,7 +75,7 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Mock HTMLCanvasElement.getContext for Chart.js
 if (typeof HTMLCanvasElement !== 'undefined') {
-  HTMLCanvasElement.prototype.getContext = () => null;
+  HTMLCanvasElement.prototype.getContext = jest.fn();
 }
 
 // Mock for ResizeObserver, used by Headless UI

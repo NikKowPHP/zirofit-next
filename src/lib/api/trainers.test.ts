@@ -1,3 +1,4 @@
+
 // src/lib/api/trainers.test.ts
 import { getPublishedTrainers } from "./trainers";
 import { prismaMock } from "@tests/singleton";

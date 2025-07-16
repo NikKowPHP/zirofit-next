@@ -1,6 +1,5 @@
-// src/components/clients/ClientDetailView.test.tsx
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { renderWithIntl as render, screen, fireEvent, waitFor } from "../../../tests/test-utils";
 import "@testing-library/jest-dom";
 import ClientDetailView from "./ClientDetailView";
 
@@ -25,6 +24,11 @@ jest.mock("./modules/ManageClientSessionLogs", () => {
   MockComponent.displayName = "ManageClientSessionLogs";
   return MockComponent;
 });
+jest.mock("./modules/ManageClientExerciseLogs", () => {
+    const MockComponent = () => <div>Manage Exercise Logs Content</div>;
+    MockComponent.displayName = "ManageClientExerciseLogs";
+    return MockComponent;
+});
 
 const mockClient = {
   id: "1",
@@ -32,6 +36,7 @@ const mockClient = {
   measurements: [],
   progressPhotos: [],
   sessionLogs: [],
+  exerciseLogs: [],
 } as any;
 
 describe("ClientDetailView", () => {

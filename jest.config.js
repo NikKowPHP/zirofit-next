@@ -5,7 +5,10 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@tests/(.*)$': '<rootDir>/tests/$1',
     '\\.(css|less|scss|sass)$': '<rootDir>/tests/mocks/styleMock.js',
+    // This will handle the dynamic [locale] segment in paths
+    '^@/app/\\[locale\\]/(.*)$': '<rootDir>/src/app/[locale]/$1',
   },
   transformIgnorePatterns: [
     "/node_modules/(?!(isows|@supabase/ssr|@supabase/supabase-js|@supabase/realtime-js)/)"

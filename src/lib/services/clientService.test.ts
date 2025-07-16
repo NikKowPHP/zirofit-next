@@ -1,4 +1,3 @@
-
 import { prismaMock } from "@tests/singleton";
 import * as clientService from "./clientService";
 

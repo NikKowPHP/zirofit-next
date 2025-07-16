@@ -5,8 +5,8 @@ import {
   updateMeasurement,
   deleteMeasurement,
   type MeasurementFormState,
-} from "@/app/clients/actions/measurement-actions";
-import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
+} from "@/app/[locale]/clients/actions/measurement-actions";
+import type { ClientMeasurement } from "@/app/[locale]/clients/actions/measurement-actions";
 
 interface UseMeasurementManagerProps {
   initialMeasurements: ClientMeasurement[];

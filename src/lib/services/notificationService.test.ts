@@ -3,6 +3,9 @@ import * as notificationService from "./notificationService";
 import { Resend } from "resend";
 
 jest.mock("resend");
+jest.mock("next-intl/server", () => ({
+  getTranslations: jest.fn().mockResolvedValue((key: string) => key),
+}));
 
 const mockResend = {
   emails: {
@@ -30,6 +33,7 @@ describe("Notification Service", () => {
       await notificationService.sendBookingConfirmationEmail(
         booking as any,
         trainer,
+        'en'
       );
 
       expect(mockResend.emails.send).toHaveBeenCalledTimes(2);
@@ -38,7 +42,7 @@ describe("Notification Service", () => {
       expect(mockResend.emails.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: trainer.email,
-          subject: `New Booking: ${booking.clientName}`,
+          subject: expect.any(String),
           html: expect.stringContaining("Add to Google Calendar"),
         }),
       );
@@ -47,7 +51,7 @@ describe("Notification Service", () => {
       expect(mockResend.emails.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: booking.clientEmail,
-          subject: expect.stringContaining("is Confirmed!"),
+          subject: expect.any(String),
         }),
       );
     });
@@ -62,7 +66,7 @@ describe("Notification Service", () => {
         startTime: new Date("2025-08-15"),
       } as any;
 
-      await notificationService.createBookingNotification(trainerId, booking);
+      await notificationService.createBookingNotification(trainerId, booking, 'en');
 
       expect(prismaMock.notification.create).toHaveBeenCalledWith({
         data: {

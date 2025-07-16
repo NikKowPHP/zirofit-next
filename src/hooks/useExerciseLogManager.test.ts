@@ -1,11 +1,10 @@
-
 import { renderHook, act } from "@testing-library/react";
 import { useExerciseLogManager } from "./useExerciseLogManager";
-import * as actions from "@/app/clients/actions/exercise-log-actions";
+import * as actions from "@/app/[locale]/clients/actions/exercise-log-actions";
 import { useActionState } from "react";
 
 // Mock the actions and react hooks
-jest.mock("@/app/clients/actions/exercise-log-actions", () => ({
+jest.mock("@/app/[locale]/clients/actions/exercise-log-actions", () => ({
   addExerciseLog: jest.fn(),
   updateExerciseLog: jest.fn(),
   deleteExerciseLog: jest.fn(),

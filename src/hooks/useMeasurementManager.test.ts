@@ -1,9 +1,8 @@
-// src/hooks/useMeasurementManager.test.ts
 import { renderHook, act } from '@testing-library/react';
 import { useMeasurementManager } from './useMeasurementManager';
 import * as actions from '@/app/[locale]/clients/actions/measurement-actions';
 
-jest.mock('@/app/clients/actions/measurement-actions', () => ({
+jest.mock('@/app/[locale]/clients/actions/measurement-actions', () => ({
   addMeasurement: jest.fn(),
   updateMeasurement: jest.fn(),
   deleteMeasurement: jest.fn(),

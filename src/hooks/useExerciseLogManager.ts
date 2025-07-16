@@ -10,7 +10,7 @@ import {
   type ExerciseLogFormState,
   type ClientExerciseLog,
   type Exercise,
-} from "@/app/clients/actions/exercise-log-actions";
+} from "@/app/[locale]/clients/actions/exercise-log-actions";
 import { toast } from "sonner";
 
 interface UseExerciseLogManagerProps {

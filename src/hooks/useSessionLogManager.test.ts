@@ -1,9 +1,10 @@
+
 // src/hooks/useSessionLogManager.test.ts
 import { renderHook, act } from '@testing-library/react';
 import { useSessionLogManager } from './useSessionLogManager';
-import * as actions from '@/app/clients/actions';
+import * as actions from '@/app/[locale]/clients/actions';
 
-jest.mock('@/app/clients/actions', () => ({
+jest.mock('@/app/[locale]/clients/actions', () => ({
   addSessionLog: jest.fn(),
   updateSessionLog: jest.fn(),
   deleteSessionLog: jest.fn(),

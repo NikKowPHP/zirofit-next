@@ -15,13 +15,13 @@ describe("Middleware", () => {
       },
     });
 
-    const req = new NextRequest(new URL("/dashboard", "http://localhost"), {
+    const req = new NextRequest(new URL("/en/dashboard", "http://localhost"), {
       headers: new Headers(),
     });
     const res = await middleware(req);
 
     expect(res.status).toBe(307); // Redirect status
-    expect(res.headers.get("Location")).toContain("/auth/login");
+    expect(res.headers.get("Location")).toContain("/en/auth/login");
   });
 
   it("should redirect authenticated user from auth route to dashboard", async () => {
@@ -32,13 +32,13 @@ describe("Middleware", () => {
       },
     });
 
-    const req = new NextRequest(new URL("/auth/login", "http://localhost"), {
+    const req = new NextRequest(new URL("/en/auth/login", "http://localhost"), {
       headers: new Headers(),
     });
     const res = await middleware(req);
 
     expect(res.status).toBe(307);
-    expect(res.headers.get("Location")).toContain("/dashboard");
+    expect(res.headers.get("Location")).toContain("/en/dashboard");
   });
 
   it("should allow authenticated user to access protected route", async () => {
@@ -48,14 +48,11 @@ describe("Middleware", () => {
         getUser: jest.fn().mockResolvedValue({ data: { user: { id: "123" } } }),
       },
     });
-
-    const req = new NextRequest(new URL("/dashboard", "http://localhost"), {
-      headers: new Headers(),
+    const headers = new Headers();
+    headers.set('x-next-intl-locale', 'en');
+    const req = new NextRequest(new URL("/en/dashboard", "http://localhost"), {
+      headers,
     });
-    // The middleware modifies the response, so we need to inspect it.
-    // The original `middleware` returns `response`, which is a `NextResponse.next()`.
-    // In Jest, this won't have a body or a status code unless we are redirecting.
-    // The key is that it doesn't throw and doesn't return a redirect response.
     const res = await middleware(req);
 
     // Expecting the middleware to pass through, not redirect.
@@ -72,9 +69,10 @@ describe("Middleware", () => {
         getUser: jest.fn().mockResolvedValue({ data: { user: null } }),
       },
     });
-
-    const req = new NextRequest(new URL("/", "http://localhost"), {
-      headers: new Headers(),
+    const headers = new Headers();
+    headers.set('x-next-intl-locale', 'en');
+    const req = new NextRequest(new URL("/en/", "http://localhost"), {
+      headers,
     });
     const res = await middleware(req);
 

@@ -1,6 +1,5 @@
-// src/components/profile/ProfileEditorLayout.test.tsx
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { renderWithIntl as render, screen, fireEvent, waitFor } from "../../../tests/test-utils";
 import "@testing-library/jest-dom";
 import ProfileEditorLayout from "./ProfileEditorLayout";
 

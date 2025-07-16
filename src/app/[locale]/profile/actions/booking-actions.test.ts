@@ -4,6 +4,11 @@ import * as notificationService from "@/lib/services/notificationService";
 
 jest.mock("@/lib/services/bookingService");
 jest.mock("@/lib/services/notificationService");
+jest.mock("next-intl/server", () => ({
+  getLocale: jest.fn().mockResolvedValue('en'),
+  getTranslations: jest.fn().mockResolvedValue((key: string) => key),
+}));
+
 
 describe("Booking Actions", () => {
   afterEach(() => {
