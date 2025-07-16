@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -8,7 +7,7 @@ import {
   addService,
   deleteService,
   updateService,
-} from "@/app/profile/actions/service-actions";
+} from "@/app/[locale]/profile/actions/service-actions";
 import type { Service } from "@prisma/client";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent, RichTextEditor } from "@/components/ui";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";

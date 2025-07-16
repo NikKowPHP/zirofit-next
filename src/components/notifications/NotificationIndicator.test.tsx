@@ -1,5 +1,4 @@
-
-import { renderWithIntl, screen, waitFor, act } from "../../tests/test-utils";
+import { renderWithIntl, screen, waitFor, act } from "@/tests/test-utils";
 import userEvent from "@testing-library/user-event";
 import NotificationIndicator from "./NotificationIndicator";
 

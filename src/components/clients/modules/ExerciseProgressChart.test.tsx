@@ -1,9 +1,8 @@
-
-import { renderWithIntl, screen } from "../../../tests/test-utils";
+import { renderWithIntl, screen } from "@/tests/test-utils";
 import "@testing-library/jest-dom";
 import ExerciseProgressChart from "./ExerciseProgressChart";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { ClientExerciseLog } from "@/app/clients/actions";
+import { ClientExerciseLog } from "@/app/[locale]/clients/actions";
 
 // Mock the charting library
 jest.mock("react-chartjs-2", () => ({

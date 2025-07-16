@@ -1,10 +1,9 @@
-
 "use client";
 
 import { useProgressPhotoManager } from "@/hooks/useProgressPhotoManager";
 import { Button, Input } from "@/components/ui";
 import Image from "next/image";
-import { ClientProgressPhoto } from "@/app/clients/actions";
+import { ClientProgressPhoto } from "@/app/[locale]/clients/actions";
 import { useState } from "react";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";

@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useExerciseLogManager } from "@/hooks/useExerciseLogManager";
-import { type ClientExerciseLog, type Exercise } from "@/app/clients/actions";
+import { type ClientExerciseLog, type Exercise } from "@/app/[locale]/clients/actions";
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, EmptyState } from "@/components/ui";
 import { PencilIcon, TrashIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useState, useMemo, useEffect } from "react";
@@ -282,7 +281,7 @@ export default function ManageClientExerciseLogs({
                                 </div>
                               </div>
                               <ul className="text-sm space-y-1">
-                                {(log.sets as unknown as {reps: number, weight?: number}[]).map((set, i) => (
+                                {Array.isArray(log.sets) && (log.sets as {reps: number, weight?: number}[]).map((set, i) => (
                                   <li key={i}>{i+1}. {set.reps} reps {set.weight != null ? `@ ${set.weight} kg` : ''}</li>
                                 ))}
                               </ul>

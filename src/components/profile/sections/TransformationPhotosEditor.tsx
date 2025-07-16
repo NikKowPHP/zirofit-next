@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -7,7 +6,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   addTransformationPhoto,
   deleteTransformationPhoto,
-} from "@/app/profile/actions/photo-actions";
+} from "@/app/[locale]/profile/actions/photo-actions";
 import { Input, Label, Textarea, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import Image from "next/image";
 import { z } from "zod";

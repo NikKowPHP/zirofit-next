@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -8,7 +7,7 @@ import {
   addSocialLink,
   updateSocialLink,
   deleteSocialLink,
-} from "@/app/profile/actions/social-link-actions";
+} from "@/app/[locale]/profile/actions/social-link-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";

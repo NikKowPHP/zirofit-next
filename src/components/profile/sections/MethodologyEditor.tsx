@@ -1,9 +1,8 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { updateMethodology } from "@/app/profile/actions/text-content-actions";
+import { updateMethodology } from "@/app/[locale]/profile/actions/text-content-actions";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";

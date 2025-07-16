@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useSessionLogManager } from "@/hooks/useSessionLogManager";
-import type { ClientSessionLog } from "@/app/clients/actions";
+import type { ClientSessionLog } from "@/app/[locale]/clients/actions";
 import { Button, Input, Textarea } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";

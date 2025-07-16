@@ -1,9 +1,8 @@
-
 "use client";
 
 import React, { useState } from "react";
 import { useFormStatus, useFormState } from "react-dom";
-import { updateBrandingImages } from "@/app/profile/actions/branding-actions";
+import { updateBrandingImages } from "@/app/[locale]/profile/actions/branding-actions";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { BannerImage, ProfileImage } from "@/components/ui/ImageComponents";
 import { useServerActionToast } from "@/hooks/useServerActionToast";

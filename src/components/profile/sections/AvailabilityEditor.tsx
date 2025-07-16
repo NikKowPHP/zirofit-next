@@ -1,9 +1,8 @@
-
 "use client";
 
 import React, { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { updateAvailability } from "@/app/profile/actions/availability-actions";
+import { updateAvailability } from "@/app/[locale]/profile/actions/availability-actions";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { useTranslations } from "next-intl";

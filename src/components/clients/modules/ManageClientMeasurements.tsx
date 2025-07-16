@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useMeasurementManager } from "@/hooks/useMeasurementManager";
-import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
+import type { ClientMeasurement } from "@/app/[locale]/clients/actions/measurement-actions";
 import { Button, Input, Textarea } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";

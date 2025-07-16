@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -7,8 +6,8 @@ import {
   addTestimonial,
   updateTestimonial,
   deleteTestimonial,
-} from "@/app/profile/actions/testimonial-actions";
-import { revalidateProfilePath } from "@/app/profile/revalidate";
+} from "@/app/[locale]/profile/actions/testimonial-actions";
+import { revalidateProfilePath } from "@/app/[locale]/profile/revalidate";
 import { Button, Input, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";

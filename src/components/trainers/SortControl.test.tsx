@@ -1,5 +1,4 @@
-
-import { renderWithIntl, screen, fireEvent } from '../../tests/test-utils';
+import { renderWithIntl, screen, fireEvent } from '@/tests/test-utils';
 import '@testing-library/jest-dom';
 import SortControl from './SortControl';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
