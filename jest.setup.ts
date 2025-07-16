@@ -1,4 +1,3 @@
-
 /// <reference types="node" />
 
 // Mock for react-dom hooks must be at the top
@@ -52,6 +51,16 @@ if (typeof HTMLFormElement !== 'undefined' && !HTMLFormElement.prototype.request
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
+
+jest.mock('next-intl/server', () => ({
+    getLocale: jest.fn().mockResolvedValue('en'),
+    getTranslations: jest.fn().mockResolvedValue((key, options) => {
+        // A simple mock t function that returns the key.
+        // This is enough for most tests that don't assert on translated text.
+        return key;
+    }),
+    getRequestConfig: jest.fn(() => jest.fn()), // Add this line
+}));
 
 jest.mock('@/lib/prisma', () => ({
   __esModule: true,

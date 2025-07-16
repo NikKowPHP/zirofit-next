@@ -1,4 +1,3 @@
-
 import { registerUser, loginUser, logoutUser } from "./actions";
 import { prismaMock } from "@tests/singleton";
 import { createClient } from "@/lib/supabase/server";
@@ -46,7 +45,7 @@ describe("Auth Actions", () => {
       expect(mockSupabase.auth.signUp).toHaveBeenCalled();
       expect(prismaMock.$transaction).toHaveBeenCalled();
       expect(redirect).toHaveBeenCalledWith(
-        "/auth/login?message=Registration successful! Please log in.",
+        "/en/auth/login?messageKey=registrationSuccess",
       );
     });
 
@@ -134,7 +133,7 @@ describe("Auth Actions", () => {
       await loginUser(undefined, formData);
 
       expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalled();
-      expect(redirect).toHaveBeenCalledWith("/dashboard");
+      expect(redirect).toHaveBeenCalledWith("/en/dashboard");
     });
 
     it("should return an error on failed login", async () => {
@@ -161,7 +160,7 @@ describe("Auth Actions", () => {
 
       expect(mockSupabase.auth.signOut).toHaveBeenCalled();
       expect(redirect).toHaveBeenCalledWith(
-        "/auth/login?message=Logged out successfully.",
+        "/en/auth/login?messageKey=logoutSuccess",
       );
     });
   });
