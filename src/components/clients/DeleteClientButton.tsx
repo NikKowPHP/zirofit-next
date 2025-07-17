@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { deleteClient } from "../../app/clients/actions";
+import { deleteClient } from "@/app/[locale]/clients/actions";
 import { Button } from "@/components/ui/Button";
 import { DeleteConfirmationModal } from "../ui/DeleteConfirmationModal";
 import { toast } from "sonner";

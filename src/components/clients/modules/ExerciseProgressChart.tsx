@@ -6,7 +6,7 @@ import "chartjs-adapter-date-fns";
 import { useTheme } from "@/context/ThemeContext";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useMemo } from "react";
-import { ClientExerciseLog } from "@/app/clients/actions";
+import { ClientExerciseLog } from "@/app/[locale]/clients/actions";
 import { useTranslations } from "next-intl";
 
 interface ExerciseProgressChartProps {

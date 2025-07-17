@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
+import type { ClientMeasurement } from "@/app/[locale]/clients/actions/measurement-actions";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,

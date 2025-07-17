@@ -6,9 +6,9 @@ import type {
   Client,
   ClientSessionLog,
   ClientProgressPhoto,
-} from "@/app/clients/actions/client-actions";
-import type { ClientMeasurement } from "@/app/clients/actions/measurement-actions";
-import type { ClientExerciseLog } from "@/app/clients/actions/exercise-log-actions";
+} from "@/app/[locale]/clients/actions/client-actions.ts";
+import type { ClientMeasurement } from "@/app/[locale]/clients/actions/measurement-actions";
+import type { ClientExerciseLog } from "@/app/[locale]/clients/actions/exercise-log-actions";
 import { useTranslations } from "next-intl";
 
 const ManageClientMeasurements = lazy(
