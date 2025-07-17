@@ -5,16 +5,19 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import BackLink from "@/components/ui/BackLink";
 import { getTranslations } from "next-intl/server";
-
+interface LayoutProps {
+   children: React.ReactNode;
+  params: Promise<{
+    clientId: string;
+    locale: string;
+  }>;
+}
 export default async function ClientDetailLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: { clientId: string; locale: string };
-}) {
+}: LayoutProps) {
   const t = await getTranslations("Clients");
-  const { clientId } = params;
+  const { clientId } = await params;
   const client = await getClientById(clientId);
   if (!client) {
     notFound();

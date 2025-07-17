@@ -95,7 +95,7 @@ export const metadata: Metadata = {
 
 interface LocaleLayoutProps {
   children: React.ReactNode
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>
 }
 
 
@@ -103,7 +103,7 @@ export default async function RootLayout({
   children,
   params,
 }: LocaleLayoutProps) {
-  const { locale } = params;
+  const { locale } = await params;
   unstable_setRequestLocale(locale);
   let messages
   try {

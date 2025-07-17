@@ -4,12 +4,12 @@ import BackLink from "@/components/ui/BackLink";
 import { addClient } from "../actions";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
-
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string };
-}): Promise<Metadata> {
+interface MetadataProps {
+   params: Promise<{locale: string }> 
+}
+export async function generateMetadata({ params } 
+: MetadataProps): Promise<Metadata>{
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: "Clients" });
   return {
     title: t("createClientTitle"),

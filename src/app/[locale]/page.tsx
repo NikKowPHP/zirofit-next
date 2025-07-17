@@ -5,14 +5,17 @@ import { Button } from "@/components/ui";
 import Link from "next/link";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { type Locale } from '@/i18n'
+interface MetadataProps {
+   params: Promise<{ locale: Locale }> 
+}
 interface HomePageProps {
-  params: { locale: Locale }
+   params: Promise<{ locale: Locale }> 
 }
 
 
 
-export  async function generateMetadata({ params }: HomePageProps) {
-  const { locale } = params;
+export  async function generateMetadata({ params }: MetadataProps) {
+  const { locale } =await  params;
   unstable_setRequestLocale(locale);
   const t = await getTranslations("HomePage");
 
@@ -26,7 +29,7 @@ export  async function generateMetadata({ params }: HomePageProps) {
 }
 
 export default async function Home({ params }: HomePageProps) {
-  const { locale } = params;
+  const { locale } = await params;
   unstable_setRequestLocale(locale);
   const t = await getTranslations("HomePage");
   return (

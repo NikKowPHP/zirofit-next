@@ -12,8 +12,14 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { TrainerGrid } from "@/components/trainers/TrainerGrid";
 import { getTranslations } from "next-intl/server";
-
-export async function generateMetadata({params: {locale}}): Promise<Metadata> {
+interface PageProps {
+  params: Promise<{
+  
+    locale: string;
+  }>;
+}
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { locale } = await params;
   const t = await getTranslations({locale, namespace: 'TrainersPage'});
   return {
     title: t('title'),

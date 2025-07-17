@@ -79,13 +79,13 @@ const DEFAULT_BANNER_IMAGE = "/default-banner.jpg"; // Replace with actual defau
 const DEFAULT_PROFILE_IMAGE = "/default-profile.jpg"; // Replace with actual default profile image
 
 interface TrainerProfilePageProps {
-  params: { username: string, locale: string };
+  params: Promise<{ username: string, locale: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: TrainerProfilePageProps): Promise<Metadata> {
-  const username = params.username;
+  const {username} = await params;
   const user = await getTrainerProfileByUsername(username);
 
   if (!user || !user.profile) {
@@ -142,8 +142,9 @@ export async function generateMetadata({
 export default async function TrainerProfilePage({
   params,
 }: TrainerProfilePageProps) {
-  const t = await getTranslations({locale: params.locale, namespace: 'TrainerProfilePage'});
-  const { username } = params;
+    const { locale, username } = await params;
+  const t = await getTranslations({locale: locale, namespace: 'TrainerProfilePage'});
+
   const userWithProfile: UserWithProfile | null =
     await getTrainerProfileByUsername(username);
 

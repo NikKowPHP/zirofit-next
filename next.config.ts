@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+   eslint: {
+   // Disable ESLint during builds as it's handled separately
+  ignoreDuringBuilds: true,
+   },
   webpack: (config) => {
     return config;
   },

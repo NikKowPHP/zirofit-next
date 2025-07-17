@@ -5,12 +5,14 @@ import { generateGoogleCalendarLink } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import type { Booking } from "@prisma/client";
-
-export default async function BookingsPage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+interface PageProps {
+  params: Promise<{
+    
+    locale: string;
+  }>;
+}
+export default async function BookingsPage({ params }: PageProps) {
+  const { locale } = await params;
   const supabase = await createClient();
   const {
     data: { user },
