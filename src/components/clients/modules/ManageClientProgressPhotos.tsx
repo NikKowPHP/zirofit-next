@@ -9,6 +9,7 @@ import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
+import { transformImagePath } from "@/lib/utils";
 
 interface ManageClientProgressPhotosProps {
   clientId: string;
@@ -113,7 +114,7 @@ export default function ManageClientProgressPhotos({
               <div key={photo.id} className="group relative">
                 <div className="relative aspect-square mb-2">
                   <Image
-                    src={photo.imagePath}
+                    src={transformImagePath(photo.imagePath)}
                     alt={photo.caption || ""}
                     fill
                     className="object-cover rounded-md"
