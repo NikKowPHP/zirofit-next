@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
@@ -6,8 +5,9 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "@/components/ui/Toaster";
 import { Suspense } from "react";
 import { TopLoader } from "@/components/layouts/TopLoader";
-import {NextIntlClientProvider, useMessages} from 'next-intl';
-import { locales } from "@/i18n";
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages, unstable_setRequestLocale} from 'next-intl/server';
+import { Locale, locales } from "@/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,12 +89,29 @@ export const metadata: Metadata = {
     languages: locales.reduce((acc, loc) => {
       acc[loc] = `/${loc}`;
       return acc;
-    }, {}),
+    }, {} as Record<string, string>),
   },
 };
 
-export default function RootLayout({ children, params: { locale } }: Readonly<{ children: React.ReactNode; params: { locale: string } }>) {
-  const messages = useMessages();
+interface LocaleLayoutProps {
+  children: React.ReactNode
+  params: { locale: Locale }
+}
+
+
+export default async function RootLayout({
+  children,
+  params,
+}: LocaleLayoutProps) {
+  const { locale } = params;
+  unstable_setRequestLocale(locale);
+  let messages
+  try {
+    messages = (await import(`@/messages/${locale}.json`)).default
+  } catch (error) {
+  
+   console.error('error')
+  }
   
   return (
     <html lang={locale} suppressHydrationWarning>

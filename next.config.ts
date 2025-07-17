@@ -1,6 +1,10 @@
+
 import type { NextConfig } from "next";
 import pwa from "next-pwa";
 import { withSentryConfig } from "@sentry/nextjs";
+import withNextIntl from 'next-intl/plugin';
+
+const withIntl = withNextIntl('./src/i18n.ts');
 
 const withPWA = pwa({
   dest: "public",
@@ -38,6 +42,6 @@ const sentryWebpackPluginOptions = {
 
 // Make sure to put `withSentryConfig` last in your list of HOCs.
 export default withSentryConfig(
-  withPWA(nextConfig as any),
+  withIntl(withPWA(nextConfig  as any) as any),
   sentryWebpackPluginOptions
 );
