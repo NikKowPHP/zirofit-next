@@ -49,7 +49,13 @@ const sentryWebpackPluginOptions = {
 
 
 // Make sure to put `withSentryConfig` last in your list of HOCs.
+const configWithPlugins = withIntl(
+  withPWA(
+    bundleAnalyzer(nextConfig)
+  ) as any
+);
+
 export default withSentryConfig(
-  withIntl(withPWA(bundleAnalyzer(nextConfig  as any)) as any),
+  configWithPlugins,
   sentryWebpackPluginOptions
 );

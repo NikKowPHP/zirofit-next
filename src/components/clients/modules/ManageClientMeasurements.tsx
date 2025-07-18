@@ -6,6 +6,7 @@ import type { ClientMeasurement } from "@/app/[locale]/clients/actions/measureme
 import { Button, Input, Textarea } from "@/components/ui";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
@@ -14,6 +15,23 @@ import { useTranslations, useLocale } from "next-intl";
 interface ManageClientMeasurementsProps {
   clientId: string;
   initialMeasurements: ClientMeasurement[];
+}
+
+function SubmitButton({ isEditing }: { isEditing: boolean }) {
+  const t = useTranslations("Clients");
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending
+        ? isEditing
+          ? t("clientForm_updating")
+          : t("clientForm_creating")
+        : isEditing
+        ? t("measurements_updateButton")
+        : t("measurements_addButton")}
+    </Button>
+  );
 }
 
 export default function ManageClientMeasurements({
@@ -149,11 +167,7 @@ export default function ManageClientMeasurements({
             />
 
             <div className="flex gap-2">
-              <Button type="submit">
-                {isEditing
-                  ? t("measurements_updateButton")
-                  : t("measurements_addButton")}
-              </Button>
+              <SubmitButton isEditing={isEditing} />
               {isEditing && (
                 <Button
                   type="button"
@@ -204,6 +218,7 @@ export default function ManageClientMeasurements({
                       variant="secondary"
                       size="sm"
                       onClick={() => handleEdit(measurement)}
+                      disabled={isDeleting}
                     >
                       <PencilIcon className="h-4 w-4" />
                     </Button>
@@ -212,6 +227,7 @@ export default function ManageClientMeasurements({
                       variant="danger"
                       size="sm"
                       onClick={() => setItemToDelete(measurement.id)}
+                      disabled={isDeleting}
                     >
                       <TrashIcon className="h-4 w-4" />
                     </Button>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useProgressPhotoManager } from "@/hooks/useProgressPhotoManager";
@@ -5,6 +6,7 @@ import { Button, Input } from "@/components/ui";
 import Image from "next/image";
 import { ClientProgressPhoto } from "@/app/[locale]/clients/actions";
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
@@ -14,6 +16,16 @@ import { transformImagePath } from "@/lib/utils";
 interface ManageClientProgressPhotosProps {
   clientId: string;
   initialProgressPhotos: ClientProgressPhoto[];
+}
+
+function SubmitButton() {
+  const t = useTranslations("ProfileEditor");
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? t("uploading") : t("photos_add")}
+    </Button>
+  );
 }
 
 export default function ManageClientProgressPhotos({
@@ -101,7 +113,7 @@ export default function ManageClientProgressPhotos({
               )}
             </div>
 
-            <Button type="submit">{t("photos_add")}</Button>
+            <SubmitButton />
           </form>
         </div>
 
@@ -124,6 +136,7 @@ export default function ManageClientProgressPhotos({
                       variant="danger"
                       size="sm"
                       onClick={() => setItemToDelete(photo.id)}
+                      disabled={isDeleting}
                     >
                       {t("deleteButton")}
                     </Button>

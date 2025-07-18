@@ -9,7 +9,28 @@ jest.mock("swr");
 const mockedUseSWR = useSWR as jest.Mock;
 
 describe("DashboardContent", () => {
-  it("should render all skeleton components when loading", () => {
+  const mockData = {
+    activeClients: 10,
+    sessionsThisMonth: 25,
+    pendingClients: 3,
+    profile: {
+      profilePhotoPath: "/photo.jpg",
+      bannerImagePath: "/banner.jpg",
+      aboutMe: "About me text",
+      services: [{ id: "1" }],
+      testimonials: [{ id: "1" }],
+      benefits: [{ id: "1" }, { id: "2" }],
+      transformationPhotos: [{ id: "1" }],
+    },
+    activityFeed: [],
+    clientProgressData: [
+      { x: "2025-01-01", y: 80 },
+      { x: "2025-01-08", y: 79 },
+    ],
+    monthlyActivityData: [{ x: "Week 1", y: 5 }],
+  };
+
+  it("should render all skeleton components when loading without initialData", () => {
     mockedUseSWR.mockReturnValue({
       data: null,
       error: null,
@@ -18,11 +39,13 @@ describe("DashboardContent", () => {
 
     renderWithIntl(
       <ThemeProvider>
-        <DashboardContent />
+        <DashboardContent initialData={null} />
       </ThemeProvider>,
     );
 
-    expect(screen.getByTestId("skeleton-at-a-glance-stats")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("skeleton-at-a-glance-stats"),
+    ).toBeInTheDocument();
     expect(
       screen.getByTestId("skeleton-profile-checklist"),
     ).toBeInTheDocument();
@@ -30,7 +53,7 @@ describe("DashboardContent", () => {
     expect(screen.getByTestId("skeleton-activity-feed")).toBeInTheDocument();
   });
 
-  it("should display an error message when data fetching fails", () => {
+  it("should display an error message when data fetching fails and there's no initialData", () => {
     mockedUseSWR.mockReturnValue({
       data: null,
       error: new Error("API Error"),
@@ -39,47 +62,27 @@ describe("DashboardContent", () => {
 
     renderWithIntl(
       <ThemeProvider>
-        <DashboardContent />
+        <DashboardContent initialData={null} />
       </ThemeProvider>,
     );
 
-    expect(
-      screen.getByText("Failed to load dashboard"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Failed to load dashboard")).toBeInTheDocument();
   });
 
-  it("should render the dashboard with data when fetching succeeds", () => {
-    const mockData = {
-      activeClients: 10,
-      sessionsThisMonth: 25,
-      pendingClients: 3,
-      profile: {
-        profilePhotoPath: "/photo.jpg",
-        bannerImagePath: "/banner.jpg",
-        aboutMe: "About me text",
-        services: [{ id: "1" }],
-        testimonials: [{ id: "1" }],
-        benefits: [{ id: "1" }, { id: "2" }],
-        transformationPhotos: [{ id: "1" }],
-      },
-      activityFeed: [],
-      clientProgressData: [{ x: '2025-01-01', y: 80 }, { x: '2025-01-08', y: 79 }],
-      monthlyActivityData: [{ x: 'Week 1', y: 5 }],
-    };
-
+  it("should render immediately with initialData without showing skeletons", () => {
     mockedUseSWR.mockReturnValue({
       data: mockData,
       error: null,
-      isLoading: false,
+      isLoading: false, // With fallbackData (from initialData), isLoading is false on first render
     });
 
     renderWithIntl(
       <ThemeProvider>
-        <DashboardContent />
+        <DashboardContent initialData={mockData} />
       </ThemeProvider>,
     );
 
-    // Assert that skeleton loaders are not present
+    // Assert that skeleton loaders are NOT present
     expect(
       screen.queryByTestId("skeleton-at-a-glance-stats"),
     ).not.toBeInTheDocument();

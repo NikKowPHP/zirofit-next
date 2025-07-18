@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 
@@ -25,13 +24,6 @@ interface UseEditableListProps<T extends Item> {
 
 const initialActionState = { success: false };
 
-/**
- * Manages the state and actions for a list of editable items.
- * Handles adding, updating, and deleting items with optimistic UI updates.
- * @template T The type of items in the list, must extend a base Item type.
- * @param {UseEditableListProps<T>} props - The initial items and server actions.
- * @returns An object containing the list state and handlers.
- */
 export function useEditableList<T extends Item>({
   initialItems,
   addAction,
@@ -69,11 +61,11 @@ export function useEditableList<T extends Item>({
     setOptimisticTempId(tempId);
 
     const tempItemData: { [key: string]: any } = {};
-    for (const [key, value] of formData.entries()) {
+    formData.forEach((value, key) => {
       if (typeof value === 'string') {
         tempItemData[key] = value;
       }
-    }
+    });
 
     const optimisticItem = {
       id: tempId,

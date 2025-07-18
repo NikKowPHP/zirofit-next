@@ -53,18 +53,19 @@ const initialUpdateState: FormState = {
 };
 
 function SubmitButton({ isEditing }: { isEditing: boolean }) {
-  const { pending } = useFormStatus();
   const t = useTranslations("ProfileEditor");
+  const { pending } = useFormStatus();
   return (
     <Button type="submit" variant="primary" disabled={pending}>
       {pending
         ? t("saving")
         : isEditing
-          ? t("testimonialUpdateButton")
-          : t("testimonialAddButton")}
+        ? t("testimonialUpdateButton")
+        : t("testimonialAddButton")}
     </Button>
   );
 }
+
 
 export default function TestimonialsEditor({
   initialTestimonials,

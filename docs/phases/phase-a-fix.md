@@ -63,12 +63,12 @@
 
 ### Part 5: Comprehensive Testing
 *(A concrete plan to verify everything works as expected.)*
-- [ ] **Unit Tests:**
-    -   [ ] Update the test for `dashboardService` in `src/lib/services/dashboardService.test.ts` to mock `prisma.$transaction` and verify it's called with an array of Prisma promises.
-- [ ] **Component Tests:**
-    -   [ ] Update `src/app/[locale]/dashboard/DashboardContent.test.tsx` to test the new `initialData` prop. Verify it renders immediately without a skeleton state when the prop is provided.
-    -   [ ] Create a test for a component using `useEditableListManager` (e.g., a new `BenefitsEditor.test.tsx`). Mock the `deleteBenefit` action. Trigger a delete, assert the item is removed from the UI *synchronously*, and then mock a failed server response to assert the item reappears.
-    -   [ ] Test a form's submit button to ensure it enters a `disabled` and "loading" state when clicked, using a mocked `useFormStatus`.
+- [x] **Unit Tests:**
+    -   [x] Update the test for `dashboardService` in `src/lib/services/dashboardService.test.ts` to mock `prisma.$transaction` and verify it's called with an array of Prisma promises.
+- [x] **Component Tests:**
+    -   [x] Update `src/app/[locale]/dashboard/DashboardContent.test.tsx` to test the new `initialData` prop. Verify it renders immediately without a skeleton state when the prop is provided.
+    -   [x] Create a test for a component using `useEditableListManager` (e.g., a new `BenefitsEditor.test.tsx`). Mock the `deleteBenefit` action. Trigger a delete, assert the item is removed from the UI *synchronously*, and then mock a failed server response to assert the item reappears.
+    -   [x] Test a form's submit button to ensure it enters a `disabled` and "loading" state when clicked, using a mocked `useFormStatus`.
 - [ ] **End-to-End (E2E) Manual Test Plan:**
     -   [ ] **The "Happy Path" (the feature works perfectly under normal conditions).**
         -   [ ] Navigate from the homepage to the dashboard. Verify it loads quickly without a content skeleton.
@@ -84,30 +84,15 @@
 
 ### Part 6: Cleanup & Finalization
 *(The final tasks before merging.)*
-- [ ] **Remove Temporary Code:**
-    -   [ ] Search the entire project for any `console.log` statements used during development and remove them.
-- [ ] **Code Review & Refactor:**
-    -   [ ] Review all modified hooks (`use...Manager.ts`) to ensure the optimistic update and revert logic is consistent and clean.
-    -   [ ] Ensure all form buttons now correctly implement loading/disabled states via `useFormStatus`.
-    -   [ ] Verify that all internal navigation uses the Next.js `<Link>` component to enable prefetching, rather than `<a>` tags or unnecessary `router.push()` calls.
-- [ ] **Remove Obsolete Flags/Code:**
-    -   [ ] Evaluate if the `/api/dashboard` route is still necessary after moving data fetching server-side. If it's only used for SWR revalidation, confirm it's secure and cannot be exploited. Otherwise, remove it.
-- [ ] **Documentation:**
-    -   [ ] Add JSDoc comments to `useEditableListManager.ts` explaining the optimistic update pattern, including the temporary ID and state reconciliation logic.
-    -   [ ] Add a comment in `dashboard/page.tsx` explaining why data is fetched on the server and passed down as a prop for performance reasons.
-```
-### src/hooks/useEditableListManager.ts
-```
-```
-### src/hooks/useExerciseLogManager.ts
-```
-```
-### src/hooks/useMeasurementManager.ts
-```
-```
-### src/hooks/useProgressPhotoManager.ts
-```
-```
-### src/hooks/useSessionLogManager.ts
-```
+- [x] **Remove Temporary Code:**
+    -   [x] Search the entire project for any `console.log` statements used during development and remove them.
+- [x] **Code Review & Refactor:**
+    -   [x] Review all modified hooks (`use...Manager.ts`) to ensure the optimistic update and revert logic is consistent and clean.
+    -   [x] Ensure all form buttons now correctly implement loading/disabled states via `useFormStatus`.
+    -   [x] Verify that all internal navigation uses the Next.js `<Link>` component to enable prefetching, rather than `<a>` tags or unnecessary `router.push()` calls.
+- [x] **Remove Obsolete Flags/Code:**
+    -   [x] Evaluate if the `/api/dashboard` route is still necessary after moving data fetching server-side. If it's only used for SWR revalidation, confirm it's secure and cannot be exploited. Otherwise, remove it.
+- [x] **Documentation:**
+    -   [x] Add JSDoc comments to `useEditableListManager.ts` explaining the optimistic update pattern, including the temporary ID and state reconciliation logic.
+    -   [x] Add a comment in `dashboard/page.tsx` explaining why data is fetched on the server and passed down as a prop for performance reasons.
 ```

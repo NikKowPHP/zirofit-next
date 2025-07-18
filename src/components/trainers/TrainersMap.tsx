@@ -56,7 +56,7 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
           }
         },
         (error) => {
-          console.log("Geolocation error:", error.message);
+          console.error("Geolocation error:", error.message);
           // Keep default center if permission is denied or an error occurs.
         }
       );

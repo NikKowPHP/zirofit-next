@@ -5,7 +5,6 @@ import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardContent from "./DashboardContent";
 import { getDashboardData } from "@/lib/services/dashboardService";
-import { ErrorState } from "@/components/ui";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -18,9 +17,11 @@ export default async function DashboardPage() {
     return redirect("/auth/login");
   }
 
+  // Fetch data on the server for a faster initial load and to avoid client-side skeletons.
+  // The client-side DashboardContent component will still use SWR for revalidation,
+  // but it will be hydrated with this initial server-fetched data.
   let dashboardData = null;
   try {
-    // Fetch data on the server for a faster initial load.
     dashboardData = await getDashboardData(user.id);
   } catch (error) {
     console.error("Failed to fetch dashboard data:", error);

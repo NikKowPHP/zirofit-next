@@ -1,208 +1,62 @@
 
-import { prisma } from "@/lib/prisma";
-import { startOfMonth, endOfMonth } from "date-fns";
-import { ChartDataService } from "./ChartDataService";
+// src/lib/services/dashboardService.test.ts
+import { getDashboardData } from "./dashboardService";
+import { prismaMock } from "@tests/singleton";
 
-interface ActivityItem {
-  type:
-    | "UPCOMING_SESSION"
-    | "NEW_MEASUREMENT"
-    | "PROGRESS_PHOTO"
-    | "PAST_SESSION";
-  date: Date;
-  clientName: string;
-  message: string;
-}
+describe("Dashboard Data Service", () => {
+  it("should use prisma.$transaction to fetch data in parallel", async () => {
+    const trainerId = "test-trainer-id";
+    const now = new Date();
 
-/**
- * Aggregates and retrieves all necessary data for the trainer dashboard.
- * @param {string} trainerId - The ID of the logged-in trainer.
- * @returns {Promise<object>} A promise that resolves to an object containing all dashboard data.
- */
-export async function getDashboardData(trainerId: string) {
-  const [
-    activeClients,
-    sessionsThisMonth,
-    pendingClients,
-    profile,
-    upcomingSessions,
-    recentMeasurements,
-    pastSessions,
-    progressPhotos,
-  ] = await prisma.$transaction([
-    prisma.client.count({
-      where: { trainerId, status: "active" },
-    }),
-    prisma.clientSessionLog.count({
-      where: {
-        client: { trainerId },
-        sessionDate: {
-          gte: startOfMonth(new Date()),
-          lte: endOfMonth(new Date()),
-        },
+    // Mock the results for each query in the transaction array
+    const transactionResults = [
+      5, // activeClients
+      12, // sessionsThisMonth
+      2, // pendingClients
+      { services: [], testimonials: [], transformationPhotos: [], benefits: [] }, // profile
+      [{ sessionDate: new Date(now.getTime() + 86400000), client: { name: "Upcoming Client" } }], // upcomingSessions
+      [{ createdAt: now, client: { name: "Measured Client" } }], // recentMeasurements
+      [{ sessionDate: new Date(now.getTime() - 86400000), client: { name: "Past Client" } }], // pastSessions
+      [{ createdAt: now, client: { name: "Photo Client" } }], // progressPhotos
+    ];
+
+    prismaMock.$transaction.mockResolvedValue(transactionResults as any);
+
+    // Mocks for getSpotlightClient, which is called separately
+    prismaMock.client.findMany.mockResolvedValueOnce([
+      {
+        id: "spotlight-client",
+        name: "Spotlight Client",
+        _count: { measurements: 2 },
       },
-    }),
-    prisma.client.count({
-      where: { trainerId, status: "pending" },
-    }),
-    prisma.profile.findUnique({
-      where: { userId: trainerId },
-      include: {
-        services: true,
-        testimonials: true,
-        transformationPhotos: true,
-        benefits: true, // Also include benefits for checklist
+    ] as any);
+    prismaMock.clientMeasurement.findMany.mockResolvedValueOnce([
+      {
+        measurementDate: now,
+        weightKg: 80,
       },
-    }),
-    prisma.clientSessionLog.findMany({
-      where: {
-        client: { trainerId },
-        sessionDate: { gte: new Date() },
-      },
-      orderBy: { sessionDate: "asc" },
-      take: 3,
-      include: { client: { select: { name: true } } },
-    }),
-    prisma.clientMeasurement.findMany({
-      where: { client: { trainerId } },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      include: { client: { select: { name: true } } },
-    }),
-    prisma.clientSessionLog.findMany({
-      where: {
-        client: { trainerId },
-        sessionDate: { lt: new Date() },
-      },
-      orderBy: { sessionDate: "desc" },
-      take: 5,
-      include: { client: { select: { name: true } } },
-    }),
-    prisma.clientProgressPhoto.findMany({
-      where: { client: { trainerId } },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      include: { client: { select: { name: true } } },
-    }),
-  ]);
+    ] as any);
+    
+    const data = await getDashboardData(trainerId);
 
-  // Merge and format activities
-  const activityFeed: ActivityItem[] = [
-    ...upcomingSessions.map(
-      (session: { sessionDate: Date; client: { name: string } }) => ({
-        type: "UPCOMING_SESSION" as const,
-        date: session.sessionDate,
-        clientName: session.client.name,
-        message: `Session with ${session.client.name} at ${session.sessionDate.toLocaleTimeString()}`,
-      }),
-    ),
-    ...recentMeasurements.map((measurement) => ({
-      type: "NEW_MEASUREMENT" as const,
-      date: measurement.createdAt,
-      clientName: measurement.client.name,
-      message: `New measurement logged for ${measurement.client.name}`,
-    })),
-    ...pastSessions.map(
-      (session: { sessionDate: Date; client: { name: string } }) => ({
-        type: "PAST_SESSION" as const,
-        date: session.sessionDate,
-        clientName: session.client.name,
-        message: `Completed session with ${session.client.name}`,
-      }),
-    ),
-    ...progressPhotos.map(
-      (photo: { createdAt: Date; client: { name: string } }) => ({
-        type: "PROGRESS_PHOTO" as const,
-        date: photo.createdAt,
-        clientName: photo.client.name,
-        message: `New progress photo from ${photo.client.name}`,
-      }),
-    ),
-  ].sort((a, b) => b.date.getTime() - a.date.getTime());
+    // Assert that $transaction was called
+    expect(prismaMock.$transaction).toHaveBeenCalled();
+    // Check if the number of promises in the transaction is correct
+    expect(prismaMock.$transaction.mock.calls[0][0]).toHaveLength(8);
 
-  const spotlight = await getSpotlightClient(trainerId);
 
-  // Format data for charts, providing empty arrays as fallbacks
-  const clientProgressData = spotlight
-    ? ChartDataService.formatProgressData(spotlight.measurements)
-    : [];
+    // Assert stats
+    expect(data.activeClients).toBe(5);
+    expect(data.pendingClients).toBe(2);
+    expect(data.sessionsThisMonth).toBe(12);
 
-  // Create sample data for the monthly activity chart
-  const monthlyActivityData = ChartDataService.formatActivityData([
-    { week: 1, count: 5 },
-    { week: 2, count: 8 },
-    { week: 3, count: 3 },
-    { week: 4, count: 12 },
-  ]);
+    // Assert activity feed
+    expect(data.activityFeed).toHaveLength(4);
+    expect(data.activityFeed[0].type).toBe("UPCOMING_SESSION");
 
-  return {
-    activeClients,
-    sessionsThisMonth,
-    pendingClients,
-    profile,
-    activityFeed,
-    clientProgressData,
-    monthlyActivityData,
-  };
-}
-
-/**
- * Finds a client who is making progress to feature on the dashboard.
- * @param {string} trainerId - The ID of the trainer.
- * @returns {Promise<object | null>} A promise that resolves to a spotlight client object or null.
- */
-async function getSpotlightClient(trainerId: string) {
-  // Find clients with at least 2 measurements in last 45 days
-  const eligibleClients = await prisma.client.findMany({
-    where: {
-      trainerId,
-      measurements: {
-        some: {
-          createdAt: {
-            gte: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-          },
-        },
-      },
-    },
-    include: {
-      _count: {
-        select: { measurements: true },
-      },
-    },
+    // Assert spotlight data
+    expect(data.clientProgressData).toBeDefined();
+    expect(data.clientProgressData.length).toBe(1);
+    expect(data.clientProgressData[0].y).toBe(80);
   });
-
-  // Filter clients with at least 2 measurements
-  const clientsWithEnoughData = eligibleClients.filter(
-    (client: { _count: { measurements: number } }) =>
-      client._count.measurements >= 2,
-  );
-
-  if (clientsWithEnoughData.length === 0) {
-    return null;
-  }
-
-  // Select first eligible client
-  const client = clientsWithEnoughData[0];
-
-  // Get client's measurements
-  const measurements = await prisma.clientMeasurement.findMany({
-    where: {
-      clientId: client.id,
-    },
-    orderBy: {
-      measurementDate: "asc", // Order by measurementDate
-    },
-    take: 10, // Get last 10 measurements
-  });
-
-  return {
-    name: client.name,
-    measurements: measurements
-      .filter((m) => m.weightKg != null) // Ensure we only plot measurements with a weight
-      .map((m) => ({
-        date: m.measurementDate, // Use the actual date of the measurement
-        value: m.weightKg!, // Use the weightKg as the value
-        type: "weight", // Explicitly define the type for the chart
-      })),
-  };
-}
+});
