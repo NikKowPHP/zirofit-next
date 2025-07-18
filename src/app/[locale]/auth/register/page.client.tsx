@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormStatus, useFormState } from "react-dom";
@@ -125,6 +126,38 @@ export default function RegisterPage() {
                     </p>
                   ))}
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300">
+                  I am a
+                </label>
+                <div className="mt-2 flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="role"
+                      value="trainer"
+                      defaultChecked
+                      className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-neutral-300">
+                      Trainer
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="role"
+                      value="client"
+                      className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-neutral-300">
+                      Client
+                    </span>
+                  </label>
+                </div>
+              </div>
+              
               <div className="pt-2">
                 <SubmitButton />
               </div>

@@ -142,6 +142,13 @@ export async function addClient(prevState: any, formData: FormData) {
 
   const { name, email, phone, status } = validatedFields.data;
 
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    return {
+      message: "A user with this email already exists. You can request to link accounts.",
+    };
+  }
+
   try {
     await clientService.createClient({
       trainerId: authUser.id,
@@ -360,6 +367,46 @@ export async function getClientDetails(clientId: string) {
     console.error("Failed to fetch client details:", error);
     return null;
   }
+}
+
+export async function requestClientLink(prevState: any, formData: FormData) {
+  const clientEmail = formData.get("email") as string;
+  if (!clientEmail) {
+    return { success: false, message: "Email is required." };
+  }
+
+  const supabase = await createSupabaseClient();
+  const {
+    data: { user: trainerUser },
+  } = await supabase.auth.getUser();
+
+  if (!trainerUser) {
+    return { success: false, message: "Unauthorized." };
+  }
+
+  const clientUser = await prisma.user.findUnique({
+    where: { email: clientEmail },
+    select: { id: true },
+  });
+
+  if (!clientUser) {
+    return { success: false, message: "No user found with this email." };
+  }
+
+  const trainerInDb = await prisma.user.findUnique({
+    where: { id: trainerUser.id },
+  });
+  const trainerName = trainerInDb?.name || trainerUser.email;
+
+  await prisma.notification.create({
+    data: {
+      userId: clientUser.id,
+      type: "link_request",
+      message: `Trainer ${trainerName} requests to connect with you.`,
+    },
+  });
+
+  return { success: true, message: "Connection request sent." };
 }
 
 // Infer types for client components to consume, avoiding direct imports that can fail in some build contexts.

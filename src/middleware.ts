@@ -1,10 +1,10 @@
-// src/middleware.ts
+
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import createIntlMiddleware from 'next-intl/middleware';
 import { locales } from './i18n';
 
-const protectedRoutes = ["/dashboard", "/profile", "/clients"];
+const protectedRoutes = ["/dashboard", "/profile", "/clients", "/client-dashboard"];
 const authRoutes = ["/auth/login", "/auth/register"];
 
 const handleI18nRouting = createIntlMiddleware({

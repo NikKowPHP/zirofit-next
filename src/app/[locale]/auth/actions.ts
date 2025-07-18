@@ -14,6 +14,7 @@ const getRegisterSchema = async () => {
     name: z.string().min(2, t("name_min_2")),
     email: z.string().email(t("invalid_email")),
     password: z.string().min(8, t("password_min_8")),
+    role: z.enum(["client", "trainer"]),
   });
 };
 
@@ -38,6 +39,7 @@ export async function registerUser(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    role: formData.get("role"),
   });
 
   if (!validatedFields.success) {
@@ -48,7 +50,7 @@ export async function registerUser(
     };
   }
 
-  const { name, email, password } = validatedFields.data;
+  const { name, email, password, role } = validatedFields.data;
   const supabase = await createClient();
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -111,7 +113,7 @@ export async function registerUser(
           name,
           email,
           username, // Add username
-          role: "trainer", // Default role
+          role: role,
           // emailVerifiedAt: authData.user.email_confirmed_at ? new Date(authData.user.email_confirmed_at) : null,
         },
       }),
@@ -188,7 +190,24 @@ export async function loginUser(
     return { error: error.message || "Failed to log in.", success: false };
   }
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return {
+      error: "Could not retrieve user session after login.",
+      success: false,
+    };
+  }
+  const prismaUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { role: true },
+  });
   const locale = await getLocale();
+  if (prismaUser?.role === "client") {
+    redirect(`/${locale}/client-dashboard`);
+  }
+
   redirect(`/${locale}/dashboard`);
 }
 

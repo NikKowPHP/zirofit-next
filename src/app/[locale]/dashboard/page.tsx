@@ -5,6 +5,8 @@ import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardContent from "./DashboardContent";
 import { getDashboardData } from "@/lib/services/dashboardService";
+import { prisma } from "@/lib/prisma";
+import { getLocale } from "next-intl/server";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -15,6 +17,16 @@ export default async function DashboardPage() {
   if (!user) {
     // Middleware should handle this, but as a fallback:
     return redirect("/auth/login");
+  }
+
+  const prismaUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { role: true },
+  });
+
+  if (prismaUser?.role === "client") {
+    const locale = await getLocale();
+    return redirect(`/${locale}/client-dashboard`);
   }
 
   // Fetch data on the server for a faster initial load and to avoid client-side skeletons.
