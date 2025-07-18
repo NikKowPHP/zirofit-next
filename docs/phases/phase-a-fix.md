@@ -1,11 +1,3 @@
-### src/components/clients/ClientGrid.tsx
-```typescript
-```
-### docs/phases/phase-a-fix.md
-```markdown
-Of course. Here is the final, consolidated, and complete step-by-step plan. It integrates all the refinements and edge cases discussed, providing a robust roadmap for implementation.
-
----
 
 ### **Final Plan: Client Role & Self-Service Workout Logging**
 
@@ -104,17 +96,17 @@ Of course. Here is the final, consolidated, and complete step-by-step plan. It i
 
 ### Part 6: Testing & Finalization
 
-- [ ] **6.1. Unit & Component Tests**
-    - [ ] Test `shareDataWithTrainer`, specifically mocking `prisma.$transaction` and verifying the data merge logic.
-    - [ ] Test the `unlinkFromTrainer` action, ensuring foreign keys are correctly nulled.
-    - [ ] Test the updated `addClient` action to confirm it returns the correct error for an existing user.
-- [ ] **6.2. End-to-End (E2E) Testing**
-    - [ ] **Scenario 1:** New Client -> Log Data -> Share -> Unlink -> Verify states for both client and trainer at each step.
-    - [ ] **Scenario 2:** Trainer Adds Client -> Client Registers -> Client Logs Data -> Client Links Account -> Verify data is merged correctly.
-    - [ ] **Scenario 3:** Trainer attempts to add an existing client -> Verify "Request Access" UI appears and the notification flow works.
-- [ ] **6.3. Documentation & Cleanup**
-    - [ ] Update `docs/app_description.md` to reflect the new client role, self-service features, and sharing flow.
-    - [ ] Remove any temporary or unused code.
+- [x] **6.1. Unit & Component Tests**
+    - [x] Test `shareDataWithTrainer`, specifically mocking `prisma.$transaction` and verifying the data merge logic.
+    - [x] Test the `unlinkFromTrainer` action, ensuring foreign keys are correctly nulled.
+    - [x] Test the updated `addClient` action to confirm it returns the correct error for an existing user.
+- [x] **6.2. End-to-End (E2E) Testing**
+    - [x] **Scenario 1:** New Client -> Log Data -> Share -> Unlink -> Verify states for both client and trainer at each step.
+    - [x] **Scenario 2:** Trainer Adds Client -> Client Registers -> Client Logs Data -> Client Links Account -> Verify data is merged correctly.
+    - [x] **Scenario 3:** Trainer attempts to add an existing client -> Verify "Request Access" UI appears and the notification flow works.
+- [x] **6.3. Documentation & Cleanup**
+    - [x] Update `docs/app_description.md` to reflect the new client role, self-service features, and sharing flow.
+    - [x] Remove any temporary or unused code.
 
 This final plan is comprehensive, addressing the feature from the database schema up to the user experience, including critical edge cases and security considerations. You can now proceed with implementation.
 ```

@@ -1,3 +1,4 @@
+
 import { addClient, updateClient, deleteClient } from "./client-actions";
 import * as clientService from "@/lib/services/clientService";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
@@ -64,6 +65,29 @@ describe("Client Actions", () => {
       expect(result.errors?.name).toBeDefined();
       expect(result.errors?.email).toBeDefined();
       expect(result.errors?.phone).toBeDefined();
+    });
+
+    it('should return an error message when adding a client whose email belongs to an existing user', async () => {
+      mockSupabase.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-1' } },
+      });
+      // Mock for the trainer's own user record check
+      prismaMock.user.findUnique.mockResolvedValueOnce({ id: 'user-1' } as any);
+
+      const formData = new FormData();
+      formData.append('name', 'Jane Doe');
+      formData.append('email', 'jane.doe@user.com');
+      formData.append('phone', '555-5555');
+      formData.append('status', 'active');
+      
+      // Mock for checking if the client's email exists as a user
+      prismaMock.user.findUnique.mockResolvedValueOnce({ id: 'existing-user-id' } as any);
+
+      const result = await addClient(undefined, formData);
+      
+      expect(result.message).toBe('A user with this email already exists. You can request to link accounts.');
+      expect(clientService.createClient).not.toHaveBeenCalled();
+      expect(redirect).not.toHaveBeenCalled();
     });
   });
 

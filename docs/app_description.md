@@ -109,10 +109,10 @@ The platform operates on a freemium model with two tiers for trainers.
 
 The schema is defined in `prisma/schema.prisma`.
 
-*   **`User`**: Stores core user data, including role (`trainer`). Links to Supabase Auth via a UUID.
+*   **`User`**: Stores core user data, including role (`trainer`, `client`). Links to Supabase Auth via a UUID.
 *   **`Profile`**: A one-to-one extension of `User` for all public-facing profile information (bio, photos, location, availability).
 *   **`Service`, `Testimonial`, `Benefit`, `SocialLink`, `ExternalLink`**: One-to-many relations with `Profile`, storing the various content blocks for a trainer's page.
-*   **`Client`**: Represents a trainer's client, with fields for contact info, goals, and health notes. Linked to a `User` (the trainer).
+*   **`Client`**: Represents a trainer's client, with fields for contact info, goals, and health notes. Linked to a `User` (the trainer) via a nullable `trainerId`. It can also be linked to a `User` (the client themselves) via a nullable `userId`, allowing for self-management.
 *   **`ClientMeasurement`, `ClientProgressPhoto`, `ClientSessionLog`**: Data models for tracking a client's journey, linked to the `Client` model.
 *   **`Booking`**: Stores appointment details, linking a `User` (trainer) with client contact information.
 *   **`Notification`**: Stores messages for the in-app notification center.
@@ -157,6 +157,16 @@ The schema is defined in `prisma/schema.prisma`.
 *   **[PROJ-401]:** As a user on a mobile device, I can navigate the trainer dashboard using a fixed bottom navigation bar.
 *   **[PROJ-402]:** As a user on any device, all pages and components, including data charts, are fully responsive and legible.
 *   **[PROJ-403]:** As a user, I can "install" the ZIRO.FIT application to my home screen for an app-like experience.
+
+### **Epic 6: Client Self-Service & Data Sharing**
+*   **[PROJ-501]:** As a new user, I can register for a "Client" account.
+*   **[PROJ-502]:** As a client, I can log my own workout sessions in a dedicated dashboard.
+*   **[PROJ-503]:** As a client, I can view my progress charts based on the data I logged.
+*   **[PROJ-504]:** As a client browsing a trainer's profile, I can choose to share my data with them.
+*   **[PROJ-505]:** As a client, I can see which trainer I am currently sharing data with.
+*   **[PROJ-506]:** As a client, I can stop sharing my data with a trainer at any time.
+*   **[PROJ-507]:** As a trainer, when adding a new client, I am notified if a user with that email already exists.
+*   **[PROJ-508]:** As a trainer, I can see an indicator on my client list for clients who have linked their user accounts.
 
 ## 8. Development & Compliance Practices
 
