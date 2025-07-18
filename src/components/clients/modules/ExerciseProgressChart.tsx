@@ -75,10 +75,9 @@ export default function ExerciseProgressChart({
     );
   }
 
-  const textColor =
-    theme === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.8)";
+   const textColor = theme === "dark" ? "#E5E7EB" : "#374151";
   const gridColor =
-    theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)";
+    theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)";
 
   const chartOptions: any = {
     responsive: true,

@@ -1,5 +1,3 @@
-### docs/phases/phase-a-fix.md
-```
 ### Part 1: Analysis & Discovery
 *(Tasks to fully understand the current state before writing any code.)*
 - [x] **Identify Key Files:**
@@ -17,6 +15,8 @@
     -   **State Updates on Tab Click:** Identify the synchronous `setActiveTab` call in the tab click handler within `src/components/clients/ClientDetailView.tsx`.
 - [x] **Analyze Bundle Size:**
     -   [x] Integrate `@next/bundle-analyzer` to generate a visual report of the application's JavaScript bundles. Identify any unexpectedly large dependencies in the initial client-side bundle.
+- [x] **Establish Performance Baselines:**
+    -   [x] Before writing code, use Sentry Performance Monitoring or Vercel Analytics to record key metrics: Largest Contentful Paint (LCP) for the dashboard, Interaction to Next Paint (INP) for tab switching, and the average duration of the `/api/dashboard` API route.
 
 ### Part 2: Core Logic Implementation
 *(The primary "happy path" implementation tasks.)*
@@ -28,15 +28,15 @@
     -   [x] In `src/app/[locale]/dashboard/page.tsx`, move the data fetching logic from `DashboardContent.tsx` here. Call `getDashboardData` directly on the server.
     -   [x] In `src/app/[locale]/dashboard/DashboardContent.tsx`, refactor the component to accept `initialData` as a prop and pass it to `useSWR`'s `fallbackData` option.
     -   [x] In `src/components/clients/ClientDetailView.tsx`, import `useTransition` from React. Wrap the `setActiveTab` state update inside a `startTransition` call.
-- [x] **API/Service Logic:**
-    -   [x] In `src/lib/services/dashboardService.ts`, refactor the `getDashboardData` function to use `prisma.$transaction([...])` to execute all independent data-fetching queries in parallel.
+- [ ] **API/Service Logic:**
+    -   [ ] In `src/lib/services/dashboardService.ts`, refactor the `getDashboardData` function to use `prisma.$transaction([...])` to execute all independent data-fetching queries in parallel. **(This step was missed in the implementation).**
     -   [x] Ensure all server actions that create a new database entry (e.g., `addService`, `addBenefit`) return the complete, newly created object.
 
 ### Part 3: UI/UX & Polish
 *(Tasks to ensure the feature feels good to use, not just functional.)*
 - [x] **Loading States:**
     -   [x] In all forms that use a Server Action, ensure the main submit button uses `useFormStatus` to show a pending state (e.g., text changes to "Saving...", spinner appears).
-    -   [x] In `ClientDetailView.tsx`, use the `isPending` state from `useTransition` to apply a subtle opacity change to the tab content area (`<div style={{ opacity: isPending ? 0.5 : 1 }}>`) while the next tab is rendering.
+    -   [x] In `ClientDetailView.tsx`, use the `isPending` state from `useTransition` to apply a subtle opacity change to the tab content area (`<div className="... transition-opacity ... ${isPending ? 'opacity-50' : 'opacity-100'}`) while the next tab is rendering.
     -   [x] When implementing optimistic deletions, apply a temporary "dimmed" or "strikethrough" style to the list item before it's removed from the DOM to provide a clear visual cue of the pending action.
     -   [x] Ensure skeleton loaders (`TrainersListSkeleton`, etc.) have a fixed `min-height` that approximates the height of the final content to prevent Cumulative Layout Shift (CLS).
 - [x] **Disabled States:**
@@ -47,6 +47,9 @@
     -   [x] If an optimistic update fails, show an error toast and ensure the UI reverts correctly to its original state.
 - [x] **Smooth Transitions:**
     -   [x] Wrap list items that support optimistic deletion in `framer-motion`'s `<AnimatePresence>` and `<motion.div>` tags to provide a smooth exit animation (e.g., fade out).
+- [ ] **ARIA Attributes for Live Regions:**
+    -   [ ] When content is loading or an optimistic update occurs, use `aria-live="polite"` on a notification/toast container. **(This step was missed in the implementation).**
+    -   [ ] For loading spinners that replace content, apply `aria-busy="true"` to the content container being loaded. **(This step was missed in the implementation).**
 
 ### Part 4: Robustness & Edge Case Handling
 *(Tasks to make the feature resilient to unexpected user behavior and system failures.)*
@@ -57,14 +60,14 @@
     -   [x] The shift to server-side data fetching for initial loads naturally handles refresh interruptions well. This requires no extra implementation.
     -   [x] For optimistic UI, the client-side state is lost on refresh, and the page will simply refetch the correct state from the server. This is the desired behavior and requires no extra implementation.
 - [x] **Handle Unexpected Navigation:**
-    -   [x] If a user navigates away while a server action is pending, the component will unmount. Ensure there are no state updates on unmounted components by using a mounted flag or a cleanup function in `useEffect`.
+    -   [x] If a user navigates away while a server action is pending, the component will unmount. Ensure there are no state updates on unmounted components by using a mounted flag or a cleanup function in `useEffect`. **(Implemented correctly in hooks like `useMeasurementManager.ts`)**.
 - [x] **Input Validation:**
     -   [x] The codebase already uses Zod for server-side validation. This plan does not introduce new inputs, so the primary task is to ensure existing validation schemas are maintained during refactoring.
 
 ### Part 5: Comprehensive Testing
 *(A concrete plan to verify everything works as expected.)*
 - [x] **Unit Tests:**
-    -   [x] Update the test for `dashboardService` in `src/lib/services/dashboardService.test.ts` to mock `prisma.$transaction` and verify it's called with an array of Prisma promises.
+    -   [x] Update the test for `dashboardService` in `src/lib/services/dashboardService.test.ts` to mock `prisma.$transaction` and verify it's called with an array of Prisma promises. **(Test was updated, but the implementation it tests is missing).**
 - [x] **Component Tests:**
     -   [x] Update `src/app/[locale]/dashboard/DashboardContent.test.tsx` to test the new `initialData` prop. Verify it renders immediately without a skeleton state when the prop is provided.
     -   [x] Create a test for a component using `useEditableListManager` (e.g., a new `BenefitsEditor.test.tsx`). Mock the `deleteBenefit` action. Trigger a delete, assert the item is removed from the UI *synchronously*, and then mock a failed server response to assert the item reappears.
@@ -81,6 +84,8 @@
         -   [ ] Use dev tools to block the `/api/dashboard` route. Navigate to the dashboard and verify an error state with a "Retry" button appears.
     -   [ ] **The "Interruption Paths" (verify all interruption-handling from Part 4 works).**
         -   [ ] Click to delete an item, and immediately refresh the page before the action completes. Verify the item is still present on page load (as the action never finished).
+- [ ] **Post-Deployment Metric Validation:**
+    -   [ ] After deployment, compare the new performance metrics in Sentry/Vercel against the established baselines to quantify the improvement and confirm the changes were effective.
 
 ### Part 6: Cleanup & Finalization
 *(The final tasks before merging.)*
@@ -92,7 +97,8 @@
     -   [x] Verify that all internal navigation uses the Next.js `<Link>` component to enable prefetching, rather than `<a>` tags or unnecessary `router.push()` calls.
 - [x] **Remove Obsolete Flags/Code:**
     -   [x] Evaluate if the `/api/dashboard` route is still necessary after moving data fetching server-side. If it's only used for SWR revalidation, confirm it's secure and cannot be exploited. Otherwise, remove it.
+- [x] **Audit All New User-Facing Strings:**
+    -   [x] Before finalizing the PR, search for all new strings added (e.g., in `toast.success()`, button text). Verify that every string is retrieved via the `t()` function from `useTranslations` and has a corresponding entry in both `src/messages/en.json` and `src/messages/pl.json`.
 - [x] **Documentation:**
     -   [x] Add JSDoc comments to `useEditableListManager.ts` explaining the optimistic update pattern, including the temporary ID and state reconciliation logic.
     -   [x] Add a comment in `dashboard/page.tsx` explaining why data is fetched on the server and passed down as a prop for performance reasons.
-```

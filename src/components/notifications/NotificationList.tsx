@@ -57,7 +57,7 @@ export default function NotificationList({
             <div
               key={notification.id}
               onClick={() => handleMarkRead(notification.id)}
-              className={`p-4 border-b border-gray-100 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-800/50 cursor-pointer ${
+              className={`text-neutral-900 dark:text-neutral-50 p-4 border-b border-gray-100 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-800/50 cursor-pointer ${
                 !notification.readStatus ? "bg-blue-50 dark:bg-blue-900/20" : ""
               }`}
             >

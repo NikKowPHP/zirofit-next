@@ -1,35 +1,35 @@
-import type { NextConfig } from "next";
-import pwa from "next-pwa";
-import { withSentryConfig } from "@sentry/nextjs";
-import withNextIntl from 'next-intl/plugin';
-import withBundleAnalyzer from "@next/bundle-analyzer";
 
-const withIntl = withNextIntl('./src/i18n.ts');
 
-const withPWA = pwa({
-  dest: "public",
+const { withSentryConfig } = require('@sentry/nextjs');
+const withNextIntl = require('next-intl/plugin');
+const withBundleAnalyzer = require('@next/bundle-analyzer');
+const withPWA = require('next-pwa')({
+  dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV === 'development',
 });
+
+const withIntl = withNextIntl('./src/i18n.ts');
 
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**", // This will allow all hostnames. Use with caution.
+        protocol: 'https',
+        hostname: '**', // This will allow all hostnames. Use with caution.
       },
     ],
   },
-   eslint: {
-   // Disable ESLint during builds as it's handled separately
-  ignoreDuringBuilds: true,
-   },
+  eslint: {
+    // Disable ESLint during builds as it's handled separately
+    ignoreDuringBuilds: true,
+  },
   webpack: (config) => {
     return config;
   },
@@ -47,15 +47,9 @@ const sentryWebpackPluginOptions = {
   project: process.env.SENTRY_PROJECT,
 };
 
-
+// Chain plugins: bundleAnalyzer -> withPWA -> withIntl -> withSentryConfig
 // Make sure to put `withSentryConfig` last in your list of HOCs.
-const configWithPlugins = withIntl(
-  withPWA(
-    bundleAnalyzer(nextConfig)
-  ) as any
-);
-
-export default withSentryConfig(
-  configWithPlugins,
+module.exports = withSentryConfig(
+  withIntl(withPWA(bundleAnalyzer(nextConfig))),
   sentryWebpackPluginOptions
 );
