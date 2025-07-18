@@ -12,7 +12,7 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import { usePathname } from "next/navigation";
 import NotificationIndicator from "@/components/notifications/NotificationIndicator";
 import { useTheme } from "@/context/ThemeContext";
-import BottomNavBar from "@/components/layouts/BottomNavBar";
+import ClientBottomNavBar from "@/components/layouts/ClientBottomNavBar"; // UPDATED IMPORT
 import { motion } from "framer-motion";
 import LanguageSwitcher from "@/components/layouts/LanguageSwitcher";
 
@@ -125,7 +125,7 @@ export default function ClientDashboardLayout({
           {children}
         </motion.main>
       </div>
-      <BottomNavBar />
+      <ClientBottomNavBar />
     </div>
   );
 }

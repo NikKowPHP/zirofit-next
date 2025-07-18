@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Modal } from "./Modal";
@@ -5,39 +6,28 @@ import { Button } from "./Button";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 /**
- * A reusable modal component for confirming delete actions.
+ * A reusable modal component for confirming actions.
  *
  * @param {object} props - The component props.
  * @param {boolean} props.isOpen - Whether the modal is open or not.
  * @param {(isOpen: boolean) => void} props.setIsOpen - Function to set the open state.
- * @param {() => void} props.onConfirm - Function to call when the delete button is confirmed.
- * @param {string} [props.title="Confirm Deletion"] - The title of the modal.
- * @param {string} [props.description="This action cannot be undone."] - The description text in the modal.
+ * @param {() => void} props.onConfirm - Function to call when the action is confirmed.
+ * @param {string} [props.title="Confirm Action"] - The title of the modal.
+ * @param {string} [props.description="This action may have consequences."] - The description text in the modal.
  * @param {boolean} [props.isPending=false] - Whether the confirmation action is pending.
- * @returns {JSX.Element} The rendered DeleteConfirmationModal component.
- *
- * @example
- * const [isOpen, setIsOpen] = useState(false);
- * const [isDeleting, setIsDeleting] = useState(false);
- * const handleDelete = async () => {
- *   setIsDeleting(true);
- *   // ... delete logic
- *   setIsDeleting(false);
- * };
- * <DeleteConfirmationModal
- *   isOpen={isOpen}
- *   setIsOpen={setIsOpen}
- *   onConfirm={handleDelete}
- *   isPending={isDeleting}
- * />
+ * @param {string} [props.confirmButtonText="Confirm"] - The text for the confirm button.
+ * @param {"primary" | "secondary" | "danger"} [props.confirmButtonVariant="primary"] - The visual style of the confirm button.
+ * @returns {JSX.Element} The rendered ConfirmationModal component.
  */
-export function DeleteConfirmationModal({
+export function DeleteConfirmationModal({ // Note: Keeping the exported name for backward compatibility
   isOpen,
   setIsOpen,
   onConfirm,
-  title = "Confirm Deletion",
-  description = "This action cannot be undone.",
+  title = "Confirm Action",
+  description = "This action may have consequences.",
   isPending = false,
+  confirmButtonText = "Delete", // Default to "Delete"
+  confirmButtonVariant = "danger", // Default to "danger"
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -45,13 +35,19 @@ export function DeleteConfirmationModal({
   title?: string;
   description?: string;
   isPending?: boolean;
+  confirmButtonText?: string;
+  confirmButtonVariant?: "primary" | "secondary" | "danger";
 }) {
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={title}>
       <div className="flex items-start space-x-4">
-        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+        <div className={`mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${
+            confirmButtonVariant === 'danger' ? 'bg-red-100' : 'bg-blue-100'
+          } sm:mx-0 sm:h-10 sm:w-10`}>
           <ExclamationTriangleIcon
-            className="h-6 w-6 text-red-600"
+            className={`h-6 w-6 ${
+              confirmButtonVariant === 'danger' ? 'text-red-600' : 'text-blue-600'
+            }`}
             aria-hidden="true"
           />
         </div>
@@ -63,14 +59,13 @@ export function DeleteConfirmationModal({
       </div>
       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
         <Button
-          variant="danger"
+          variant={confirmButtonVariant}
           onClick={() => {
             onConfirm();
-            // Let the parent component close the modal after the action is complete
           }}
           disabled={isPending}
         >
-          {isPending ? "Deleting..." : "Delete"}
+          {isPending ? "Processing..." : confirmButtonText}
         </Button>
         <Button
           variant="secondary"

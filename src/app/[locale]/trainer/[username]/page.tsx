@@ -17,6 +17,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { getTranslations } from "next-intl/server";
+import { createClient } from "@/lib/supabase/server"; // <-- IMPORT
+import { prisma } from "@/lib/prisma"; // <-- IMPORT
+import ShareDataButton from "@/components/trainer/ShareDataButton"; // <-- IMPORT NEW COMPONENT
 
 // Define interfaces for the data structure
 interface Benefit {
@@ -145,6 +148,21 @@ export default async function TrainerProfilePage({
     const { locale, username } = await params;
   const t = await getTranslations({locale: locale, namespace: 'TrainerProfilePage'});
 
+  // --- START: ADDED LOGIC TO GET CURRENT USER ---
+  const supabase = await createClient();
+  const { data: { user: sessionUser } } = await supabase.auth.getUser();
+  
+  let prismaUser = null;
+  if (sessionUser) {
+    prismaUser = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: { role: true },
+    });
+  }
+  
+  const showShareButton = sessionUser && prismaUser?.role === 'client';
+  // --- END: ADDED LOGIC ---
+
   const userWithProfile: UserWithProfile | null =
     await getTrainerProfileByUsername(username);
 
@@ -195,10 +213,18 @@ export default async function TrainerProfilePage({
               {profile.certifications}
             </p>
           )}
-          <Button asChild size="lg">
-            <a href="#booking-section">{t('bookSession')}</a>
-          </Button>
-          
+
+          {/* --- START: CONDITIONAL BUTTON RENDERING --- */}
+          <div className="flex justify-center items-center gap-4">
+            <Button asChild size="lg">
+              <a href="#booking-section">{t('bookSession')}</a>
+            </Button>
+            {showShareButton && name && (
+              <ShareDataButton trainerUsername={username} trainerName={name} />
+            )}
+          </div>
+          {/* --- END: CONDITIONAL BUTTON RENDERING --- */}
+
           {profile.location && (
             <p className="text-gray-300 mt-6 text-sm flex items-center justify-center">
               <MapPinIcon className="w-4 h-4 mr-1.5" />

@@ -66,7 +66,7 @@ export default function MyTrainer({ trainer }: MyTrainerProps) {
                 ) : (
                     <EmptyState 
                         title="You are not linked with a trainer"
-                        description="Sharing your progress with a trainer can help you reach your goals faster. Find one that fits your needs!"
+                        description="To link with a trainer, browse the public trainers list, view their profile, and click the 'Share My Data' button."
                         action={
                             <Button asChild>
                                 <Link href="/trainers">Find a Trainer</Link>

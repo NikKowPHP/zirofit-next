@@ -8,6 +8,31 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useMemo } from "react";
 import { ClientExerciseLog } from "@/app/[locale]/clients/actions";
 import { useTranslations } from "next-intl";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale,
+  Filler,
+} from "chart.js";
+
+// Register all necessary Chart.js components. This was the missing part.
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale,
+  Filler,
+);
 
 interface ExerciseProgressChartProps {
   logs: ClientExerciseLog[];

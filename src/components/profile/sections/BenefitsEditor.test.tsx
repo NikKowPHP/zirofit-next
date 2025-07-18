@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { renderWithIntl, screen, waitFor } from '../../../../tests/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -5,6 +6,7 @@ import '@testing-library/jest-dom';
 import BenefitsEditor from './BenefitsEditor';
 import * as benefitActions from '@/app/[locale]/profile/actions/benefit-actions';
 import { toast } from 'sonner';
+import { useFormStatus } from "react-dom";
 
 // Mock the server actions
 jest.mock('@/app/[locale]/profile/actions/benefit-actions', () => ({
@@ -23,12 +25,7 @@ jest.mock('sonner', () => ({
 }));
 
 // Mock react-dom's useFormStatus
-jest.mock('react-dom', () => ({
-  ...jest.requireActual('react-dom'),
-  useFormStatus: jest.fn(() => ({ pending: false })),
-}));
-
-// Mock SortableJS
+jest.mock('react-dom');
 jest.mock('sortablejs', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
@@ -44,8 +41,8 @@ const mockInitialBenefits = [
 describe('BenefitsEditor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Default mock for useFormStatus
-    (jest.requireMock('react-dom').useFormStatus as jest.Mock).mockReturnValue({ pending: false });
+    // Default mock for useFormStatus for all tests in this suite
+    (useFormStatus as jest.Mock).mockReturnValue({ pending: false });
   });
 
   it('optimistically removes a benefit on delete and reverts on failure', async () => {
@@ -103,8 +100,7 @@ describe('BenefitsEditor', () => {
   });
 
   it('shows loading state on submit button when form is pending', () => {
-    // Mock useFormStatus to return pending: true
-    (jest.requireMock('react-dom').useFormStatus as jest.Mock).mockReturnValue({ pending: true });
+    (useFormStatus as jest.Mock).mockReturnValue({ pending: true });
     
     renderWithIntl(<BenefitsEditor initialBenefits={[]} />);
 

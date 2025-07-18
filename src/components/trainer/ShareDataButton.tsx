@@ -39,6 +39,8 @@ export default function ShareDataButton({ trainerUsername, trainerName }: ShareD
                 isPending={isPending}
                 title={`Share Data with ${trainerName}?`}
                 description="By sharing your data, this trainer will be able to see your workout logs and progress. You can revoke access at any time from your dashboard."
+                confirmButtonText="Share Data"
+                confirmButtonVariant="primary"
             />
             <Button size="lg" onClick={() => setIsModalOpen(true)}>
                 Share My Data with {trainerName}

@@ -1,7 +1,9 @@
+
 import { registerUser, loginUser, logoutUser } from "./actions";
 import { prismaMock } from "@tests/singleton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { Prisma } from "@prisma/client";
 
 jest.mock("@/lib/supabase/server");
 jest.mock("next/navigation", () => ({
@@ -13,6 +15,7 @@ const mockSupabase = {
     signUp: jest.fn(),
     signInWithPassword: jest.fn(),
     signOut: jest.fn(),
+    getUser: jest.fn(),
   },
 };
 
@@ -28,6 +31,7 @@ describe("Auth Actions", () => {
     formData.append("name", "Test User");
     formData.append("email", "test@example.com");
     formData.append("password", "password123");
+    formData.append("role", "trainer");
 
     it("should register a new user successfully and redirect", async () => {
       mockSupabase.auth.signUp.mockResolvedValue({
@@ -129,6 +133,13 @@ describe("Auth Actions", () => {
       formData.append("password", "password123");
 
       mockSupabase.auth.signInWithPassword.mockResolvedValue({ error: null });
+      mockSupabase.auth.getUser.mockResolvedValue({
+        data: { user: { id: "test-user-id" } },
+        error: null,
+      });
+      prismaMock.user.findUnique.mockResolvedValue({
+        role: "trainer",
+      } as any);
 
       await loginUser(undefined, formData);
 

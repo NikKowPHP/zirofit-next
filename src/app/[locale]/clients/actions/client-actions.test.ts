@@ -28,10 +28,11 @@ describe("Client Actions", () => {
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: { id: "user-1" } },
       });
-      prismaMock.user.findUnique.mockResolvedValue({ id: "user-1" } as any);
-      (clientService.createClient as jest.Mock).mockResolvedValue({
-        id: "client-1",
-      });
+      // 1. Mock trainer user check, 2. Mock client email check
+      prismaMock.user.findUnique
+        .mockResolvedValueOnce({ id: "user-1" } as any)
+        .mockResolvedValueOnce(null);
+      (clientService.createClient as jest.Mock).mockResolvedValue({ id: "client-1" });
 
       const formData = new FormData();
       formData.append("name", "Test Client");
