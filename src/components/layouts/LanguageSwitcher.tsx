@@ -29,7 +29,7 @@ export default function LanguageSwitcher() {
       defaultValue={locale}
       onChange={onSelectChange}
       disabled={isPending}
-      className="p-2 rounded-md border border-neutral-300 bg-white text-neutral-900 
+      className="p-2 rounded-full border border-neutral-300 bg-white text-neutral-900 
                  dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-100 
                   text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-blue)]"
     >
