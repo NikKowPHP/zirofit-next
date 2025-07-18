@@ -1,57 +1,14 @@
 ### [BASH_COMMANDS]
 ```bash
-mkdir -p "src/app/[locale]/client-dashboard/log-workout"
-mkdir -p "src/app/[locale]/client-dashboard/my-progress"
-mkdir -p "src/app/[locale]/client-dashboard/my-trainer"
-mkdir -p "src/components/clients/dashboard"
-touch "src/app/[locale]/client-dashboard/log-workout/page.tsx"
-
-touch "src/app/[locale]/client-dashboard/my-progress/page.tsx"
-
-touch "src/app/[locale]/client-dashboard/my-trainer/page.tsx"
-touch "src/app/[locale]/client-dashboard/layout.tsx"
-touch "src/app/[locale]/client-dashboard/page.tsx"
-
-touch "src/components/clients/dashboard/ClientDashboardLayout.tsx"
-touch "src/components/clients/dashboard/LogWorkout.tsx"
-touch "src/components/clients/dashboard/MyProgress.tsx"
-touch "src/components/clients/dashboard/MyTrainer.tsx"
-touch "src/hooks/useMyExerciseLogManager.ts"
-```
-### src/app/[locale]/auth/actions.ts
-```typescript
+touch src/components/trainer/ShareDataButton.tsx
 ```
 ### src/app/[locale]/client-dashboard/actions.ts
-```typescript
-```
-### src/app/[locale]/client-dashboard/layout.tsx
-```typescript
-```
-### src/app/[locale]/client-dashboard/log-workout/page.tsx
-```typescript
-```
-### src/app/[locale]/client-dashboard/my-progress/page.tsx
-```typescript
-```
-### src/app/[locale]/client-dashboard/my-trainer/page.tsx
-```typescript
-```
-### src/app/[locale]/client-dashboard/page.tsx
-```typescript
-```
-### src/components/clients/dashboard/ClientDashboardLayout.tsx
-```typescript
-```
-### src/components/clients/dashboard/LogWorkout.tsx
-```typescript
-```
-### src/components/clients/dashboard/MyProgress.tsx
 ```typescript
 ```
 ### src/components/clients/dashboard/MyTrainer.tsx
 ```typescript
 ```
-### src/hooks/useMyExerciseLogManager.ts
+### src/components/trainer/ShareDataButton.tsx
 ```typescript
 ```
 ### docs/phases/phase-a-fix.md
@@ -129,23 +86,23 @@ Of course. Here is the final, consolidated, and complete step-by-step plan. It i
 
 ### Part 4: Trainer Discovery & Data Sharing Flow
 
-- [ ] **4.1. Create the `shareDataWithTrainer(trainerUsername: string)` Server Action (`src/app/[locale]/client-dashboard/actions.ts`)**
-    - [ ] The entire action's database logic **must be wrapped in `prisma.$transaction`** to ensure atomicity.
-    - [ ] Implement merge logic: If a trainer-created `Client` record exists for the user's email, consolidate data.
-        - [ ] **Consolidation Strategy:** Use `prisma.clientExerciseLog.updateMany` (and similar for other data types) to re-assign the `clientId` of self-logged data to the trainer's `Client` record ID.
-        - [ ] Update the trainer's `Client` record to set its `userId`.
-        - [ ] Delete the now-empty self-managed `Client` record.
-    - [ ] Implement fresh link logic: If no pre-existing record, update the self-managed `Client` record's `trainerId`.
-    - [ ] Create an in-app notification for the trainer.
-- [ ] **4.2. Create the `unlinkFromTrainer()` Server Action (`src/app/[locale]/client-dashboard/actions.ts`)**
-    - [ ] Get the current client's `User` and linked `Client` records.
-    - [ ] Set the `trainerId` on the `Client` record back to `null`.
-    - [ ] **Crucially, also set the `userId` field to `null` on the trainer's former `Client` record** to break the active link while preserving historical data for the trainer.
-    - [ ] Create a notification for the trainer about the unlink event.
-- [ ] **4.3. Add "Share Data" Button to Trainer Profile (`src/app/[locale]/trainer/[username]/page.tsx`)**
-    - [ ] Add a server-side check to display the "Share My Data" button only for logged-in users with the `client` role.
-- [ ] **4.4. Create Sharing Confirmation UI**
-    - [ ] Build the client component with the confirmation modal that calls the `shareDataWithTrainer` action.
+- [x] **4.1. Create the `shareDataWithTrainer(trainerUsername: string)` Server Action (`src/app/[locale]/client-dashboard/actions.ts`)**
+    - [x] The entire action's database logic **must be wrapped in `prisma.$transaction`** to ensure atomicity.
+    - [x] Implement merge logic: If a trainer-created `Client` record exists for the user's email, consolidate data.
+        - [x] **Consolidation Strategy:** Use `prisma.clientExerciseLog.updateMany` (and similar for other data types) to re-assign the `clientId` of self-logged data to the trainer's `Client` record ID.
+        - [x] Update the trainer's `Client` record to set its `userId`.
+        - [x] Delete the now-empty self-managed `Client` record.
+    - [x] Implement fresh link logic: If no pre-existing record, update the self-managed `Client` record's `trainerId`.
+    - [x] Create an in-app notification for the trainer.
+- [x] **4.2. Create the `unlinkFromTrainer()` Server Action (`src/app/[locale]/client-dashboard/actions.ts`)**
+    - [x] Get the current client's `User` and linked `Client` records.
+    - [x] Set the `trainerId` on the `Client` record back to `null`.
+    - [x] **Crucially, also set the `userId` field to `null` on the trainer's former `Client` record** to break the active link while preserving historical data for the trainer.
+    - [x] Create a notification for the trainer about the unlink event.
+- [x] **4.3. Add "Share Data" Button to Trainer Profile (`src/app/[locale]/trainer/[username]/page.tsx`)**
+    - [x] Add a server-side check to display the "Share My Data" button only for logged-in users with the `client` role.
+- [x] **4.4. Create Sharing Confirmation UI**
+    - [x] Build the client component with the confirmation modal that calls the `shareDataWithTrainer` action.
 
 ### Part 5: Trainer-Side Integration
 

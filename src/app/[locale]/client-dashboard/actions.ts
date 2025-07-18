@@ -16,7 +16,6 @@ export type ClientExerciseLog = Prisma.ClientExerciseLogGetPayload<{
 async function getSelfManagedClient(authUserId: string) {
     return await prisma.client.findUnique({
         where: { userId: authUserId },
-        select: { id: true }
     });
 }
 
@@ -210,4 +209,124 @@ export async function deleteMyExerciseLog(
       success: false,
     };
   }
+}
+
+export async function getClientDashboardData() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const client = await prisma.client.findUnique({
+        where: { userId: user.id },
+        include: {
+            trainer: { 
+                select: { name: true, username: true, email: true }
+            },
+            exerciseLogs: {
+                include: { exercise: true },
+                orderBy: { logDate: "desc" }
+            },
+            measurements: {
+                orderBy: { measurementDate: "desc" }
+            }
+        }
+    });
+
+    return client;
+}
+
+export async function shareDataWithTrainer(trainerUsername: string) {
+    const supabase = await createClient();
+    const { data: { user: clientUser } } = await supabase.auth.getUser();
+
+    if (!clientUser || clientUser.email === null) {
+        return { success: false, error: "Authentication error." };
+    }
+
+    const trainer = await prisma.user.findUnique({ where: { username: trainerUsername } });
+    if (!trainer) {
+        return { success: false, error: "Trainer not found." };
+    }
+
+    const selfManagedClient = await getSelfManagedClient(clientUser.id);
+    if (!selfManagedClient) {
+        return { success: false, error: "Could not find your client profile." };
+    }
+    
+    try {
+        await prisma.$transaction(async (tx) => {
+            const trainerCreatedClientRecord = await tx.client.findFirst({
+                where: { trainerId: trainer.id, email: clientUser.email! }
+            });
+            
+            if (trainerCreatedClientRecord) { // Merge logic
+                await tx.clientExerciseLog.updateMany({ where: { clientId: selfManagedClient.id }, data: { clientId: trainerCreatedClientRecord.id } });
+                await tx.clientMeasurement.updateMany({ where: { clientId: selfManagedClient.id }, data: { clientId: trainerCreatedClientRecord.id } });
+                await tx.clientProgressPhoto.updateMany({ where: { clientId: selfManagedClient.id }, data: { clientId: trainerCreatedClientRecord.id } });
+                await tx.clientSessionLog.updateMany({ where: { clientId: selfManagedClient.id }, data: { clientId: trainerCreatedClientRecord.id } });
+
+                await tx.client.update({ where: { id: trainerCreatedClientRecord.id }, data: { userId: clientUser.id } });
+                await tx.client.delete({ where: { id: selfManagedClient.id } });
+            } else { // Fresh link logic
+                await tx.client.update({ where: { id: selfManagedClient.id }, data: { trainerId: trainer.id } });
+            }
+
+            await tx.notification.create({
+                data: {
+                    userId: trainer.id,
+                    message: `${clientUser.user_metadata.full_name || clientUser.email} has linked their account with you.`,
+                    type: "client_link"
+                }
+            });
+        });
+
+        revalidatePath("/client-dashboard");
+        revalidatePath(`/trainer/${trainerUsername}`);
+        return { success: true, message: "Successfully linked with trainer." };
+
+    } catch (error) {
+        console.error("Failed to share data with trainer:", error);
+        return { success: false, error: "An unexpected error occurred." };
+    }
+}
+
+export async function unlinkFromTrainer() {
+    const supabase = await createClient();
+    const { data: { user: clientUser } } = await supabase.auth.getUser();
+
+    if (!clientUser) {
+        return { success: false, error: "Authentication error." };
+    }
+
+    try {
+        const clientRecord = await prisma.client.findUnique({
+            where: { userId: clientUser.id }
+        });
+
+        if (!clientRecord || !clientRecord.trainerId) {
+            return { success: false, error: "You are not currently linked to a trainer." };
+        }
+
+        const trainerId = clientRecord.trainerId;
+
+        await prisma.client.update({
+            where: { id: clientRecord.id },
+            data: { trainerId: null }
+        });
+
+        await prisma.notification.create({
+            data: {
+                userId: trainerId,
+                message: `${clientUser.user_metadata.full_name || clientUser.email} has unlinked their account.`,
+                type: "client_unlink"
+            }
+        });
+        
+        revalidatePath("/client-dashboard");
+        return { success: true, message: "Successfully unlinked from trainer." };
+
+    } catch (error) {
+        console.error("Failed to unlink from trainer:", error);
+        return { success: false, error: "An unexpected error occurred." };
+    }
 }

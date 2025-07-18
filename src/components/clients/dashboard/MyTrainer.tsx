@@ -1,9 +1,12 @@
 
 "use client";
 
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, DeleteConfirmationModal } from "@/components/ui";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui";
+import { unlinkFromTrainer } from "@/app/[locale]/client-dashboard/actions";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface MyTrainerProps {
     trainer: {
@@ -14,7 +17,32 @@ interface MyTrainerProps {
 }
 
 export default function MyTrainer({ trainer }: MyTrainerProps) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPending, setIsPending] = useState(false);
+
+    const handleUnlink = async () => {
+        setIsPending(true);
+        const result = await unlinkFromTrainer();
+        if (result.success) {
+            toast.success(result.message);
+        } else {
+            toast.error(result.error);
+        }
+        setIsModalOpen(false);
+        setIsPending(false);
+        // Note: The page will need to be reloaded/re-validated to reflect the change.
+    }
+
     return (
+        <>
+        <DeleteConfirmationModal
+            isOpen={isModalOpen}
+            setIsOpen={setIsModalOpen}
+            onConfirm={handleUnlink}
+            isPending={isPending}
+            title="Unlink from Trainer"
+            description="Are you sure you want to unlink from this trainer? They will no longer see your new workout data."
+        />
         <Card>
             <CardHeader>
                 <CardTitle>My Trainer</CardTitle>
@@ -30,7 +58,9 @@ export default function MyTrainer({ trainer }: MyTrainerProps) {
                             <Button asChild>
                                 <Link href={`/trainer/${trainer.username}`}>View Profile</Link>
                             </Button>
-                            <Button variant="danger" disabled>Unlink From Trainer</Button>
+                            <Button variant="danger" onClick={() => setIsModalOpen(true)}>
+                                Unlink From Trainer
+                            </Button>
                         </div>
                     </div>
                 ) : (
@@ -46,5 +76,6 @@ export default function MyTrainer({ trainer }: MyTrainerProps) {
                 )}
             </CardContent>
         </Card>
+        </>
     );
 }
