@@ -47,29 +47,64 @@ export function useEditableList<T extends Item>({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [addState, addFormAction] = useFormState(addAction, initialActionState);
+  const [addState, serverAddFormAction] = useFormState(addAction, initialActionState);
   const [updateState, updateFormAction] = useFormState(updateAction, initialActionState);
+  const [optimisticTempId, setOptimisticTempId] = useState<string | null>(null);
 
   const isEditing = !!editingItemId;
   const currentEditingItem = isEditing
     ? items.find((item) => item.id === editingItemId)
     : null;
 
+  // The form's action will call this function.
+  const addFormAction = (formData: FormData) => {
+    const tempId = `temp-${Date.now()}`;
+    setOptimisticTempId(tempId);
+
+    const tempItemData: { [key: string]: any } = {};
+    for (const [key, value] of formData.entries()) {
+      // Only include string values to avoid issues with File objects in optimistic state
+      if (typeof value === 'string') {
+        tempItemData[key] = value;
+      }
+    }
+
+    const optimisticItem = {
+      id: tempId,
+      createdAt: new Date(),
+      ...tempItemData,
+    } as T;
+    
+    // Optimistically add to the list
+    setItems((current) =>
+      [...current, optimisticItem].sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
+    );
+    
+    // Call the server action
+    serverAddFormAction(formData);
+  };
+
   useEffect(() => {
     if (addState?.success) {
       const newItemKey = Object.keys(addState).find((k) => k.startsWith("new"));
-      if (newItemKey && addState[newItemKey]) {
+      if (newItemKey && addState[newItemKey] && optimisticTempId) {
         const newItem = addState[newItemKey] as T;
+        // Replace temp item with the one from the server
         setItems((current) =>
-          [...current, newItem].sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-          ),
+          current.map((item) => (item.id === optimisticTempId ? newItem : item))
         );
-        formRef.current?.reset();
+        setOptimisticTempId(null);
+        formRef.current?.reset(); // Reset form on success
       }
+    } else if (addState?.error && optimisticTempId) {
+      // Server action failed, remove the optimistic item
+      setItems((current) => current.filter((item) => item.id !== optimisticTempId));
+      setOptimisticTempId(null);
+      // The error toast will be shown by useServerActionToast hook in the component
     }
-  }, [addState]);
+  }, [addState, optimisticTempId]);
 
   useEffect(() => {
     if (updateState?.success) {
