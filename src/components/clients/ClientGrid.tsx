@@ -4,7 +4,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { PlusIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, UserGroupIcon, LinkIcon } from "@heroicons/react/24/outline";
 import DeleteClientButton from "@/components/clients/DeleteClientButton";
 import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -16,6 +16,7 @@ interface Client {
   email: string | null;
   phone: string | null;
   status: string;
+  userId: string | null;
 }
 
 const containerVariants = {
@@ -65,8 +66,16 @@ export default function ClientGrid({ clients }: { clients: Client[] }) {
           <Card className="transition-all duration-200 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col">
             <CardContent className="p-4 flex flex-col flex-grow">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
                   {client.name}
+                  {client.userId && (
+                    <span
+                      title="Linked Account"
+                      className="text-green-600 dark:text-green-400"
+                    >
+                      <LinkIcon className="h-4 w-4" />
+                    </span>
+                  )}
                 </h3>
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

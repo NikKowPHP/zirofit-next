@@ -1,14 +1,4 @@
-### [BASH_COMMANDS]
-```bash
-touch src/components/trainer/ShareDataButton.tsx
-```
-### src/app/[locale]/client-dashboard/actions.ts
-```typescript
-```
-### src/components/clients/dashboard/MyTrainer.tsx
-```typescript
-```
-### src/components/trainer/ShareDataButton.tsx
+### src/components/clients/ClientGrid.tsx
 ```typescript
 ```
 ### docs/phases/phase-a-fix.md
@@ -106,11 +96,11 @@ Of course. Here is the final, consolidated, and complete step-by-step plan. It i
 
 ### Part 5: Trainer-Side Integration
 
-- [ ] **5.1. Update Trainer's Client List UI (`src/components/clients/ClientGrid.tsx`)**
-    - [ ] Fetch the `userId` field when calling `getTrainerClients`.
-    - [ ] Add a visual "Linked Account" indicator for clients with a non-null `userId`.
-- [ ] **5.2. Verify Data Display in `ClientDetailView`**
-    - [ ] Manually confirm that after a client links, all their historical and newly logged data appears correctly in the trainer's view.
+- [x] **5.1. Update Trainer's Client List UI (`src/components/clients/ClientGrid.tsx`)**
+    - [x] Fetch the `userId` field when calling `getTrainerClients`.
+    - [x] Add a visual "Linked Account" indicator for clients with a non-null `userId`.
+- [x] **5.2. Verify Data Display in `ClientDetailView`**
+    - [x] Manually confirm that after a client links, all their historical and newly logged data appears correctly in the trainer's view.
 
 ### Part 6: Testing & Finalization
 
