@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLocale } from 'next-intl';
@@ -30,7 +29,9 @@ export default function LanguageSwitcher() {
       defaultValue={locale}
       onChange={onSelectChange}
       disabled={isPending}
-      className="text-sm bg-transparent p-1 rounded-md border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-[var(--primary-blue)]"
+      className="p-2 rounded-md border border-neutral-300 bg-white text-neutral-900 
+                 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-100 
+                  text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-blue)]"
     >
       <option value="en">English</option>
       <option value="pl">Polski</option>

@@ -57,7 +57,7 @@ const RichTextEditor = ({
         {label}
       </label>
       <input type="hidden" name={name} value={content} />
-      <div className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 rounded-md">
+      <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-200 rounded-md">
         <div ref={quillRef} className="quill-editor" />
       </div>
       <style jsx global>{`
@@ -67,7 +67,7 @@ const RichTextEditor = ({
           border-color: #d1d5db;
         }
         .dark .quill-editor .ql-toolbar {
-          border-color: #4b5563;
+          border-color: #404040;
         }
         .quill-editor .ql-container {
           border-bottom-left-radius: 0.375rem;
@@ -76,8 +76,12 @@ const RichTextEditor = ({
           min-height: 150px;
         }
         .dark .quill-editor .ql-container {
-          border-color: #4b5563;
+          border-color:rgb(255, 255, 255);
         }
+        .dark .ql-editor {
+          color: #f5f5f7;
+        }
+          
         .dark .ql-snow .ql-stroke {
           stroke: #d1d5db;
         }

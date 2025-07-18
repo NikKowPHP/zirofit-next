@@ -1,4 +1,3 @@
-
 // src/middleware.ts
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
@@ -69,9 +68,9 @@ export const config = {
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     * - any file with an extension (e.g. .ico, .json, .png)
+     * This is to prevent the middleware from applying locale-based routing to static assets.
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|.*\\..*).*)',
   ],
 };
