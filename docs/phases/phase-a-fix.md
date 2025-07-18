@@ -1,12 +1,57 @@
 ### [BASH_COMMANDS]
 ```bash
-mkdir -p "src/app/[locale]/client-dashboard"
-touch "src/app/[locale]/client-dashboard/actions.ts"
+mkdir -p "src/app/[locale]/client-dashboard/log-workout"
+mkdir -p "src/app/[locale]/client-dashboard/my-progress"
+mkdir -p "src/app/[locale]/client-dashboard/my-trainer"
+mkdir -p "src/components/clients/dashboard"
+touch "src/app/[locale]/client-dashboard/log-workout/page.tsx"
+
+touch "src/app/[locale]/client-dashboard/my-progress/page.tsx"
+
+touch "src/app/[locale]/client-dashboard/my-trainer/page.tsx"
+touch "src/app/[locale]/client-dashboard/layout.tsx"
+touch "src/app/[locale]/client-dashboard/page.tsx"
+
+touch "src/components/clients/dashboard/ClientDashboardLayout.tsx"
+touch "src/components/clients/dashboard/LogWorkout.tsx"
+touch "src/components/clients/dashboard/MyProgress.tsx"
+touch "src/components/clients/dashboard/MyTrainer.tsx"
+touch "src/hooks/useMyExerciseLogManager.ts"
 ```
 ### src/app/[locale]/auth/actions.ts
 ```typescript
 ```
 ### src/app/[locale]/client-dashboard/actions.ts
+```typescript
+```
+### src/app/[locale]/client-dashboard/layout.tsx
+```typescript
+```
+### src/app/[locale]/client-dashboard/log-workout/page.tsx
+```typescript
+```
+### src/app/[locale]/client-dashboard/my-progress/page.tsx
+```typescript
+```
+### src/app/[locale]/client-dashboard/my-trainer/page.tsx
+```typescript
+```
+### src/app/[locale]/client-dashboard/page.tsx
+```typescript
+```
+### src/components/clients/dashboard/ClientDashboardLayout.tsx
+```typescript
+```
+### src/components/clients/dashboard/LogWorkout.tsx
+```typescript
+```
+### src/components/clients/dashboard/MyProgress.tsx
+```typescript
+```
+### src/components/clients/dashboard/MyTrainer.tsx
+```typescript
+```
+### src/hooks/useMyExerciseLogManager.ts
 ```typescript
 ```
 ### docs/phases/phase-a-fix.md
@@ -67,20 +112,20 @@ Of course. Here is the final, consolidated, and complete step-by-step plan. It i
 
 ### Part 3: Client Dashboard Implementation
 
-- [ ] **3.1. Create Client Dashboard Routes and Layout**
-    - [ ] Create directory: `src/app/[locale]/client-dashboard/`.
-    - [ ] Create `layout.tsx` with client-specific navigation (e.g., Dashboard, Log Workout, My Trainer).
-    - [ ] Create `page.tsx` for the main dashboard view.
-- [ ] **3.2. Implement Client-Side Exercise Logging UI**
-    - [ ] Create a `LogWorkout.tsx` component, reusing UI patterns from `ManageClientExerciseLogs.tsx`.
-    - [ ] Create a `useMyExerciseLogManager` hook adapted for the new self-service actions.
-- [ ] **3.3. Implement Client Statistics and Progress View**
-    - [ ] Create a `MyProgress.tsx` component, reusing `ClientStatistics.tsx` and `ExerciseProgressChart.tsx`.
-- [ ] **3.4. Implement "My Trainer" / "Sharing" Section in Client Dashboard**
-    - [ ] Create a component that displays the linked trainer's info if `trainerId` is not null.
-    - [ ] This component will contain the "Unlink from Trainer" button.
-- [ ] **3.5. Design and Implement Empty States**
-    - [ ] Create a welcoming empty state for the client dashboard that guides new users on what to do next (log a workout or find a trainer).
+- [x] **3.1. Create Client Dashboard Routes and Layout**
+    - [x] Create directory: `src/app/[locale]/client-dashboard/`.
+    - [x] Create `layout.tsx` with client-specific navigation (e.g., Dashboard, Log Workout, My Trainer).
+    - [x] Create `page.tsx` for the main dashboard view.
+- [x] **3.2. Implement Client-Side Exercise Logging UI**
+    - [x] Create a `LogWorkout.tsx` component, reusing UI patterns from `ManageClientExerciseLogs.tsx`.
+    - [x] Create a `useMyExerciseLogManager` hook adapted for the new self-service actions.
+- [x] **3.3. Implement Client Statistics and Progress View**
+    - [x] Create a `MyProgress.tsx` component, reusing `ClientStatistics.tsx` and `ExerciseProgressChart.tsx`.
+- [x] **3.4. Implement "My Trainer" / "Sharing" Section in Client Dashboard**
+    - [x] Create a component that displays the linked trainer's info if `trainerId` is not null.
+    - [x] This component will contain the "Unlink from Trainer" button.
+- [x] **3.5. Design and Implement Empty States**
+    - [x] Create a welcoming empty state for the client dashboard that guides new users on what to do next (log a workout or find a trainer).
 
 ### Part 4: Trainer Discovery & Data Sharing Flow
 
