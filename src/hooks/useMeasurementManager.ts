@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
 import {
@@ -64,11 +65,18 @@ export const useMeasurementManager = ({
   }, [updateState]);
 
   const handleDelete = async (measurementId: string) => {
+    const originalMeasurements = measurements;
     setIsDeleting(true);
+    // Optimistically update UI
+    setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
+
     const result = await deleteMeasurement({}, measurementId);
-    if (result?.success) {
-      setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
+    
+    // If server action fails, revert the state
+    if (!result?.success) {
+      setMeasurements(originalMeasurements);
     }
+    
     setIsDeleting(false);
     return result;
   };

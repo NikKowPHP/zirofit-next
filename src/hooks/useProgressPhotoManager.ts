@@ -86,13 +86,20 @@ export const useProgressPhotoManager = ({
   };
 
   const handleDelete = async (photoId: string) => {
+    const originalPhotos = progressPhotos;
     setIsDeleting(true);
+    // Optimistically update UI
+    setProgressPhotos((prevPhotos) =>
+      prevPhotos.filter((photo) => photo.id !== photoId),
+    );
+    
     const result = await deleteProgressPhoto({}, photoId);
-    if (result?.success) {
-      setProgressPhotos((prevPhotos) =>
-        prevPhotos.filter((photo) => photo.id !== photoId),
-      );
+    
+    // If server action fails, revert the state
+    if (!result?.success) {
+      setProgressPhotos(originalPhotos);
     }
+    
     setIsDeleting(false);
     return result;
   };

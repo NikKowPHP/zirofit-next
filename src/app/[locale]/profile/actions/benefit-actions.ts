@@ -1,14 +1,15 @@
-
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
+import type { Benefit } from "@prisma/client";
 
 export interface BenefitFormState {
   messageKey?: string | null;
   error?: string | null;
   success?: boolean;
+  newBenefit?: Benefit;
 }
 
 const BenefitSchema = z.object({
@@ -32,7 +33,7 @@ export async function addBenefit(
   if (!validated.success) return { error: "Validation failed." };
   try {
     const maxOrder = await profileService.getMaxBenefitOrder(profile.id);
-    await profileService.createBenefit({
+    const newBenefit = await profileService.createBenefit({
       title: validated.data.title,
       description: validated.data.description,
       iconName: validated.data.iconName,
@@ -41,7 +42,7 @@ export async function addBenefit(
       orderColumn: (maxOrder._max.orderColumn ?? 0) + 1,
     });
     revalidatePath("/profile/edit");
-    return { success: true, messageKey: "benefitAdded" };
+    return { success: true, messageKey: "benefitAdded", newBenefit };
   } catch (e: unknown) {
     return { error: "Failed to add benefit." };
   }

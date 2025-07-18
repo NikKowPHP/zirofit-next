@@ -80,11 +80,18 @@ export const useSessionLogManager = ({
   }, [updateState]);
 
   const handleDelete = async (sessionLogId: string) => {
+    const originalLogs = sessionLogs;
     setDeletingId(sessionLogId);
+    // Optimistically update UI
+    setSessionLogs((prev) => prev.filter((log) => log.id !== sessionLogId));
+    
     const result = await deleteSessionLog(sessionLogId);
-    if (result?.success) {
-      setSessionLogs((prev) => prev.filter((log) => log.id !== sessionLogId));
+    
+    // If server action fails, revert the state
+    if (!result?.success) {
+      setSessionLogs(originalLogs);
     }
+    
     setDeletingId(null);
     return result;
   };

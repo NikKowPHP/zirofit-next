@@ -116,6 +116,18 @@ export default function ManageClientExerciseLogs({
       toast.error(updateState.error);
     }
   }, [updateState]);
+  
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      const result = await handleDelete(itemToDelete);
+      if (result?.success) {
+        toast.success(t("exLogs_deleted"));
+      } else {
+        toast.error(result?.error || t("exLogs_failDelete"));
+      }
+      setItemToDelete(null);
+    }
+  };
 
   const groupedLogs = useMemo(() => {
     return logs.reduce<Record<string, ClientExerciseLog[]>>(
@@ -161,12 +173,7 @@ export default function ManageClientExerciseLogs({
       <DeleteConfirmationModal
         isOpen={!!itemToDelete}
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
-        onConfirm={async () => {
-          if (itemToDelete) {
-            await handleDelete(itemToDelete);
-            setItemToDelete(null);
-          }
-        }}
+        onConfirm={handleConfirmDelete}
         isPending={!!deletingId}
         title={t("exLogs_deleteTitle")}
         description={t("exLogs_deleteDesc")}

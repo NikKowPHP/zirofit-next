@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy, useTransition } from "react";
 import type {
   Client,
   ClientSessionLog,
@@ -39,6 +39,7 @@ interface ClientDetailViewProps {
 export default function ClientDetailView({ client }: ClientDetailViewProps) {
   const t = useTranslations("Clients");
   const [activeTab, setActiveTab] = useState("stats");
+  const [isPending, startTransition] = useTransition();
 
   const tabs = [
     { name: t("clientDetail_statistics"), id: "stats" },
@@ -47,6 +48,12 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
     { name: t("clientDetail_sessionLogs"), id: "logs" },
     { name: t("clientDetail_exercisePerformance"), id: "exercise" },
   ];
+
+  const handleTabChange = (tabId: string) => {
+    startTransition(() => {
+      setActiveTab(tabId);
+    });
+  };
 
   const tabContent: { [key: string]: React.ReactNode } = {
     stats: <ClientStatistics measurements={client.measurements} />,
@@ -86,7 +93,7 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`${
                 tab.id === activeTab
                   ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
@@ -98,7 +105,9 @@ export default function ClientDetailView({ client }: ClientDetailViewProps) {
           ))}
         </nav>
       </div>
-      <div className="p-6">
+      <div
+        className={`p-6 transition-opacity duration-300 ${isPending ? "opacity-50" : "opacity-100"}`}
+      >
         <Suspense
           fallback={
             <div className="flex items-center justify-center p-6 text-gray-600 dark:text-gray-300">

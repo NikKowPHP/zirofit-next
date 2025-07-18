@@ -1,34 +1,35 @@
+
 ### Part 1: Analysis & Discovery
 *(Tasks to fully understand the current state before writing any code.)*
-- [ ] **Identify Key Files:**
+- [x] **Identify Key Files:**
     -   **Page Navigation & Data Fetching:** `src/app/[locale]/dashboard/page.tsx`, `src/app/[locale]/dashboard/DashboardContent.tsx`, `src/lib/services/dashboardService.ts`, `src/app/api/dashboard/route.ts`.
     -   **Client-Side State Management & Actions (Optimistic UI):** `src/hooks/useEditableListManager.ts`, `src/hooks/useSessionLogManager.ts`, `src/hooks/useMeasurementManager.ts`, `src/hooks/useProgressPhotoManager.ts`, `src/hooks/useExerciseLogManager.ts`.
     -   **Action Handlers (for adding loading/disabled states):** All files in `src/components/profile/sections/`, `src/components/clients/modules/`, `src/app/[locale]/auth/login/page.client.tsx`, `src/app/[locale]/auth/register/page.client.tsx`.
     -   **Tab Switching Logic:** `src/components/clients/ClientDetailView.tsx`.
-- [ ] **Map Data/State Flow:**
+- [x] **Map Data/State Flow:**
     -   **Dashboard:** Trace the current flow: `page.tsx` (Server) -> `DashboardContent.tsx` (Client) -> `useSWR` -> `/api/dashboard` (API Route) -> `dashboardService.ts` -> Prisma. Note the extra client-server roundtrip for the initial view.
     -   **CRUD Actions (e.g., Services):** Trace the current flow: `ServicesEditor.tsx` (Client) -> `addService` (Server Action) -> `profileService.ts` -> Prisma. Note that the UI update in `useEditableListManager.ts` is pessimistic (waits for server response).
     -   **Button States:** Audit forms to identify where `useFormStatus` is used versus where it is missing, leading to inconsistent user feedback.
-- [ ] **Pinpoint Logic:**
+- [x] **Pinpoint Logic:**
     -   **Sequential Queries:** Locate the series of sequential `await` calls in `getDashboardData` within `src/lib/services/dashboardService.ts`.
     -   **Pessimistic UI Updates:** Isolate the `useEffect` blocks in `useEditableListManager.ts` that react to `addState` and `updateState`. Pinpoint the `handleDelete` function that awaits the server action before updating local state.
     -   **State Updates on Tab Click:** Identify the synchronous `setActiveTab` call in the tab click handler within `src/components/clients/ClientDetailView.tsx`.
-- [ ] **Analyze Bundle Size:**
-    -   [ ] Integrate `@next/bundle-analyzer` to generate a visual report of the application's JavaScript bundles. Identify any unexpectedly large dependencies in the initial client-side bundle.
+- [x] **Analyze Bundle Size:**
+    -   [x] Integrate `@next/bundle-analyzer` to generate a visual report of the application's JavaScript bundles. Identify any unexpectedly large dependencies in the initial client-side bundle.
 
 ### Part 2: Core Logic Implementation
 *(The primary "happy path" implementation tasks.)*
-- [ ] **State Management:**
-    -   [ ] In `useEditableListManager.ts` (and apply pattern to other `use...Manager` hooks), refactor `handleDelete` to store the original list state, update the UI state immediately, then `await` the server action.
+- [x] **State Management:**
+    -   [x] In `useEditableListManager.ts` (and apply pattern to other `use...Manager` hooks), refactor `handleDelete` to store the original list state, update the UI state immediately, then `await` the server action.
     -   [ ] In `useEditableListManager.ts`, refactor the add logic: generate a temporary client-side ID for the new item, add it to the local state immediately, then call the server action.
     -   [ ] In the `useEffect` that handles the successful response from the `add...` action, implement logic to find the item with the temporary ID in the local state and replace it with the final item (containing the real database ID) returned from the server.
-- [ ] **Component Logic:**
-    -   [ ] In `src/app/[locale]/dashboard/page.tsx`, move the data fetching logic from `DashboardContent.tsx` here. Call `getDashboardData` directly on the server.
-    -   [ ] In `src/app/[locale]/dashboard/DashboardContent.tsx`, refactor the component to accept `initialData` as a prop and pass it to `useSWR`'s `fallbackData` option.
-    -   [ ] In `src/components/clients/ClientDetailView.tsx`, import `useTransition` from React. Wrap the `setActiveTab` state update inside a `startTransition` call.
-- [ ] **API/Service Logic:**
-    -   [ ] In `src/lib/services/dashboardService.ts`, refactor the `getDashboardData` function to use `prisma.$transaction([...])` to execute all independent data-fetching queries in parallel.
-    -   [ ] Ensure all server actions that create a new database entry (e.g., `addService`, `addBenefit`) return the complete, newly created object.
+- [x] **Component Logic:**
+    -   [x] In `src/app/[locale]/dashboard/page.tsx`, move the data fetching logic from `DashboardContent.tsx` here. Call `getDashboardData` directly on the server.
+    -   [x] In `src/app/[locale]/dashboard/DashboardContent.tsx`, refactor the component to accept `initialData` as a prop and pass it to `useSWR`'s `fallbackData` option.
+    -   [x] In `src/components/clients/ClientDetailView.tsx`, import `useTransition` from React. Wrap the `setActiveTab` state update inside a `startTransition` call.
+- [x] **API/Service Logic:**
+    -   [x] In `src/lib/services/dashboardService.ts`, refactor the `getDashboardData` function to use `prisma.$transaction([...])` to execute all independent data-fetching queries in parallel.
+    -   [x] Ensure all server actions that create a new database entry (e.g., `addService`, `addBenefit`) return the complete, newly created object.
 
 ### Part 3: UI/UX & Polish
 *(Tasks to ensure the feature feels good to use, not just functional.)*
@@ -93,3 +94,38 @@
 - [ ] **Documentation:**
     -   [ ] Add JSDoc comments to `useEditableListManager.ts` explaining the optimistic update pattern, including the temporary ID and state reconciliation logic.
     -   [ ] Add a comment in `dashboard/page.tsx` explaining why data is fetched on the server and passed down as a prop for performance reasons.
+
+### src/app/[locale]/dashboard/DashboardContent.tsx
+```
+```
+### src/app/[locale]/dashboard/page.tsx
+```
+```
+### src/app/[locale]/profile/actions/benefit-actions.ts
+```
+
+```
+### src/components/clients/ClientDetailView.tsx
+```
+```
+### src/components/clients/modules/ManageClientExerciseLogs.tsx
+```
+```
+### src/hooks/useEditableListManager.ts
+```
+```
+### src/hooks/useExerciseLogManager.ts
+```
+```
+### src/hooks/useMeasurementManager.ts
+```
+```
+### src/hooks/useProgressPhotoManager.ts
+```
+```
+### src/hooks/useSessionLogManager.ts
+```
+```
+### src/lib/services/dashboardService.ts
+```
+```

@@ -18,22 +18,38 @@ import { useTranslations } from "next-intl";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function DashboardContent() {
-  const t = useTranslations('Dashboard');
+// Define a type for the dashboard data for better type safety
+type DashboardData = {
+  activeClients: number;
+  sessionsThisMonth: number;
+  pendingClients: number;
+  profile: any; // Consider creating a more specific type
+  activityFeed: any[];
+  clientProgressData: any[];
+  monthlyActivityData: any[];
+};
+
+export default function DashboardContent({
+  initialData,
+}: {
+  initialData?: DashboardData | null;
+}) {
+  const t = useTranslations("Dashboard");
   const { data, error, isLoading, mutate } = useSWR("/api/dashboard", fetcher, {
+    fallbackData: initialData,
     refreshInterval: 30000,
     revalidateOnFocus: true,
   });
 
-  if (error)
+  if (error && !data)
     return (
       <ErrorState
-        title={t('failToLoad')}
-        description={t('failToLoadDescription')}
+        title={t("failToLoad")}
+        description={t("failToLoadDescription")}
         onRetry={mutate}
       />
     );
-  if (isLoading || !data)
+  if (isLoading && !data)
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -64,6 +80,18 @@ export default function DashboardContent() {
         </div>
       </div>
     );
+
+  if (!data) {
+    // This case handles when initialData is null (due to a server-side error)
+    // and SWR hasn't fetched anything yet.
+    return (
+      <ErrorState
+        title={t("failToLoad")}
+        description={t("failToLoadDescription")}
+        onRetry={mutate}
+      />
+    );
+  }
 
   const {
     activeClients,
@@ -100,21 +128,21 @@ export default function DashboardContent() {
         {clientProgressData.length > 0 ? (
           <ClientProgressChart
             data={clientProgressData}
-            title={t('clientProgressWeight')}
+            title={t("clientProgressWeight")}
           />
         ) : (
           <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 text-center text-gray-500">
-            {t('noClientProgress')}
+            {t("noClientProgress")}
           </div>
         )}
         {monthlyActivityData.length > 0 ? (
           <MonthlyActivityChart
             data={monthlyActivityData}
-            title={t('monthlyActivity')}
+            title={t("monthlyActivity")}
           />
         ) : (
           <div className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 text-center text-gray-500">
-            {t('noMonthlyActivity')}
+            {t("noMonthlyActivity")}
           </div>
         )}
       </div>

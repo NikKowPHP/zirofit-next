@@ -96,10 +96,16 @@ export function useEditableList<T extends Item>({
   const handleCancelEdit = () => setEditingItemId(null);
 
   const handleDelete = async (id: string) => {
+    const originalItems = items;
     setDeletingId(id);
+    // Optimistically update UI
+    setItems((current) => current.filter((i) => i.id !== id));
+
     const result = await deleteAction(id);
-    if (result.success && result.deletedId) {
-      setItems((current) => current.filter((i) => i.id !== result.deletedId));
+    
+    // If server action fails, revert the state
+    if (!result.success) {
+      setItems(originalItems);
     }
     setDeletingId(null);
     return result;

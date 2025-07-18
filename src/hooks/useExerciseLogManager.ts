@@ -75,15 +75,18 @@ export const useExerciseLogManager = ({
   }, [updateState]);
 
   const handleDelete = async (logId: string) => {
+    const originalLogs = logs;
     setDeletingId(logId);
+    setLogs((prev) => prev.filter((log) => log.id !== logId));
+    
     const result = await deleteExerciseLog(logId);
-    if (result?.success) {
-      setLogs((prev) => prev.filter((log) => log.id !== result.deletedId));
-      toast.success("Log deleted.");
-    } else {
-      toast.error(result?.error || "Failed to delete log.");
+
+    if (!result?.success) {
+      setLogs(originalLogs);
     }
+    
     setDeletingId(null);
+    return result;
   };
 
   const handleEdit = (log: ClientExerciseLog) => {
