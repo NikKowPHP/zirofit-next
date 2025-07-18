@@ -106,7 +106,7 @@ export async function registerUser(
       count++;
     }
 
-    const [_newUser] = await prisma.$transaction([
+    const operations = [
       prisma.user.create({
         data: {
           id: authData.user.id, // Use Supabase Auth UUID as the primary key
@@ -114,7 +114,6 @@ export async function registerUser(
           email,
           username, // Add username
           role: role,
-          // emailVerifiedAt: authData.user.email_confirmed_at ? new Date(authData.user.email_confirmed_at) : null,
         },
       }),
       prisma.profile.create({
@@ -122,7 +121,23 @@ export async function registerUser(
           userId: authData.user.id,
         },
       }),
-    ]);
+    ];
+
+    if (role === "client") {
+      operations.push(
+        prisma.client.create({
+          data: {
+            userId: authData.user.id,
+            name: name,
+            email: email,
+            status: "active",
+            trainerId: null,
+          },
+        }) as any,
+      );
+    }
+
+    await prisma.$transaction(operations);
   } catch (dbError: unknown) {
     console.error("Prisma DB Error:", dbError);
     // Potentially delete the Supabase auth user if Prisma creation fails (for consistency)

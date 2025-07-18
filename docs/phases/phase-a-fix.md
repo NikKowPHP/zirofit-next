@@ -1,56 +1,13 @@
 ### [BASH_COMMANDS]
 ```bash
-mkdir -p prisma/migrations/20250716100000_add_client_role_and_linking
-touch prisma/migrations/20250716100000_add_client_role_and_linking/migration.sql
-```
-### prisma/migrations/20250716100000_add_client_role_and_linking/migration.sql
-```sql
--- DropForeignKey
-ALTER TABLE "Client" DROP CONSTRAINT "Client_trainerId_fkey";
-
--- DropIndex
-DROP INDEX "Client_trainerId_email_key";
-
--- AlterTable
-ALTER TABLE "Client" ADD COLUMN     "userId" TEXT,
-ALTER COLUMN "trainerId" DROP NOT NULL;
-
--- AlterTable
-ALTER TABLE "User" ALTER COLUMN "role" DROP DEFAULT;
-
--- CreateIndex
-CREATE UNIQUE INDEX "Client_userId_key" ON "Client"("userId");
-
--- AddForeignKey
-ALTER TABLE "Client" ADD CONSTRAINT "Client_trainerId_fkey" FOREIGN KEY ("trainerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Client" ADD CONSTRAINT "Client_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-```
-### prisma/schema.prisma
-```prisma
+mkdir -p "src/app/[locale]/client-dashboard"
+touch "src/app/[locale]/client-dashboard/actions.ts"
 ```
 ### src/app/[locale]/auth/actions.ts
 ```typescript
 ```
-### src/app/[locale]/auth/register/page.client.tsx
+### src/app/[locale]/client-dashboard/actions.ts
 ```typescript
-```
-### src/app/[locale]/clients/actions/client-actions.ts
-```typescript
-```
-### src/app/[locale]/clients/actions.ts
-```typescript
-```
-### src/app/[locale]/dashboard/page.tsx
-```typescript
-```
-### src/components/clients/ClientForm.tsx
-```typescript
-```
-### src/middleware.ts
-```typescript
-// src/middleware.ts
 ```
 ### docs/phases/phase-a-fix.md
 ```markdown
@@ -102,11 +59,11 @@ Of course. Here is the final, consolidated, and complete step-by-step plan. It i
 
 ### Part 2: Client Account Creation & Data Scaffolding
 
-- [ ] **2.1. Create Self-Managed Client Record (`src/app/[locale]/auth/actions.ts`)**
-    - [ ] In `registerUser`, if the role is `'client'`, immediately create a corresponding `Client` record with `userId` set and `trainerId` as `null`.
-- [ ] **2.2. Create New Server Actions for Client Self-Logging (`src/app/[locale]/client-dashboard/actions.ts`)**
-    - [ ] Implement `addMyExerciseLog`, `updateMyExerciseLog`, and `deleteMyExerciseLog`.
-    - [ ] Ensure all actions securely resolve the logged-in `User.id` to their self-managed `Client.id` before performing any database operations.
+- [x] **2.1. Create Self-Managed Client Record (`src/app/[locale]/auth/actions.ts`)**
+    - [x] In `registerUser`, if the role is `'client'`, immediately create a corresponding `Client` record with `userId` set and `trainerId` as `null`.
+- [x] **2.2. Create New Server Actions for Client Self-Logging (`src/app/[locale]/client-dashboard/actions.ts`)**
+    - [x] Implement `addMyExerciseLog`, `updateMyExerciseLog`, and `deleteMyExerciseLog`.
+    - [x] Ensure all actions securely resolve the logged-in `User.id` to their self-managed `Client.id` before performing any database operations.
 
 ### Part 3: Client Dashboard Implementation
 
