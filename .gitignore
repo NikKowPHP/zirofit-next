@@ -54,3 +54,4 @@ public/workbox-*
 playwright-report/
 test-results/
 a.sh
+analyze/*
