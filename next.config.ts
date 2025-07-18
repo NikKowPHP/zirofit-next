@@ -1,8 +1,8 @@
-
 import type { NextConfig } from "next";
 import pwa from "next-pwa";
 import { withSentryConfig } from "@sentry/nextjs";
 import withNextIntl from 'next-intl/plugin';
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const withIntl = withNextIntl('./src/i18n.ts');
 
@@ -11,6 +11,10 @@ const withPWA = pwa({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
+});
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
 });
 
 const nextConfig: NextConfig = {
@@ -46,6 +50,6 @@ const sentryWebpackPluginOptions = {
 
 // Make sure to put `withSentryConfig` last in your list of HOCs.
 export default withSentryConfig(
-  withIntl(withPWA(nextConfig  as any) as any),
+  withIntl(withPWA(bundleAnalyzer(nextConfig  as any)) as any),
   sentryWebpackPluginOptions
 );
