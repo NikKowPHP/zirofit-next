@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import {
   addTestimonial,
   updateTestimonial,
@@ -15,6 +16,7 @@ import { toast } from "sonner";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { useTranslations } from "next-intl";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Testimonial {
   id: string;
@@ -49,6 +51,20 @@ const initialUpdateState: FormState = {
   success: false,
   error: null,
 };
+
+function SubmitButton({ isEditing }: { isEditing: boolean }) {
+  const { pending } = useFormStatus();
+  const t = useTranslations("ProfileEditor");
+  return (
+    <Button type="submit" variant="primary" disabled={pending}>
+      {pending
+        ? t("saving")
+        : isEditing
+          ? t("testimonialUpdateButton")
+          : t("testimonialAddButton")}
+    </Button>
+  );
+}
 
 export default function TestimonialsEditor({
   initialTestimonials,
@@ -146,19 +162,25 @@ export default function TestimonialsEditor({
     handleEffect();
   }, [updateState?.success, updateState?.updatedTestimonial]);
 
-  const handleDeleteTestimonial = async (testimonialId: string) => {
-    setDeletingId(testimonialId);
-    const result = await deleteTestimonial(testimonialId, undefined);
+  const handleDeleteTestimonial = async () => {
+    if (!itemToDelete) return;
+    const originalTestimonials = testimonials;
+    setDeletingId(itemToDelete);
+    // Optimistic UI update
+    setTestimonials((current) =>
+      current.filter((t) => t.id !== itemToDelete),
+    );
+    setItemToDelete(null);
+
+    const result = await deleteTestimonial(itemToDelete, undefined);
+
     if (result?.success && result.messageKey && result?.deletedId) {
       toast.success(t_server(result.messageKey));
-      setTestimonials((current) =>
-        current.filter((t) => t.id !== result?.deletedId),
-      );
       await revalidateProfilePath();
-    } else if (result?.error) {
-      toast.error(result.error);
     } else {
-      toast.error(t_server("genericError"));
+      // Revert UI on failure
+      setTestimonials(originalTestimonials);
+      toast.error(result?.error || t_server("genericError"));
     }
     setDeletingId(null);
   };
@@ -175,12 +197,7 @@ export default function TestimonialsEditor({
       <DeleteConfirmationModal
         isOpen={!!itemToDelete}
         setIsOpen={(isOpen) => !isOpen && setItemToDelete(null)}
-        onConfirm={() => {
-          if (itemToDelete) {
-            handleDeleteTestimonial(itemToDelete);
-            setItemToDelete(null);
-          }
-        }}
+        onConfirm={handleDeleteTestimonial}
         isPending={!!deletingId}
         title={t("testimonialDeleteTitle")}
         description={t("testimonialDeleteDesc")}
@@ -226,9 +243,7 @@ export default function TestimonialsEditor({
                 }
               />
               <div className="flex gap-2">
-                <Button type="submit" variant="primary">
-                  {isEditing ? t("testimonialUpdateButton") : t("testimonialAddButton")}
-                </Button>
+                <SubmitButton isEditing={isEditing} />
                 {isEditing && (
                   <Button
                     type="button"
@@ -243,49 +258,56 @@ export default function TestimonialsEditor({
           </form>
 
           <div className="space-y-2 mt-6">
-            {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.id}
-                className="p-4 bg-neutral-100 dark:bg-neutral-800/50 rounded-md transition-all duration-200"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium text-gray-800 dark:text-gray-200">
-                      {testimonial.clientName}
-                    </h4>
-                    <div
-                      className="text-sm text-gray-600 dark:text-gray-300 prose dark:prose-invert"
-                      dangerouslySetInnerHTML={{
-                        __html: testimonial.testimonialText,
-                      }}
-                    />
+            <AnimatePresence>
+              {testimonials.map((testimonial) => (
+                <motion.div
+                  key={testimonial.id}
+                  layout
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
+                  className={`p-4 bg-neutral-100 dark:bg-neutral-800/50 rounded-md transition-opacity duration-200 ${deletingId === testimonial.id ? "opacity-50" : ""}`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium text-gray-800 dark:text-gray-200">
+                        {testimonial.clientName}
+                      </h4>
+                      <div
+                        className="text-sm text-gray-600 dark:text-gray-300 prose dark:prose-invert"
+                        dangerouslySetInnerHTML={{
+                          __html: testimonial.testimonialText,
+                        }}
+                      />
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleStartEdit(testimonial)}
+                        disabled={!!deletingId}
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="danger"
+                        size="sm"
+                        onClick={() => setItemToDelete(testimonial.id)}
+                        disabled={!!deletingId}
+                      >
+                        {deletingId === testimonial.id ? (
+                          "..."
+                        ) : (
+                          <TrashIcon className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-2 flex-shrink-0">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleStartEdit(testimonial)}
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="danger"
-                      size="sm"
-                      onClick={() => setItemToDelete(testimonial.id)}
-                      disabled={deletingId === testimonial.id}
-                    >
-                      {deletingId === testimonial.id ? (
-                        "..."
-                      ) : (
-                        <TrashIcon className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </CardContent>
       </Card>

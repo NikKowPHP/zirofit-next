@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 function TrainerCardSkeleton() {
   return (
-    <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6">
+    <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 min-h-[148px]">
       <Skeleton className="w-24 h-24 rounded-full flex-shrink-0" />
       <div className="flex-grow space-y-2 text-center sm:text-left">
         <Skeleton className="h-6 w-32" />

@@ -11,7 +11,7 @@ import { getTranslations } from "next-intl/server";
 
 function ClientCardSkeleton() {
   return (
-    <Card>
+    <Card className="min-h-[200px]">
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-4">
           <Skeleton className="h-5 w-1/2" />
