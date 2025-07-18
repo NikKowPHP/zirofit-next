@@ -28,6 +28,14 @@ export const useMeasurementManager = ({
   >(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const initialActionState: MeasurementFormState = { message: "", success: false };
 
@@ -67,18 +75,27 @@ export const useMeasurementManager = ({
   const handleDelete = async (measurementId: string) => {
     const originalMeasurements = measurements;
     setIsDeleting(true);
-    // Optimistically update UI
     setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
 
-    const result = await deleteMeasurement({}, measurementId);
-    
-    // If server action fails, revert the state
-    if (!result?.success) {
-      setMeasurements(originalMeasurements);
+    try {
+      const result = await deleteMeasurement({}, measurementId);
+      if (!result?.success) {
+        if (isMounted.current) {
+          setMeasurements(originalMeasurements);
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error("Delete measurement failed:", error);
+      if (isMounted.current) {
+        setMeasurements(originalMeasurements);
+      }
+      return { success: false, error: "An unexpected error occurred." };
+    } finally {
+      if (isMounted.current) {
+        setIsDeleting(false);
+      }
     }
-    
-    setIsDeleting(false);
-    return result;
   };
 
   const handleEdit = (measurement: ClientMeasurement) => {

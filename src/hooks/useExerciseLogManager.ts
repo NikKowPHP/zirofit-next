@@ -11,7 +11,6 @@ import {
   type ClientExerciseLog,
   type Exercise,
 } from "@/app/[locale]/clients/actions/exercise-log-actions";
-import { toast } from "sonner";
 
 interface UseExerciseLogManagerProps {
   initialExerciseLogs: ClientExerciseLog[];
@@ -27,6 +26,14 @@ export const useExerciseLogManager = ({
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Exercise[]>([]);
@@ -79,14 +86,25 @@ export const useExerciseLogManager = ({
     setDeletingId(logId);
     setLogs((prev) => prev.filter((log) => log.id !== logId));
     
-    const result = await deleteExerciseLog(logId);
-
-    if (!result?.success) {
-      setLogs(originalLogs);
+    try {
+      const result = await deleteExerciseLog(logId);
+      if (!result?.success) {
+        if (isMounted.current) {
+          setLogs(originalLogs);
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error("Delete exercise log failed:", error);
+      if (isMounted.current) {
+        setLogs(originalLogs);
+      }
+      return { success: false, error: "An unexpected error occurred." };
+    } finally {
+      if (isMounted.current) {
+        setDeletingId(null);
+      }
     }
-    
-    setDeletingId(null);
-    return result;
   };
 
   const handleEdit = (log: ClientExerciseLog) => {

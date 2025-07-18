@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 import {
   addProgressPhoto,
@@ -35,6 +35,14 @@ export const useProgressPhotoManager = ({
     useState<ClientProgressPhoto[]>(initialProgressPhotos);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const initialActionState: ActionState = { message: "", success: false };
 
@@ -88,20 +96,29 @@ export const useProgressPhotoManager = ({
   const handleDelete = async (photoId: string) => {
     const originalPhotos = progressPhotos;
     setIsDeleting(true);
-    // Optimistically update UI
     setProgressPhotos((prevPhotos) =>
       prevPhotos.filter((photo) => photo.id !== photoId),
     );
     
-    const result = await deleteProgressPhoto({}, photoId);
-    
-    // If server action fails, revert the state
-    if (!result?.success) {
-      setProgressPhotos(originalPhotos);
+    try {
+      const result = await deleteProgressPhoto({}, photoId);
+      if (!result?.success) {
+        if (isMounted.current) {
+          setProgressPhotos(originalPhotos);
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error("Delete photo failed:", error);
+      if (isMounted.current) {
+        setProgressPhotos(originalPhotos);
+      }
+      return { success: false, message: "An unexpected error occurred." };
+    } finally {
+      if (isMounted.current) {
+        setIsDeleting(false);
+      }
     }
-    
-    setIsDeleting(false);
-    return result;
   };
 
   return {

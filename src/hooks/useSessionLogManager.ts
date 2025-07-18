@@ -45,6 +45,14 @@ export const useSessionLogManager = ({
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const [addState, addAction] = useFormState(
     addSessionLog,
@@ -82,18 +90,27 @@ export const useSessionLogManager = ({
   const handleDelete = async (sessionLogId: string) => {
     const originalLogs = sessionLogs;
     setDeletingId(sessionLogId);
-    // Optimistically update UI
     setSessionLogs((prev) => prev.filter((log) => log.id !== sessionLogId));
     
-    const result = await deleteSessionLog(sessionLogId);
-    
-    // If server action fails, revert the state
-    if (!result?.success) {
-      setSessionLogs(originalLogs);
+    try {
+      const result = await deleteSessionLog(sessionLogId);
+      if (!result?.success) {
+        if (isMounted.current) {
+          setSessionLogs(originalLogs);
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error("Delete session log failed:", error);
+      if (isMounted.current) {
+        setSessionLogs(originalLogs);
+      }
+      return { success: false, message: "An unexpected error occurred." };
+    } finally {
+      if (isMounted.current) {
+        setDeletingId(null);
+      }
     }
-    
-    setDeletingId(null);
-    return result;
   };
 
   const handleEdit = (log: ClientSessionLog) => {

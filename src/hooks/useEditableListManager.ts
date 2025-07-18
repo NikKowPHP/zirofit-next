@@ -46,6 +46,14 @@ export function useEditableList<T extends Item>({
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const [addState, serverAddFormAction] = useFormState(addAction, initialActionState);
   const [updateState, updateFormAction] = useFormState(updateAction, initialActionState);
@@ -56,14 +64,12 @@ export function useEditableList<T extends Item>({
     ? items.find((item) => item.id === editingItemId)
     : null;
 
-  // The form's action will call this function.
   const addFormAction = (formData: FormData) => {
     const tempId = `temp-${Date.now()}`;
     setOptimisticTempId(tempId);
 
     const tempItemData: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
-      // Only include string values to avoid issues with File objects in optimistic state
       if (typeof value === 'string') {
         tempItemData[key] = value;
       }
@@ -75,14 +81,12 @@ export function useEditableList<T extends Item>({
       ...tempItemData,
     } as T;
     
-    // Optimistically add to the list
     setItems((current) =>
       [...current, optimisticItem].sort(
         (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       )
     );
     
-    // Call the server action
     serverAddFormAction(formData);
   };
 
@@ -91,18 +95,15 @@ export function useEditableList<T extends Item>({
       const newItemKey = Object.keys(addState).find((k) => k.startsWith("new"));
       if (newItemKey && addState[newItemKey] && optimisticTempId) {
         const newItem = addState[newItemKey] as T;
-        // Replace temp item with the one from the server
         setItems((current) =>
           current.map((item) => (item.id === optimisticTempId ? newItem : item))
         );
         setOptimisticTempId(null);
-        formRef.current?.reset(); // Reset form on success
+        formRef.current?.reset();
       }
     } else if (addState?.error && optimisticTempId) {
-      // Server action failed, remove the optimistic item
       setItems((current) => current.filter((item) => item.id !== optimisticTempId));
       setOptimisticTempId(null);
-      // The error toast will be shown by useServerActionToast hook in the component
     }
   }, [addState, optimisticTempId]);
 
@@ -133,17 +134,28 @@ export function useEditableList<T extends Item>({
   const handleDelete = async (id: string) => {
     const originalItems = items;
     setDeletingId(id);
-    // Optimistically update UI
     setItems((current) => current.filter((i) => i.id !== id));
 
-    const result = await deleteAction(id);
-    
-    // If server action fails, revert the state
-    if (!result.success) {
-      setItems(originalItems);
+    try {
+      const result = await deleteAction(id);
+      
+      if (!result.success) {
+        if (isMounted.current) {
+          setItems(originalItems);
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error("Delete action failed:", error);
+      if (isMounted.current) {
+        setItems(originalItems);
+      }
+      return { success: false, error: "An unexpected error occurred." };
+    } finally {
+      if (isMounted.current) {
+        setDeletingId(null);
+      }
     }
-    setDeletingId(null);
-    return result;
   };
 
   return {
