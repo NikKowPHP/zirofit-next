@@ -1,104 +1,114 @@
-### Part 1: Analysis & Discovery
-*(Tasks to fully understand the current state before writing any code.)*
-- [x] **Identify Key Files:**
-    -   **Page Navigation & Data Fetching:** `src/app/[locale]/dashboard/page.tsx`, `src/app/[locale]/dashboard/DashboardContent.tsx`, `src/lib/services/dashboardService.ts`, `src/app/api/dashboard/route.ts`.
-    -   **Client-Side State Management & Actions (Optimistic UI):** `src/hooks/useEditableListManager.ts`, `src/hooks/useSessionLogManager.ts`, `src/hooks/useMeasurementManager.ts`, `src/hooks/useProgressPhotoManager.ts`, `src/hooks/useExerciseLogManager.ts`.
-    -   **Action Handlers (for adding loading/disabled states):** All files in `src/components/profile/sections/`, `src/components/clients/modules/`, `src/app/[locale]/auth/login/page.client.tsx`, `src/app/[locale]/auth/register/page.client.tsx`.
-    -   **Tab Switching Logic:** `src/components/clients/ClientDetailView.tsx`.
-- [x] **Map Data/State Flow:**
-    -   **Dashboard:** Trace the current flow: `page.tsx` (Server) -> `DashboardContent.tsx` (Client) -> `useSWR` -> `/api/dashboard` (API Route) -> `dashboardService.ts` -> Prisma. Note the extra client-server roundtrip for the initial view.
-    -   **CRUD Actions (e.g., Services):** Trace the current flow: `ServicesEditor.tsx` (Client) -> `addService` (Server Action) -> `profileService.ts` -> Prisma. Note that the UI update in `useEditableListManager.ts` is pessimistic (waits for server response).
-    -   **Button States:** Audit forms to identify where `useFormStatus` is used versus where it is missing, leading to inconsistent user feedback.
-- [x] **Pinpoint Logic:**
-    -   **Sequential Queries:** Locate the series of sequential `await` calls in `getDashboardData` within `src/lib/services/dashboardService.ts`.
-    -   **Pessimistic UI Updates:** Isolate the `useEffect` blocks in `useEditableListManager.ts` that react to `addState` and `updateState`. Pinpoint the `handleDelete` function that awaits the server action before updating local state.
-    -   **State Updates on Tab Click:** Identify the synchronous `setActiveTab` call in the tab click handler within `src/components/clients/ClientDetailView.tsx`.
-- [x] **Analyze Bundle Size:**
-    -   [x] Integrate `@next/bundle-analyzer` to generate a visual report of the application's JavaScript bundles. Identify any unexpectedly large dependencies in the initial client-side bundle.
-- [x] **Establish Performance Baselines:**
-    -   [x] Before writing code, use Sentry Performance Monitoring or Vercel Analytics to record key metrics: Largest Contentful Paint (LCP) for the dashboard, Interaction to Next Paint (INP) for tab switching, and the average duration of the `/api/dashboard` API route.
+Of course. Here is the final, consolidated, and complete step-by-step plan. It integrates all the refinements and edge cases discussed, providing a robust roadmap for implementation.
 
-### Part 2: Core Logic Implementation
-*(The primary "happy path" implementation tasks.)*
-- [x] **State Management:**
-    -   [x] In `useEditableListManager.ts` (and apply pattern to other `use...Manager` hooks), refactor `handleDelete` to store the original list state, update the UI state immediately, then `await` the server action.
-    -   [x] In `useEditableListManager.ts`, refactor the add logic: generate a temporary client-side ID for the new item, add it to the local state immediately, then call the server action.
-    -   [x] In the `useEffect` that handles the successful response from the `add...` action, implement logic to find the item with the temporary ID in the local state and replace it with the final item (containing the real database ID) returned from the server.
-- [x] **Component Logic:**
-    -   [x] In `src/app/[locale]/dashboard/page.tsx`, move the data fetching logic from `DashboardContent.tsx` here. Call `getDashboardData` directly on the server.
-    -   [x] In `src/app/[locale]/dashboard/DashboardContent.tsx`, refactor the component to accept `initialData` as a prop and pass it to `useSWR`'s `fallbackData` option.
-    -   [x] In `src/components/clients/ClientDetailView.tsx`, import `useTransition` from React. Wrap the `setActiveTab` state update inside a `startTransition` call.
-- [ ] **API/Service Logic:**
-    -   [ ] In `src/lib/services/dashboardService.ts`, refactor the `getDashboardData` function to use `prisma.$transaction([...])` to execute all independent data-fetching queries in parallel. **(This step was missed in the implementation).**
-    -   [x] Ensure all server actions that create a new database entry (e.g., `addService`, `addBenefit`) return the complete, newly created object.
+---
 
-### Part 3: UI/UX & Polish
-*(Tasks to ensure the feature feels good to use, not just functional.)*
-- [x] **Loading States:**
-    -   [x] In all forms that use a Server Action, ensure the main submit button uses `useFormStatus` to show a pending state (e.g., text changes to "Saving...", spinner appears).
-    -   [x] In `ClientDetailView.tsx`, use the `isPending` state from `useTransition` to apply a subtle opacity change to the tab content area (`<div className="... transition-opacity ... ${isPending ? 'opacity-50' : 'opacity-100'}`) while the next tab is rendering.
-    -   [x] When implementing optimistic deletions, apply a temporary "dimmed" or "strikethrough" style to the list item before it's removed from the DOM to provide a clear visual cue of the pending action.
-    -   [x] Ensure skeleton loaders (`TrainersListSkeleton`, etc.) have a fixed `min-height` that approximates the height of the final content to prevent Cumulative Layout Shift (CLS).
-- [x] **Disabled States:**
-    -   [x] Universally apply the `pending` state from `useFormStatus` to disable submit buttons during form submission.
-    -   [x] In list components (`BenefitsEditor`, `ServicesEditor`, etc.), use a state variable like `deletingId` to disable the "Delete" and "Edit" buttons for a specific item while its deletion is in progress.
-- [x] **User Feedback:**
-    -   [x] Modify the optimistic `handleDelete` function to show a success toast only *after* the server confirms the deletion.
-    -   [x] If an optimistic update fails, show an error toast and ensure the UI reverts correctly to its original state.
-- [x] **Smooth Transitions:**
-    -   [x] Wrap list items that support optimistic deletion in `framer-motion`'s `<AnimatePresence>` and `<motion.div>` tags to provide a smooth exit animation (e.g., fade out).
-- [ ] **ARIA Attributes for Live Regions:**
-    -   [ ] When content is loading or an optimistic update occurs, use `aria-live="polite"` on a notification/toast container. **(This step was missed in the implementation).**
-    -   [ ] For loading spinners that replace content, apply `aria-busy="true"` to the content container being loaded. **(This step was missed in the implementation).**
+### **Final Plan: Client Role & Self-Service Workout Logging**
 
-### Part 4: Robustness & Edge Case Handling
-*(Tasks to make the feature resilient to unexpected user behavior and system failures.)*
-- [x] **Handle API Errors:**
-    -   [x] In each `use...Manager` hook, implement a `try...catch` block around the server action call inside the optimistic update handler. On failure, revert the UI state to the pre-action state and display an error toast.
-    -   [x] For the server-side data fetching in `dashboard/page.tsx`, wrap the `getDashboardData` call in a `try...catch` block. If it fails, pass a specific error prop to `DashboardContent` and render an `ErrorState` component with a retry mechanism (`router.refresh()`).
-- [x] **Handle User Interruption:**
-    -   [x] The shift to server-side data fetching for initial loads naturally handles refresh interruptions well. This requires no extra implementation.
-    -   [x] For optimistic UI, the client-side state is lost on refresh, and the page will simply refetch the correct state from the server. This is the desired behavior and requires no extra implementation.
-- [x] **Handle Unexpected Navigation:**
-    -   [x] If a user navigates away while a server action is pending, the component will unmount. Ensure there are no state updates on unmounted components by using a mounted flag or a cleanup function in `useEffect`. **(Implemented correctly in hooks like `useMeasurementManager.ts`)**.
-- [x] **Input Validation:**
-    -   [x] The codebase already uses Zod for server-side validation. This plan does not introduce new inputs, so the primary task is to ensure existing validation schemas are maintained during refactoring.
+**Goal:** Enable users to sign up as "Clients", log their own workout data, view progress, and securely share/unshare this data with trainers, ensuring a seamless experience and data integrity for all parties.
 
-### Part 5: Comprehensive Testing
-*(A concrete plan to verify everything works as expected.)*
-- [x] **Unit Tests:**
-    -   [x] Update the test for `dashboardService` in `src/lib/services/dashboardService.test.ts` to mock `prisma.$transaction` and verify it's called with an array of Prisma promises. **(Test was updated, but the implementation it tests is missing).**
-- [x] **Component Tests:**
-    -   [x] Update `src/app/[locale]/dashboard/DashboardContent.test.tsx` to test the new `initialData` prop. Verify it renders immediately without a skeleton state when the prop is provided.
-    -   [x] Create a test for a component using `useEditableListManager` (e.g., a new `BenefitsEditor.test.tsx`). Mock the `deleteBenefit` action. Trigger a delete, assert the item is removed from the UI *synchronously*, and then mock a failed server response to assert the item reappears.
-    -   [x] Test a form's submit button to ensure it enters a `disabled` and "loading" state when clicked, using a mocked `useFormStatus`.
-- [ ] **End-to-End (E2E) Manual Test Plan:**
-    -   [ ] **The "Happy Path" (the feature works perfectly under normal conditions).**
-        -   [ ] Navigate from the homepage to the dashboard. Verify it loads quickly without a content skeleton.
-        -   [ ] Navigate between Dashboard, Clients, and Profile pages. Confirm smooth and fast transitions.
-        -   [ ] Go to a client's detail page and switch between the Statistics, Measurements, and Logs tabs. Verify the content loads and the UI remains responsive.
-        -   [ ] Add a new Service in the profile editor. Verify it appears in the list instantly. Refresh the page and confirm it persists with the correct data.
-        -   [ ] Delete a Testimonial. Verify it is removed from the list instantly with a fade-out animation. Refresh and confirm it's gone.
-    -   [ ] **The "Error Paths" (verify all error-handling from Part 4 works).**
-        -   [ ] Use browser dev tools to simulate a network failure for a `delete` action. Click delete, see the item disappear, then reappear after the network error, accompanied by an error toast.
-        -   [ ] Use dev tools to block the `/api/dashboard` route. Navigate to the dashboard and verify an error state with a "Retry" button appears.
-    -   [ ] **The "Interruption Paths" (verify all interruption-handling from Part 4 works).**
-        -   [ ] Click to delete an item, and immediately refresh the page before the action completes. Verify the item is still present on page load (as the action never finished).
-- [ ] **Post-Deployment Metric Validation:**
-    -   [ ] After deployment, compare the new performance metrics in Sentry/Vercel against the established baselines to quantify the improvement and confirm the changes were effective.
+---
 
-### Part 6: Cleanup & Finalization
-*(The final tasks before merging.)*
-- [x] **Remove Temporary Code:**
-    -   [x] Search the entire project for any `console.log` statements used during development and remove them.
-- [x] **Code Review & Refactor:**
-    -   [x] Review all modified hooks (`use...Manager.ts`) to ensure the optimistic update and revert logic is consistent and clean.
-    -   [x] Ensure all form buttons now correctly implement loading/disabled states via `useFormStatus`.
-    -   [x] Verify that all internal navigation uses the Next.js `<Link>` component to enable prefetching, rather than `<a>` tags or unnecessary `router.push()` calls.
-- [x] **Remove Obsolete Flags/Code:**
-    -   [x] Evaluate if the `/api/dashboard` route is still necessary after moving data fetching server-side. If it's only used for SWR revalidation, confirm it's secure and cannot be exploited. Otherwise, remove it.
-- [x] **Audit All New User-Facing Strings:**
-    -   [x] Before finalizing the PR, search for all new strings added (e.g., in `toast.success()`, button text). Verify that every string is retrieved via the `t()` function from `useTranslations` and has a corresponding entry in both `src/messages/en.json` and `src/messages/pl.json`.
-- [x] **Documentation:**
-    -   [x] Add JSDoc comments to `useEditableListManager.ts` explaining the optimistic update pattern, including the temporary ID and state reconciliation logic.
-    -   [x] Add a comment in `dashboard/page.tsx` explaining why data is fetched on the server and passed down as a prop for performance reasons.
+### Part 1: Backend Foundation & Authentication
+
+- [ ] **1.1. Enhance Database Schema (`prisma/schema.prisma`)**
+    - [ ] Modify the `User` model: Change the `role` field to be required without a default value.
+    - [ ] Modify the `Client` model:
+        - [ ] Add a new nullable, unique field: `userId String? @unique`.
+        - [ ] Add the corresponding relation: `user User? @relation("ClientUser", fields: [userId], references: [id], onDelete: SetNull)`.
+        - [ ] Make the `trainerId` field nullable: `trainerId String?`.
+        - [ ] Update the `trainer` relation with a name to disambiguate: `trainer User? @relation("TrainerClients", fields: [trainerId], references: [id], onDelete: Cascade)`.
+        - [ ] Add the new relations to the `User` model: `clients Client[] @relation("TrainerClients")` and `selfManagedClient Client? @relation("ClientUser")`.
+- [ ] **1.2. Update Database**
+    - [ ] Run `npx prisma migrate dev --name add_client_role_and_linking` and approve the migration.
+- [ ] **1.3. Modify User Registration Flow (`src/app/[locale]/auth/actions.ts`)**
+    - [ ] Update the Zod schema (`getRegisterSchema`) to require a `role` field (must be `'client'` or `'trainer'`).
+    - [ ] Modify the `registerUser` server action to accept and use the `role` from `formData` when creating the new `User`.
+- [ ] **1.4. Update Registration UI (`src/app/[locale]/auth/register/page.client.tsx`)**
+    - [ ] Add a clear, two-option radio button group for role selection ("I am a Client" / "I am a Trainer").
+- [ ] **1.5. Implement Role-Based Logic**
+    - [ ] **Middleware (`src/middleware.ts`):**
+        - [ ] After auth, check user's role.
+        - [ ] Redirect `trainer` roles to `/dashboard`.
+        - [ ] Redirect `client` roles to `/client-dashboard`.
+        - [ ] Define and protect client-only routes (e.g., `/client-dashboard/*`).
+    - [ ] **Page-Level (`/client-dashboard/page.tsx`, etc.):**
+        - [ ] Add a server-side check on protected pages to re-verify the user's role for defense-in-depth security.
+- [ ] **1.6. Update Trainer's "Add Client" Flow (`src/app/[locale]/clients/actions/client-actions.ts`)**
+    - [ ] In the `addClient` server action, before creating a new `Client`, check if a `User` with the provided email already exists.
+    - [ ] If a `User` exists, return a specific error message.
+- [ ] **1.7. Implement "Request Access" Flow**
+    - [ ] **Backend (`src/app/[locale]/client-dashboard/actions.ts`):**
+        - [ ] Create a new server action `requestClientLink(clientEmail: string)`.
+        - [ ] This action finds the client `User` by email and creates a new `Notification` for them with a special type (e.g., `link_request`) and payload containing the trainer's ID.
+    - [ ] **UI (`src/components/clients/ClientForm.tsx`):**
+        - [ ] When the "user already exists" error is returned, hide the standard error message and instead display a "Request Access" button.
+        - [ ] Wire this button to call the `requestClientLink` action.
+
+### Part 2: Client Account Creation & Data Scaffolding
+
+- [ ] **2.1. Create Self-Managed Client Record (`src/app/[locale]/auth/actions.ts`)**
+    - [ ] In `registerUser`, if the role is `'client'`, immediately create a corresponding `Client` record with `userId` set and `trainerId` as `null`.
+- [ ] **2.2. Create New Server Actions for Client Self-Logging (`src/app/[locale]/client-dashboard/actions.ts`)**
+    - [ ] Implement `addMyExerciseLog`, `updateMyExerciseLog`, and `deleteMyExerciseLog`.
+    - [ ] Ensure all actions securely resolve the logged-in `User.id` to their self-managed `Client.id` before performing any database operations.
+
+### Part 3: Client Dashboard Implementation
+
+- [ ] **3.1. Create Client Dashboard Routes and Layout**
+    - [ ] Create directory: `src/app/[locale]/client-dashboard/`.
+    - [ ] Create `layout.tsx` with client-specific navigation (e.g., Dashboard, Log Workout, My Trainer).
+    - [ ] Create `page.tsx` for the main dashboard view.
+- [ ] **3.2. Implement Client-Side Exercise Logging UI**
+    - [ ] Create a `LogWorkout.tsx` component, reusing UI patterns from `ManageClientExerciseLogs.tsx`.
+    - [ ] Create a `useMyExerciseLogManager` hook adapted for the new self-service actions.
+- [ ] **3.3. Implement Client Statistics and Progress View**
+    - [ ] Create a `MyProgress.tsx` component, reusing `ClientStatistics.tsx` and `ExerciseProgressChart.tsx`.
+- [ ] **3.4. Implement "My Trainer" / "Sharing" Section in Client Dashboard**
+    - [ ] Create a component that displays the linked trainer's info if `trainerId` is not null.
+    - [ ] This component will contain the "Unlink from Trainer" button.
+- [ ] **3.5. Design and Implement Empty States**
+    - [ ] Create a welcoming empty state for the client dashboard that guides new users on what to do next (log a workout or find a trainer).
+
+### Part 4: Trainer Discovery & Data Sharing Flow
+
+- [ ] **4.1. Create the `shareDataWithTrainer(trainerUsername: string)` Server Action (`src/app/[locale]/client-dashboard/actions.ts`)**
+    - [ ] The entire action's database logic **must be wrapped in `prisma.$transaction`** to ensure atomicity.
+    - [ ] Implement merge logic: If a trainer-created `Client` record exists for the user's email, consolidate data.
+        - [ ] **Consolidation Strategy:** Use `prisma.clientExerciseLog.updateMany` (and similar for other data types) to re-assign the `clientId` of self-logged data to the trainer's `Client` record ID.
+        - [ ] Update the trainer's `Client` record to set its `userId`.
+        - [ ] Delete the now-empty self-managed `Client` record.
+    - [ ] Implement fresh link logic: If no pre-existing record, update the self-managed `Client` record's `trainerId`.
+    - [ ] Create an in-app notification for the trainer.
+- [ ] **4.2. Create the `unlinkFromTrainer()` Server Action (`src/app/[locale]/client-dashboard/actions.ts`)**
+    - [ ] Get the current client's `User` and linked `Client` records.
+    - [ ] Set the `trainerId` on the `Client` record back to `null`.
+    - [ ] **Crucially, also set the `userId` field to `null` on the trainer's former `Client` record** to break the active link while preserving historical data for the trainer.
+    - [ ] Create a notification for the trainer about the unlink event.
+- [ ] **4.3. Add "Share Data" Button to Trainer Profile (`src/app/[locale]/trainer/[username]/page.tsx`)**
+    - [ ] Add a server-side check to display the "Share My Data" button only for logged-in users with the `client` role.
+- [ ] **4.4. Create Sharing Confirmation UI**
+    - [ ] Build the client component with the confirmation modal that calls the `shareDataWithTrainer` action.
+
+### Part 5: Trainer-Side Integration
+
+- [ ] **5.1. Update Trainer's Client List UI (`src/components/clients/ClientGrid.tsx`)**
+    - [ ] Fetch the `userId` field when calling `getTrainerClients`.
+    - [ ] Add a visual "Linked Account" indicator for clients with a non-null `userId`.
+- [ ] **5.2. Verify Data Display in `ClientDetailView`**
+    - [ ] Manually confirm that after a client links, all their historical and newly logged data appears correctly in the trainer's view.
+
+### Part 6: Testing & Finalization
+
+- [ ] **6.1. Unit & Component Tests**
+    - [ ] Test `shareDataWithTrainer`, specifically mocking `prisma.$transaction` and verifying the data merge logic.
+    - [ ] Test the `unlinkFromTrainer` action, ensuring foreign keys are correctly nulled.
+    - [ ] Test the updated `addClient` action to confirm it returns the correct error for an existing user.
+- [ ] **6.2. End-to-End (E2E) Testing**
+    - [ ] **Scenario 1:** New Client -> Log Data -> Share -> Unlink -> Verify states for both client and trainer at each step.
+    - [ ] **Scenario 2:** Trainer Adds Client -> Client Registers -> Client Logs Data -> Client Links Account -> Verify data is merged correctly.
+    - [ ] **Scenario 3:** Trainer attempts to add an existing client -> Verify "Request Access" UI appears and the notification flow works.
+- [ ] **6.3. Documentation & Cleanup**
+    - [ ] Update `docs/app_description.md` to reflect the new client role, self-service features, and sharing flow.
+    - [ ] Remove any temporary or unused code.
+
+This final plan is comprehensive, addressing the feature from the database schema up to the user experience, including critical edge cases and security considerations. You can now proceed with implementation.
