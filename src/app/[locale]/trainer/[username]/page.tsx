@@ -17,11 +17,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server"; // <-- IMPORT
-import { prisma } from "@/lib/prisma"; // <-- IMPORT
-import ShareDataButton from "@/components/trainer/ShareDataButton"; // <-- IMPORT NEW COMPONENT
+import { createClient } from "@/lib/supabase/server"; 
+import { prisma } from "@/lib/prisma"; 
+import ShareOrUnlinkButton from "@/components/trainer/ShareOrUnlinkButton";
 
-// Define interfaces for the data structure
+// ... (interfaces remain the same) ...
 interface Benefit {
   id: string;
   title: string;
@@ -78,8 +78,8 @@ interface UserWithProfile {
 }
 
 // Placeholder for default images
-const DEFAULT_BANNER_IMAGE = "/default-banner.jpg"; // Replace with actual default banner
-const DEFAULT_PROFILE_IMAGE = "/default-profile.jpg"; // Replace with actual default profile image
+const DEFAULT_BANNER_IMAGE = "/default-banner.jpg";
+const DEFAULT_PROFILE_IMAGE = "/default-profile.jpg";
 
 interface TrainerProfilePageProps {
   params: Promise<{ username: string, locale: string }>;
@@ -114,14 +114,13 @@ export async function generateMetadata({
       title: pageTitle,
       description: description,
       url: `/trainer/${username}`,
-      images: profileImageUrl ? [profileImageUrl] : [], // Use trainer's profile pic
+      images: profileImageUrl ? [profileImageUrl] : [],
     },
     twitter: {
       title: pageTitle,
       description: description,
       images: profileImageUrl ? [profileImageUrl] : [],
     },
-    // DYNAMIC JSON-LD STRUCTURED DATA
     other: {
       'script[type="application/ld+json"]': JSON.stringify({
         "@context": "https://schema.org",
@@ -148,33 +147,49 @@ export default async function TrainerProfilePage({
     const { locale, username } = await params;
   const t = await getTranslations({locale: locale, namespace: 'TrainerProfilePage'});
 
-  // --- START: ADDED LOGIC TO GET CURRENT USER ---
-  const supabase = await createClient();
-  const { data: { user: sessionUser } } = await supabase.auth.getUser();
-  
-  let prismaUser = null;
-  if (sessionUser) {
-    prismaUser = await prisma.user.findUnique({
-      where: { id: sessionUser.id },
-      select: { role: true },
-    });
-  }
-  
-  const showShareButton = sessionUser && prismaUser?.role === 'client';
-  // --- END: ADDED LOGIC ---
-
   const userWithProfile: UserWithProfile | null =
     await getTrainerProfileByUsername(username);
 
   if (!userWithProfile || !userWithProfile.profile) {
-    notFound(); // Or return a custom "Profile not found" component
+    notFound();
   }
+
+  // --- START: MODIFIED LOGIC TO CHECK LINK STATUS ---
+  const supabase = await createClient();
+  const { data: { user: sessionUser } } = await supabase.auth.getUser();
+  
+  let showActionButtons = false;
+  let isAlreadyLinked = false;
+
+  if (sessionUser) {
+    // Corrected Prisma Query
+    const clientRecord = await prisma.client.findUnique({
+      where: { userId: sessionUser.id },
+      select: { 
+        trainerId: true,
+        user: { // Follow the relation to the User model
+          select: {
+            role: true // Select the role from the related User
+          }
+        }
+      }
+    });
+  
+    // Check if the logged-in user is a client.
+    if (clientRecord && clientRecord.user?.role === 'client') {
+      showActionButtons = true;
+      // Check if the client's linked trainerId matches the ID of the trainer profile being viewed.
+      if (clientRecord.trainerId === userWithProfile.id) {
+        isAlreadyLinked = true;
+      }
+    }
+  }
+  // --- END: MODIFIED LOGIC ---
 
   const schedule = await getTrainerSchedule(userWithProfile.id);
 
   const { profile, name } = userWithProfile;
 
-  // Helper to render HTML content safely
   const renderHTML = (htmlString: string | null | undefined) => {
     if (!htmlString) return null;
     return <p dangerouslySetInnerHTML={{ __html: htmlString }} />;
@@ -214,17 +229,19 @@ export default async function TrainerProfilePage({
             </p>
           )}
 
-          {/* --- START: CONDITIONAL BUTTON RENDERING --- */}
           <div className="flex justify-center items-center gap-4">
             <Button asChild size="lg">
               <a href="#booking-section">{t('bookSession')}</a>
             </Button>
-            {showShareButton && name && (
-              <ShareDataButton trainerUsername={username} trainerName={name} />
+            {showActionButtons && name && (
+              <ShareOrUnlinkButton 
+                trainerUsername={username} 
+                trainerName={name} 
+                isAlreadyLinked={isAlreadyLinked} 
+              />
             )}
           </div>
-          {/* --- END: CONDITIONAL BUTTON RENDERING --- */}
-
+          
           {profile.location && (
             <p className="text-gray-300 mt-6 text-sm flex items-center justify-center">
               <MapPinIcon className="w-4 h-4 mr-1.5" />
@@ -234,12 +251,10 @@ export default async function TrainerProfilePage({
         </div>
       </section>
 
+      {/* ... (rest of the component remains the same) ... */}
       <div className="bg-neutral-50 dark:bg-black">
-        {/* Main Content Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-0 py-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column (Main content) */}
           <div className="lg:col-span-2 space-y-8">
-            {/* About, Philosophy, Methodology Section */}
             {(profile.aboutMe || profile.philosophy || profile.methodology) && (
               <Card>
                 <CardContent className="pt-6">
@@ -273,7 +288,6 @@ export default async function TrainerProfilePage({
               </Card>
             )}
 
-            {/* Benefits Section */}
             {profile.benefits && profile.benefits.length > 0 && (
               <Card>
                  <CardHeader><CardTitle>{t('whyTrainWithMe')}</CardTitle></CardHeader>
@@ -297,7 +311,6 @@ export default async function TrainerProfilePage({
               </Card>
             )}
 
-            {/* Services Section */}
             {profile.services && profile.services.length > 0 && (
               <Card>
                 <CardHeader><CardTitle>{t('servicesOffered')}</CardTitle></CardHeader>
@@ -321,7 +334,6 @@ export default async function TrainerProfilePage({
               </Card>
             )}
 
-            {/* Transformation Photos Section */}
             {profile.transformationPhotos && profile.transformationPhotos.length > 0 && (
               <Card>
                 <CardHeader><CardTitle>{t('clientTransformations')}</CardTitle></CardHeader>
@@ -355,7 +367,6 @@ export default async function TrainerProfilePage({
               </Card>
             )}
 
-            {/* Testimonials Section */}
             {profile.testimonials && profile.testimonials.length > 0 && (
               <Card>
                 <CardHeader><CardTitle>{t('whatClientsSay')}</CardTitle></CardHeader>
@@ -380,7 +391,6 @@ export default async function TrainerProfilePage({
             )}
           </div>
 
-          {/* Right Column (Booking) */}
           <aside className="lg:col-span-1">
             <div className="sticky top-24 space-y-8">
               <Card id="booking-section">
