@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -28,10 +27,17 @@ export default function TrainerSearch() {
     e.preventDefault();
     setIsLoading(true); // 2. Set loading on submit
     const searchParams = new URLSearchParams();
-    if (query) searchParams.set("q", query);
-    if (activeTab === "in-person" && location) {
-      searchParams.set("location", location);
+    
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) searchParams.set("q", trimmedQuery);
+
+    if (activeTab === "in-person") {
+      const trimmedLocation = location.trim();
+      if (trimmedLocation) {
+        searchParams.set("location", trimmedLocation);
+      }
     }
+    
     searchParams.set("type", activeTab);
     // The component will unmount on navigation, so we don't need to reset the loading state
     router.push(`/trainers?${searchParams.toString()}`);
