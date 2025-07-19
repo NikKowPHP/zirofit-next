@@ -9,23 +9,45 @@ describe("Dashboard Data Service", () => {
 
     // Mock individual prisma calls in the order they appear in getDashboardData
     prismaMock.client.count
-      .mockResolvedValueOnce(5)   // activeClients
-      .mockResolvedValueOnce(2);  // pendingClients
+      .mockResolvedValueOnce(5) // activeClients
+      .mockResolvedValueOnce(2); // pendingClients
 
     prismaMock.clientSessionLog.count.mockResolvedValue(12);
 
     prismaMock.profile.findUnique.mockResolvedValue({
-      services: [], testimonials: [], transformationPhotos: [],
+      services: [],
+      testimonials: [],
+      transformationPhotos: [],
     } as any);
 
     prismaMock.clientSessionLog.findMany
-      .mockResolvedValueOnce([{ sessionDate: new Date(now.getTime() + 86400000), client: { name: "Upcoming Client" } }] as any) // upcomingSessions
-      .mockResolvedValueOnce([{ sessionDate: new Date(now.getTime() - 86400000), client: { name: "Past Client" } }] as any);   // pastSessions
+      .mockResolvedValueOnce([
+        {
+          sessionDate: new Date(now.getTime() + 86400000),
+          client: { name: "Upcoming Client" },
+        },
+      ] as any) // upcomingSessions
+      .mockResolvedValueOnce([
+        {
+          sessionDate: new Date(now.getTime() - 86400000),
+          client: { name: "Past Client" },
+        },
+      ] as any); // pastSessions
 
-    prismaMock.clientMeasurement.findMany.mockResolvedValue([{ createdAt: now, client: { name: "Measured Client" } }] as any);
-    prismaMock.clientProgressPhoto.findMany.mockResolvedValue([{ createdAt: now, client: { name: "Photo Client" } }] as any);
+    // Chained mocks for clientMeasurement.findMany
+    prismaMock.clientMeasurement.findMany
+      .mockResolvedValueOnce([
+        { createdAt: now, client: { name: "Measured Client" } },
+      ] as any) // First call for recentMeasurements
+      .mockResolvedValueOnce([
+        { measurementDate: now, weightKg: 80 },
+      ] as any); // Second call for getSpotlightClient
 
-    // Mocks for getSpotlightClient, which is called separately
+    prismaMock.clientProgressPhoto.findMany.mockResolvedValue([
+      { createdAt: now, client: { name: "Photo Client" } },
+    ] as any);
+
+    // Mock for getSpotlightClient's client query
     prismaMock.client.findMany.mockResolvedValueOnce([
       {
         id: "spotlight-client",
@@ -33,10 +55,7 @@ describe("Dashboard Data Service", () => {
         _count: { measurements: 2 },
       },
     ] as any);
-    prismaMock.clientMeasurement.findMany.mockResolvedValueOnce([
-      { measurementDate: now, weightKg: 80 },
-    ] as any);
-    
+
     const data = await getDashboardData(trainerId);
 
     // Assert that the mocks were called

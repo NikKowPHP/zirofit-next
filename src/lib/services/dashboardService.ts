@@ -1,6 +1,8 @@
+
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { ChartDataService } from "./ChartDataService";
+import type { Prisma } from "@prisma/client";
 
 interface ActivityItem {
   type:
@@ -12,6 +14,17 @@ interface ActivityItem {
   clientName: string;
   message: string;
 }
+
+type MeasurementWithClient = Prisma.ClientMeasurementGetPayload<{
+  include: { client: { select: { name: true } } };
+}>;
+type PhotoWithClient = Prisma.ClientProgressPhotoGetPayload<{
+  include: { client: { select: { name: true } } };
+}>;
+type SessionWithClient = Prisma.ClientSessionLogGetPayload<{
+  include: { client: { select: { name: true } } };
+}>;
+
 
 /**
  * Aggregates and retrieves all necessary data for the trainer dashboard.
@@ -84,21 +97,21 @@ export async function getDashboardData(trainerId: string) {
   // Merge and format activities
   const activityFeed: ActivityItem[] = [
     ...upcomingSessions.map(
-      (session: { sessionDate: Date; client: { name: string } }) => ({
+      (session: SessionWithClient) => ({
         type: "UPCOMING_SESSION" as const,
         date: session.sessionDate,
         clientName: session.client.name,
         message: `Session with ${session.client.name} at ${session.sessionDate.toLocaleTimeString()}`,
       }),
     ),
-    ...recentMeasurements.map((measurement) => ({
+    ...recentMeasurements.map((measurement: MeasurementWithClient) => ({
       type: "NEW_MEASUREMENT" as const,
       date: measurement.createdAt,
       clientName: measurement.client.name,
       message: `New measurement logged for ${measurement.client.name}`,
     })),
     ...pastSessions.map(
-      (session: { sessionDate: Date; client: { name: string } }) => ({
+      (session: SessionWithClient) => ({
         type: "PAST_SESSION" as const,
         date: session.sessionDate,
         clientName: session.client.name,
@@ -106,7 +119,7 @@ export async function getDashboardData(trainerId: string) {
       }),
     ),
     ...progressPhotos.map(
-      (photo: { createdAt: Date; client: { name: string } }) => ({
+      (photo: PhotoWithClient) => ({
         type: "PROGRESS_PHOTO" as const,
         date: photo.createdAt,
         clientName: photo.client.name,

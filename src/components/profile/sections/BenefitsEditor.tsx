@@ -1,4 +1,3 @@
-// src/components/profile/sections/BenefitsEditor.tsx
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -69,7 +68,7 @@ export default function BenefitsEditor({
             .filter((id): id is string => id !== undefined);
           const result = await updateBenefitOrder(newOrder);
           if (result.success && result.messageKey) {
-            toast.success(t_server(result.messageKey));
+            toast.success(t_server(result.messageKey as any));
           } else {
             toast.error(result.error || t_server('genericError'));
           }
@@ -105,30 +104,37 @@ export default function BenefitsEditor({
   const handleDeleteBenefit = async () => {
     if (!itemToDelete) return;
 
+    const originalBenefits = benefits;
     setIsDeleting(true);
+    
+    // Optimistic UI update
+    setBenefits((prevBenefits) =>
+      prevBenefits.filter((benefit) => benefit.id !== itemToDelete),
+    );
+    setItemToDelete(null); // Close modal
+
     try {
       const result = await deleteBenefit(itemToDelete);
       if (result.success && result.messageKey) {
-        toast.success(t_server(result.messageKey));
-        setBenefits((prevBenefits) =>
-          prevBenefits.filter((benefit) => benefit.id !== itemToDelete),
-        );
+        toast.success(t_server(result.messageKey as any));
+        // State is already updated, do nothing
       } else {
         toast.error(result.error || t_server('genericError'));
+        setBenefits(originalBenefits); // Revert on failure
       }
     } catch (e: unknown) {
       toast.error(t_server('genericError'));
+      setBenefits(originalBenefits); // Revert on failure
       console.error("Failed to delete benefit: ", e);
     } finally {
         setIsDeleting(false);
-        setItemToDelete(null);
     }
   };
 
   const handleBenefitUpdate = async (id: string, formData: FormData) => {
     const result = await updateBenefit(id, undefined, formData);
     if (result?.success && result.messageKey) {
-      toast.success(t_server(result.messageKey));
+      toast.success(t_server(result.messageKey as any));
       setBenefits((prevBenefits) => {
         return prevBenefits.map((benefit) => {
           if (benefit.id === id) {

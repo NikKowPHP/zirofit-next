@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithIntl, screen, waitFor } from '../../../../tests/test-utils';
+import { renderWithIntl, screen, waitFor, within } from '../../../../tests/test-utils';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import BenefitsEditor from './BenefitsEditor';
@@ -24,8 +24,8 @@ jest.mock('sonner', () => ({
   },
 }));
 
-// Mock react-dom's useFormStatus
-jest.mock('react-dom');
+// Mock react-dom's useFormStatus - it's mocked globally in jest.setup.ts
+// We only need to import it here to type it for manipulation.
 jest.mock('sortablejs', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
@@ -47,8 +47,12 @@ describe('BenefitsEditor', () => {
 
   it('optimistically removes a benefit on delete and reverts on failure', async () => {
     const user = userEvent.setup();
-    (benefitActions.deleteBenefit as jest.Mock)
-      .mockResolvedValueOnce({ success: false, error: "Deletion failed" });
+    (benefitActions.deleteBenefit as jest.Mock).mockImplementation(async () => {
+      // This delay is crucial to let React render the optimistic state
+      // before the promise resolves and the state is reverted.
+      await new Promise(resolve => setTimeout(resolve, 10));
+      return { success: false, error: "Deletion failed" };
+    });
 
     renderWithIntl(<BenefitsEditor initialBenefits={mockInitialBenefits} />);
 
@@ -59,8 +63,9 @@ describe('BenefitsEditor', () => {
     const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
     await user.click(deleteButtons[0]);
 
-    // Confirmation modal appears
-    const confirmButton = screen.getByRole('button', { name: "Delete" });
+    // Confirmation modal appears, scope the search within it
+    const modal = screen.getByRole('dialog');
+    const confirmButton = within(modal).getByRole('button', { name: "Delete" });
     await user.click(confirmButton);
 
     // Assert item is removed optimistically BEFORE action resolves
@@ -89,14 +94,16 @@ describe('BenefitsEditor', () => {
     const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
     await user.click(deleteButtons[0]);
     
-    const confirmButton = screen.getByRole('button', { name: "Delete" });
+    // Confirmation modal appears, scope the search within it
+    const modal = screen.getByRole('dialog');
+    const confirmButton = within(modal).getByRole('button', { name: "Delete" });
     await user.click(confirmButton);
 
     await waitFor(() => {
       expect(screen.queryByText('Benefit One')).not.toBeInTheDocument();
     });
 
-    expect(toast.success).toHaveBeenCalledWith('benefitDeleted');
+    expect(toast.success).toHaveBeenCalledWith('Benefit deleted.');
   });
 
   it('shows loading state on submit button when form is pending', () => {
