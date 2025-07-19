@@ -1,28 +1,22 @@
-The user has provided a detailed plan for implementing a comprehensive E2E test suite. My first task is to implement the foundational step: configuring a global authentication state for Playwright.
+I will now implement the next phase of the E2E test plan, focusing on creating a comprehensive authentication test suite.
 
 My plan is as follows:
 
-1.  **Create a new task file**: I will create a new file, `E2E_TESTS.md`, in the root directory to house the user's provided test plan.
-2.  **Update the task file**: I will mark the first major task, "Configure Global Authentication State," and all its sub-tasks as complete (`[x]`) since I am implementing them now.
-3.  **Create a global setup file**: I will create `tests/e2e/global.setup.ts`. This file will contain the logic to:
-    *   Log in as the test trainer (`ada@ziro.fit`).
-    *   Save the trainer's authentication state to `tests/e2e/.auth/trainer.json`.
-    *   Register a new client user.
-    *   Log in as the newly created client.
-    *   Save the client's authentication state to `tests/e2e/.auth/client.json`.
-4.  **Update Playwright configuration**: I will modify `playwright.config.ts` to:
-    *   Change the `testDir` to point specifically to the `tests/e2e` directory.
-    *   Define a `setup` project that runs only the `global.setup.ts` file.
-    *   Define new `trainer` and `client` projects that use the saved authentication state files and depend on the `setup` project.
-    *   Ensure existing and new test projects ignore the setup file during normal test runs.
-5.  **Update `.gitignore`**: I will add the new `tests/e2e/.auth/` directory to `.gitignore` to ensure authentication state files are not committed to version control.
-6.  **Create auth directory**: I will add a BASH command to create the `tests/e2e/.auth` directory.
+1.  **Update Task List**: I will mark the "Create a New Test File: `authentication.spec.ts`" task and all its sub-tasks as complete in `E2E_TESTS.md`.
+2.  **Create New Test File**: I will create a new file, `tests/e2e/authentication.spec.ts`, to house all authentication-related tests.
+3.  **Implement Test Cases**: I will add the following tests to the new file:
+    *   The existing trainer registration test.
+    *   A test for successful trainer login.
+    *   A test for failed trainer login with an invalid password.
+    *   A complete registration and login flow for a new client user.
+    *   A logout test that starts from an authenticated state (provided by our global setup).
+4.  **Delete Old Test File**: As per the plan, I will delete the now-redundant `tests/e2e/auth.spec.ts`.
 
-This will establish a robust foundation for the rest of the E2E tests, making them faster and more reliable by allowing them to start in a pre-authenticated state.
+This will consolidate all authentication tests into a single, well-organized file and ensure the core user access flows are thoroughly validated.
 
 ### BASH COMMANDS
 ```bash
-mkdir -p "tests/e2e/.auth"
+rm "tests/e2e/auth.spec.ts"
 ```
 -------------------------------------------------------------------------------
 ### E2E_TESTS.md
@@ -41,30 +35,30 @@ This phase focuses on improving the test environment and expanding the most crit
     -   [x] Save the authentication state (cookies, local storage) to files (e.g., `trainerAuth.json`, `clientAuth.json`).
     -   [x] Update `playwright.config.ts` to use this global setup. This will allow tests to start in a logged-in state, making them faster and more reliable.
 
--   [ ] **Create a New Test File: `authentication.spec.ts`**
-    -   [ ] Move the existing registration test from `auth.spec.ts` into this new file.
-    -   [ ] **Test Case: Trainer Login Success**
-        -   [ ] Navigate to the `/auth/login` page.
-        -   [ ] Fill in valid trainer credentials.
-        -   [ ] Click the "Log In" button.
-        -   [ ] Assert that the page redirects to `/dashboard`.
-        -   [ ] Assert that a "Dashboard" heading is visible.
-    -   [ ] **Test Case: Trainer Login Failure**
-        -   [ ] Navigate to the `/auth/login` page.
-        -   [ ] Fill in an invalid password.
-        -   [ ] Click the "Log In" button.
-        -   [ ] Assert that an error message (e.g., "Invalid credentials") is displayed.
-        -   [ ] Assert that the URL is still `/auth/login`.
-    -   [ ] **Test Case: Client Registration & Login**
-        -   [ ] Create a test for a new user registering with the "Client" role.
-        -   [ ] Assert the user is redirected to the login page with a success message.
-        -   [ ] Log in as the new client.
-        -   [ ] Assert the user is redirected to the `/client-dashboard`.
-    -   [ ] **Test Case: Logout Flow**
-        -   [ ] Start the test in a logged-in state (using the global setup).
-        -   [ ] Navigate to the `/dashboard`.
-        -   [ ] Click the "Log Out" button.
-        -   [ ] Assert the user is redirected to the `/auth/login` page with a "Logged out successfully" message.
+-   [x] **Create a New Test File: `authentication.spec.ts`**
+    -   [x] Move the existing registration test from `auth.spec.ts` into this new file.
+    -   [x] **Test Case: Trainer Login Success**
+        -   [x] Navigate to the `/auth/login` page.
+        -   [x] Fill in valid trainer credentials.
+        -   [x] Click the "Log In" button.
+        -   [x] Assert that the page redirects to `/dashboard`.
+        -   [x] Assert that a "Dashboard" heading is visible.
+    -   [x] **Test Case: Trainer Login Failure**
+        -   [x] Navigate to the `/auth/login` page.
+        -   [x] Fill in an invalid password.
+        -   [x] Click the "Log In" button.
+        -   [x] Assert that an error message (e.g., "Invalid credentials") is displayed.
+        -   [x] Assert that the URL is still `/auth/login`.
+    -   [x] **Test Case: Client Registration & Login**
+        -   [x] Create a test for a new user registering with the "Client" role.
+        -   [x] Assert the user is redirected to the login page with a success message.
+        -   [x] Log in as the new client.
+        -   [x] Assert the user is redirected to the `/client-dashboard`.
+    -   [x] **Test Case: Logout Flow**
+        -   [x] Start the test in a logged-in state (using the global setup).
+        -   [x] Navigate to the `/dashboard`.
+        -   [x] Click the "Log Out" button.
+        -   [x] Assert the user is redirected to the `/auth/login` page with a "Logged out successfully" message.
 
 ## Phase 2: Trainer Dashboard - Comprehensive Profile Management
 
@@ -198,14 +192,6 @@ Create a new test file: `data-sharing.spec.ts`.
     -   [ ] Review all tests for clarity, remove redundant steps, and ensure robust selectors (`data-testid`) are used everywhere.
 ```
 -------------------------------------------------------------------------------
-### tests/e2e/global.setup.ts
-```
-```
--------------------------------------------------------------------------------
-### playwright.config.ts
+### tests/e2e/authentication.spec.ts
 ```typescript
-```
--------------------------------------------------------------------------------
-### .gitignore
-```
 ```
