@@ -34,6 +34,8 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     { name: 'setup', testMatch: /global\.setup\.ts/ },
+    
+    // Desktop Browsers
     {
       name: 'chromium',
       use: { 
@@ -68,11 +70,31 @@ export default defineConfig({
       dependencies: ['setup'],
       testIgnore: /global\.setup\.ts/,
     },
+
+    // Mobile Browsers
+    {
+      name: 'Mobile Chrome (Trainer)',
+      use: {
+        ...devices['Pixel 5'],
+        storageState: TRAINER_AUTH_FILE,
+      },
+      dependencies: ['setup'],
+      testIgnore: /global\.setup\.ts/,
+    },
+    {
+      name: 'Mobile Chrome (Client)',
+      use: {
+        ...devices['Pixel 5'],
+        storageState: CLIENT_AUTH_FILE,
+      },
+      dependencies: ['setup'],
+      testIgnore: /global\.setup\.ts/,
+    },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'npm run dev:test',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

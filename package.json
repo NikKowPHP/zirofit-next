@@ -1,3 +1,4 @@
+
 {
   "name": "zirofit-next",
   "version": "1.0.0",
@@ -7,9 +8,10 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "jest",
-    "test:e2e": "npx playwright install --with-deps && playwright test",
+    "test:e2e": "npx playwright install --with-deps && docker-compose up -d && dotenv -e .env.test -- npx prisma migrate deploy && playwright test; docker-compose down",
     "db:backfill-locations": "npx ts-node --project tsconfig-seed.json prisma/seed-backfill-locations.ts",
-    "db:seed-exercises": "npx ts-node --project tsconfig-seed.json prisma/seed-exercises.ts"
+    "db:seed-exercises": "npx ts-node --project tsconfig-seed.json prisma/seed-exercises.ts",
+    "dev:test": "dotenv -e .env.test -- next dev"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -67,6 +69,7 @@
     "autoprefixer": "^10.4.21",
     "babel-jest": "^30.0.0",
     "babel-plugin-module-resolver": "latest",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^8.57.1",
     "globals": "^15.9.0",
     "jest": "^30.0.0",
