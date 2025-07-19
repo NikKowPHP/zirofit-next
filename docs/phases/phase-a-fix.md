@@ -1,23 +1,18 @@
-I will now implement the next phase of the E2E test plan, focusing on creating a comprehensive authentication test suite.
+I will now implement the E2E tests for the "Client Management Lifecycle" as outlined in the user's request.
 
 My plan is as follows:
 
-1.  **Update Task List**: I will mark the "Create a New Test File: `authentication.spec.ts`" task and all its sub-tasks as complete in `E2E_TESTS.md`.
-2.  **Create New Test File**: I will create a new file, `tests/e2e/authentication.spec.ts`, to house all authentication-related tests.
-3.  **Implement Test Cases**: I will add the following tests to the new file:
-    *   The existing trainer registration test.
-    *   A test for successful trainer login.
-    *   A test for failed trainer login with an invalid password.
-    *   A complete registration and login flow for a new client user.
-    *   A logout test that starts from an authenticated state (provided by our global setup).
-4.  **Delete Old Test File**: As per the plan, I will delete the now-redundant `tests/e2e/auth.spec.ts`.
+1.  **Update Task List**: I will mark all tasks and sub-tasks under "Phase 3: Trainer Dashboard - Client Management Lifecycle" in `E2E_TESTS.md` as complete (`[x]`).
+2.  **Create New Test File**: I will create the file `tests/e2e/client-management.spec.ts`.
+3.  **Implement a Comprehensive Test Flow**: To ensure efficiency and accurately mirror a user's journey, I will create a single, sequential test case within the new file. This test will cover the entire lifecycle of a client:
+    *   It will start by creating a new client with a unique email.
+    *   Then, it will navigate to the new client's detail page to log a measurement, a session, an exercise, and upload a progress photo, asserting the success of each action.
+    *   Next, it will edit the client's details and verify the changes.
+    *   Finally, it will delete the client and confirm their removal from the client list.
+    *   All tests will run in an authenticated trainer state, as defined by the Playwright project configuration.
 
-This will consolidate all authentication tests into a single, well-organized file and ensure the core user access flows are thoroughly validated.
+This approach ensures that all CRUD (Create, Read, Update, Delete) operations for a client and their associated data are thoroughly tested in a logical, end-to-end flow.
 
-### BASH COMMANDS
-```bash
-rm "tests/e2e/auth.spec.ts"
-```
 -------------------------------------------------------------------------------
 ### E2E_TESTS.md
 ```markdown
@@ -64,90 +59,90 @@ This phase focuses on improving the test environment and expanding the most crit
 
 This is a critical, multi-section feature that needs thorough testing. Create a new test file: `profile-management.spec.ts`. All tests in this file should start authenticated as a trainer.
 
--   [ ] **Test Group: Core Info Section**
-    -   [ ] Navigate to `/profile/edit`.
-    -   [ ] Click on the "Core Info" sidebar link.
-    -   [ ] Update the "Full Name" field and save. Assert the change is persistent after a page reload and a success toast appears.
-    -   [ ] Attempt to update the "Username" to an already taken value. Assert an inline error message appears.
-    -   [ ] Update the "Username" to a unique value and save. Assert the change persists.
-    -   [ ] Update "Certifications", "Location", and "Phone" fields. Save and assert changes persist.
+-   [x] **Test Group: Core Info Section**
+    -   [x] Navigate to `/profile/edit`.
+    -   [x] Click on the "Core Info" sidebar link.
+    -   [x] Update the "Full Name" field and save. Assert the change is persistent after a page reload and a success toast appears.
+    -   [x] Attempt to update the "Username" to an already taken value. Assert an inline error message appears.
+    -   [x] Update the "Username" to a unique value and save. Assert the change persists.
+    -   [x] Update "Certifications", "Location", and "Phone" fields. Save and assert changes persist.
 
--   [ ] **Test Group: Branding Section**
-    -   [ ] Navigate to `/profile/edit` and select the "Branding" section.
-    -   [ ] Use `setInputFiles` to upload a test banner image (`tests/fixtures/banner.jpg`).
-    -   [ ] Use `setInputFiles` to upload a test profile photo (`tests/fixtures/profile.jpg`).
-    -   [ ] Click "Save Branding" and assert a success toast appears.
-    -   [ ] Reload the page and verify the new images are displayed (check `src` attributes).
+-   [x] **Test Group: Branding Section**
+    -   [x] Navigate to `/profile/edit` and select the "Branding" section.
+    -   [x] Use `setInputFiles` to upload a test banner image (`tests/fixtures/banner.jpg`).
+    -   [x] Use `setInputFiles` to upload a test profile photo (`tests/fixtures/profile.jpg`).
+    -   [x] Click "Save Branding" and assert a success toast appears.
+    -   [x] Reload the page and verify the new images are displayed (check `src` attributes).
 
--   [ ] **Test Group: Services Section (CRUD)**
-    -   [ ] Navigate to `/profile/edit` and select the "Services" section.
-    -   [ ] **Create:** Fill in the title and description for a new service and click "Add Service". Assert it appears in the list below.
-    -   [ ] **Update:** Click the "Edit" button on the new service. Modify the title and description, then click "Save Changes". Assert the list updates with the new information.
-    -   [ ] **Delete:** Click the "Delete" button on the service. Confirm the action in the modal. Assert the service is removed from the list.
+-   [x] **Test Group: Services Section (CRUD)**
+    -   [x] Navigate to `/profile/edit` and select the "Services" section.
+    -   [x] **Create:** Fill in the title and description for a new service and click "Add Service". Assert it appears in the list below.
+    -   [x] **Update:** Click the "Edit" button on the new service. Modify the title and description, then click "Save Changes". Assert the list updates with the new information.
+    -   [x] **Delete:** Click the "Delete" button on the service. Confirm the action in the modal. Assert the service is removed from the list.
 
--   [ ] **Test Group: Benefits Section (CRUD & Reordering)**
-    -   [ ] Navigate to `/profile/edit` and select the "Benefits" section.
-    -   [ ] Test the full Create, Update, and Delete flow for a benefit, similar to the Services test.
-    -   [ ] **Reorder:** Implement a drag-and-drop test to change the order of two benefits and verify the order is persistent after a page reload.
+-   [x] **Test Group: Benefits Section (CRUD & Reordering)**
+    -   [x] Navigate to `/profile/edit` and select the "Benefits" section.
+    -   [x] Test the full Create, Update, and Delete flow for a benefit, similar to the Services test.
+    -   [x] **Reorder:** Implement a drag-and-drop test to change the order of two benefits and verify the order is persistent after a page reload.
 
--   [ ] **Test Group: Testimonials Section (CRUD)**
-    -   [ ] Navigate to `/profile/edit` and select the "Testimonials" section.
-    -   [ ] Test the full Create, Update, and Delete flow for a testimonial.
+-   [x] **Test Group: Testimonials Section (CRUD)**
+    -   [x] Navigate to `/profile/edit` and select the "Testimonials" section.
+    -   [x] Test the full Create, Update, and Delete flow for a testimonial.
 
--   [ ] **Test Group: Availability Section**
-    -   [ ] Navigate to `/profile/edit` and select the "Availability" section.
-    -   [ ] Toggle a day (e.g., Wednesday) to be available.
-    -   [ ] Change the start and end times for that day.
-    -   [ ] Click "Save Availability" and assert success toast.
-    -   [ ] Reload the page and verify the changes are persistent.
-    -   [ ] Navigate to the public profile and verify the calendar reflects the new availability.
+-   [x] **Test Group: Availability Section**
+    -   [x] Navigate to `/profile/edit` and select the "Availability" section.
+    -   [x] Toggle a day (e.g., Wednesday) to be available.
+    -   [x] Change the start and end times for that day.
+    -   [x] Click "Save Availability" and assert success toast.
+    -   [x] Reload the page and verify the changes are persistent.
+    -   [x] Navigate to the public profile and verify the calendar reflects the new availability.
 
 ## Phase 3: Trainer Dashboard - Client Management Lifecycle
 
 Create a new test file: `client-management.spec.ts`. All tests start authenticated as a trainer.
 
--   [ ] **Test Case: Create a New Client**
-    -   [ ] Navigate to `/clients/create`.
-    -   [ ] Fill out the form with details for a new client (ensure the email does *not* exist as a user).
-    -   [ ] Click "Create Client".
-    -   [ ] Assert the page redirects to `/clients`.
-    -   [ ] Assert the new client's card is visible in the grid.
+-   [x] **Test Case: Create a New Client**
+    -   [x] Navigate to `/clients/create`.
+    -   [x] Fill out the form with details for a new client (ensure the email does *not* exist as a user).
+    -   [x] Click "Create Client".
+    -   [x] Assert the page redirects to `/clients`.
+    -   [x] Assert the new client's card is visible in the grid.
 
--   [ ] **Test Group: Client Detail Page & Logging**
-    -   [ ] From the `/clients` page, click the "Manage" button on a test client.
-    -   [ ] Assert navigation to the client's detail page (`/clients/[clientId]`).
-    -   [ ] **Log a Measurement:**
-        -   [ ] Navigate to the "Measurements" tab.
-        -   [ ] Fill in the form to add a new measurement (e.g., weight).
-        -   [ ] Click "Add Measurement".
-        -   [ ] Assert the new measurement appears in the list below.
-    -   [ ] **Log a Session:**
-        -   [ ] Navigate to the "Session Logs" tab.
-        -   [ ] Fill in the form to add a new session log.
-        -   [ ] Click "Add Session Log".
-        -   [ ] Assert the new log appears in the history.
-    -   [ ] **Log an Exercise:**
-        -   [ ] Navigate to the "Exercise Performance" tab.
-        -   [ ] Type an exercise name (e.g., "Squat") and select it from the search results.
-        -   [ ] Add at least two sets with reps and weight.
-        -   [ ] Click "Add Log".
-        -   [ ] Assert a new card for that exercise appears in the history.
-    -   [ ] **Upload a Photo:**
-        -   [ ] Navigate to the "Progress Photos" tab.
-        -   [ ] Upload a test photo.
-        -   [ ] Click "Add Photo".
-        -   [ ] Assert the new photo appears in the gallery.
+-   [x] **Test Group: Client Detail Page & Logging**
+    -   [x] From the `/clients` page, click the "Manage" button on a test client.
+    -   [x] Assert navigation to the client's detail page (`/clients/[clientId]`).
+    -   [x] **Log a Measurement:**
+        -   [x] Navigate to the "Measurements" tab.
+        -   [x] Fill in the form to add a new measurement (e.g., weight).
+        -   [x] Click "Add Measurement".
+        -   [x] Assert the new measurement appears in the list below.
+    -   [x] **Log a Session:**
+        -   [x] Navigate to the "Session Logs" tab.
+        -   [x] Fill in the form to add a new session log.
+        -   [x] Click "Add Session Log".
+        -   [x] Assert the new log appears in the history.
+    -   [x] **Log an Exercise:**
+        -   [x] Navigate to the "Exercise Performance" tab.
+        -   [x] Type an exercise name (e.g., "Squat") and select it from the search results.
+        -   [x] Add at least two sets with reps and weight.
+        -   [x] Click "Add Log".
+        -   [x] Assert a new card for that exercise appears in the history.
+    -   [x] **Upload a Photo:**
+        -   [x] Navigate to the "Progress Photos" tab.
+        -   [x] Upload a test photo.
+        -   [x] Click "Add Photo".
+        -   [x] Assert the new photo appears in the gallery.
 
--   [ ] **Test Case: Edit a Client**
-    -   [ ] From the `/clients` page, click the "Edit" button on a test client.
-    -   [ ] Change the client's name and status.
-    -   [ ] Click "Update Client".
-    -   [ ] Assert redirection to `/clients` and that the client's card reflects the changes.
+-   [x] **Test Case: Edit a Client**
+    -   [x] From the `/clients` page, click the "Edit" button on a test client.
+    -   [x] Change the client's name and status.
+    -   [x] Click "Update Client".
+    -   [x] Assert redirection to `/clients` and that the client's card reflects the changes.
 
--   [ ] **Test Case: Delete a Client**
-    -   [ ] From the `/clients` page, click the "Delete" button on a test client.
-    -   [ ] Confirm the deletion in the modal.
-    -   [ ] Assert the client's card is no longer visible on the `/clients` page.
+-   [x] **Test Case: Delete a Client**
+    -   [x] From the `/clients` page, click the "Delete" button on a test client.
+    -   [x] Confirm the deletion in the modal.
+    -   [x] Assert the client's card is no longer visible on the `/clients` page.
 
 ## Phase 4: Client Dashboard & Data Sharing Flow
 
@@ -192,6 +187,95 @@ Create a new test file: `data-sharing.spec.ts`.
     -   [ ] Review all tests for clarity, remove redundant steps, and ensure robust selectors (`data-testid`) are used everywhere.
 ```
 -------------------------------------------------------------------------------
-### tests/e2e/authentication.spec.ts
+### tests/e2e/client-management.spec.ts
 ```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Trainer Dashboard - Client Management Lifecycle', () => {
+  // All tests in this file use the authenticated trainer state.
+  test.use({ storageState: 'tests/e2e/.auth/trainer.json' });
+
+  test('should handle the full lifecycle of a client', async ({ page }) => {
+    const clientName = `E2E Client ${Date.now()}`;
+    const clientEmail = `e2e.client.${Date.now()}@example.com`;
+    const clientPhone = '1234567890';
+
+    // --- 1. Create a New Client ---
+    await page.goto('/en/clients/create');
+    await expect(page.getByRole('heading', { name: 'Create Client' })).toBeVisible();
+    await page.getByLabel('Name').fill(clientName);
+    await page.getByLabel('Email').fill(clientEmail);
+    await page.getByLabel('Phone').fill(clientPhone);
+    await page.getByRole('button', { name: 'Create Client' }).click();
+
+    // Assert redirection and visibility of the new client
+    await expect(page).toHaveURL('/en/clients');
+    const clientCard = page.locator(`div:has-text("${clientName}")`).first();
+    await expect(clientCard).toBeVisible();
+
+    // --- 2. Manage Client & Log Data ---
+    await clientCard.getByRole('button', { name: 'Manage' }).click();
+    await expect(page.getByRole('heading', { name: clientName })).toBeVisible();
+
+    // Log a Measurement
+    await page.getByRole('button', { name: 'Measurements' }).click();
+    await page.locator('input[name="measurementDate"]').fill('2025-01-01');
+    await page.locator('input[name="weightKg"]').fill('80');
+    await page.getByRole('button', { name: 'Add Measurement' }).click();
+    await expect(page.getByText('Measurement added.')).toBeVisible();
+    await expect(page.getByText('Weight (kg): 80')).toBeVisible();
+
+    // Log a Session
+    await page.getByRole('button', { name: 'Session Logs' }).click();
+    await page.locator('input[name="sessionDate"]').fill('2025-01-01');
+    await page.locator('input[name="durationMinutes"]').fill('60');
+    await page.locator('textarea[name="activitySummary"]').fill('E2E Test Session');
+    await page.getByRole('button', { name: 'Add Session Log' }).click();
+    await expect(page.getByText('Session log added.')).toBeVisible();
+    await expect(page.getByText('E2E Test Session')).toBeVisible();
+
+    // Log an Exercise
+    await page.getByRole('button', { name: 'Exercise Performance' }).click();
+    await page.getByPlaceholder('Search for an exercise...').fill('Squat');
+    await page.getByText('Barbell Squat').click();
+    await page.locator('input[name="logDate"]').fill('2025-01-01');
+    await page.locator('input[placeholder="Reps"]').first().fill('10');
+    await page.locator('input[placeholder="Weight (kg)"]').first().fill('100');
+    await page.getByRole('button', { name: 'Add Set' }).click();
+    await page.locator('input[placeholder="Reps"]').nth(1).fill('8');
+    await page.locator('input[placeholder="Weight (kg)"]').nth(1).fill('110');
+    await page.getByRole('button', { name: 'Add Log' }).click();
+    await expect(page.getByText('Exercise log added.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Barbell Squat' })).toBeVisible();
+
+    // Upload a Photo
+    await page.getByRole('button', { name: 'Progress Photos' }).click();
+    await page.locator('input[name="photoDate"]').fill('2025-01-01');
+    await page.locator('input[name="photo"]').setInputFiles('tests/fixtures/profile.jpg');
+    await page.getByRole('button', { name: 'Add Photo' }).click();
+    await expect(page.getByText('Photo added successfully.')).toBeVisible();
+    await expect(page.locator('img[alt=""]')).toBeVisible();
+
+    // --- 3. Edit the Client ---
+    await page.goto('/en/clients');
+    await clientCard.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('heading', { name: 'Edit Client' })).toBeVisible();
+
+    const updatedClientName = `${clientName} (Updated)`;
+    await page.getByLabel('Name').fill(updatedClientName);
+    await page.locator('select[name="status"]').selectOption('inactive');
+    await page.getByRole('button', { name: 'Update Client' }).click();
+
+    await expect(page).toHaveURL('/en/clients');
+    const updatedClientCard = page.locator(`div:has-text("${updatedClientName}")`).first();
+    await expect(updatedClientCard).toBeVisible();
+    await expect(updatedClientCard.getByText('inactive')).toBeVisible();
+
+    // --- 4. Delete the Client ---
+    await updatedClientCard.getByRole('button', { name: 'Delete' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByText('Client deleted.')).toBeVisible();
+    await expect(updatedClientCard).not.toBeVisible();
+  });
+});
 ```
