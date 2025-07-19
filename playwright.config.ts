@@ -1,10 +1,14 @@
+
 import { defineConfig, devices } from '@playwright/test';
+
+const TRAINER_AUTH_FILE = 'tests/e2e/.auth/trainer.json';
+const CLIENT_AUTH_FILE = 'tests/e2e/.auth/client.json';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -29,6 +33,7 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    { name: 'setup', testMatch: /global\.setup\.ts/ },
     {
       name: 'chromium',
       use: { 
@@ -42,6 +47,26 @@ export default defineConfig({
           ]
         }
       },
+      dependencies: ['setup'],
+      testIgnore: /global\.setup\.ts/,
+    },
+    {
+      name: 'trainer',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: TRAINER_AUTH_FILE,
+      },
+      dependencies: ['setup'],
+      testIgnore: /global\.setup\.ts/,
+    },
+    {
+      name: 'client',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: CLIENT_AUTH_FILE,
+      },
+      dependencies: ['setup'],
+      testIgnore: /global\.setup\.ts/,
     },
   ],
 
