@@ -3,7 +3,6 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 
 const clientCredentialsFile = 'tests/e2e/.auth/client-credentials.json';
-const clientCredentials = JSON.parse(fs.readFileSync(clientCredentialsFile, 'utf-8'));
 
 test.describe('Client Dashboard & Data Sharing Flow', () => {
   
@@ -58,6 +57,7 @@ test.describe('Client Dashboard & Data Sharing Flow', () => {
     test.use({ storageState: 'tests/e2e/.auth/trainer.json' });
 
     test('should see a client\'s data after they link', async ({ page }) => {
+      const clientCredentials = JSON.parse(fs.readFileSync(clientCredentialsFile, 'utf-8'));
       // This test requires the client to be in a linked state.
       // We will perform the linking action using the API or a separate page context.
       const clientPage = await page.context().newPage();
