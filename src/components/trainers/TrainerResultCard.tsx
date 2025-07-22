@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -19,7 +18,7 @@ interface TrainerCardProps {
       certifications: string | null;
       profilePhotoPath: string | null;
       services: {
-        price: { toString: () => string } | string | null;
+        price: string | null;
         currency: string | null;
         duration: number | null;
       }[];
@@ -62,7 +61,7 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
         </p>
         {firstService && firstService.price && (
             <p className="mt-2 text-lg font-bold text-neutral-800 dark:text-neutral-200">
-                {t('fromPrice', { price: firstService.price.toString(), currency: firstService.currency || 'PLN' })}
+                {t('fromPrice', { price: firstService.price, currency: firstService.currency || 'PLN' })}
                 {firstService.duration && ` / ${firstService.duration} min`}
             </p>
         )}

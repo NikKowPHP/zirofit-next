@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -9,13 +8,18 @@ import {
   deleteService,
   updateService,
 } from "@/app/[locale]/profile/actions/service-actions";
-import type { Service } from "@prisma/client";
+import type { Service as PrismaService } from "@prisma/client";
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardContent, RichTextEditor } from "@/components/ui";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { useServerActionToast } from "@/hooks/useServerActionToast";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+
+// Type that is safe to pass from Server to Client Components
+type Service = Omit<PrismaService, 'price'> & {
+  price: string | null;
+};
 
 interface ServicesEditorProps {
   initialServices: Service[];
@@ -121,7 +125,7 @@ export default function ServicesEditor({
                   type="number"
                   step="0.01"
                   placeholder="e.g., 50.00"
-                  defaultValue={currentEditingService?.price?.toString() ?? ""}
+                  defaultValue={currentEditingService?.price ?? ""}
                   className="mt-1"
                 />
                 {getFieldError("price") && (
@@ -219,7 +223,7 @@ export default function ServicesEditor({
                     <div className="text-sm text-gray-600 dark:text-gray-300 mt-2">
                       {service.price && (
                         <span className="font-semibold text-gray-800 dark:text-gray-200">
-                          {service.price.toString()} {service.currency}
+                          {service.price} {service.currency}
                         </span>
                       )}
                       {service.duration && (

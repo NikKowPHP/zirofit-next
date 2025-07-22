@@ -1,4 +1,3 @@
-
 // src/lib/api/trainers.ts
 import { prisma } from "@/lib/prisma";
 import { transformImagePath, normalizeLocation } from "../utils";
@@ -85,12 +84,20 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
       take: pageSize,
     });
 
-    // Transform the image paths to full URLs
+    // Transform image paths and serialize Decimal prices
     const trainersWithUrls = trainers.map((trainer) => {
       if (trainer.profile) {
-        trainer.profile.profilePhotoPath = transformImagePath(
-          trainer.profile.profilePhotoPath,
-        );
+        return {
+          ...trainer,
+          profile: {
+            ...trainer.profile,
+            profilePhotoPath: transformImagePath(trainer.profile.profilePhotoPath),
+            services: trainer.profile.services.map(s => ({
+              ...s,
+              price: s.price?.toString() ?? null,
+            })),
+          },
+        };
       }
       return trainer;
     });
@@ -126,7 +133,7 @@ export interface Trainer {
     latitude: number | null;
     longitude: number | null;
     services: {
-        price: Prisma.Decimal | null;
+        price: string | null;
         currency: string | null;
         duration: number | null;
     }[];
@@ -164,6 +171,14 @@ export async function getTrainerProfileByUsername(username: string) {
       // The component will just use `photo.imagePath`.
       photo.imagePath = transformImagePath(photo.imagePath);
     });
+
+    // Serialize Decimal prices for services
+    if (profile.services) {
+        (profile.services as any) = profile.services.map(service => ({
+            ...service,
+            price: service.price ? service.price.toString() : null
+        }));
+    }
 
     return userWithProfile; // Contains user and their full profile
   } catch (error) {

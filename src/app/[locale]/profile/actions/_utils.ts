@@ -78,6 +78,13 @@ export async function getCurrentUserProfileData() {
       userWithProfile.profile.transformationPhotos.forEach((photo) => {
         (photo as any).imagePath = transformImagePath(photo.imagePath);
       });
+      // Serialize Decimal price in services to string for client components
+      if (userWithProfile.profile.services) {
+        (userWithProfile.profile.services as any) = userWithProfile.profile.services.map(service => ({
+            ...service,
+            price: service.price ? service.price.toString() : null
+        }));
+      }
     }
 
     return userWithProfile;
