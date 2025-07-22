@@ -47,9 +47,9 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
   } else if (sortBy === 'newest') {
     orderBy = { createdAt: 'desc' };
   } else if (sortBy === 'price_asc') {
-    orderBy = { profile: { services: { _min: { price: 'asc' } } } };
+    orderBy = { profile: { minServicePrice: 'asc' } };
   } else if (sortBy === 'price_desc') {
-    orderBy = { profile: { services: { _min: { price: 'desc' } } } };
+    orderBy = { profile: { minServicePrice: 'desc' } };
   }
 
   try {
@@ -178,6 +178,10 @@ export async function getTrainerProfileByUsername(username: string) {
             ...service,
             price: service.price ? service.price.toString() : null
         }));
+    }
+    // Serialize minServicePrice
+    if (profile.minServicePrice) {
+      (profile as any).minServicePrice = profile.minServicePrice.toString();
     }
 
     return userWithProfile; // Contains user and their full profile

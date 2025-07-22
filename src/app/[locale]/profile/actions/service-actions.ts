@@ -1,10 +1,15 @@
-
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import * as profileService from "@/lib/services/profileService";
 import { getUserAndProfile } from "./_utils";
-import type { Service } from "./_utils";
+import type { Service as PrismaService } from "@prisma/client";
+
+// This is a client-safe version for passing data from server to client components.
+type Service = Omit<PrismaService, 'price'> & {
+  price: string | null;
+};
+
 
 const ServiceSchema = z.object({
   title: z.string().min(1, "Title is required."),
@@ -57,7 +62,7 @@ export async function addService(
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
     const { title, description, price, currency, duration } = validated.data;
-    const newService = await profileService.createService({
+    const newServiceFromDb = await profileService.createService({
       title,
       description,
       price,
@@ -65,6 +70,11 @@ export async function addService(
       duration,
       profileId: profile.id,
     });
+    // Serialize the Decimal price to a string before returning to the client
+    const newService: Service = {
+      ...newServiceFromDb,
+      price: newServiceFromDb.price ? newServiceFromDb.price.toString() : null,
+    };
     revalidatePath("/profile/edit");
     return { success: true, messageKey: "serviceAdded", newService };
   } catch (e: unknown) {
@@ -88,11 +98,16 @@ export async function updateService(
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const updatedService = await profileService.updateService(
+    const updatedServiceFromDb = await profileService.updateService(
       serviceId,
       profile.id,
       validated.data,
     );
+    // Serialize the Decimal price to a string before returning to the client
+    const updatedService: Service = {
+      ...updatedServiceFromDb,
+      price: updatedServiceFromDb.price ? updatedServiceFromDb.price.toString() : null,
+    };
     revalidatePath("/profile/edit");
     return { success: true, messageKey: "serviceUpdated", updatedService };
   } catch (e: unknown) {

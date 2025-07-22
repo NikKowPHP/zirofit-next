@@ -1,6 +1,30 @@
-
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
+
+/**
+ * Helper function to calculate and update the minimum service price for a profile.
+ * This should be called after any CUD operation on services.
+ * @param {string} profileId - The ID of the profile to update.
+ */
+async function updateProfileMinPrice(profileId: string) {
+  const minPriceResult = await prisma.service.aggregate({
+    _min: {
+      price: true,
+    },
+    where: {
+      profileId: profileId,
+      price: { not: null },
+    },
+  });
+
+  const minPrice = minPriceResult._min.price;
+
+  await prisma.profile.update({
+    where: { id: profileId },
+    data: { minServicePrice: minPrice },
+  });
+}
+
 
 /**
  * Fetches the full user profile including all related entities.
@@ -221,7 +245,9 @@ export const deleteTransformationPhoto = async (id: string) => {
 export const createService = async (
   data: Prisma.ServiceUncheckedCreateInput,
 ) => {
-  return prisma.service.create({ data });
+  const service = await prisma.service.create({ data });
+  await updateProfileMinPrice(data.profileId);
+  return service;
 };
 
 /**
@@ -236,7 +262,9 @@ export const updateService = async (
   profileId: string,
   data: Prisma.ServiceUncheckedUpdateInput,
 ) => {
-  return prisma.service.update({ where: { id, profileId }, data });
+  const service = await prisma.service.update({ where: { id, profileId }, data });
+  await updateProfileMinPrice(profileId);
+  return service;
 };
 
 /**
@@ -246,7 +274,9 @@ export const updateService = async (
  * @returns {Promise<Service>} A promise that resolves to the deleted service.
  */
 export const deleteService = async (id: string, profileId: string) => {
-  return prisma.service.delete({ where: { id, profileId } });
+  const service = await prisma.service.delete({ where: { id, profileId } });
+  await updateProfileMinPrice(profileId);
+  return service;
 };
 
 /**

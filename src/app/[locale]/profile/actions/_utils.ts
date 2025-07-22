@@ -85,6 +85,10 @@ export async function getCurrentUserProfileData() {
             price: service.price ? service.price.toString() : null
         }));
       }
+      // Serialize minServicePrice
+      if (userWithProfile.profile.minServicePrice) {
+          (userWithProfile.profile as any).minServicePrice = userWithProfile.profile.minServicePrice.toString();
+      }
     }
 
     return userWithProfile;
