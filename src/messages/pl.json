@@ -27,7 +27,9 @@
     "description_required": "Opis jest wymagany.",
     "platform_required": "Platforma jest wymagana.",
     "username_required": "Nazwa użytkownika jest wymagana.",
-    "testimonial_text_min_10": "Tekst referencji jest wymagany."
+    "testimonial_text_min_10": "Tekst referencji jest wymagany.",
+    "price_positive": "Cena musi być liczbą dodatnią.",
+    "duration_positive": "Czas trwania musi być dodatnią liczbą całkowitą."
   },
   "PublicLayout": {
     "findTrainers": "Znajdź trenera",
@@ -69,11 +71,14 @@
     "sortBy": "Sortuj według:",
     "nameAsc": "Nazwa (A-Z)",
     "nameDesc": "Nazwa (Z-A)",
-    "newest": "Najnowsi"
+    "newest": "Najnowsi",
+    "priceAsc": "Cena (od najniższej)",
+    "priceDesc": "Cena (od najwyższej)"
   },
   "TrainerResultCard": {
     "viewProfile": "Zobacz profil",
-    "loading": "Ładowanie..."
+    "loading": "Ładowanie...",
+    "fromPrice": "od {price} {currency}"
   },
   "TrainerProfilePage": {
     "bookSession": "Zarezerwuj sesję",
@@ -358,6 +363,9 @@
     "serviceNone": "Nie dodałeś jeszcze żadnych usług.",
     "serviceDeleteTitle": "Usuń usługę",
     "serviceDeleteDesc": "Czy na pewno chcesz trwale usunąć tę usługę?",
+    "servicePriceLabel": "Cena",
+    "serviceCurrencyLabel": "Waluta",
+    "serviceDurationLabel": "Czas trwania (minuty)",
     "socialLinksTitle": "Dodaj nowy link społecznościowy",
     "socialLinksEditTitle": "Edytuj link społecznościowy: {platform}",
     "socialPlatform": "Platforma",

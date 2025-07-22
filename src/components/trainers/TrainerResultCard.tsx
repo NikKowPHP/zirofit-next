@@ -18,6 +18,11 @@ interface TrainerCardProps {
       location: string | null;
       certifications: string | null;
       profilePhotoPath: string | null;
+      services: {
+        price: { toString: () => string } | string | null;
+        currency: string | null;
+        duration: number | null;
+      }[];
     } | null;
   };
 }
@@ -32,6 +37,8 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
     setIsLoading(true);
     router.push(`/trainer/${trainer.username}`);
   };
+
+  const firstService = trainer.profile.services?.[0];
 
   return (
     <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 transition-shadow duration-300 hover:shadow-md flex flex-col sm:flex-row items-center gap-6" data-testid="trainer-card">
@@ -53,6 +60,12 @@ export default function TrainerResultCard({ trainer }: TrainerCardProps) {
         <p className="font-semibold text-neutral-700 dark:text-neutral-300 mt-1">
           {trainer.profile.certifications}
         </p>
+        {firstService && firstService.price && (
+            <p className="mt-2 text-lg font-bold text-neutral-800 dark:text-neutral-200">
+                {t('fromPrice', { price: firstService.price.toString(), currency: firstService.currency || 'PLN' })}
+                {firstService.duration && ` / ${firstService.duration} min`}
+            </p>
+        )}
         {trainer.profile.location && (
           <div className="flex items-center justify-center sm:justify-start text-sm text-neutral-500 dark:text-neutral-400 mt-2">
             <MapPinIcon className="w-4 h-4 mr-1.5" />

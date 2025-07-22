@@ -54,7 +54,7 @@ export default function ServicesEditor({
 
   const formStatus = useFormStatus();
   const currentFormState = isEditing ? updateState : addState;
-  const getFieldError = (fieldName: "title" | "description") => {
+  const getFieldError = (fieldName: "title" | "description" | "price" | "currency" | "duration") => {
     return currentFormState.errors?.find(
       (err: any) => err.path && err.path.includes(fieldName),
     )?.message;
@@ -112,6 +112,57 @@ export default function ServicesEditor({
                 </p>
               )}
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="price">{t("servicePriceLabel")}</Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  placeholder="e.g., 50.00"
+                  defaultValue={currentEditingService?.price?.toString() ?? ""}
+                  className="mt-1"
+                />
+                {getFieldError("price") && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {getFieldError("price")}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="currency">{t("serviceCurrencyLabel")}</Label>
+                <Input
+                  id="currency"
+                  name="currency"
+                  type="text"
+                  placeholder="e.g., PLN"
+                  defaultValue={currentEditingService?.currency ?? ""}
+                  className="mt-1"
+                />
+                {getFieldError("currency") && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {getFieldError("currency")}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="duration">{t("serviceDurationLabel")}</Label>
+                <Input
+                  id="duration"
+                  name="duration"
+                  type="number"
+                  placeholder="e.g., 60"
+                  defaultValue={currentEditingService?.duration?.toString() ?? ""}
+                  className="mt-1"
+                />
+                {getFieldError("duration") && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {getFieldError("duration")}
+                  </p>
+                )}
+              </div>
+            </div>
             <div>
               <RichTextEditor
                 label={t("serviceDescLabel")}
@@ -165,6 +216,16 @@ export default function ServicesEditor({
                     <h5 className="font-semibold text-gray-800 dark:text-gray-100">
                       {service.title}
                     </h5>
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                      {service.price && (
+                        <span className="font-semibold text-gray-800 dark:text-gray-200">
+                          {service.price.toString()} {service.currency}
+                        </span>
+                      )}
+                      {service.duration && (
+                        <span> / {service.duration} min</span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-600 dark:text-gray-300 mt-1 prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: service.description }} />
                   </div>
                   <div className="flex space-x-2 flex-shrink-0">

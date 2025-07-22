@@ -27,7 +27,9 @@
     "description_required": "Description is required.",
     "platform_required": "Platform is required.",
     "username_required": "Username is required.",
-    "testimonial_text_min_10": "Testimonial text is required."
+    "testimonial_text_min_10": "Testimonial text is required.",
+    "price_positive": "Price must be a positive number.",
+    "duration_positive": "Duration must be a positive integer."
   },
   "PublicLayout": {
     "findTrainers": "Find Trainers",
@@ -69,11 +71,14 @@
     "sortBy": "Sort by:",
     "nameAsc": "Name (A-Z)",
     "nameDesc": "Name (Z-A)",
-    "newest": "Newest"
+    "newest": "Newest",
+    "priceAsc": "Price (Low to High)",
+    "priceDesc": "Price (High to Low)"
   },
   "TrainerResultCard": {
     "viewProfile": "View Profile",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "fromPrice": "From {price} {currency}"
   },
   "TrainerProfilePage": {
     "bookSession": "Book a Session",
@@ -358,6 +363,9 @@
     "serviceNone": "You haven't added any services yet.",
     "serviceDeleteTitle": "Delete Service",
     "serviceDeleteDesc": "Are you sure you want to permanently delete this service?",
+    "servicePriceLabel": "Price",
+    "serviceCurrencyLabel": "Currency",
+    "serviceDurationLabel": "Duration (minutes)",
     "socialLinksTitle": "Add New Social Link",
     "socialLinksEditTitle": "Edit Social Link: {platform}",
     "socialPlatform": "Platform",

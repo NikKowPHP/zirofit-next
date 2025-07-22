@@ -1,3 +1,4 @@
+
 // src/lib/api/trainers.ts
 import { prisma } from "@/lib/prisma";
 import { transformImagePath, normalizeLocation } from "../utils";
@@ -41,11 +42,15 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
     }
   }
 
-  let orderBy: Prisma.UserOrderByWithRelationInput = { name: "asc" }; // Default sort
+  let orderBy: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[] = { name: "asc" }; // Default sort
   if (sortBy === 'name_desc') {
     orderBy = { name: 'desc' };
   } else if (sortBy === 'newest') {
     orderBy = { createdAt: 'desc' };
+  } else if (sortBy === 'price_asc') {
+    orderBy = { profile: { services: { _min: { price: 'asc' } } } };
+  } else if (sortBy === 'price_desc') {
+    orderBy = { profile: { services: { _min: { price: 'desc' } } } };
   }
 
   try {
@@ -62,6 +67,16 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
             certifications: true,
             latitude: true,
             longitude: true,
+            services: {
+              where: { price: { not: null } },
+              orderBy: { price: 'asc' },
+              take: 1,
+              select: {
+                price: true,
+                currency: true,
+                duration: true,
+              },
+            },
           },
         },
       },
@@ -110,6 +125,11 @@ export interface Trainer {
     certifications: string | null;
     latitude: number | null;
     longitude: number | null;
+    services: {
+        price: Prisma.Decimal | null;
+        currency: string | null;
+        duration: number | null;
+    }[];
   } | null;
 }
 

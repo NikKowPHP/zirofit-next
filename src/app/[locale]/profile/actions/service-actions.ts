@@ -9,6 +9,26 @@ import type { Service } from "./_utils";
 const ServiceSchema = z.object({
   title: z.string().min(1, "Title is required."),
   description: z.string().min(1, "Description is required."),
+  price: z
+    .preprocess(
+      (val) => (String(val).trim() === "" ? null : val),
+      z.coerce
+        .number({ invalid_type_error: "Price must be a number." })
+        .positive({ message: "Price must be a positive number." })
+        .optional()
+        .nullable(),
+    ),
+  currency: z.string().optional().nullable(),
+  duration: z
+    .preprocess(
+      (val) => (String(val).trim() === "" ? null : val),
+      z.coerce
+        .number({ invalid_type_error: "Duration must be a number." })
+        .int({ message: "Duration must be a whole number." })
+        .positive({ message: "Duration must be a positive number." })
+        .optional()
+        .nullable(),
+    ),
 });
 
 export interface ServiceFormState {
@@ -29,14 +49,20 @@ export async function addService(
   const validated = ServiceSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description"),
+    price: formData.get("price"),
+    currency: formData.get("currency"),
+    duration: formData.get("duration"),
   });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };
   try {
-    const { title, description } = validated.data;
+    const { title, description, price, currency, duration } = validated.data;
     const newService = await profileService.createService({
       title,
       description,
+      price,
+      currency,
+      duration,
       profileId: profile.id,
     });
     revalidatePath("/profile/edit");
@@ -55,6 +81,9 @@ export async function updateService(
   const validated = ServiceSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description"),
+    price: formData.get("price"),
+    currency: formData.get("currency"),
+    duration: formData.get("duration"),
   });
   if (!validated.success)
     return { errors: validated.error.issues, error: "Validation failed." };

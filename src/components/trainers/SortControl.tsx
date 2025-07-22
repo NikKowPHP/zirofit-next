@@ -32,6 +32,8 @@ export default function SortControl() {
         <option value="name_asc">{t('nameAsc')}</option>
         <option value="name_desc">{t('nameDesc')}</option>
         <option value="newest">{t('newest')}</option>
+        <option value="price_asc">{t('priceAsc')}</option>
+        <option value="price_desc">{t('priceDesc')}</option>
       </select>
     </div>
   );
