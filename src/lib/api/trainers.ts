@@ -142,7 +142,7 @@ export interface Trainer {
 
 export async function getTrainerProfileByUsername(username: string) {
   try {
-    const userWithProfile = await prisma.user.findUnique({
+    const userWithProfileFromDb = await prisma.user.findUnique({
       where: { username },
       include: {
         profile: {
@@ -158,33 +158,34 @@ export async function getTrainerProfileByUsername(username: string) {
       },
     });
 
-    if (!userWithProfile || !userWithProfile.profile) {
-      return null; // Or throw a NotFound error
+    if (!userWithProfileFromDb || !userWithProfileFromDb.profile) {
+      return null;
     }
 
-    // Transform all image paths in the profile
-    const profile = userWithProfile.profile;
-    profile.bannerImagePath = transformImagePath(profile.bannerImagePath);
-    profile.profilePhotoPath = transformImagePath(profile.profilePhotoPath);
-    profile.transformationPhotos.forEach((photo) => {
-      // Note: Here we transform the path directly on the object.
-      // The component will just use `photo.imagePath`.
-      photo.imagePath = transformImagePath(photo.imagePath);
-    });
-
-    // Serialize Decimal prices for services
-    if (profile.services) {
-        (profile.services as any) = profile.services.map(service => ({
-            ...service,
-            price: service.price ? service.price.toString() : null
-        }));
+    // Create a new, fully serialized object to return to the client component.
+    const serializedProfile = {
+      ...userWithProfileFromDb.profile,
+      bannerImagePath: transformImagePath(userWithProfileFromDb.profile.bannerImagePath),
+      profilePhotoPath: transformImagePath(userWithProfileFromDb.profile.profilePhotoPath),
+      transformationPhotos: userWithProfileFromDb.profile.transformationPhotos.map(photo => ({
+        ...photo,
+        imagePath: transformImagePath(photo.imagePath),
+      })),
+      services: userWithProfileFromDb.profile.services.map(service => ({
+        ...service,
+        price: service.price ? service.price.toString() : null,
+      })),
+      minServicePrice: userWithProfileFromDb.profile.minServicePrice
+        ? userWithProfileFromDb.profile.minServicePrice.toString()
+        : null,
+    };
+    
+    const userWithProfile = {
+        ...userWithProfileFromDb,
+        profile: serializedProfile
     }
-    // Serialize minServicePrice
-    if (profile.minServicePrice) {
-      (profile as any).minServicePrice = profile.minServicePrice.toString();
-    }
 
-    return userWithProfile; // Contains user and their full profile
+    return userWithProfile; // Contains user and their full, serialized profile
   } catch (error) {
     console.error(`Failed to fetch profile for username ${username}:`, error);
     return null; // Or throw

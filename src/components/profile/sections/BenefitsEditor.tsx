@@ -102,28 +102,39 @@ export default function BenefitsEditor({
     setEditingBenefitId(null);
   };
 
-  const handleDeleteBenefit = async () => {
+  const handleDeleteBenefit = () => {
     if (!itemToDelete) return;
+    const originalBenefits = benefits;
+    const benefitIdToDelete = itemToDelete;
 
+    // Close modal and start loading state
+    setItemToDelete(null);
     setIsDeleting(true);
-    try {
-      const result = await deleteBenefit(itemToDelete);
+
+    // Optimistically update UI
+    setBenefits((prevBenefits) =>
+      prevBenefits.filter((benefit) => benefit.id !== benefitIdToDelete)
+    );
+
+    // Call server action
+    deleteBenefit(benefitIdToDelete).then((result) => {
       if (result.success && result.messageKey) {
         toast.success(t_server(result.messageKey));
-        setBenefits((prevBenefits) =>
-          prevBenefits.filter((benefit) => benefit.id !== itemToDelete),
-        );
       } else {
+        // Revert on failure
         toast.error(result.error || t_server('genericError'));
+        setBenefits(originalBenefits);
       }
-    } catch (e: unknown) {
+    }).catch((e) => {
       toast.error(t_server('genericError'));
       console.error("Failed to delete benefit: ", e);
-    } finally {
+      // Revert on error
+      setBenefits(originalBenefits);
+    }).finally(() => {
         setIsDeleting(false);
-        setItemToDelete(null);
-    }
+    });
   };
+
 
   const handleBenefitUpdate = async (id: string, formData: FormData) => {
     const result = await updateBenefit(id, undefined, formData);

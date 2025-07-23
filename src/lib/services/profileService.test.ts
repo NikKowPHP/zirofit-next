@@ -1,9 +1,21 @@
 import { prismaMock } from "@tests/singleton";
 import * as profileService from "./profileService";
+import { Prisma } from "@prisma/client";
 
 describe("Profile Service", () => {
   const userId = "test-user-id";
   const profileId = "test-profile-id";
+
+  beforeEach(() => {
+    // Mock the aggregate call that is now used by service CUD operations
+    prismaMock.service.aggregate.mockResolvedValue({
+      _min: { price: new Prisma.Decimal(10.0) },
+      _avg: null,
+      _count: null,
+      _max: null,
+      _sum: null,
+    });
+  });
 
   it("getFullUserProfile should include all relations", async () => {
     await profileService.getFullUserProfile(userId);

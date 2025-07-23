@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { renderWithIntl, screen, waitFor } from '../../../../tests/test-utils';
+import { renderWithIntl, screen, waitFor, within } from '../../../../tests/test-utils';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import BenefitsEditor from './BenefitsEditor';
@@ -24,8 +23,7 @@ jest.mock('sonner', () => ({
   },
 }));
 
-// Mock react-dom's useFormStatus
-jest.mock('react-dom');
+// DO NOT mock 'react-dom' here. It is handled globally in jest.setup.ts.
 jest.mock('sortablejs', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
@@ -59,8 +57,9 @@ describe('BenefitsEditor', () => {
     const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
     await user.click(deleteButtons[0]);
 
-    // Confirmation modal appears
-    const confirmButton = screen.getByRole('button', { name: "Delete" });
+    // Confirmation modal appears, scope query to inside the modal
+    const modal = screen.getByRole('dialog');
+    const confirmButton = within(modal).getByRole('button', { name: "Delete" });
     await user.click(confirmButton);
 
     // Assert item is removed optimistically BEFORE action resolves
@@ -89,14 +88,15 @@ describe('BenefitsEditor', () => {
     const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
     await user.click(deleteButtons[0]);
     
-    const confirmButton = screen.getByRole('button', { name: "Delete" });
+    const modal = screen.getByRole('dialog');
+    const confirmButton = within(modal).getByRole('button', { name: "Delete" });
     await user.click(confirmButton);
 
     await waitFor(() => {
       expect(screen.queryByText('Benefit One')).not.toBeInTheDocument();
     });
 
-    expect(toast.success).toHaveBeenCalledWith('benefitDeleted');
+    expect(toast.success).toHaveBeenCalledWith('Benefit deleted.');
   });
 
   it('shows loading state on submit button when form is pending', () => {

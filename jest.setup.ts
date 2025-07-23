@@ -14,12 +14,12 @@ jest.mock('react-dom', () => ({
     };
     return [state, dispatch];
   },
-  useFormStatus: () => ({
+  useFormStatus: jest.fn(() => ({
     pending: false,
     data: null,
     method: null,
     action: null,
-  }),
+  })),
 }));
 
 import '@testing-library/jest-dom';

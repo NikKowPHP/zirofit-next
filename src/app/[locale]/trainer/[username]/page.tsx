@@ -1,4 +1,3 @@
-
 // src/app/trainer/[username]/page.tsx
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getTrainerProfileByUsername } from "@/lib/api/trainers";
@@ -32,6 +31,9 @@ interface Service {
   id: string;
   title: string;
   description: string | null;
+  price: string | null;
+  currency: string | null;
+  duration: number | null;
 }
 
 interface TransformationPhoto {
@@ -318,11 +320,21 @@ export default async function TrainerProfilePage({
                     <div className="space-y-6">
                       {profile.services.map((service: Service) => (
                         <div key={service.id} className="bg-neutral-100 dark:bg-neutral-900 p-6 rounded-lg">
-                          <h3 className="text-xl font-semibold mb-2">
-                            {service.title}
-                          </h3>
+                          <div className="flex justify-between items-start flex-wrap gap-2">
+                            <h3 className="text-xl font-semibold">
+                              {service.title}
+                            </h3>
+                            {service.price && (
+                              <div className="text-lg font-bold text-neutral-800 dark:text-neutral-200 flex-shrink-0">
+                                {service.price} {service.currency}
+                                {service.duration && (
+                                  <span className="text-sm font-normal text-neutral-500"> / {service.duration} min</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
                           <div
-                            className="text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap prose dark:prose-invert max-w-none"
+                            className="mt-2 text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap prose dark:prose-invert max-w-none"
                             dangerouslySetInnerHTML={{
                               __html: service.description || "",
                             }}

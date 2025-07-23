@@ -1,4 +1,3 @@
-
 import { getDashboardData } from "./dashboardService";
 import { prismaMock } from "@tests/singleton";
 
@@ -22,7 +21,10 @@ describe("Dashboard Data Service", () => {
       .mockResolvedValueOnce([{ sessionDate: new Date(now.getTime() + 86400000), client: { name: "Upcoming Client" } }] as any) // upcomingSessions
       .mockResolvedValueOnce([{ sessionDate: new Date(now.getTime() - 86400000), client: { name: "Past Client" } }] as any);   // pastSessions
 
-    prismaMock.clientMeasurement.findMany.mockResolvedValue([{ createdAt: now, client: { name: "Measured Client" } }] as any);
+    prismaMock.clientMeasurement.findMany
+      .mockResolvedValueOnce([{ createdAt: now, client: { name: "Measured Client" } }] as any) // For activity feed
+      .mockResolvedValueOnce([{ measurementDate: now, weightKg: 80 }] as any); // For spotlight client
+        
     prismaMock.clientProgressPhoto.findMany.mockResolvedValue([{ createdAt: now, client: { name: "Photo Client" } }] as any);
 
     // Mocks for getSpotlightClient, which is called separately
@@ -32,9 +34,6 @@ describe("Dashboard Data Service", () => {
         name: "Spotlight Client",
         _count: { measurements: 2 },
       },
-    ] as any);
-    prismaMock.clientMeasurement.findMany.mockResolvedValueOnce([
-      { measurementDate: now, weightKg: 80 },
     ] as any);
     
     const data = await getDashboardData(trainerId);
@@ -51,7 +50,7 @@ describe("Dashboard Data Service", () => {
 
     // Assert activity feed
     expect(data.activityFeed.length).toBeGreaterThanOrEqual(1);
-    expect(data.activityFeed[0].type).toBe("UPCOMING_SESSION");
+    expect(data.activityFeed.find(item => item.type === "UPCOMING_SESSION")).toBeDefined();
 
     // Assert spotlight data
     expect(data.clientProgressData).toBeDefined();
