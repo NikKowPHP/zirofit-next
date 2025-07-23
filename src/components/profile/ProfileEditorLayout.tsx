@@ -15,12 +15,13 @@ interface ExternalLink {
   updatedAt: Date;
 }
 
-interface InitialProfileData {
+export interface InitialProfileData {
   name: string;
   username: string;
   email: string;
   profile?: {
     id: string;
+    userId: string;
     certifications: string | null;
     location: string | null;
     phone: string | null;
@@ -29,7 +30,13 @@ interface InitialProfileData {
     methodology: string | null;
     bannerImagePath: string | null;
     profilePhotoPath: string | null;
-    availability: { [day: string]: string[] } | null; // e.g., { "mon": ["09:00-17:00"] }
+    availability: { [day: string]: string[] } | null;
+    locationNormalized: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    minServicePrice: string | null;
+    createdAt: Date;
+    updatedAt: Date;
     services: Array<{
       id: string;
       title: string;
@@ -37,6 +44,9 @@ interface InitialProfileData {
       createdAt: Date;
       profileId: string;
       updatedAt: Date;
+      price: string | null;
+      currency: string | null;
+      duration: number | null;
     }>;
     testimonials: Array<{
       id: string;

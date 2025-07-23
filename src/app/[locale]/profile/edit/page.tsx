@@ -1,5 +1,6 @@
-
-import ProfileEditorLayout from "@/components/profile/ProfileEditorLayout";
+import ProfileEditorLayout, {
+  type InitialProfileData,
+} from "@/components/profile/ProfileEditorLayout";
 import { getCurrentUserProfileData } from "../actions";
 import { redirect } from "next/navigation";
 
@@ -25,5 +26,9 @@ export default async function EditProfilePage() {
     },
   };
 
-  return <ProfileEditorLayout initialData={safeData} />;
+  return (
+    <ProfileEditorLayout
+      initialData={safeData as unknown as InitialProfileData}
+    />
+  );
 }

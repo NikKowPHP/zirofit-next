@@ -13,6 +13,11 @@ interface Trainer {
     profilePhotoPath: string | null;
     latitude: number | null;
     longitude: number | null;
+    services: {
+      price: string | null;
+      currency: string | null;
+      duration: number | null;
+    }[];
   } | null;
 }
 

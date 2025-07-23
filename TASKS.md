@@ -1,3 +1,0 @@
-- [x] Add safe-area padding to bottom navigation bars for iOS devices.
-- [x] Fix console errors related to React keys and non-serializable Decimal objects.
-- [x] Update deprecated ReactDOM.useFormState to React.useActionState.

@@ -3,7 +3,21 @@ import { prisma } from "@/lib/prisma";
 import { transformImagePath, normalizeLocation } from "../utils";
 import type { Prisma } from '@prisma/client';
 
-export async function getPublishedTrainers(page = 1, pageSize = 15, query?: string, location?: string, sortBy?: string) {
+export interface GetPublishedTrainersResponse {
+  trainers: Trainer[];
+  totalTrainers: number;
+  currentPage: number;
+  totalPages: number;
+  error?: string;
+}
+
+export async function getPublishedTrainers(
+  page = 1, 
+  pageSize = 15, 
+  query?: string, 
+  location?: string, 
+  sortBy?: string
+): Promise<GetPublishedTrainersResponse> {
   const skip = (page - 1) * pageSize;
 
   const whereClause: Prisma.UserWhereInput = {
@@ -104,7 +118,7 @@ export async function getPublishedTrainers(page = 1, pageSize = 15, query?: stri
 
     const totalTrainers = await prisma.user.count({ where: whereClause });
     return {
-      trainers: trainersWithUrls,
+      trainers: trainersWithUrls as Trainer[],
       totalTrainers,
       currentPage: page,
       totalPages: Math.ceil(totalTrainers / pageSize),
