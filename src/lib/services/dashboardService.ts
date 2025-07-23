@@ -37,7 +37,7 @@ export async function getDashboardData(trainerId: string) {
     where: { trainerId, status: "pending" },
   });
 
-  const profile = await prisma.profile.findUnique({
+  const profileFromDb = await prisma.profile.findUnique({
     where: { userId: trainerId },
     include: {
       services: true,
@@ -45,6 +45,20 @@ export async function getDashboardData(trainerId: string) {
       transformationPhotos: true,
     },
   });
+  
+  // Serialize profile data before using it further
+  const profile = profileFromDb
+    ? {
+        ...profileFromDb,
+        minServicePrice: profileFromDb.minServicePrice
+          ? profileFromDb.minServicePrice.toString()
+          : null,
+        services: profileFromDb.services.map((service) => ({
+          ...service,
+          price: service.price ? service.price.toString() : null,
+        })),
+      }
+    : null;
 
   // Fetch activity feed data
   const upcomingSessions = await prisma.clientSessionLog.findMany({

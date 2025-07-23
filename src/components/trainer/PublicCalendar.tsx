@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -211,7 +210,7 @@ export default function PublicCalendar({
               </Button>
           </div>
           <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 dark:text-gray-400">
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => <div key={day}>{day}</div>)}
+              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <div key={`${day}-${index}`}>{day}</div>)}
           </div>
           <div className="grid grid-cols-7 gap-1 mt-2" data-testid="calendar-grid">
               {daysInMonth.map(day => {
