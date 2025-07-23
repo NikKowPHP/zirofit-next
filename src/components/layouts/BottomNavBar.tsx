@@ -27,7 +27,7 @@ export default function BottomNavBar() {
 
   return (
     // Redesigned to mimic iOS Tab Bar with frosted glass effect
-    <div className="md:hidden fixed bottom-0 left-0 z-50 w-full border-t border-black/10 dark:border-white/10 bg-neutral-100/75 dark:bg-neutral-900/75 backdrop-blur-xl">
+    <div className="md:hidden fixed bottom-0 left-0 z-50 w-full border-t border-black/10 dark:border-white/10 bg-neutral-100/75 dark:bg-neutral-900/75 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
       <div className="grid h-full max-w-lg grid-cols-4 mx-auto">
         {navigation.map((item) => {
           const isActive =

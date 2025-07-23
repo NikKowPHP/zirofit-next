@@ -1,0 +1,1 @@
+- [x] Add safe-area padding to bottom navigation bars for iOS devices.
