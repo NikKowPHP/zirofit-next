@@ -1,4 +1,3 @@
-
 {
   "ZodErrors": {
     "name_min_2": "Imię musi mieć co najmniej 2 znaki",
@@ -65,7 +64,9 @@
     "previous": "Poprzednia",
     "next": "Następna",
     "emptyStateTitle": "Nie znaleziono trenerów",
-    "emptyStateDescription": "Spróbuj zmienić zapytanie lub lokalizację."
+    "emptyStateDescription": "Spróbuj zmienić zapytanie lub lokalizację.",
+    "mapView": "Mapa",
+    "listView": "Lista"
   },
   "SortControl": {
     "sortBy": "Sortuj według:",

@@ -1,4 +1,3 @@
-
 {
   "ZodErrors": {
     "name_min_2": "Name must be at least 2 characters",
@@ -65,7 +64,9 @@
     "previous": "Previous",
     "next": "Next",
     "emptyStateTitle": "No trainers found",
-    "emptyStateDescription": "Try adjusting your search query or location."
+    "emptyStateDescription": "Try adjusting your search query or location.",
+    "mapView": "Map",
+    "listView": "List"
   },
   "SortControl": {
     "sortBy": "Sort by:",

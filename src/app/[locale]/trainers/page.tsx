@@ -1,17 +1,14 @@
-
 import PublicLayout from "@/components/layouts/PublicLayout";
 import { getPublishedTrainers } from "@/lib/api/trainers";
-import Link from "next/link";
 import type { Metadata } from "next";
-import { Button } from "@/components/ui/Button";
 import SortControl from "@/components/trainers/SortControl";
-import TrainersMapWrapper from "@/components/trainers/TrainersMapWrapper";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { TrainerGrid } from "@/components/trainers/TrainerGrid";
 import { getTranslations } from "next-intl/server";
+import TrainersView from "@/components/trainers/TrainersView";
+
 interface PageProps {
   params: Promise<{
   
@@ -46,10 +43,12 @@ function TrainerCardSkeleton() {
 
 function TrainersListSkeleton() {
   return (
-    <div className="lg:col-span-2 space-y-6">
-      <TrainerCardSkeleton />
-      <TrainerCardSkeleton />
-      <TrainerCardSkeleton />
+    <div className="lg:col-span-3">
+      <div className="space-y-6">
+        <TrainerCardSkeleton />
+        <TrainerCardSkeleton />
+        <TrainerCardSkeleton />
+      </div>
     </div>
   );
 }
@@ -94,52 +93,12 @@ async function TrainerList({
     );
   }
 
-  const mapKey = trainers.map((t: any) => t.id).join("-");
-  const getPageUrl = (p: number) => {
-    const params = new URLSearchParams();
-    if (query) params.set("q", query);
-    if (location) params.set("location", location);
-    if (sortBy) params.set("sortBy", sortBy);
-    if (p > 1) params.set("page", p.toString());
-    return `/trainers?${params.toString()}`;
-  };
-
   return (
-    <>
-      <div className="lg:col-span-2 space-y-6">
-        <TrainerGrid trainers={trainers} />
-      </div>
-      <div className="lg:col-span-1">
-        <div className="sticky top-24 h-96 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
-          <TrainersMapWrapper key={mapKey} trainers={trainers} />
-        </div>
-      </div>
-
-      {totalPages > 1 && (
-        <div className="lg:col-span-3 mt-12 flex justify-center items-center space-x-2">
-          {page > 1 && (
-            <Button asChild variant="secondary" size="sm">
-              <Link href={getPageUrl(page - 1)}>{t('previous')}</Link>
-            </Button>
-          )}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Button
-              key={p}
-              asChild
-              variant={p === page ? "primary" : "secondary"}
-              size="sm"
-            >
-              <Link href={getPageUrl(p)}>{p}</Link>
-            </Button>
-          ))}
-          {page < totalPages && (
-            <Button asChild variant="secondary" size="sm">
-              <Link href={getPageUrl(page + 1)}>{t('next')}</Link>
-            </Button>
-          )}
-        </div>
-      )}
-    </>
+    <TrainersView
+      trainers={trainers}
+      totalPages={totalPages}
+      currentPage={page}
+    />
   );
 }
 
@@ -165,16 +124,14 @@ export default async function TrainersPage({
             </h1>
             <SortControl />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Suspense key={`${currentPage}-${query}-${location}-${sortBy}`} fallback={<TrainersListSkeleton />}>
-              <TrainerList
-                page={currentPage}
-                query={query}
-                location={location}
-                sortBy={sortBy}
-              />
-            </Suspense>
-          </div>
+          <Suspense key={`${currentPage}-${query}-${location}-${sortBy}`} fallback={<TrainersListSkeleton />}>
+            <TrainerList
+              page={currentPage}
+              query={query}
+              location={location}
+              sortBy={sortBy}
+            />
+          </Suspense>
         </div>
       </div>
     </PublicLayout>

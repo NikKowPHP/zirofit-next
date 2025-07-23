@@ -1,11 +1,11 @@
-
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
+import type { Trainer } from '@/lib/api/trainers';
 
 // Leaflet icon fix for Next.js
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -20,18 +20,31 @@ L.Icon.Default.mergeOptions({
   shadowUrl: shadowUrl.src,
 });
 
-interface TrainerForMap {
-  id: string;
-  name: string;
-  username: string | null;
-  profile: {
-    latitude: number | null;
-    longitude: number | null;
-  } | null;
+interface TrainersMapProps {
+  trainers: Trainer[];
 }
 
-interface TrainersMapProps {
-  trainers: TrainerForMap[];
+function MapResizer() {
+  const map = useMap();
+  useEffect(() => {
+    // This observer will trigger 'invalidateSize' whenever the map container's
+    // dimensions change, which is crucial for maps in animated containers.
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    
+    const mapContainer = map.getContainer();
+    resizeObserver.observe(mapContainer);
+
+    // Also call invalidateSize once initially to handle cases where the map
+    // is rendered in a container that is already the correct size but was hidden.
+    map.invalidateSize();
+
+    return () => {
+      resizeObserver.unobserve(mapContainer);
+    };
+  }, [map]);
+  return null;
 }
 
 export default function TrainersMap({ trainers }: TrainersMapProps) {
@@ -40,31 +53,25 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    // This effect runs only on the client, after the initial render.
-    // It sets a state variable to true, triggering a re-render.
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    // This effect runs when isClient becomes true.
     if (isClient && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLocation: L.LatLngExpression = [position.coords.latitude, position.coords.longitude];
           if (mapRef.current) {
-            mapRef.current.setView(userLocation, 13); // Use a city-level zoom
+            mapRef.current.setView(userLocation, 13);
           }
         },
         (error) => {
           console.error("Geolocation error:", error.message);
-          // Keep default center if permission is denied or an error occurs.
         }
       );
     }
   }, [isClient]);
 
-  // The wrapper component handles the loading state. Here, we return null
-  // during server-side rendering or the first client-side render pass.
   if (!isClient) {
     return null;
   }
@@ -78,29 +85,69 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
   }
 
   return (
-    <MapContainer 
-      center={[52.2297, 21.0122]} 
-      zoom={6} 
-      style={{ height: '100%', width: '100%', borderRadius: '0.75rem' }}
-      ref={mapRef}
-      data-testid="trainers-map"
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {trainersWithCoords.map(trainer => (
-        <Marker 
-            key={trainer.id} 
-            position={[trainer.profile!.latitude!, trainer.profile!.longitude!]}
-        >
-          <Popup>
-            <Link href={`/trainer/${trainer.username}`} className="font-semibold text-indigo-600 hover:underline" data-testid={`map-popup-link-${trainer.username}`}>
-              {trainer.name}
-            </Link>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+    <>
+      <style jsx global>{`
+        .custom-price-marker {
+          background: white;
+          border-radius: 9999px;
+          padding: 4px 10px;
+          font-weight: 600;
+          font-size: 14px;
+          color: black;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          border: 1px solid #ddd;
+          white-space: nowrap;
+        }
+        .dark .custom-price-marker {
+            background: #1d1d1f;
+            color: white;
+            border-color: #444;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+        }
+      `}</style>
+      <MapContainer 
+        center={[52.2297, 21.0122]} 
+        zoom={6} 
+        style={{ height: '100%', width: '100%' }}
+        ref={mapRef}
+        data-testid="trainers-map"
+      >
+        <MapResizer />
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {trainersWithCoords.map(trainer => {
+          const price = trainer.profile?.services?.[0]?.price;
+          const currencySymbol = 'zł';
+          
+          let priceString = '';
+          if (price) {
+            priceString = `${Math.round(parseFloat(price))} ${currencySymbol}`;
+          }
+
+          const customIcon = L.divIcon({
+            html: priceString,
+            className: 'custom-price-marker',
+          });
+          
+          return (
+            <Marker 
+              key={trainer.id} 
+              position={[trainer.profile!.latitude!, trainer.profile!.longitude!]}
+              icon={price ? customIcon : L.Icon.Default.prototype}
+            >
+              <Popup>
+                <Link href={`/trainer/${trainer.username}`} className="font-semibold text-indigo-600 hover:underline" data-testid={`map-popup-link-${trainer.username}`}>
+                  {trainer.name}
+                </Link>
+              </Popup>
+            </Marker>
+          )
+        })}
+      </MapContainer>
+    </>
   );
 }

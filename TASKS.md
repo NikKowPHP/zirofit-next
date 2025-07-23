@@ -1,0 +1,5 @@
+- [ ] Refactor CSS styles
+- [x] Add mobile view with a map for trainers list and price pins on the map.
+- [x] Implement an interactive map bottom sheet for mobile devices.
+- [x] Fix broken map tiles in animated bottom sheet on mobile.
+- [x] Fix map tiles not loading completely in bottom sheet.
