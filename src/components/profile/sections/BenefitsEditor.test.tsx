@@ -45,8 +45,12 @@ describe('BenefitsEditor', () => {
 
   it('optimistically removes a benefit on delete and reverts on failure', async () => {
     const user = userEvent.setup();
-    (benefitActions.deleteBenefit as jest.Mock)
-      .mockResolvedValueOnce({ success: false, error: "Deletion failed" });
+    // Use mockImplementation to delay the promise resolution slightly, allowing waitFor to catch the intermediate state.
+    (benefitActions.deleteBenefit as jest.Mock).mockImplementationOnce(() =>
+      new Promise(resolve =>
+        setTimeout(() => resolve({ success: false, error: "Deletion failed" }), 10),
+      ),
+    );
 
     renderWithIntl(<BenefitsEditor initialBenefits={mockInitialBenefits} />);
 
@@ -60,20 +64,23 @@ describe('BenefitsEditor', () => {
     // Confirmation modal appears, scope query to inside the modal
     const modal = screen.getByRole('dialog');
     const confirmButton = within(modal).getByRole('button', { name: "Delete" });
-    await user.click(confirmButton);
+
+    // Do NOT await this click. This allows us to test the UI state
+    // immediately after the optimistic update is applied, before the promise resolves.
+    user.click(confirmButton);
 
     // Assert item is removed optimistically BEFORE action resolves
     await waitFor(() => {
       expect(screen.queryByText('Benefit One')).not.toBeInTheDocument();
     });
 
-    // Wait for the action to complete and UI to revert
-    await waitFor(() => {
-      expect(screen.getByText('Benefit One')).toBeInTheDocument();
-    });
+    // Wait for the action to complete and UI to revert. findBy* is good for this as it has built-in waitFor.
+    await screen.findByText('Benefit One');
 
     // Check that an error toast was shown
-    expect(toast.error).toHaveBeenCalledWith("Deletion failed");
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Deletion failed");
+    });
   });
 
   it('optimistically removes a benefit on delete and shows success toast', async () => {
