@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useState, useMemo, useEffect, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { createBooking } from "@/app/[locale]/profile/actions/booking-actions";
 import { Button, Input, Textarea, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { 
@@ -90,7 +90,7 @@ export default function PublicCalendar({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const [formState, formAction] = useFormState(createBooking, {
+  const [formState, formAction] = useActionState(createBooking, {
     success: false,
   });
   
