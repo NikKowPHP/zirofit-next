@@ -31,7 +31,9 @@ html {
 h1, h2, h3, h4, h5, h6 {
   @apply text-neutral-900 dark:text-neutral-100;
 }
-
+.trainer-name-hero {
+  color: white;
+}
 /* Apply smooth transitions to links */
 a {
   @apply transition-colors duration-200;
