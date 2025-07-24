@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 interface TrainersViewProps {
   trainers: Trainer[];
@@ -89,22 +90,21 @@ export default function TrainersView({
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 400, damping: 40 }}
-                style={{ height: "calc(100% - 80px)" }} // Leave 60px of space at the top
-                drag="y"
-                dragConstraints={{ top: 0, bottom: 500 }}
-                dragElastic={{ top: 0, bottom: 0.8 }}
-                onDragEnd={(event, info) => {
-                  if (info.offset.y > 150 || info.velocity.y > 500) {
-                    setView("list");
-                  }
-                }}
+                style={{ height: "calc(100% - 80px)" }} // Leave 80px of space at the top
               >
-                <div
-                  className="p-4 flex-shrink-0 flex justify-center cursor-grab active:cursor-grabbing"
-                >
-                  <div className="w-10 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full" />
+                <div className="p-2 flex-shrink-0 flex justify-between items-center border-b border-neutral-200 dark:border-neutral-800">
+                  <h3 className="font-semibold text-lg flex-1 ml-6 text-center">
+                    {t("mapView")}
+                  </h3>
+                  <button
+                    onClick={() => setView("list")}
+                    className="p-[2px] rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
+                    aria-label="Close map view"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
                 </div>
-                <div className="flex-grow min-h-0">
+                <div className="flex-grow min-h-0 px-2  rounded-xl overflow-hidden">
                   <TrainersMapWrapper trainers={trainers} />
                 </div>
               </motion.div>
