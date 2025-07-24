@@ -1,0 +1,3 @@
+- [x] Make dashboard navigation feel as "instant" as public page navigation.
+- [x] Make switching between dashboard tabs feel instantaneous.
+- [x] Fix dashboard navigation loading indicator not appearing on click.

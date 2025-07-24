@@ -41,7 +41,7 @@ export function TopLoader() {
 
           if (
             targetUrl.origin === currentUrl.origin &&
-            targetUrl.pathname !== currentUrl.pathname
+            anchor.href !== currentUrl.href
           ) {
             NProgress.start();
           }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   HomeIcon as HomeIconOutline,
   ClipboardDocumentListIcon as ClipboardDocumentListIconOutline,
@@ -15,6 +15,63 @@ import {
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
 import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
+
+function BottomNavLink({ href, isActive, name, outlineIcon: OutlineIcon, solidIcon: SolidIcon }: { href: string; isActive: boolean; name: string; outlineIcon: React.ElementType; solidIcon: React.ElementType; }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const Icon = isActive ? SolidIcon : OutlineIcon;
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isActive) {
+      e.preventDefault();
+      setIsLoading(true);
+      setTimeout(() => {
+        router.push(href);
+      }, 50);
+    }
+  };
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
+  
+  return (
+    <Link
+      href={href}
+      onClick={handleClick}
+      className="inline-flex flex-col items-center justify-center pt-2 pb-1 group"
+    >
+      {isLoading ? (
+        <svg
+          className="animate-spin w-6 h-6 mb-1 text-indigo-500 dark:text-indigo-400"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      ) : (
+        <Icon
+          className={`w-6 h-6 mb-1 transition-colors ${
+            isActive
+              ? "text-indigo-500 dark:text-indigo-400"
+              : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+          }`}
+        />
+      )}
+      <span className={`text-xs transition-colors ${
+          isActive
+            ? "text-indigo-500 dark:text-indigo-400 font-semibold"
+            : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+        }`}>
+        {name}
+      </span>
+    </Link>
+  );
+}
 
 export default function ClientBottomNavBar() {
   const pathname = usePathname();
@@ -35,29 +92,16 @@ export default function ClientBottomNavBar() {
           const isActive =
             item.href === "/client-dashboard"
               ? pathname.endsWith(item.href) && !pathname.includes('/log-workout') && !pathname.includes('/my-progress') && !pathname.includes('/my-trainer')
-              : pathname.startsWith(item.href);
-          const Icon = isActive ? item.solidIcon : item.outlineIcon;
+              : pathname.includes(item.href.substring('/client-dashboard/'.length));
           return (
-            <Link
+            <BottomNavLink 
               key={item.name}
               href={item.href}
-              className="inline-flex flex-col items-center justify-center pt-2 pb-1 group"
-            >
-              <Icon
-                className={`w-6 h-6 mb-1 transition-colors ${
-                  isActive
-                    ? "text-indigo-500 dark:text-indigo-400"
-                    : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                }`}
-              />
-              <span className={`text-xs transition-colors ${
-                  isActive
-                    ? "text-indigo-500 dark:text-indigo-400 font-semibold"
-                    : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                }`}>
-                {item.name}
-              </span>
-            </Link>
+              isActive={isActive}
+              name={item.name}
+              outlineIcon={item.outlineIcon}
+              solidIcon={item.solidIcon}
+            />
           );
         })}
       </div>
