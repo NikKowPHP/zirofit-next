@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import {
   UserCircleIcon,
@@ -11,10 +11,12 @@ import LogoutButton from "../auth/LogoutButton";
 import { usePathname, useRouter } from "next/navigation";
 import NotificationIndicator from "@/components/notifications/NotificationIndicator";
 import { useTheme } from "@/context/ThemeContext";
-import BottomNavBar from "./BottomNavBar"; // Import the new component
+import BottomNavBar from "./BottomNavBar";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/layouts/LanguageSwitcher";
+import { NavigationProvider, useNavigation } from "@/context/NavigationContext";
+import DashboardContentSkeleton from "./DashboardContentSkeleton";
 
 interface TrainerDashboardLayoutProps {
   children: React.ReactNode;
@@ -22,26 +24,28 @@ interface TrainerDashboardLayoutProps {
   userEmail?: string;
 }
 
-function NavLink({ href, current, icon: Icon, children }: { href: string, current: boolean, icon: React.ElementType, children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = useState(false);
+function NavLink({
+  href,
+  current,
+  icon: Icon,
+  children,
+}: {
+  href: string;
+  current: boolean;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}) {
+  const { setIsNavigating, setOptimisticPath } = useNavigation();
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Only show loader if navigating to a different page/section.
     if (!current) {
       e.preventDefault();
-      setIsLoading(true);
-      setTimeout(() => {
-        router.push(href);
-      }, 50); // A small delay ensures the state update renders before navigation
+      setIsNavigating(true);
+      setOptimisticPath(href);
+      router.push(href);
     }
   };
-
-  // Reset loading state if path changes for any reason (e.g., browser back/forward)
-  useEffect(() => {
-    setIsLoading(false);
-  }, [pathname]);
 
   return (
     <Link
@@ -53,60 +57,54 @@ function NavLink({ href, current, icon: Icon, children }: { href: string, curren
           : "text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10"
       }`}
     >
-      {isLoading ? (
-        <svg className="animate-spin mr-3 h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      ) : (
-        <Icon
-          className={`mr-3 h-5 w-5 flex-shrink-0 ${
-            current
-              ? "text-neutral-700 dark:text-neutral-200"
-              : "text-neutral-500 dark:text-neutral-400"
-          }`}
-          aria-hidden="true"
-        />
-      )}
+      <Icon
+        className={`mr-3 h-5 w-5 flex-shrink-0 ${
+          current
+            ? "text-neutral-700 dark:text-neutral-200"
+            : "text-neutral-500 dark:text-neutral-400"
+        }`}
+        aria-hidden="true"
+      />
       {children}
     </Link>
   );
 }
 
-
-export default function TrainerDashboardLayout({
+function LayoutUI({
   children,
   headerTitle,
   userEmail,
 }: TrainerDashboardLayoutProps) {
   const pathname = usePathname();
   const { theme } = useTheme();
-  const t = useTranslations('TrainerDashboardLayout');
+  const t = useTranslations("TrainerDashboardLayout");
+  const { isNavigating, optimisticPath } = useNavigation();
+  const currentPath = isNavigating ? optimisticPath : pathname;
 
   const navigation = [
     {
-      name: t('dashboard'),
+      name: t("dashboard"),
       href: "/dashboard",
       icon: HomeIcon,
-      current: pathname.endsWith("/dashboard") && !pathname.includes('bookings'),
+      current: currentPath?.endsWith("/dashboard") && !currentPath?.includes("bookings"),
     },
     {
-      name: t('profileSettings'),
+      name: t("profileSettings"),
       href: "/profile/edit",
       icon: UserCircleIcon,
-      current: pathname.includes("/profile"),
+      current: currentPath?.includes("/profile"),
     },
     {
-      name: t('manageClients'),
+      name: t("manageClients"),
       href: "/clients",
       icon: UserGroupIcon,
-      current: pathname.includes("/clients"),
+      current: currentPath?.includes("/clients"),
     },
     {
-      name: t('myBookings'),
+      name: t("myBookings"),
       href: "/dashboard/bookings",
       icon: CalendarDaysIcon,
-      current: pathname.includes("/dashboard/bookings"),
+      current: currentPath?.includes("/dashboard/bookings"),
     },
   ];
 
@@ -116,7 +114,6 @@ export default function TrainerDashboardLayout({
         theme === "dark" ? "dark" : ""
       }`}
     >
-      {/* Desktop Sidebar (Hidden on mobile) */}
       <aside className="hidden md:flex md:flex-shrink-0 w-64 bg-white/60 dark:bg-neutral-900/80 border-r border-neutral-200 dark:border-neutral-800">
         <div className="flex flex-col h-full w-full">
           <div className="p-6">
@@ -128,7 +125,12 @@ export default function TrainerDashboardLayout({
           </div>
           <nav className="mt-4 px-4 flex-grow">
             {navigation.map((item) => (
-              <NavLink key={item.name} href={item.href} current={item.current} icon={item.icon}>
+              <NavLink
+                key={item.name}
+                href={item.href}
+                current={item.current ?? false}
+                icon={item.icon}
+              >
                 {item.name}
               </NavLink>
             ))}
@@ -136,7 +138,7 @@ export default function TrainerDashboardLayout({
           <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-800">
             {userEmail && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                {t('loggedInAs', {email: userEmail})}
+                {t("loggedInAs", { email: userEmail })}
               </p>
             )}
             <LogoutButton />
@@ -148,7 +150,7 @@ export default function TrainerDashboardLayout({
         <header className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {headerTitle || t('header_dashboard')}
+              {headerTitle || t("header_dashboard")}
             </h1>
             <div className="flex items-center space-x-4">
               <LanguageSwitcher />
@@ -156,19 +158,26 @@ export default function TrainerDashboardLayout({
             </div>
           </div>
         </header>
-        {/* Add bottom padding for mobile to avoid overlap with nav bar */}
         <motion.main
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ease: "easeInOut", duration: 0.4 }}
           className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 pb-20 md:pb-6"
         >
-          {children}
+          {isNavigating ? <DashboardContentSkeleton /> : children}
         </motion.main>
       </div>
-
-      {/* Mobile Bottom Nav Bar */}
       <BottomNavBar />
     </div>
+  );
+}
+
+export default function TrainerDashboardLayout(
+  props: TrainerDashboardLayoutProps,
+) {
+  return (
+    <NavigationProvider>
+      <LayoutUI {...props} />
+    </NavigationProvider>
   );
 }

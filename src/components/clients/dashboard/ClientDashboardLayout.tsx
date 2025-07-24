@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import {
   UserCircleIcon,
@@ -11,33 +11,39 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import { usePathname, useRouter } from "next/navigation";
 import NotificationIndicator from "@/components/notifications/NotificationIndicator";
 import { useTheme } from "@/context/ThemeContext";
-import ClientBottomNavBar from "@/components/layouts/ClientBottomNavBar"; // UPDATED IMPORT
+import ClientBottomNavBar from "@/components/layouts/ClientBottomNavBar";
 import { motion } from "framer-motion";
 import LanguageSwitcher from "@/components/layouts/LanguageSwitcher";
+import { NavigationProvider, useNavigation } from "@/context/NavigationContext";
+import DashboardContentSkeleton from "@/components/layouts/DashboardContentSkeleton";
 
 interface ClientDashboardLayoutProps {
   children: React.ReactNode;
   userEmail?: string;
 }
 
-function NavLink({ href, current, icon: Icon, children }: { href: string, current: boolean, icon: React.ElementType, children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = useState(false);
+function NavLink({
+  href,
+  current,
+  icon: Icon,
+  children,
+}: {
+  href: string;
+  current: boolean;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}) {
+  const { setIsNavigating, setOptimisticPath } = useNavigation();
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!current) {
       e.preventDefault();
-      setIsLoading(true);
-      setTimeout(() => {
-        router.push(href);
-      }, 50);
+      setIsNavigating(true);
+      setOptimisticPath(href);
+      router.push(href);
     }
   };
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [pathname]);
 
   return (
     <Link
@@ -49,57 +55,49 @@ function NavLink({ href, current, icon: Icon, children }: { href: string, curren
           : "text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10"
       }`}
     >
-      {isLoading ? (
-        <svg className="animate-spin mr-3 h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      ) : (
-        <Icon
-          className={`mr-3 h-5 w-5 flex-shrink-0 ${
-            current
-              ? "text-neutral-700 dark:text-neutral-200"
-              : "text-neutral-500 dark:text-neutral-400"
-          }`}
-          aria-hidden="true"
-        />
-      )}
+      <Icon
+        className={`mr-3 h-5 w-5 flex-shrink-0 ${
+          current
+            ? "text-neutral-700 dark:text-neutral-200"
+            : "text-neutral-500 dark:text-neutral-400"
+        }`}
+        aria-hidden="true"
+      />
       {children}
     </Link>
   );
 }
 
-export default function ClientDashboardLayout({
-  children,
-  userEmail,
-}: ClientDashboardLayoutProps) {
+function LayoutUI({ children, userEmail }: ClientDashboardLayoutProps) {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const { isNavigating, optimisticPath } = useNavigation();
+  const currentPath = isNavigating ? optimisticPath : pathname;
 
   const navigation = [
     {
       name: "Dashboard",
       href: "/client-dashboard",
       icon: HomeIcon,
-      current: pathname.endsWith("/client-dashboard"),
+      current: currentPath?.endsWith("/client-dashboard"),
     },
     {
       name: "Log Workout",
       href: "/client-dashboard/log-workout",
       icon: ClipboardDocumentListIcon,
-      current: pathname.includes("/log-workout"),
+      current: currentPath?.includes("/log-workout"),
     },
     {
       name: "My Progress",
       href: "/client-dashboard/my-progress",
       icon: ChartBarIcon,
-      current: pathname.includes("/my-progress"),
+      current: currentPath?.includes("/my-progress"),
     },
     {
       name: "My Trainer",
       href: "/client-dashboard/my-trainer",
       icon: UserCircleIcon,
-      current: pathname.includes("/my-trainer"),
+      current: currentPath?.includes("/my-trainer"),
     },
   ];
 
@@ -112,7 +110,10 @@ export default function ClientDashboardLayout({
       <aside className="hidden md:flex md:flex-shrink-0 w-64 bg-white/60 dark:bg-neutral-900/80 border-r border-neutral-200 dark:border-neutral-800">
         <div className="flex flex-col h-full w-full">
           <div className="p-6">
-            <Link href="/client-dashboard" className="flex items-center space-x-2">
+            <Link
+              href="/client-dashboard"
+              className="flex items-center space-x-2"
+            >
               <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                 ZIRO.FIT
               </span>
@@ -120,7 +121,12 @@ export default function ClientDashboardLayout({
           </div>
           <nav className="mt-4 px-4 flex-grow">
             {navigation.map((item) => (
-              <NavLink key={item.name} href={item.href} current={item.current} icon={item.icon}>
+              <NavLink
+                key={item.name}
+                href={item.href}
+                current={item.current ?? false}
+                icon={item.icon}
+              >
                 {item.name}
               </NavLink>
             ))}
@@ -154,10 +160,18 @@ export default function ClientDashboardLayout({
           transition={{ ease: "easeInOut", duration: 0.4 }}
           className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 pb-20 md:pb-6"
         >
-          {children}
+          {isNavigating ? <DashboardContentSkeleton /> : children}
         </motion.main>
       </div>
       <ClientBottomNavBar />
     </div>
+  );
+}
+
+export default function ClientDashboardLayout(props: ClientDashboardLayoutProps) {
+  return (
+    <NavigationProvider>
+      <LayoutUI {...props} />
+    </NavigationProvider>
   );
 }

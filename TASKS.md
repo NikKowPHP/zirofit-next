@@ -1,3 +1,5 @@
 - [x] Make dashboard navigation feel as "instant" as public page navigation.
 - [x] Make switching between dashboard tabs feel instantaneous.
 - [x] Fix dashboard navigation loading indicator not appearing on click.
+- [x] Show an instantaneous skeleton of the destination page when navigating between dashboard tabs.
+- [x] Add optimistic active tab switching for dashboard navigation.
