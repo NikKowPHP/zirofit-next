@@ -88,20 +88,60 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
     <>
       <style jsx global>{`
         .custom-price-marker {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           background: white;
           border-radius: 9999px;
-          padding: 4px 10px;
-          font-weight: 600;
+          padding: 10px 20px;
+          font-weight: 700;
           font-size: 14px;
           color: black;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          border: 1px solid #ddd;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
           white-space: nowrap;
+          transform: translate(-50%, -calc(100% + 12px));
+          transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          cursor: pointer;
+          border: 1px solid #eee;
+        }
+        .leaflet-marker-icon:hover .custom-price-marker {
+          transform: translate(-50%, -calc(100% + 12px)) scale(1.08);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .custom-price-marker::after {
+          content: '';
+          position: absolute;
+          bottom: -9px;
+          left: 50%;
+          transform: translateX(-50%) rotate(45deg);
+          width: 16px;
+          height: 16px;
+          background: white;
+          border-bottom: 1px solid #eee;
+          border-right: 1px solid #eee;
+          z-index: -1;
         }
         .dark .custom-price-marker {
-            background: #1d1d1f;
-            color: white;
-            border-color: #444;
+          background: #262626;
+          color: white;
+          border-color: #444;
+        }
+        .dark .custom-price-marker::after {
+          background: #262626;
+          border-color: #444;
+        }
+        .custom-dot-marker {
+          background-color: var(--primary-blue);
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 2px solid white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          transform: translate(-50%, -50%);
+        }
+        .dark .custom-dot-marker {
+          border-color: #262626;
         }
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
@@ -123,21 +163,24 @@ export default function TrainersMap({ trainers }: TrainersMapProps) {
           const price = trainer.profile?.services?.[0]?.price;
           const currencySymbol = 'zł';
           
-          let priceString = '';
+          let iconHtml = '';
+          let iconClassName = 'custom-dot-marker';
+          
           if (price) {
-            priceString = `${Math.round(parseFloat(price))} ${currencySymbol}`;
+            iconHtml = `${Math.round(parseFloat(price))} ${currencySymbol}`;
+            iconClassName = 'custom-price-marker';
           }
 
           const customIcon = L.divIcon({
-            html: priceString,
-            className: 'custom-price-marker',
+            html: iconHtml,
+            className: iconClassName,
           });
           
           return (
             <Marker 
               key={trainer.id} 
               position={[trainer.profile!.latitude!, trainer.profile!.longitude!]}
-              icon={price ? customIcon : L.Icon.Default.prototype}
+              icon={customIcon}
             >
               <Popup>
                 <Link href={`/trainer/${trainer.username}`} className="font-semibold text-indigo-600 hover:underline" data-testid={`map-popup-link-${trainer.username}`}>
