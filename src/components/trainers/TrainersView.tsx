@@ -89,11 +89,18 @@ export default function TrainersView({
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 400, damping: 40 }}
-                style={{ height: "calc(100% - 100px)" }} // Leave 60px of space at the top
+                style={{ height: "calc(100% - 80px)" }} // Leave 60px of space at the top
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 500 }}
+                dragElastic={{ top: 0, bottom: 0.8 }}
+                onDragEnd={(event, info) => {
+                  if (info.offset.y > 150 || info.velocity.y > 500) {
+                    setView("list");
+                  }
+                }}
               >
                 <div
                   className="p-4 flex-shrink-0 flex justify-center cursor-grab active:cursor-grabbing"
-                  onClick={() => setView("list")}
                 >
                   <div className="w-10 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full" />
                 </div>

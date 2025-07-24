@@ -1,2 +1,11 @@
-
+- [ ] Refactor CSS styles
+- [x] Add mobile view with a map for trainers list and price pins on the map.
+- [x] Implement an interactive map bottom sheet for mobile devices.
+- [x] Fix broken map tiles in animated bottom sheet on mobile.
+- [x] Fix map tiles not loading completely in bottom sheet.
+- [x] Improve the UI of the map price pins to align with a modern design.
+- [x] Fix text alignment inside map price pins.
+- [x] Increase the size of the map pins for better visibility.
+- [x] Fix text centering in map pins and ensure container is flexible.
 - [x] Make map pins larger and more spacious.
+- [x] Make the mobile map bottom sheet closable via drag and tap-outside.
